@@ -7,7 +7,7 @@ No link to Earth
 
 Scripted two-week blackout (antenna fault), modelled on the two-week command pause at solar conjunction
 
-Keel does not use the link to work. Detection, explanations and recommended actions all run on this tablet: it last re-checked the whole crew's readings in 33 milliseconds. The link only carries a summary for the flight surgeon when one is available.
+Keel does not use the link to work. Detection, explanations and recommended actions all run on this tablet: it last re-checked the whole crew's readings in 41 milliseconds. The link only carries a summary for the flight surgeon when one is available.
 
 The link is already down today (a scripted blackout), so there is nothing to cut. Every screen you have used so far was running without it.
 
@@ -15,7 +15,7 @@ Go to a day with a working link and cut it yourself
 Queued for the ground
 3 waiting
 
-One summary per mission day, smaller than a text message, containing only what you share with the flight surgeon. While there is no link, summaries wait here and go out together when it returns.
+One summary per mission day goes out automatically, smaller than a text message. It contains only what you have chosen to share with the flight surgeon in Sharing (by default nothing personal, only cabin alerts). While there is no link, summaries wait here and go out together when it returns.
 
 Day 119 · 85 bytes · waiting
 Day 120 · 85 bytes · waiting

@@ -4,34 +4,34 @@ BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
 Does it work?
 
-Every number here was produced by a script in the repository. Real data is used wherever it exists; everything else is simulated and labelled. Intervals are 95% bootstrap intervals over people. Nothing was tuned on the people it was tested on.
+Every number here was produced by a script in the repository. Real data is used wherever it exists; everything else is simulated and labelled. Intervals are 95% bootstrap intervals over people. No fitted quantity (threshold, correlation, population statistic) saw the people it was tested on. Analysis choices such as the metric and the detector selection rule were revised during two review rounds; the decision log in the repository records each one.
 
 The short version
-+31 points
++30 points
 above luck, on real illness
-Keel flagged 67% of 103 real illness episodes at one false alert per person-month. Luck alone gives 36%. Interval for the gap: 21 to 41 points.
-+15 points
+Keel flagged 66% of 107 real illness episodes at one false alert per person-month. Luck alone gives 36%. Interval for the gap: 20 to 40 points. With heart rate alone, without steps: +17 (7 to 27).
++17 points
 for one threshold for everyone
-A fixed threshold flagged 40%, with 24% by luck. Keel's advantage: +15 points (interval 2 to 30).
-1.00
-false alerts per person-month
-Measured on held-out people against a budget of 1.00. At the stricter alert tier: 0.24 against 0.25, and +31 points above luck.
-What these results do not show. Keel does not give early warning: on real data the alert mostly starts on or after the day symptoms begin (40% of episodes had an alert start in the ten days up to onset; luck gives 28%). Most alerts are false: at the in-flight rate of respiratory illness, about 1 in 11 alert-tier alerts would be a real illness. The data is from people on Earth with consumer watches. Everything except illness is tested in simulation only.
+A fixed threshold flagged 41%, with 25% by luck. Keel's advantage: +14 points (interval 0 to 28).
+0.99 to 1.38
+false alerts per person-month, budget 1.00
+0.99 when thresholds come from other real people (close to budget by design). 1.38 when they come from simulation only, as the app's full-sensor thresholds do. Alert tier (budget 0.25): 0.25 and 0.39; there Keel is +32 above luck with daily steps but only +12 with the 7-day activity average the app itself uses.
+What these results do not show. Keel does not give early warning: on real data the alert mostly starts on or after the day symptoms begin (39% of episodes had an alert start in the ten days up to onset; luck gives 29%). Most alerts are false: at the in-flight rate of respiratory illness, between about 1 in 11 and about 1 in 28 alert-tier alerts would be a real illness. The data is from people on Earth with consumer watches. Everything except illness is tested in simulation only.
 
 Jump to: real data · simulated missions · simulator realism · NASA bed-rest data · limitations
 
 Detection above luck, real data
 One threshold for all
-15%
+17%
 Personal, 2-of-3-days rule
-26%
+27%
 Personal + CUSUM
 30%
-Keel: personal + multivar…
-31%
+Keel (multivariate)
+30%
 Personal, fused
-32%
-Share of illness episodes flagged, minus the share an alert would hit by luck, at one false alert per person-month. Bars show 95% intervals. The four personal-baseline methods cannot be told apart; all sit above the fixed threshold.
+33%
+Share of illness episodes flagged, minus the share an alert would hit by luck, at one false alert per person-month. Bars show 95% intervals. At this tier the four personal-baseline methods overlap. Keel's lead over the fixed threshold is +14 (0 to 28); for the simple personal rule, which differs from the fixed threshold only in whose baseline it uses, it is +11 (-3 to 25), an interval that includes zero. At the alert tier the methods range from +14 to +32 (table under the next chart).
 How this was measured
 Made by research/scripts/eval_real.py
 Show the numbers as a table
@@ -62,24 +62,25 @@ Who is in the test	People
 Downloaded (all 120 of phase 1; all 84 positives and 120 others of phase 2)	324
 Left out: fewer than 28 nights with a usable resting heart rate	−73
 Analysed (18 AppleWatch, 208 Fitbit, 25 Other)	251
-… with a dated illness episode inside their recording (103 episodes: 79 COVID-19 with a symptom date, 19 with a test date only, 5 other illness)	101
+… with a dated illness episode inside their recording (107 episodes: 79 COVID-19 with a symptom date, 19 with a test date only, 9 other illness)	105
 … without one: phase 1, no illness reported	64
-… without one: illness reported, but dated outside the recording	6
+… without one: illness reported, but dated outside the recording	2
 … without one: phase 2, not in the positives table (never confirmed healthy)	80
 
-37,234 person-days; 771 person-months of scored quiet time. Phase 2 is a subset of the release: all 84 positives, plus the first 60 Fitbit and first 60 other-device participant IDs in sorted order (not a random draw). Every episode counts for every method: an episode Keel could not score (no baseline yet) is a miss.
+37,234 person-days; 766 person-months of scored quiet time. Phase 1: 120 recordings from 118 people (one person has three short recordings, all excluded for length). Phase 2 is a subset of the release: all 84 positives, plus the first 60 Fitbit and first 60 other-device participant IDs in sorted order (not a random draw). Dates are shifted per person by the data owners, so pretend events cannot be matched to the calendar: lockdowns and isolation after a positive test are tangled up with onset. Every episode counts for every method: an episode Keel could not score (no baseline yet) is a miss.
 
 When the alert came, relative to symptom onset
 0
 5
 10
+15
 -10
 -5
 0
 Days from symptom onset to alert start (negative = alert first)
 Episodes
 Onset
-Keel at one false alert per person-month. Left of the line, the alert started before symptoms; right of it, after. 34 of 103 episodes had no alert in the window. The cluster just after onset is the real response; alerts a week before onset are mostly coincidence.
+Keel at one false alert per person-month. Left of the line, the alert started before symptoms; right of it, after. 36 of 107 episodes had no alert in the window. The cluster just after onset is the real response; alerts a week before onset are mostly coincidence.
 How this was measured
 Made by research/scripts/eval_real.py
 What real illness looks like in resting heart rate
@@ -92,51 +93,53 @@ What real illness looks like in resting heart rate
 Days from symptom onset
 Resting heart rate change, bpm
 Onset
-Mean change from each person's own earlier level, 67 dated episodes, with a 95% band. The rise is small before symptoms and peaks a day or two after onset. Night-to-night variation is about 3.5 bpm, so a single person's rise is hard to see.
+Mean change from each person's own earlier level, 70 dated episodes, with a 95% band. The rise is small before symptoms and peaks a day or two after onset. Night-to-night variation is about 3.5 bpm, so a single person's rise is hard to see.
 How this was measured
 Made by research/scripts/eval_real.py
 What an alert is worth
 
-ISS crews report about one episode of upper-respiratory symptoms per person-year. At that rate, and with the detection above luck measured here, about 1 in 11 alert-tier alerts and about 1 in 41 notices would coincide with such an illness. The other conditions Keel watches for would raise those shares, by an amount we cannot measure on real data. This is why a notice asks for a look, not for the medical officer.
+ISS crews report about one episode of upper-respiratory symptoms per person-year. At that rate, and with the detection above luck measured here, about 1 in 11 alert-tier alerts and about 1 in 41 notices would coincide with such an illness when daily steps are used, and about 1 in 28 and about 1 in 46 with the 7-day activity average the app uses. The other conditions Keel watches for would raise those shares, by an amount we cannot measure on real data. This is why a notice asks for a look, not for the medical officer.
 
-Illness rate 0.97 per person-year (upper-respiratory symptoms on the ISS, DOMAIN ref 52b); sensitivity = detection net of luck on real data. How this was measured · research/scripts/eval_real.py
+Assumes 0.97 illnesses per person-year (upper-respiratory symptoms on the ISS, source 52b) and the detection above luck measured on real data. How this was measured · research/scripts/eval_real.py
 
 False alerts over long quiet periods
 
-People with no dated illness in their recording (150 people, 459 scored person-months; many were never confirmed healthy, so some alerts may be real). Notice tier: 0.99 false alerts per person-month (interval 0.90 to 1.10), with an alert open on 10% of quiet days. Alert tier: 0.23 per person-month, open on 2% of days; 56% of people never saw one. The noisiest fifth of people produced 63% of alert-tier false alerts, which is what pure chance would give (59%): we found no evidence that some people are systematically noisier.
+People with no dated illness in their recording (146 people, 452 scored person-months; many were never confirmed healthy, so some alerts may be real). Notice tier: 0.99 false alerts per person-month (interval 0.88 to 1.10), with an alert open on 10% of quiet days. Alert tier: 0.24 per person-month, open on 2% of days; 54% of people never saw one. The noisiest fifth of people produced 63% of alert-tier false alerts, which is what pure chance would give (59%): we found no evidence that some people are systematically noisier.
 
 0 per month
-20 people
+19 people
 up to 0.5 per month
-13 people
+16 people
 0.5 to 1 per month
-40 people
+36 people
 1 to 2 per month
-56 people
+54 people
 2 to 3 per month
-13 people
+12 people
 3 to 5 per month
-2 people
+3 people
 over 5 per month
 0 people
 
-People with at least 30 scored quiet days (144), by their own false-alert rate at the notice tier. How this was measured · research/scripts/eval_real.py
+People with at least 30 scored quiet days (140), by their own false-alert rate at the notice tier. How this was measured · research/scripts/eval_real.py
 
 Which indicators and components earn their place (real data)
-Variant	Flagged	By luck	Above luck (interval)
-Resting heart rate only	50%	35%	+14 (4 to 25)
-Resting heart rate + daily steps	67%	36%	+31 (21 to 41)
-Resting heart rate + 7-day mean of steps	62%	32%	+30 (20 to 41)
-Night and whole-day resting heart rate + steps (exploratory, added after seeing the main result)	64%	37%	+27 (17 to 38)
-… + adjust heart rate for the previous day's steps	67%	36%	+31 (21 to 41)
-Adding sleep duration, in the 18 people who have it: without → with	79% → 79%	–	–
-Steps add most of the signal, and that is a caution. Heart rate alone is +14 points above luck; with steps, +31. People's steps halve once they feel ill and stay home. A crew on a fixed exercise schedule may not show that.
-Adjusting heart rate for the previous day's activity does not help (+31 against +31), so the app leaves it off.
+Indicators	Notice tier: flagged, luck	Above luck (interval)	Alert tier: flagged, luck	Above luck (interval)
+Resting heart rate only	50%, 34%	+17 (7 to 27)	27%, 10%	+17 (9 to 26)
+Resting heart rate + daily steps (headline analysis)	66%, 36%	+30 (20 to 40)	43%, 11%	+32 (21 to 42)
+Resting heart rate + 7-day mean of steps (the activity feature the app uses)	62%, 34%	+28 (17 to 38)	22%, 11%	+12 (3 to 20)
+… + adjust heart rate for the previous day's steps	67%, 36%	+32 (22 to 41)	41%, 11%	+30 (20 to 40)
+Night and whole-day resting heart rate + steps (exploratory, added after seeing the main result)	64%, 36%	+28 (17 to 37)	39%, 11%	+29 (19 to 38)
+Adding sleep duration, in the 18 people who have it: without → with	79% → 79%	–	–	–
+Steps add much of the signal, and that is a caution. Heart rate alone is +17 points above luck; with steps, +30. Median daily steps fell from 7,554 to 4,210 in the five days from onset (89 episodes): people rest, or isolate after a positive test. A crew on a fixed exercise schedule may not show that, and because the data owners shifted every person's dates we cannot separate it from lockdowns.
+At the alert tier the choice of activity feature matters. With daily steps Keel is +32 above luck; with the smoother 7-day average the app uses, +12.
+Adjusting heart rate for the previous day's activity does not help (+32 against +30), so the app leaves it off.
 Sleep is undecided. Too few people have sleep data.
-Device matters. Fitbit: 73% flagged (+36 above luck, 85 episodes). Other devices, mostly Apple Watch: 39% (+8, 18 episodes); their overnight heart-rate samples are sparse in this release.
-It holds across cohorts. Trained on phase 1 and tested on phase 2: 62% flagged, +29 above luck, 0.87 false alerts per person-month. The reverse: 73%, +38, 1.10. Five different fold splits gave +31 to +33 above luck.
-Retrospective and prospective phase 2 cases (the prospective ones were enrolled under the original study's own alerting): +31 and +25 above luck.
-The window. -14..+7 days: 74% flagged, 49% by luck; -10..+4 days: 67% flagged, 36% by luck; -7..+0 days: 34% flagged, 22% by luck; -3..+0 days: 21% flagged, 11% by luck. The −10 to +4 window was fixed before the first run on real data; it also turned out to have the largest gap.
+Device matters. Fitbit: 72% flagged (+35 above luck, 89 episodes). Non-Fitbit devices: 39% (+9, 18 episodes, all Apple Watch); their overnight heart-rate samples are sparse in this release.
+People who reported no illness in phase 1 saw 1.17 false alerts per person-month at the notice tier (interval 0.96 to 1.37).
+It holds across cohorts. Trained on phase 1 and tested on phase 2: 62% flagged, +29 above luck, 0.87 false alerts per person-month. The reverse: 71%, +36, 1.11. Five different fold splits gave +30 to +32 above luck.
+Retrospective and prospective phase 2 cases (the prospective ones were enrolled under the original study's own alerting): +29 and +27 above luck.
+The window. -14..+7 days: 73% flagged, 46% by luck; -10..+4 days: 66% flagged, 36% by luck; -7..+0 days: 34% flagged, 21% by luck; -3..+0 days: 21% flagged, 12% by luck. The window was narrowed from −14..+7 to −10..+4 while the real-data evaluation was being written. The commit history cannot show that this came before the first run, and −10..+4 has the largest gap of the four, so treat +27 for the original window as the conservative figure.
 Published comparison. The dataset's authors reported 63% of 32 cases detectable before symptoms with about 0.66 alarms per month, using hourly data and their own algorithm on phase 1. We did not reproduce early detection with daily features.
 2. Simulated missions Simulated data
 3. Is the simulator realistic?
@@ -144,9 +147,9 @@ Published comparison. The dataset's authors reported 63% of 32 cases detectable 
 Limits you should know before trusting any of this
 No open dataset has astronaut wearable time series. The real evaluation uses people on Earth; spaceflight physiology is represented only by published summary values and the bed-rest analog.
 The real illness data has two indicators. Claims about HRV, oxygen, temperature, mood, reaction time, fluids and food rest on simulation with assumed effect sizes.
-103 real episodes is a small sample; intervals are wide. Symptom dates are self-reported and shifted for privacy.
+107 real episodes is a small sample; intervals are wide. Symptom dates are self-reported and shifted for privacy.
 Thresholds for the full indicator set are calibrated on simulated missions and probably run over budget on real people.
-The four personal-baseline detectors perform alike. Keel runs the one a pre-set rule picked on simulated training missions.
+The four personal-baseline detectors perform alike at the notice tier. Keel runs the one picked on simulated training missions by a selection rule that was itself revised during review; the choice flipped once. The simple rule is +27 above luck at the notice tier and +25 at the alert tier.
 Full limitations and what a clinician would need to review
 
-Result files: code version 008308988a09. Scripts: research/scripts/.
+Result files, code version: real 2e00bb89b95f, simulated 2e00bb89b95f, realism 2e00bb89b95f, bed rest 2e00bb89b95f. Scripts: research/scripts/.

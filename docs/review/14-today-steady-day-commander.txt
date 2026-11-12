@@ -2,24 +2,24 @@ SCREEN: 14-today-steady-day-commander
 TOP BAR: Keel | Earth link: 1 min 34 s delay | Amara · Flight day 66 | Simulated data
 BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
-Keel is a crew health monitor that works with no link to Earth. It learns each crew member's own normal, flags drift, and gives one action with its source. You are looking at Amara Okafor's tablet on a simulated mission: Mars transit.
+Keel is a crew health monitor that works with no link to Earth. It learns each person's own normal and gives one action with its source. Demo: Amara's tablet, simulated Mars transit.
 
-Watch Keel catch a health event (40 s)
-Does it work? The evidence
-Hide this
+Watch it catch an event (40 s)
+The evidence
+Hide
 Steady
 
-No change detected in your readings. Steady does not mean well: if you feel unwell, say so.
+Nothing needs action. One reading is a little off your usual; Keel is watching.
 
 Cabin CO2 is 2.6 mmHg, above the 2.5 level where headaches become more likely. If you have a headache, log it at check-in and move to better airflow.
 
 Demo crew member, simulated readings.
 
-Nothing unusual
+Worth knowing
 All trends
-
-Every tracked reading is within your usual range over the last three days.
-
+Sleep timing shift 1.5 h
+Shifted from your usual -0.8. Your most unusual reading in 51 days. Out of your range for 4 days.
+Tested in simulation only
 Your body at a glance
 Brain, sleep and mood
 Heart and circulation
@@ -28,15 +28,17 @@ Food and fluids
 Muscle and bone
 Whole body
 Cabin and radiation
-Cabin and radiation
+Brain, sleep and mood
 Worth a look
 
-Cabin carbon dioxide and your radiation dose.
+Sleep, body clock, reaction time and mood.
 
-Why space matters here: Beyond Earth's magnetic shield, cosmic rays give a steady dose and solar storms an occasional burst.
+Why space matters here: Isolation and confinement, plus a lost day-night cycle, disturb sleep and wear on mood and attention.
 
-CO2
-Radiation
+Sleep
+Timing
+Reaction
+Mood
 How to measure
 Today's routine
 6-day streak
@@ -47,10 +49,10 @@ Exercise this week
 Crew goal this week: 89% of planned exercise done together. Individual numbers stay private.
 
 Report a symptom now
-Daily check-in (about a minute)
-Start
+Check-in done (simulated entry; you can redo it)
 Sensor worn last night
 Exercise done today
+Sleep last night 5.1 h. The scheduled sleep period is 8.5 h.
 Cabin
 Deep-space transit vehicle
 Carbon dioxide 
@@ -59,5 +61,7 @@ Above 2.5, where headaches become more likely
 Radiation dose
 118 mSv this mission (dosimeter estimate)
 Today 1.60 mSv. The 600 mSv career limit also counts earlier flights.
+
+Keel raised 1 notice for you in the last 30 days. The budget allows about one false one per person-month, so some of these are false.
 
 Keel is decision support, not a medical device. It does not diagnose. It shows how your readings compare with your own normal and points to documented countermeasures.

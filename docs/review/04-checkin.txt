@@ -23,33 +23,23 @@ Headache
 Nausea
 Vomited
 Stuffy head or nose
-Sore throat or cough
+Sore throat
+Cough
 Unusual tiredness
 Back pain
 Dizziness
 Vision change
 Rash or itchy skin
 Something else
-Tell the medical officer now if you have any of these:
-Chest pain or pressure
-Short of breath at rest
-Fainted or nearly fainted
-Racing or irregular heartbeat
-Sudden loss of vision
-Worst headache of your life
-Confusion, weakness or trouble speaking
-Severe belly pain
-Severe side or back pain
-Vomited more than twice, or cannot keep fluids down
-Cannot pass urine, or blood in urine
-Injury, or something in the eye
-Joint pain or numbness after a spacewalk
+Something serious? Chest pain, fainting, trouble breathing, bleeding, vision loss, thoughts of harming yourself…
 3. Fluids today
 −
-2.50 L
+0.00 L
 +
+Same as usual (2.5 L)
++ 1 L
 
-Starts at your recent average (2.5 L). One tap is one 250 mL drink bag. The in-flight target is 2.0 to 2.5 L.
+One tap on + is one 250 mL drink bag. Aim for at least 2.0 to 2.5 L a day. Left at zero, nothing is recorded.
 
 4. How much of your planned food did you eat?
 All of it

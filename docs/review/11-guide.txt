@@ -10,36 +10,40 @@ The five hazards of human spaceflight, and what Keel watches for each
 Hazard	What it does	What Keel tracks
 Space radiation	Cosmic rays and solar storms. Mostly a long-term risk; a solar storm can also matter within hours.	Daily and mission-total dose from the dosimeter. Keel does not warn of solar storms: the vehicle alarm does. Afterwards Keel records the dose and asks about nausea.
 Isolation and confinement	Mood and sleep problems become more likely the longer a small crew is shut in together.	Private mood check-ins, sleep duration and timing, reaction self-test, each against your own normal.
-Distance from Earth	Up to about 24 minutes of signal delay each way, blackouts, no resupply and no quick return.	Everything runs on board. The link only carries a summary you approve, when a link exists.
+Distance from Earth	Up to about 24 minutes of signal delay each way, blackouts, no resupply and no quick return.	Everything runs on board. When a link exists it carries a small daily summary containing only what you chose to share.
 Gravity fields	Without weight, bone and muscle are lost, fluid shifts toward the head, and the body must re-adapt at each gravity change.	Exercise against plan, resting heart rate and HRV; normal ranges are widened and re-learned after each gravity change.
 Hostile, closed environment	Recycled air and water, shared microbes, an immune system that behaves differently.	Cabin carbon dioxide with the levels linked to headaches; signs of infection in heart rate, HRV and temperature, usually visible once symptoms have started.
 [6] NASA Human Research Program. "The Human Body in Space." nasa.gov, 2021 (updated 2026). Source
 [7] NASA Human Research Program. "5 Hazards of Human Spaceflight." nasa.gov (updated 2026). Source
 When to involve someone else
-Now, whatever Keel shows: chest pain or pressure; short of breath at rest; fainted or nearly fainted; racing or irregular heartbeat; sudden loss of vision; worst headache of your life; confusion, weakness or trouble speaking; severe belly pain; severe side or back pain; vomited more than twice, or cannot keep fluids down; cannot pass urine, or blood in urine; injury, or something in the eye; joint pain or numbness after a spacewalk; a fingertip oxygen reading of 92% or lower; a thermometer reading of 39.4 °C or more; blood sugar below 70 mg/dL. Tell the medical officer. If you are the medical officer, tell the commander.
-Today: a thermometer reading of 38.0 °C or more; a change in vision; very low mood for days; or when Keel shows "Act today".
+Now, whatever Keel shows: chest pain or pressure; short of breath at rest; fainted, blacked out or had a seizure; racing or irregular heartbeat; swelling of lips, face or tongue, or a rash with trouble breathing; sudden loss of vision, or a painful red eye; worst headache of your life, or fever with a stiff neck; confusion, weakness or trouble speaking; severe belly pain; severe side or back pain; vomited more than twice, or cannot keep fluids down; coughing or vomiting blood, or bleeding that will not stop; cannot pass urine, or blood in urine; injury, something in the eye, or smoke or chemical exposure; joint pain or numbness after a spacewalk; severe tooth or jaw pain; thoughts of harming yourself; a fingertip oxygen reading of 92% or lower; a thermometer reading of 39.4 °C or more; blood sugar below 54 mg/dL; an upper blood pressure below 80 mmHg. Tell the medical officer. If you are the medical officer, tell the commander.
+Today: a thermometer reading of 38.0 °C or more; blood sugar below 70 mg/dL; an upper blood pressure of 180 mmHg or more after a repeat; a change in vision; very low mood for days; or when Keel shows "Act today".
 When a link opens: anything the medical officer wants a flight surgeon to review. Keel keeps the summary queued.
 If you have thoughts of harming yourself, or cannot function: tell the medical officer or the commander now.
 
-These are general thresholds from public clinical guidance for adults on Earth, not flight rules. "Steady" on the Today screen means no change was detected, not that you are well.
+Keel does not recommend medication or treatment; that is for the medical officer with the onboard medical checklist. These are general thresholds from public clinical guidance for adults on Earth, or placeholders, not flight rules. "Steady" on the Today screen means no change was detected, not that you are well.
 
 Everything Keel can recommend
 
-The complete list of 28 rules. Each has one action, how soon, who should know, and where the advice comes from. Nothing else can appear on an alert.
+The complete list of 32 rules. Each has one action, how soon, who should know, and where the advice comes from. Nothing else can appear on an alert.
 
 Symptom that needs the medical officer now
 Fingertip oxygen reading is 92% or lower
 Thermometer reading is 39.4 °C or higher
-Thermometer reading is 38.0 °C or higher
-Blood sugar reading is below 70 mg/dL
+Thermometer reading is in the fever range
+Blood sugar reading is below 54 mg/dL
+Blood sugar reading is between 54 and 69 mg/dL
+Blood sugar reading is 300 mg/dL or higher
 Blood sugar reading is 200 mg/dL or higher
+Upper blood pressure reading is very low
 Upper blood pressure reading is below 90 mmHg
+Upper blood pressure reading is 180 mmHg or higher
 Upper blood pressure reading is 140 mmHg or higher
 Resting heart rate above 100 on two nights
 Your mood has been very low for days
 You reported a change in vision
 Radiation dose was far above normal over the last day
-Cold-like symptoms, and your readings are drifting
+Throat or cough symptoms, and your readings are drifting
 Body mass is 5% or more below pre-flight
 You reported a rash or itchy skin
 Cabin carbon dioxide is elevated
@@ -53,7 +57,7 @@ You are drinking less than usual
 Exercise has dropped below your plan
 You are eating less than planned
 Your reactions are slower than usual
-Your heart is working harder at rest
+Resting heart rate or HRV is off your normal
 Several readings have drifted from your normal
 
 Reference numbers: source list.
@@ -109,16 +113,16 @@ How fast your heart beats when you are fully at rest, usually measured during sl
 
 How to measure. Wear the wrist or chest sensor while you sleep. Keel takes the typical heart rate over still minutes in your sleep period, so exercise and coffee do not distort it.
 
-Why it matters. A resting heart rate that climbs above your own normal is one of the earliest whole-body signs of infection, dehydration, poor recovery or loss of fitness.
+Why it matters. A resting heart rate that climbs above your own normal is a whole-body sign of infection, dehydration, poor recovery or loss of fitness. In our tests it usually showed once symptoms had started, not before.
 
 Heart rate variability (ms)
 See my trend
 
-The small beat-to-beat changes in your heart rhythm (RMSSD). Higher usually means your body is recovering well.
+The small beat-to-beat changes in your heart rhythm. Higher usually means your body is recovering well.
 
 How to measure. Measured automatically overnight by the wearable, or in a two-minute still reading with the chest strap.
 
-Why it matters. HRV drops when the body is under strain: illness, short sleep, heavy training or stress. It often moves before you feel anything.
+Why it matters. HRV drops when the body is under strain: illness, short sleep, heavy training or stress.
 
 Blood pressure (upper) (mmHg)
 See my trend
@@ -128,6 +132,15 @@ The upper (systolic) number of your blood pressure.
 How to measure. Rest quietly and restrained for five minutes, cuff on the upper arm, do not talk during the reading.
 
 Why it matters. Blood pressure regulation changes without gravity. Readings well outside your normal deserve a repeat and a word with the medical officer.
+
+Blood pressure (lower) (mmHg)
+See my trend
+
+The lower (diastolic) number of your blood pressure.
+
+How to measure. Taken in the same reading as the upper number.
+
+Why it matters. Recorded with the upper number so the medical officer sees the whole reading. Normal for adults is between 60 and 80.
 
 Lungs and oxygen
 
@@ -193,7 +206,7 @@ Immune changes in flight make infections and reactivated viruses more likely; te
 Skin temperature (overnight) (°C)
 See my trend
 
-Your wrist skin temperature while asleep, from the wearable. It moves with the cabin and bedding as well as with your body, so only a sustained rise means something.
+Your wrist skin temperature while asleep, from the wearable. It runs a few degrees below body temperature and is not a fever reading; only a sustained rise means something.
 
 How to measure. Measured automatically overnight. For a real body temperature use the thermometer and enter it at check-in.
 

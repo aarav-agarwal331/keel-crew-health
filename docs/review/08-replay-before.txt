@@ -8,9 +8,9 @@ A scripted health event from the simulated mission, played at about 1.5 mission 
 
 Event to replay
 Scripted cabin CO2 rise (scrubber degradation) · whole crew · Day 39
-Scripted low fluid intake · Tomás Novák · Day 59
-Scripted sleep restriction (schedule shift) · Amara Okafor · Day 79
-Scripted exercise device outage · Kenji Sato · Day 97
+Scripted low fluid intake · Tomás Novák · Day 53
+Scripted sleep restriction (schedule shift) · Amara Okafor · Day 65
+Scripted exercise device outage · Kenji Sato · Day 79
 Scripted illness (infection-like strain) · Lucía Reyes · Day 120
 Scripted low-mood period · Tomás Novák · Day 151
 Scripted solar particle event · whole crew · Day 164
@@ -21,7 +21,7 @@ Slow
 Normal
 Fast
 Replay clock: Day 104 · Lucía Reyes
-Worth a look
+Steady
 In replay: link up
 Lucía's readings
 Your readings
@@ -42,15 +42,13 @@ Day 112
 Day 121
 Day 129
 Skin temperature (overnight) (°C)
-36
-37
-38
+33
+34
+35
 Day 104
 Day 112
 Day 121
 Day 129
 What Keel did
-DAY 104
-Worth a look: Exercise has dropped below your plan
 
-Do today's session, even a shortened one, and plan the next three. (at the next routine opportunity; self-managed)
+Press Play. Nothing has happened yet.

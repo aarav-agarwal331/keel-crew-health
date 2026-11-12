@@ -12,14 +12,16 @@ Demo view. On a mission each role has its own device; here you can switch roles.
 
 Task tomorrow: spacewalk
 
-Keel has no flags for 0 of 4 crew. This is not a medical clearance.
+1 of 4 should talk to the medical officer first. 3 have minor flags. 0 have none.
+
+This is not a medical clearance.
 
 NASA's medical operations standard requires medical clearance before every spacewalk. Keel's tier is one input to that conversation with the medical officer.
 
 Crew-wide pattern
 3 of 4 crew show a change in symptoms over the last three days.
 
-When several people drift together, look for a shared cause: cabin air, schedule, workload. Counts only, no names, and only when three or more people are affected.
+When several people drift together, look for a shared cause: an infection spreading, water or food, cabin air, schedule, workload. Tell the medical officer. Counts only, no names, and only when three or more people are affected.
 
 Amara Okafor
 Commander
@@ -31,9 +33,9 @@ Minor flags
 Kenji Sato
 Crew medical officer
 
-Talk to the medical officer first
+Minor flags
 
- Reason not shared. Ask Kenji or the medical officer.
+ Reason not shared. Ask Kenji.
 
 Lucía Reyes
 Flight engineer
@@ -48,5 +50,7 @@ Mission specialist
 Minor flags
 
  Reason not shared. Ask Tomás or the medical officer.
+
+"Steady" and "no flags" mean within the person's own usual range and no rule triggered. They do not mean the values are healthy.
 
 The tier is a rule-based summary: it is never better than the worst area on the crew member's own screen, and nausea or clearly slowed reactions always mean a conversation first. It is not a validated fitness-for-duty test and not a clearance.

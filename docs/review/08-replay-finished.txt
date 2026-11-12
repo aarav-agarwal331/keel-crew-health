@@ -8,9 +8,9 @@ A scripted health event from the simulated mission, played at about 4 mission da
 
 Event to replay
 Scripted cabin CO2 rise (scrubber degradation) · whole crew · Day 39
-Scripted low fluid intake · Tomás Novák · Day 59
-Scripted sleep restriction (schedule shift) · Amara Okafor · Day 79
-Scripted exercise device outage · Kenji Sato · Day 97
+Scripted low fluid intake · Tomás Novák · Day 53
+Scripted sleep restriction (schedule shift) · Amara Okafor · Day 65
+Scripted exercise device outage · Kenji Sato · Day 79
 Scripted illness (infection-like strain) · Lucía Reyes · Day 120
 Scripted low-mood period · Tomás Novák · Day 151
 Scripted solar particle event · whole crew · Day 164
@@ -21,7 +21,7 @@ Slow
 Normal
 Fast
 Replay clock: Day 129 · Lucía Reyes
-Act today
+Steady
 In replay: no Earth link
 Lucía's readings
 Your readings
@@ -30,7 +30,7 @@ Outside your range
 Resting heart rate (bpm)
 50
 60
-Keel alert
+Keel flags
 Symptoms begin
 Day 104
 Day 112
@@ -40,17 +40,15 @@ Heart rate variability (ms)
 20
 40
 60
-Keel alert
+Keel flags
 Symptoms begin
 Day 104
 Day 112
 Day 121
 Day 129
 Skin temperature (overnight) (°C)
-36
-37
-38
-Keel alert
+34
+Keel flags
 Symptoms begin
 Day 104
 Day 112
@@ -60,23 +58,23 @@ What Keel did
 DAY 121
 More serious now: Your body looks like it is under strain
 
-Take your temperature with the thermometer and hold exercise until you have. Tell the medical officer. (today; medical officer, flight surgeon when a link exists)
+Take your temperature now. No exercise until you have. Tell the medical officer. (today; medical officer)
 
 DAY 120
 SCRIPTED EVENT
 What was scripted: illness (infection-like strain)
 
-This is the day the simulated crew member first feels symptoms and ticks them at check-in. Scripted at 1.46 times the average real response: a peak resting heart rate rise of about 7 bpm, the published median among detected cases and near the upper quartile of real episodes. About three real episodes in ten show no heart-rate rise at all.
+This is the day the simulated crew member first feels symptoms and ticks them at check-in. Scripted at 2.15 times the average real response: a peak resting heart rate rise of about 7 bpm, the published median among detected cases and near the upper quartile of real episodes. About three real episodes in ten show no heart-rate rise at all.
 
 DAY 120
+Act today: Throat or cough symptoms, and your readings are drifting
+
+Take your temperature now. No exercise until you have. Tell the medical officer. (today; medical officer)
+
+DAY 119
 More serious now: Your mood has been lower than usual
 
 Book a private conversation: with the medical officer, or a recorded message to the support team at home. (at the next routine opportunity; self-managed)
-
-DAY 120
-Act today: Cold-like symptoms, and your readings are drifting
-
-Take your temperature with the thermometer and hold exercise until you have. Tell the medical officer. (today; medical officer)
 
 DAY 119
 LINK
@@ -94,18 +92,15 @@ Worth a look: Exercise has dropped below your plan
 
 Do today's session, even a shortened one, and plan the next three. (at the next routine opportunity; self-managed)
 
-DAY 104
-Worth a look: Exercise has dropped below your plan
-
-Do today's session, even a shortened one, and plan the next three. (at the next routine opportunity; self-managed)
-
 RESULT OF THIS REPLAY
 
-Keel flagged this on the day symptoms began, with a specific action and no link to Earth.
+Keel flagged this 1 day before the first symptoms, with a specific action and no link to Earth.
 
-Earlier in this replay Keel also raised 3 notices that the scripted event did not cause. Some reflect ordinary lapses in the simulated routine, such as a missed exercise session; some are false alerts. That is part of the picture: notices are budgeted at about one false one per person-month.
+Sensors alone, with no symptom report: the detector showed its illness pattern or alert tier on Day 119, 1 day before symptoms began. The earlier flag came from her check-in combined with drifting readings. Keel is a backstop and a record, not an early-warning system.
 
-Across all the real data, not this one script: Keel flagged 67% of 103 real illness episodes at one false alert per person-month, 31 points more than luck. It did not give early warning. Everything except illness is tested in simulation only.
+Earlier in this replay Keel also raised 2 notices that the scripted event did not cause. Some reflect ordinary lapses in the simulated routine, such as a missed exercise session; some are false alerts. That is part of the picture: notices are budgeted at about one false one per person-month.
+
+Across all the real data, not this one script: Keel flagged 66% of 107 real illness episodes at one false alert per person-month, 30 points more than luck. It did not give early warning. Everything except illness is tested in simulation only.
 
 One scripted event proves nothing by itself.
 

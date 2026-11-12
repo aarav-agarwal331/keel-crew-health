@@ -20,7 +20,7 @@ Your readings
 Your usual range
 Outside your range
 Resting heart rate
-65 bpm
+66 bpm
 50
 60
 Day 66
@@ -32,25 +32,25 @@ How fast your heart beats when you are fully at rest, usually measured during sl
 
 Why it matters, how to measure, and the numbers
 Heart rate variability
-25 ms
+21 ms
 25
 50
 75
-Alert began Day 103
-Alert began Day 107
+Notice
+Notice
 Day 66
 Day 84
 Day 103
 Day 121
 
-The small beat-to-beat changes in your heart rhythm (RMSSD). Higher usually means your body is recovering well.
+The small beat-to-beat changes in your heart rhythm. Higher usually means your body is recovering well.
 
 Why it matters, how to measure, and the numbers
 Blood oxygen
 96 %
 96
 98
-Alert began Day 115
+Notice
 Day 66
 Day 84
 Day 103
@@ -60,21 +60,21 @@ The share of the haemoglobin in your blood that is carrying oxygen.
 
 Why it matters, how to measure, and the numbers
 Skin temperature (overnight)
-37.7 °C
+35.1 °C
+34
 36
-38
-Alert began Day 107
-Alert began Day 115
+Notice
+Notice
 Day 66
 Day 84
 Day 103
 Day 121
 
-Your wrist skin temperature while asleep, from the wearable. It moves with the cabin and bedding as well as with your body, so only a sustained rise means something.
+Your wrist skin temperature while asleep, from the wearable. It runs a few degrees below body temperature and is not a fever reading; only a sustained rise means something.
 
 Why it matters, how to measure, and the numbers
 Sleep duration
-4.9 h
+4.5 h
 5
 10
 Scheduled sleep period 8.5 h
@@ -83,15 +83,14 @@ Day 84
 Day 103
 Day 121
 
-Hours actually asleep in the last sleep period. Your usual is not the standard: scheduled sleep period 8.5 h.
+Hours actually asleep in the last sleep period. Your usual is not the standard. Standard: Scheduled sleep period 8.5 h.
 
 Why it matters, how to measure, and the numbers
 Sleep timing shift
 -1.0 h
 -2
 0
-Alert began Day 103
-Alert began Day 115
+Notice
 Day 66
 Day 84
 Day 103
@@ -101,11 +100,10 @@ How far the middle of your sleep moved from your scheduled sleep period. Zero me
 
 Why it matters, how to measure, and the numbers
 Exercise, 7-day average
-90 min/day
+89 min/day
 100
-Alert began Day 103
-Alert began Day 107
-Alert began Day 115
+Notice
+Notice
 Day 66
 Day 84
 Day 103
@@ -115,11 +113,11 @@ Average minutes of exercise per day over the last week.
 
 Why it matters, how to measure, and the numbers
 Reaction time
-295 ms
+297 ms
 250
 300
-Alert began Day 107
-Alert began Day 115
+Notice
+Notice
 Day 66
 Day 84
 Day 103
@@ -132,7 +130,7 @@ Mood
 2 /5
 0
 5
-Alert began Day 115
+Notice
 Day 66
 Day 84
 Day 103
@@ -151,7 +149,7 @@ Day 84
 Day 103
 Day 121
 
-How much you drank today. Your usual is not the standard: at least 2.0 l.
+How much you drank today. Your usual is not the standard. Standard: At least 2.0 L.
 
 Why it matters, how to measure, and the numbers
 Food intake
@@ -159,17 +157,17 @@ Food intake
 60
 80
 100
-Plan: 100%
+Planned: 100%
 Day 66
 Day 84
 Day 103
 Day 121
 
-How much of your planned food you ate today. Your usual is not the standard: plan: 100%.
+How much of your planned food you ate today. Your usual is not the standard. Standard: Planned: 100%.
 
 Why it matters, how to measure, and the numbers
 Body mass
-– kg
+67.0 kg
 66
 68
 Day 66
@@ -184,8 +182,7 @@ Blood pressure (upper)
 115 mmHg
 100
 120
-Normal from 90
-to 120
+Normal 90 to 120
 Day 66
 Day 84
 Day 103
@@ -195,7 +192,7 @@ The upper (systolic) number of your blood pressure.
 
 Why it matters, how to measure, and the numbers
 Blood sugar
-101 mg/dL
+102 mg/dL
 80
 100
 Low below 70
@@ -213,7 +210,7 @@ Cabin carbon dioxide
 2
 3
 Headaches more likely above 2.5
-ISS limit 3.0
+Level ISS operations manage to: 3.0
 Day 66
 Day 84
 Day 103

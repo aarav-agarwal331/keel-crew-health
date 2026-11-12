@@ -6,24 +6,29 @@ BOTTOM NAV: Today | Trends | Check-in | Crew | More
 Act today
 Your body looks like it is under strain
 
-Resting heart rate is up together with other recovery signals. This combination is often seen in the days before or during an infection, but Keel cannot tell you the cause.
+Resting heart rate is up together with other readings. This combination is often seen during an infection, usually once symptoms have started, but Keel cannot tell you the cause.
 
-Open for 7 days, since Day 115.
+Act today since Day 121 (1 day). Keel first raised a notice on Day 115 for a different reason: "You are running short on sleep".
 
 RECOMMENDED ACTION
 
-Take your temperature with the thermometer and hold exercise until you have. Tell the medical officer.
+Take your temperature now. No exercise until you have. Tell the medical officer.
 
-If it is 38.0 °C or more, or 1.0 °C above your own usual thermometer reading, or you have a cough or chest symptoms: no exercise today, and the medical officer decides what you do.
-Otherwise a light session is reasonable; repeat the temperature in four hours and log symptoms at check-in.
+Enter the thermometer reading below. At 38.0 °C or more, or with a cough or chest symptoms: no exercise today, and the medical officer decides what you do.
+If you have no fever, no cough, no unusual tiredness or aches, and the medical officer agrees, a light session is reasonable. Repeat the temperature in four hours and log symptoms at check-in.
 Drink to your fluid target and protect tonight's sleep period.
 Keep some distance at meals and wipe shared surfaces until this clears.
+Thermometer reading (°C)
+Save reading
+Also showing in your readings
+Your mood has been lower than usual. Book a private conversation: with the medical officer, or a recorded message to the support team at home.
+Your reactions are slower than usual. Repeat the test after a ten-minute break; if it is still slow, ask for a buddy check on critical tasks today.
 What changed
-Resting heart rate is higher than your normal: 65 bpm against your usual 53.
-How unusual for you: Further from your normal than on 52 of your last 53 measured days. Outside your usual range today.
+Resting heart rate: 66 bpm, higher than your usual 53.
+Your most unusual reading in 53 days. TESTED ON REAL DATA
 50
 60
-Alert opened
+This pattern began
 Day 94
 Day 99
 Day 103
@@ -31,12 +36,12 @@ Day 108
 Day 112
 Day 117
 Day 121
-Heart rate variability is lower than your normal: 25 ms against your usual 43.
-How unusual for you: Further from your normal than on 49 of your last 53 measured days. Outside your usual range today.
+Heart rate variability: 21 ms, lower than your usual 43.
+More unusual than 50 of your last 53 days. TESTED IN SIMULATION ONLY
 20
 40
 60
-Alert opened
+This pattern began
 Day 94
 Day 99
 Day 103
@@ -44,12 +49,12 @@ Day 108
 Day 112
 Day 117
 Day 121
-Skin temperature (overnight) is higher than your normal: 37.7 °C against your usual 36.7.
-How unusual for you: Further from your normal than on 46 of your last 53 measured days. Outside your usual range today.
-36
-37
-38
-Alert opened
+Skin temperature (overnight): 35.1 °C, higher than your usual 34.1. Wrist skin temperature, not a fever reading.
+More unusual than 48 of your last 53 days. Out of your range for 2 days. TESTED IN SIMULATION ONLY
+33
+34
+35
+This pattern began
 Day 94
 Day 99
 Day 103
@@ -57,12 +62,11 @@ Day 108
 Day 112
 Day 117
 Day 121
-Mood is lower than your normal: 2 /5 against your usual 4.
-How unusual for you: Further from your normal than on any of your last 52 measured days. Outside your usual range for 9 days.
-0
-2.5
-5
-Alert opened
+Reaction time: 297 ms, higher than your usual 261.
+Your most unusual reading in 52 days. Out of your range for 5 days. TESTED IN SIMULATION ONLY
+250
+300
+This pattern began
 Day 94
 Day 99
 Day 103
@@ -71,32 +75,27 @@ Day 112
 Day 117
 Day 121
 What may be contributing
-Less exercise than usual. Seven-day average 90 min a day against your usual 104.
-Lower mood. Mood check-ins averaged 2.3 of 5; your normal is 4.0.
-Symptoms you reported. headache (2 of the last 3 days), stuffy head or nose (1 of the last 3 days), sore throat or cough (1 of the last 3 days), unusual tiredness (2 of the last 3 days).
+Less exercise than usual. Seven-day average 89 min a day against your usual 104.
+Symptoms you reported. unusual tiredness (3 of the last 3 days), headache (2 of the last 3 days), stuffy head or nose (1 of the last 3 days), sore throat (1 of the last 3 days).
 
 Taken only from your own readings and check-ins, and the shared cabin sensors.
 
 How soon, and who should know
-How soon
-At the next routine opportunity
-Today
-Now
-Who
-You
-Medical officer
-Medical officer + flight surgeon
 
-The medical officer, who consults the flight surgeon when a link is available. Strong temperature deviation or no improvement after four days: the medical officer should consult the flight surgeon when a link is available.
+Today. The crew medical officer.
 
-No link right now. The medical officer leads care on board. Keel keeps a summary queued for the flight surgeon and sends it when a link opens.
+Possible illness in a closed cabin affects the whole crew, and early rest is cheap.
 
-Let the medical officer see this alert's details
+Share this alert with the medical officer (heart and circulation)
+
+Opens only that area to the medical officer, until you change it in Sharing. Everything else stays as you set it.
+
 What did you do?
 Did it
 Did part of it
 Not yet
 Chose not to
+Reviewed with the medical officer
 How do you feel now?
 1
 Worse
@@ -115,7 +114,7 @@ Where this advice comes from
 Symptom check, rest, limit spread, consult
 PUBLISHED RESEARCH
 
-In our own test on Earth data the resting heart rate rise during illness averaged about 3 bpm and usually appeared on or after the first day of symptoms; one published study reported larger, earlier rises in the cases it detected. Immune function changes in space and latent viruses reactivate in most ISS crew. NASA lists hygiene, quarantine and monitoring as countermeasures.
+In our own test on Earth data the resting heart rate rise during illness averaged about 5 bpm at its peak, a day or two after symptoms began, with wide differences between people: three in ten showed no rise. Immune function changes in space and latent viruses reactivate in most ISS crew. NASA lists hygiene, quarantine and monitoring as countermeasures.
 
 [58] Mishra T, Wang M, Metwally AA, et al. "Pre-symptomatic detection of COVID-19 from smartwatch data." Nat Biomed Eng 4(12):1208–1220, 2020. Source
 [60] Natarajan A, Su HW, Heneghan C. "Assessment of physiological signs associated with COVID-19 measured using wearable devices." NPJ Digit Med 3(1):156, 2020. Source
