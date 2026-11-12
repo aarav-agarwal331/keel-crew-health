@@ -214,7 +214,7 @@ Cabin carbon dioxide
 2
 3
 Advisory line 2.5
-ISS operating level 3.0
+Keel alert 3.0 (ISS operating level)
 Day 66
 Day 84
 Day 103

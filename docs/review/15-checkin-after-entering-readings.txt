@@ -4,7 +4,7 @@ BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
 Check-in
 
-Flight day 121. Four quick answers take about a minute. Your answers stay on this tablet. Other roles see only what Sharing allows: by default the commander sees a readiness tier without the reason, and a symptom marked serious goes to the medical officer at once.
+Flight day 121. Four quick answers take about a minute. Your answers are stored on your own tablet. Other crew members see only what Sharing allows: by default the commander sees a readiness tier without the reason, a symptom marked serious goes to the medical officer at once, and the daily summary for the ground carries only what you set for the flight surgeon.
 
 1. How are you feeling?
 1
@@ -103,13 +103,19 @@ Sleep duration (h)
 How to measure
 Resting heart rate (bpm)
 How to measure
-
-Readings today: sugar mg/dL 50 at 04:57 PM · sugar mg/dL 85 at 04:57 PM. Every reading is kept; the most abnormal one counts until a new day's reading or the medical officer closes it.
+Readings today:
+Blood sugar 50 mg/dL, at 17:27 Typing mistake
+Blood sugar 85 mg/dL, at 17:27 Typing mistake
+Heart rate at rest 170 bpm, at 17:27 Typing mistake
+Every reading is kept. On the most recent day with a reading, the most abnormal one counts, and anything urgent stays on the medical officer's list until they close it.
 
 Taking a reading again? Type the new value and save: the earlier one is kept with its time, and both are shown to whoever you share them with.
 
-Resting heart rate: 170 bpm is far outside the usual range and has not been saved yet. Everything else was saved. Is that what the device showed?
+Resting heart rate: 170 bpm is far outside the usual range, so Keel saved it and is acting on it. Is that what the device showed?
 
-Yes, save 170
-No, clear it
+Yes, that is right
+No, a typing mistake: withdraw it
+
+If you withdraw it, it stays in the log, struck through, and the medical officer still sees that it was entered.
+
 Save check-in

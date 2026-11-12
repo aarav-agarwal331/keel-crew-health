@@ -8,20 +8,20 @@ Every number here was produced by a script in the repository. Real data is used 
 
 The short version
 +32 points
-above luck on real illness, as the app runs
-With thresholds taken from the simulator, as in the app, and its two real-data sensors (overnight heart rate, 7-day activity), Keel flagged 72% of 107 real illness episodes. Luck alone gives 40%. Interval for the gap: 22 to 41. On the 113 people nothing was fitted on (41 episodes): +38 (23 to 50).
+above luck on real illness
+Keel's method on the two sensors the real data has (overnight heart rate, 7-day activity), with its model and thresholds fitted only on simulated people, as the app's are: 72% of 107 real illness episodes flagged, against 40% by luck. Interval for the gap: 22 to 41. On the 113 people the simulator's calibration did not use (41 episodes): +38 (23 to 50).
 1.40 a month
 false alerts per person, against a budget of 1.00
 Simulator-set thresholds run over budget on real people. With thresholds set on other real people the rate is 1.00 and the gap above luck is +31 (21 to 41). A flight system would have to be recalibrated on real crew data.
 +19 points
 at the stricter tier that brings in the medical officer
-32% flagged, 13% by luck, interval 9 to 28, at 0.39 false alerts per person-month (budget 0.25). On people nothing was fitted on: +23 (8 to 38). With thresholds from other real people: +13 (4 to 21).
-What these results do not show. Keel does not give early warning: on real data the alert mostly starts on or after the day symptoms begin (39% of episodes had an alert start in the ten days up to onset; luck gives 24%). Most alerts are false: at the in-flight rate of respiratory illness, between about 1 in 11 and about 1 in 25 alert-tier alerts would be a real illness. Keel is not shown to beat a simple personal rule, and its lead over one fixed threshold depends on choices we made after seeing data. The data is from people on Earth with consumer watches, mostly with COVID-19. Everything except illness is tested in simulation only.
+32% flagged, 13% by luck, interval 9 to 28, at 0.39 false alerts per person-month (budget 0.25). On people the simulator's calibration did not use: +23 (8 to 38). With thresholds from other real people: +13 (4 to 21).
+What these results do not show. Useful early warning. At the notice tier an alert started in the ten days up to onset for 46% of episodes, against 28% by luck (+18, 9 to 28); at the stricter tier that brings in the medical officer, +1 (-5 to 7), about nothing. The notice-tier gain is small and confounded (test dates, isolation after a positive test, lower activity on the day itself), so we do not claim early warning. Most alerts are false: at the in-flight rate of respiratory illness, between about 1 in 11 and about 1 in 27 alert-tier alerts would be a real illness. The model file the app ships is calibrated for all eleven channels: fed only overnight heart rate (and sleep where recorded), as a real import would be, it flagged 12% of episodes (+9 above luck) at 0.08 false alerts per person-month, and its alert tier never fired. Thresholds have to be set for the sensors a person actually has. Keel is not shown to beat a simple personal rule, and its lead over one fixed threshold depends on choices we made after seeing data. The data is from people on Earth with consumer watches, mostly with COVID-19. Everything except illness is tested in simulation only.
 
 Jump to: real data · simulated missions · simulator realism · NASA bed-rest data · limitations
 
 Detection above luck on real illness, notice tier
-Keel as the app runs it
+Keel, two sensors, simulator thresholds
 32%
 Thresholds from real people
 31%
@@ -56,7 +56,7 @@ Left out for too few nights: 21 of the 73 had a dated illness (17 of them Apple 
 Keel's detector against simpler ones, real data
 One threshold for all
 18%
-Personal, 2-of-3-days ru…
+Personal, 2-of-3 rule
 28%
 Personal + CUSUM
 32%
@@ -64,7 +64,7 @@ Keel (multivariate)
 34%
 Personal, fused
 34%
-Heart rate and daily steps, thresholds from other real people, one false alert per person-month. The four personal-baseline methods cannot be told apart: Keel's detector against the simple two-of-three-days rule is +5 (-2 to 12). Against one fixed threshold Keel leads by +16 (3 to 29) in the −10..+4 day window, by +10 (-3 to 23) in the original −14..+7 window, and by +16 (3 to 29) if an alert that is already open in the window also counts. The simple rule's lead over the fixed threshold is +11 (-3 to 25). Four detectors, two tiers and a window chosen after seeing data were compared with no correction for multiple looks, so treat a personal baseline as probably better than a fixed threshold, not as proven.
+Heart rate and daily steps, thresholds from other real people, one false alert per person-month. The four personal-baseline methods cannot be told apart: Keel's detector against the simple two-of-three-days rule is +5 (-2 to 12). Against one fixed threshold Keel leads by +16 (3 to 29) in the −10..+4 day window, by +10 (-3 to 23) in the original −14..+7 window, and by +16 (3 to 29) if an alert that is already open in the window also counts. The simple rule's lead over the fixed threshold is +11 (-3 to 25). Four detectors, two tiers and a window chosen after seeing data were compared with no correction for multiple looks, so treat a personal baseline as probably better than a fixed threshold, not as proven. We did not switch the app to the simple rule after seeing these results: that would mean choosing on the test data. It would be a reasonable choice for a flight version.
 How this was measured
 Made by research/scripts/eval_real.py
 Show the numbers as a table
@@ -89,7 +89,7 @@ Made by research/scripts/eval_real.py
 Show the numbers as a table
 How much depends on how luck is measured
 
-Luck is estimated by placing pretend illness dates on quiet days and scoring them like real ones. Pretend dates carry the same missing data as real ones and are weighted to the device mix of the real episodes: luck 33%, gap +34. Using only people who had an episode: 32%, gap +34. Requiring a score on every day of a pretend window, as our earlier analysis did: 36%, gap +30. As a share of what luck leaves to be found, the gap is 50%.
+Luck is estimated by placing pretend illness dates on quiet days and scoring them like real ones. Pretend dates carry the same missing data as real ones and are weighted to the device mix of the real episodes: luck 33%, gap +34. Matched to how far into the recording real onsets fall (a young baseline is noisier): 31%, gap +35. Using only people who had an episode: 32%, gap +34. Requiring a score on every day of a pretend window, as our earlier analysis did: 36%, gap +30. As a share of what luck leaves to be found, the gap is 50%.
 
 What this cannot fix. Pretend events are placed on label-quiet days with the same missing data as real windows, and weighted to the device mix of the real episodes. They cannot be matched to the calendar (dates are shifted per person), so exposure, travel, testing and isolation near a real onset are not reproduced; detection above luck is therefore an upper bound on what physiology alone explains.
 
@@ -124,7 +124,7 @@ How this was measured
 Made by research/scripts/eval_real.py
 What an alert is worth
 
-ISS crews report about one episode of upper-respiratory symptoms per person-year. At that rate, and with the detection above luck measured here, about 1 in 11 alert-tier alerts and about 1 in 37 notices would coincide with such an illness when daily steps are used, and about 1 in 25 and about 1 in 41 with the 7-day activity average the app uses. The other conditions Keel watches for would raise those shares, by an amount we cannot measure on real data. This is why a notice asks for a look, not for the medical officer.
+ISS crews report about one episode of upper-respiratory symptoms per person-year. At that rate, and with the detection above luck measured here, about 1 in 11 alert-tier alerts and about 1 in 37 notices would coincide with such an illness with daily steps and thresholds from real people; about 1 in 25 and about 1 in 41 with the 7-day activity average; and about 1 in 27 and about 1 in 55 with thresholds from the simulator, which run over budget. The other conditions Keel watches for would raise those shares, by an amount we cannot measure on real data. This is why a notice asks for a look, not for the medical officer.
 
 Assumes 0.97 illnesses per person-year (upper-respiratory symptoms on the ISS, source 52b) and the detection above luck measured on real data. How this was measured · research/scripts/eval_real.py
 
@@ -161,7 +161,7 @@ Steps add much of the signal, and that is a caution. Heart rate alone is +22 poi
 At the alert tier the choice of activity feature matters. With daily steps Keel is +33 above luck; with the smoother 7-day average the app uses, +13, and its lead over a fixed threshold on the same sensors is +8 (-1 to 18). At the notice tier that lead is +24 (11 to 36).
 Adjusting heart rate for the previous day's activity does not help (+35 against +34), so the app leaves it off.
 Sleep is undecided. Too few people have sleep data.
-Device matters. Fitbit: 72% flagged (+39 above luck, 89 episodes). Non-Fitbit devices: 39% (+10, 18 episodes, all Apple Watch); their overnight heart-rate samples are sparse in this release.
+Device may matter (no interval for the difference). Fitbit: 72% flagged (+39 above luck, 89 episodes). Non-Fitbit devices: 39% (+10, 18 episodes, all Apple Watch); their overnight heart-rate samples are sparse in this release.
 People who reported no illness in phase 1 saw 1.17 false alerts per person-month at the notice tier (interval 0.96 to 1.37).
 It holds across cohorts. Trained on phase 1 and tested on phase 2: 62% flagged, +33 above luck, 0.87 false alerts per person-month. The reverse: 71%, +33, 1.11. Five different fold splits gave +34 to +36 above luck.
 Retrospective and prospective phase 2 cases (the prospective ones were enrolled under the original study's own alerting): +38 and +34 above luck.
@@ -180,4 +180,4 @@ The simulator's illness response was fitted on 38 of the 107 real episodes, so a
 The four personal-baseline detectors perform alike at the notice tier. Keel runs the one picked on simulated training missions by a selection rule that was itself revised during review; the choice flipped once. The simple rule is +28 above luck at the notice tier and +26 at the alert tier.
 Full limitations and what a clinician would need to review
 
-Result files, code version: real 4094da0150f3, simulated 4094da0150f3, realism 4094da0150f3, bed rest 4094da0150f3. Scripts: research/scripts/.
+Result files, code version: real e4d2c5502c36, simulated e4d2c5502c36, realism e4d2c5502c36, bed rest e4d2c5502c36. Scripts: research/scripts/.

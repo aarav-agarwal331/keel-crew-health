@@ -7,7 +7,7 @@ No link to Earth
 
 Scripted two-week blackout (antenna fault), modelled on the two-week command pause at solar conjunction
 
-Keel does not use the link to work. Detection, explanations and recommended actions all run on this tablet: it last re-checked the whole crew's readings in a fraction of a second. The link only carries a summary for the flight surgeon when one is available.
+Keel does not use the link to work. Detection, explanations and recommended actions all run on the tablet. In this demo one tablet holds the whole simulated crew (on a mission each person's tablet holds their own data); it last re-checked all four in a fraction of a second. The link only carries a summary for the flight surgeon when one is available.
 
 Day 3 of a 14-day blackout. The link is expected back on Day 133. Every screen you have used so far was running without it, and 3 daily summaries are waiting to go.
 

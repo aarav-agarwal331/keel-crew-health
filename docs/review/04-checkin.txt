@@ -4,7 +4,9 @@ BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
 Check-in
 
-Flight day 121. Four quick answers take about a minute. Your answers stay on this tablet. Other roles see only what Sharing allows: by default the commander sees a readiness tier without the reason, and a symptom marked serious goes to the medical officer at once.
+Flight day 121. Four quick answers take about a minute. Your answers are stored on your own tablet. Other crew members see only what Sharing allows: by default the commander sees a readiness tier without the reason, a symptom marked serious goes to the medical officer at once, and the daily summary for the ground carries only what you set for the flight surgeon.
+
+Today's check-in in this demo came from the simulation. Anything you save here is added to it.
 
 1. How are you feeling?
 1

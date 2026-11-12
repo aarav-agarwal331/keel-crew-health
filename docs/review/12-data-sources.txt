@@ -16,6 +16,8 @@ Four crew, 35 days at a south-polar base. Simulated.
 SIMULATED
 Import your own wearable data
 
+Expect few alerts from an import. Keel's thresholds are set for the full on-board sensor set. Tested on real watch data with only overnight heart rate (and sleep where recorded), the shipped model flagged about one illness in eight and rarely alerted at all. A version for watch data alone would need its own thresholds.
+
 Read in this browser only; the file is never uploaded. Keel then learns your baseline from it and shows the same Today and Trends screens for you. Supported: a CSV with a date column and any of rhr, hrv, spo2, temp, sleep_h, ex_min, mood, fluid, mass, sbp, glucose; Fitbit export JSON (resting heart rate, sleep); Apple Health export.xml.
 
 Choose a file

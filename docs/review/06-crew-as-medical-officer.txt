@@ -23,7 +23,7 @@ Symptoms
 Kenji Sato
 Crew medical officer
 
-Steady
+Worth a look
 
 Heart, oxygen and temperature
 Sleep and body clock
@@ -40,7 +40,7 @@ Sleep and body clock
 Exercise
 Food and fluids
 Symptoms
-Alert in heart, oxygen and temperature (act today for 1 d)
+Alert in heart, oxygen and temperature (act today for 2 d)
 Tomás Novák
 Mission specialist
 

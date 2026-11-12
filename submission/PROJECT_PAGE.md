@@ -19,7 +19,7 @@ no connection to Earth. It runs entirely on the crew member's own tablet, learns
 normal for 18 indicators, notices when readings drift, explains what changed in plain language,
 and recommends one specific action from a fixed table of rules with cited sources. The crew member
 owns the data and chooses what the medical officer, the commander and the ground may see. Mission data
-in the app is simulated and labelled. We measured how well it works on real wearable data from 251
+in the app is simulated and labelled. We measured how well its method works on real wearable data from 251
 people and report the result with false-alert rates, uncertainty and its limits, inside the app. Keel
 is decision support, not a diagnostic device.
 
@@ -44,12 +44,14 @@ is decision support, not a diagnostic device.
 - **Safety rules.** A red-flag symptom or a single reading beyond a sourced threshold (for example a
   fingertip oxygen reading of 92% or lower) is acted on at once, without waiting for a trend. Every
   entered reading is kept with its time and the worst reading of the day counts, so a repeat normal
-  reading does not erase an abnormal one. Extreme values are accepted after a confirmation. "Now" and
-  "today" findings stay on the medical officer's list until the medical officer closes them with a
-  note.
+  reading does not erase an abnormal one. Out-of-range readings are saved at once and can be withdrawn
+  as typing mistakes (kept, struck through). An urgent reading turns its body area and the medical
+  officer's view red, and exercise is held while any stop-or-rest advice is open. "Now" and "today"
+  findings stay on the medical officer's list until the medical officer closes them with a note.
 - **Sharing.** Per role and per body system, four levels from private to full detail, with a preview of
   exactly what each role sees and an access log. Some red-flag symptoms (thoughts of self-harm, an
-  injury, tooth pain, one-sided swelling) go to the medical officer only, not the commander.
+  injury, tooth pain, one-sided swelling) go to the medical officer only, not the commander. Under
+  emergency sharing the medical officer sees the symptom names and the readings with their times.
 - **Crew readiness.** Before a demanding task such as a spacewalk the commander sees whether Keel has
   flags for each crew member, without the reasons unless the crew member shares them. It is an input
   to medical clearance, not a clearance.
@@ -69,8 +71,9 @@ published adaptation curve and widens its band until the person's own new data t
 deviations feed a multivariate detector that reacts to several small changes in a worrying direction.
 Alert thresholds are not chosen by feel. They are set in simulation to a budget of one mistaken notice
 per person-month and one mistaken alert per four person-months, because alarm fatigue is an
-operational hazard; on real people they ran over that budget (1.40 and 0.39 per person-month). A fixed
-table of 38 rules turns a pattern, an entered reading or a reported symptom into wording, one action,
+operational hazard; on real people they ran over that budget (1.40 and 0.39 per person-month).
+Thresholds depend on which sensors are present and have to be set per sensor set; that is not built
+yet. A fixed table of 39 rules turns a pattern, an entered reading or a reported symptom into wording, one action,
 follow-up steps, how soon and who, each citing a NASA document, a published study or public clinical
 guidance. No language model writes any advice, and by design Keel gives no medication or treatment
 advice.
@@ -127,7 +130,7 @@ Public clinical reference values (MedlinePlus, U.S. National Library of Medicine
 fixed safety thresholds and are cited in the app.
 
 **Tools:** TypeScript, React, Vite, IndexedDB, Web Workers, Service Worker, Web Bluetooth; Python with
-NumPy, pandas, SciPy and scikit-learn; Vitest, pytest and Playwright for tests (24 Python tests, 50
+NumPy, pandas, SciPy and scikit-learn; Vitest, pytest and Playwright for tests (24 Python tests, 52
 TypeScript unit tests, 2 offline end-to-end tests); GitHub Pages for hosting. No NASA logos or
 insignia are used. Keel is not affiliated with or endorsed by NASA.
 
@@ -145,19 +148,25 @@ activity).**
 
 | On real illness episodes | Flagged | By luck | Above luck (95% interval) | False alerts per person-month (budget) |
 |---|---|---|---|---|
-| **Keel as the app runs it,** notice tier | 72% | 40% | **+32 points** (22 to 41) | 1.40 (1.00) |
-| Keel as the app runs it, alert tier | 32% | 13% | +19 (9 to 28) | 0.39 (0.25) |
+| **Keel's method, thresholds set only in simulation,** notice tier | 72% | 40% | **+32 points** (22 to 41) | 1.40 (1.00) |
+| Keel's method, thresholds set only in simulation, alert tier | 32% | 13% | +19 (9 to 28) | 0.39 (0.25) |
 | Thresholds calibrated on other real people, with daily steps | 66% | 33% | +34 (24 to 44) | about 1.00 |
 | One threshold for everyone, with daily steps | 41% | 23% | +18 (8 to 27) | |
 
-- The headline is the model and thresholds from the simulator, with heart rate and 7-day activity,
-  applied unchanged to real people. On the 113 people nothing was fitted on (41 episodes) it is
-  +38 (23 to 50). The alert tier is the one that brings in the medical officer. Both tiers ran over
-  their false-alert budget.
+- The headline is Keel's method, on two sensors, with thresholds set only in simulation: the
+  detector run on the two sensors the real data has (overnight heart rate and 7-day activity), with
+  its model and thresholds fitted only on simulated people and applied unchanged to real people. On
+  the 113 people the simulator's calibration did not use (41 episodes) it is +38 (23 to 50). The
+  alert tier is the one that brings in the medical officer. Both tiers ran over their false-alert
+  budget.
+- The model file the app ships is calibrated for all eleven on-board channels. Given only the
+  channels a real watch import has (overnight heart rate, sometimes sleep), it flagged 12% of
+  episodes, +9 above luck (4 to 16), at 0.08 false alerts per person-month, and its alert tier never
+  fired. See Limitations.
 - With thresholds calibrated on other real people (five folds over people): heart rate alone
   +22 (12 to 32); heart rate with 7-day activity +31 (21 to 41), alert tier +13 (4 to 21); heart rate
-  with daily steps +34, alert tier +33 (23 to 43). The +34 is not our headline because the app does
-  not run that feature or those thresholds.
+  with daily steps +34, alert tier +33 (23 to 43). The +34 is not our headline because its thresholds
+  were set on real people and Keel does not use daily steps.
 - Keel's lead over one fixed threshold is +16 (3 to 29) in the detection window used and
   +10 (−3 to 23) in the original wider window (−14 to +7 days). With 7-day activity the fixed
   threshold is +7 (−1 to 15) and Keel's lead is +24 (11 to 36) at the notice tier and +8 (−1 to 18)
@@ -182,19 +191,28 @@ luck: +26 points (19 to 33). The lead over a fixed threshold is +6 (−2 to 14).
 luck: sleep restriction +55, exercise outage +54, low fluids +26 (10 to 40), cabin CO2 +11 (1 to 21),
 illness +11 (−9 to 30), low mood +13 (−5 to 32); for illness and low mood the interval includes zero.
 Mission-phase handling (gravity changes) gives 0.90 false alerts per person-month in the first 30
-flight days against 1.98 without it. The simulator passes its realism checks only on quantities
+flight days against 1.98 without it. With luck taken from the same flight days, events that begin in
+the first 25 flight days are +24 (14 to 33) above luck with phase handling and +15 (6 to 25) without. The simulator passes its realism checks only on quantities
 fitted to the other half of the same data; the independent checks fail or are off, as listed below.
 
 ## Limitations
 
-- **No early warning.** On real data 39% of episodes had an alert start in the ten days up to
-  symptom onset, and luck gives 24%. In the scripted replay Keel flags the illness on the day
-  symptoms begin, and the sensors alone show it one day after.
+- **No useful early warning shown.** At the notice tier an alert started in the ten days up to
+  symptom onset for 46% of episodes against 28% by luck (+18, 9 to 28); at the alert tier, the one
+  that brings in the medical officer, the gain is +1 (−5 to 7), that is, none. The notice-tier gain
+  is small and confounded (test dates, isolation after a positive test, lower activity on the day),
+  so we do not claim it. In the scripted replay Keel flags the illness on the day symptoms begin,
+  and the sensors alone show it one day after.
 - **Most alerts are false.** At the in-flight rate of respiratory illness, between 1 in 11 and
-  1 in 25 alert-tier alerts would be a real illness, and about 1 in 40 notices. An alert is a prompt
+  1 in 27 alert-tier alerts would be a real illness, and about 1 in 40 notices. An alert is a prompt
   to look, not a verdict.
-- **The app runs over its false-alert budget on real people:** 1.40 against 1.00 per person-month at
-  the notice tier, 0.39 against 0.25 at the alert tier.
+- **Keel's method runs over its false-alert budget on real people:** 1.40 against 1.00 per
+  person-month at the notice tier, 0.39 against 0.25 at the alert tier.
+- **The shipped model is not set up for a watch import.** The model file the app ships is calibrated
+  for all eleven on-board channels. Given only the channels a real watch import has (overnight heart
+  rate, sometimes sleep), it flagged 12% of episodes, +9 above luck (4 to 16), at 0.08 false alerts
+  per person-month, and its alert tier never fired. Thresholds have to be set per sensor set; that is
+  not built. The app says so on its import card.
 - **Not shown to beat simpler methods.** The detector cannot be told apart from a simple personal
   rule, and the lead of a personal baseline over a fixed threshold is probable, not proven.
 - **Ground data stands in for spaceflight data.** No open astronaut wearable time series exists. The
@@ -210,14 +228,16 @@ fitted to the other half of the same data; the independent checks fail or are of
   per person-month on 72 real people (budgets 1.00 and 0.25), and 2.04 and 0.97 with five sensors on
   16 people. Like for like on two channels, simulated illness is flagged +11 above luck against +35
   for real episodes.
-- **Handling gravity changes has a cost.** It lowers false alerts after launch, but events that begin
-  in the first 25 flight days are flagged +19 above luck against +34 without it (in simulation).
+- **Gravity-change handling is tested only in simulation.** It halves false alerts after launch (0.90
+  against 1.98 per person-month) and has no measured cost: events that begin in the first 25 flight
+  days are +24 (14 to 33) above luck with it and +15 (6 to 25) without. An earlier analysis that
+  reported a cost was wrong (luck had been drawn from late flight).
 - **Small samples:** 107 illness episodes; 14 bed-rest volunteers in the comparison.
 - **Not clinically reviewed.** No clinician has reviewed anything. The rules, the fixed thresholds
   and the readiness tier need review by a flight surgeon. Keel is decision support, not a medical
   device, and never states a diagnosis.
 - **Nothing was pre-registered.** Analysis choices (the metric, the detector selection rule, the
-  detection window) changed during three rounds of AI role-played review (a flight surgeon, a
+  detection window) changed during four rounds of AI role-played review (a flight surgeon, a
   statistician, an astronaut, a judge). The decision log records each change.
 - The link delay, blackouts, cabin CO2 and radiation readings in the demo are simulated.
 
@@ -229,8 +249,9 @@ fitted to the other half of the same data; the independent checks fail or are of
   published work suggests carry earlier illness signals than daily heart rate.
 - Clinical review of the rule table and thresholds with flight surgeons, and a crew usability study
   under fatigue.
-- Tune how long the baseline band stays widened after a gravity change, so adaptation is not flagged
-  but a real problem in the first weeks is not hidden either.
+- Set thresholds per sensor set, so a watch import with only heart rate and sleep is not judged by
+  thresholds calibrated for eleven channels.
+- Test the gravity-change handling on real launch or analog data rather than in simulation only.
 - Device-to-device sync between crew tablets without a server, so the medical officer's view updates
   on board.
 - Image analysis. Check-in stores a photo for the medical officer, but Keel does not analyse images

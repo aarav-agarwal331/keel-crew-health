@@ -12,7 +12,7 @@ Demo view. On a mission each role has its own device; here you can switch roles.
 
 Task tomorrow: spacewalk
 
-1 of 4 should talk to the medical officer first. 1 has minor flags. 2 have none.
+1 of 4 should talk to the medical officer first. 2 have minor flags. 1 has none.
 
 This is not a medical clearance.
 
@@ -26,7 +26,9 @@ No Keel flags
 Kenji Sato
 Crew medical officer
 
-No Keel flags
+Minor flags
+
+ Reason not shared. Ask Kenji.
 
 Lucía Reyes
 Flight engineer

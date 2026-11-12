@@ -57,7 +57,7 @@ test('capture for review', async ({ page }) => {
   await nav(page, '#/checkin/measure')
   await page.getByLabel(/Blood sugar/).fill('50'); await page.getByTestId('save-checkin').first().click(); await expect(page.getByText('Saved.', { exact: true })).toBeVisible()
   await page.getByLabel(/Blood sugar/).fill('85'); await page.getByTestId('save-checkin').first().click(); await page.waitForTimeout(300)
-  await page.getByLabel(/Resting heart rate/).fill('170'); await page.getByTestId('save-checkin').first().click(); await page.waitForTimeout(300)
+  await page.getByLabel(/Resting heart rate/).fill('170'); await page.getByTestId('save-checkin').first().click(); await page.waitForTimeout(400)
   await capture(page, '15-checkin-after-entering-readings')
   await page.getByTestId('confirm-rhr').first().click(); await page.waitForTimeout(300)
   await nav(page, '#/today'); await capture(page, '16-today-after-entering-readings')

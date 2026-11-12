@@ -13,7 +13,7 @@ To everyone: cabin readings (air, radiation). They are not personal.
 Emergency sharing
 On
 Off
-When on, a symptom you mark as serious or an "act now" safety reading is shown at once to the medical officer, and stays on their list until they close it with a note. The commander is shown it too, as backup, except the items marked "medical officer only" at check-in (thoughts of harming yourself, an injury, tooth pain, one-sided swelling). Nothing goes to the ground automatically. If you switch this off, both can see that it is off.
+When on, a symptom you mark as serious or an "act now" safety reading is shown at once to the medical officer, and stays on their list until they close it with a note. The commander is shown it too, as backup, except the items marked "medical officer only" at check-in (thoughts of harming yourself, an injury, tooth pain, one-sided swelling). Emergency sharing never sends anything to the ground; the daily ground summary carries only what you set for the flight surgeon below. If you switch this off, both can see that it is off.
 Who are you setting this for?
 Crew medical officer
 Commander
@@ -22,7 +22,7 @@ Flight surgeon on the ground
 The crew member trained to provide care on board.
 
 Private: Nothing.
-Status: Only steady / worth a look / act today.
+Status: Only steady / worth a look / act today / act now.
 Trends: Status plus whether each reading is inside your normal range.
 Full detail: Status, trends, the actual numbers and your notes.
 
@@ -72,7 +72,7 @@ Overall: Act today
 
 Area	Level	They see
 Heart, oxygen and temperature	Status	Act today
-Sleep and body clock	Status	Steady
+Sleep and body clock	Status	Worth a look
 Exercise	Status	Steady
 Mind and mood	Private	Nothing
 Food and fluids	Status	Steady

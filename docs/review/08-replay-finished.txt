@@ -30,7 +30,7 @@ Outside your range
 Resting heart rate (bpm)
 50
 60
-Symptoms begin, Keel flags
+Symptoms + flag
 Day 104
 Day 112
 Day 121
@@ -39,14 +39,14 @@ Heart rate variability (ms)
 20
 40
 60
-Symptoms begin, Keel flags
+Symptoms + flag
 Day 104
 Day 112
 Day 121
 Day 129
 Skin temperature (overnight) (°C)
 34
-Symptoms begin, Keel flags
+Symptoms + flag
 Day 104
 Day 112
 Day 121
@@ -55,22 +55,22 @@ What Keel did
 DAY 128
 Act today: Several readings have drifted from your normal
 
-The notice open since Day 115 now looks like this. Do a full check-in today and repeat any reading that looks wrong. (at the next routine opportunity; self-managed)
+The notice open since Day 115 now looks like this. Do a full check-in today and repeat any reading that looks wrong. (today; self-managed)
 
 DAY 127
 Act today: Your mood has been lower than usual
 
-The notice open since Day 115 now looks like this. Book a private conversation with the medical officer. You can also record a message for the support team at home; it goes when a link is available. (at the next routine opportunity; self-managed)
+The notice open since Day 115 now looks like this. Book a private conversation with the medical officer. (today; self-managed)
 
 DAY 126
 Act today: Several readings have drifted from your normal
 
-The notice open since Day 115 now looks like this. Do a full check-in today and repeat any reading that looks wrong. (at the next routine opportunity; self-managed)
+The notice open since Day 115 now looks like this. Do a full check-in today and repeat any reading that looks wrong. (today; self-managed)
 
 DAY 125
 Act today: Your mood has been lower than usual
 
-The notice open since Day 115 now looks like this. Book a private conversation with the medical officer. You can also record a message for the support team at home; it goes when a link is available. (at the next routine opportunity; self-managed)
+The notice open since Day 115 now looks like this. Book a private conversation with the medical officer. (today; self-managed)
 
 DAY 124
 Act today: Blood oxygen is below your normal
@@ -91,7 +91,7 @@ DAY 120
 SCRIPTED EVENT
 What was scripted: illness (infection-like strain)
 
-This is the day the scripted illness symptoms begin and the simulated crew member ticks them at check-in. An odd tired or congested day before this is ordinary simulated background, not the script. Scripted at 2.15 times the average real response: a peak resting heart rate rise of about 7 bpm. That is above the upper quartile of the real episodes (5.3 bpm) and matches the published median among cases a detector caught, so this is an easy case. The simulated rise starts up to 4 days before the symptom day. About three real episodes in ten show no heart-rate rise at all.
+This is the day the scripted illness symptoms begin and the simulated crew member ticks them at check-in. An odd tired or congested day before this is ordinary simulated background, not the script. Scripted at 2.15 times the average real response: a peak resting heart rate rise of about 7 bpm. That is above the upper quartile of the real episodes (5.3 bpm) and matches the published median among cases a detector caught, so this is an easy case. The simulated rise starts up to 4 days before the symptom day. About three real episodes in ten show no heart-rate rise at all. On any one night, ordinary night-to-night variation of about 3.5 bpm comes on top of the scripted rise.
 
 DAY 120
 Act today: Throat or cough symptoms, and your readings are drifting
@@ -101,7 +101,7 @@ Take your temperature now. No exercise until you have. Tell the medical officer.
 DAY 119
 More serious now: Your mood has been lower than usual
 
-Book a private conversation with the medical officer. You can also record a message for the support team at home; it goes when a link is available. (at the next routine opportunity; self-managed)
+Book a private conversation with the medical officer. (today; self-managed)
 
 DAY 119
 LINK
@@ -112,7 +112,7 @@ Scripted two-week blackout (antenna fault), modelled on the two-week command pau
 DAY 116
 Worth a look: Your mood has been lower than usual
 
-The notice open since Day 115 now looks like this. Book a private conversation with the medical officer. You can also record a message for the support team at home; it goes when a link is available. (at the next routine opportunity; self-managed)
+The notice open since Day 115 now looks like this. Book a private conversation with the medical officer. (at the next routine opportunity; self-managed)
 
 DAY 115
 Worth a look: Your sleep is short or has shifted
@@ -149,7 +149,7 @@ On Day 119 the detector had already moved, but the readings then looked like som
 
 Keel's log for this replay also has 7 entries that are not about the scripted event. Some are one open notice being read differently as the days pass; some reflect ordinary lapses in the simulated routine, such as a missed exercise session; some are false alerts. That is part of the picture: notices are budgeted at about one false one per person-month.
 
-Across all the real data, not this one script: run as the app runs it, Keel flagged 72% of 107 real illness episodes, 32 points more than luck, at 1.4 false alerts per person-month. It did not give early warning. Everything except illness is tested in simulation only.
+Across all the real data, not this one script: with two sensors and thresholds from the simulator, Keel flagged 72% of 107 real illness episodes, 32 points more than luck, at 1.4 false alerts per person-month. Useful early warning was not shown. Everything except illness is tested in simulation only.
 
 One scripted event proves nothing by itself.
 
