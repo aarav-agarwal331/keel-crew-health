@@ -1,0 +1,115 @@
+SCREEN: 15-checkin-after-entering-readings
+TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 121 | Simulated data
+BOTTOM NAV: Today | Trends | Check-in | Crew | More
+
+Check-in
+
+Flight day 121. Four quick answers take about a minute. Your answers stay on this tablet. Other roles see only what Sharing allows: by default the commander sees a readiness tier without the reason, and a symptom marked serious goes to the medical officer at once.
+
+1. How are you feeling?
+1
+Very low
+2
+Low
+3
+OK
+4
+Good
+5
+Very good
+2. Any symptoms today?
+No symptoms
+Headache
+Nausea
+Vomited
+Stuffy head or nose
+Sore throat
+Cough
+Unusual tiredness
+Back pain
+Dizziness
+Vision change
+Rash or itchy skin
+Something else
+Something serious? Chest pain, fainting, trouble breathing, bleeding, vision loss, thoughts of harming yourself…
+3. Fluids today
+−
+0.00 L
++
+Same as usual (2.5 L)
++ 1 L
+
+One tap on + is one 250 mL drink bag. Aim for at least 2.0 to 2.5 L a day. Left at zero, nothing is recorded.
+
+4. How much of your planned food did you eat?
+All of it
+Most
+About half
+Little
+None
+Saved.
+
+Keel has re-checked your readings on this tablet with your new entries.
+
+See Today
+Who can see this?
+Hide the optional extras
+Reaction self-test (1 minute)
+Tap to start (1 minute)
+
+Tap as fast as you can each time the panel lights up. Sit still, same hand each day.
+
+Exercise today
+−
+0 min
++
+
+Only needed if the exercise devices did not log your session.
+
+Medication taken today (optional)
+Sleep aid
+Pain or fever medicine
+Decongestant or antihistamine
+Anti-nausea medicine
+Other medicine
+
+Classes only, no doses. These can move heart rate, reaction time and sleep, so Keel shows them next to any alert. The medical officer sees them only if you share Symptoms in detail. Keel never recommends medication.
+
+Photo for the medical officer (optional)
+What is it of?
+Skin
+Eye
+Mouth or throat
+Wound
+Other
+Take or choose a photo
+
+A rash, an eye, a wound. Up to three a day, shrunk and stored on this tablet when you save. Keel does not analyse photos. The medical officer sees them only if you share Symptoms in detail.
+
+Measurements (only what you took today)
+Body temperature (thermometer) (°C)
+How to measure
+Blood oxygen (%)
+How to measure
+Blood pressure (upper) (mmHg)
+How to measure
+Blood pressure (lower) (mmHg)
+How to measure
+Blood sugar (mg/dL)
+How to measure
+Body mass (kg)
+How to measure
+Sleep duration (h)
+How to measure
+Resting heart rate (bpm)
+How to measure
+
+Readings today: sugar mg/dL 50 at 04:57 PM · sugar mg/dL 85 at 04:57 PM. Every reading is kept; the most abnormal one counts until a new day's reading or the medical officer closes it.
+
+Taking a reading again? Type the new value and save: the earlier one is kept with its time, and both are shown to whoever you share them with.
+
+Resting heart rate: 170 bpm is far outside the usual range and has not been saved yet. Everything else was saved. Is that what the device showed?
+
+Yes, save 170
+No, clear it
+Save check-in

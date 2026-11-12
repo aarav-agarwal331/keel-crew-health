@@ -1,0 +1,92 @@
+SCREEN: 16-today-after-entering-readings
+TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 121 | Simulated data
+BOTTOM NAV: Today | Trends | Check-in | Crew | More
+
+Keel is a crew health monitor that works with no link to Earth. It learns each person's own normal and gives one action with its source. Demo: Lucía's tablet, simulated Mars transit.
+
+Demo: replay a scripted event (40 s)
+The evidence
+Hide
+Act now
+
+Blood sugar reading is below 54 mg/dL
+
+Demo crew member, simulated readings.
+
+RECOMMENDED ACTION
+
+Eat or drink something sugary now and tell the medical officer now.
+
+When: now. Who: the crew medical officer.
+
+A fixed safety threshold, not a trend.
+
+Readings this is based on: sugar mg/dL 50 at 04:57 PM · sugar mg/dL 85 at 04:57 PM. Every reading is kept; the most abnormal one counts until a new day's reading or the medical officer closes it.
+
+Why, and what next
+
+No link to Earth right now. Everything on this screen was worked out on this device.
+
+Heart rate reading at rest is extremely fast or slow
+Stop, rest, and tell the medical officer now.
+Resting heart rate of 120 or more
+Rest for ten minutes, repeat the reading, and tell the medical officer today.
+Your body looks like it is under strain
+Take your temperature now. No exercise until you have. Tell the medical officer.
+What changed
+All trends
+Resting heart rate 170 bpm
+Higher than your usual 53. Your most unusual reading in 53 days.
+Heart rate variability 21 ms
+Lower than your usual 43. More unusual than 50 of your last 53 days.
+Reaction time 297 ms
+Higher than your usual 261. Your most unusual reading in 52 days. Out of your range for 5 days.
+Mood 2 /5
+Lower than your usual 4. Your most unusual reading in 52 days. Out of your range for 9 days.
+Your body at a glance
+Brain, sleep and mood
+Heart and circulation
+Lungs and oxygen
+Food and fluids
+Muscle and bone
+Whole body
+Cabin and radiation
+Brain, sleep and mood
+Act today
+
+Sleep, body clock, reaction time and mood.
+
+Why space matters here: Isolation and confinement, plus a lost day-night cycle, disturb sleep and wear on mood and attention.
+
+Sleep
+Timing
+Reaction
+Mood
+How to measure
+Today's routine
+13-day streak
+87%
+Exercise this week
+625 of 720 planned minutes. Every session protects bone, muscle and heart.
+
+Crew goal this week: 86% of planned exercise done together. Individual numbers stay private.
+
+Report a symptom now
+Check-in done
+Sensor worn last night
+Exercise: 0 of 120 min today
+Weekly measurement due: body temperature (thermometer)
+ Enter
+Sleep last night 4.5 h. The scheduled sleep period is 8.5 h.
+Cabin
+Deep-space transit vehicle
+Carbon dioxide
+1.9 mmHg
+Advisory line 2.5, alert at 3.0
+Radiation dose
+216 mSv this mission (dosimeter estimate)
+Today 1.88 mSv. At this rate about 320 mSv by the end of this mission. The 600 mSv career limit also counts earlier flights.
+
+Keel opened 3 notices from your readings in the last 30 days. Keel can be wrong: expect one or two false notices a month. How often it is right
+
+Keel is decision support, not a medical device. It does not diagnose. It shows how your readings compare with your own normal and points to documented countermeasures.

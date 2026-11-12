@@ -1,0 +1,70 @@
+SCREEN: 17-crew-as-medical-officer-after-readings
+TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 121 | Simulated data
+BOTTOM NAV: Today | Trends | Check-in | Crew | More
+
+Crew readiness
+Commander
+Medical officer
+
+Day 121. What each crew member has chosen to share with you. Nothing is shown that they have not shared, except emergencies they agreed to share.
+
+Demo view. On a mission each role has its own device; here you can switch roles. Every look is written to the crew member's access log.
+
+Amara Okafor
+Commander
+
+Steady
+
+Heart, oxygen and temperature
+Sleep and body clock
+Exercise
+Food and fluids
+Symptoms
+Kenji Sato
+Crew medical officer
+
+Steady
+
+Heart, oxygen and temperature
+Sleep and body clock
+Exercise
+Food and fluids
+Symptoms
+Lucía Reyes
+Flight engineer
+
+Blood sugar reading is below 54 mg/dL. Eat or drink something sugary now and tell the medical officer now. (shared automatically: emergency sharing)
+
+Heart rate reading at rest is extremely fast or slow. Stop, rest, and tell the medical officer now. (shared automatically: emergency sharing)
+
+Act now
+
+Heart, oxygen and temperature
+Sleep and body clock
+Exercise
+Food and fluids
+Symptoms
+Alert in heart, oxygen and temperature (act today for 1 d)
+Alert in heart, oxygen and temperature (act today for 1 d)
+Open items for you to close
+Blood sugar reading is below 54 mg/dL (Day 121, needed attention at once)
+Close
+Heart rate reading at rest is extremely fast or slow (Day 121, needed attention at once)
+Close
+
+A later normal reading does not close an item. Only a note from you does.
+
+Tomás Novák
+Mission specialist
+
+Worth a look
+
+Heart, oxygen and temperature
+Sleep and body clock
+Exercise
+Food and fluids
+Symptoms
+
+"Steady" and "no flags" mean within the person's own usual range and no rule triggered. They do not mean the values are healthy.
+
+The tier is a rule-based summary: it is never better than the worst area on the crew member's own screen, and nausea or clearly slowed reactions always mean a conversation first. It is not a validated fitness-for-duty test and not a clearance.

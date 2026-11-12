@@ -32,9 +32,9 @@
 <section>
   <div>
     <div class="n">1 · The problem</div>
-    <h1>On the way to Mars, Earth cannot watch the crew.</h1>
+    <h1>On the way to Mars, Earth cannot answer in time.</h1>
     <ul>
-      <li>On the ISS a flight surgeon is seconds away by voice, follows exercise and cabin-air data, and talks to each astronaut every week.</li>
+      <li>On the ISS a flight surgeon is seconds away by voice and talks privately with each crew member about once a week. Routine vital signs are not streamed to the ground.</li>
       <li>Earth to Mars: about <strong>4 to 24 minutes each way</strong>. Around solar conjunction NASA stops commanding its Mars spacecraft for <strong>two weeks</strong>.</li>
       <li>NASA's plan is Earth-independent medical operations: the crew must detect and act on health changes themselves.</li>
     </ul>
@@ -60,7 +60,7 @@
     <div class="n">3 · Your own normal</div>
     <h1>One status. What changed. One thing to do.</h1>
     <ul>
-      <li>Learns <strong>each person's own baseline</strong> for seventeen indicators chosen from NASA's five hazards.</li>
+      <li>Learns <strong>each person's own baseline</strong> for 18 indicators chosen from NASA's five hazards.</li>
       <li>Knows launch and landing change the body on purpose, so adaptation is not called illness.</li>
       <li>Status is shown by colour, shape and words. Readable one-handed, in the dark, when tired.</li>
     </ul>
@@ -76,8 +76,8 @@
     <ul>
       <li>What changed, how unusual it is for you, what in your own data may explain it.</li>
       <li>One action, <strong>how soon and who</strong>, mapped to a cited NASA document, published study or public clinical guidance.</li>
-      <li>Red-flag symptoms and dangerous single readings are acted on at once, without waiting for a trend.</li>
-      <li><strong>No diagnosis. No language model.</strong> 32 rules a flight surgeon can read in half an hour.</li>
+      <li>Red-flag symptoms and dangerous single readings are acted on at once, without waiting for a trend. The worst reading of the day counts, and the finding stays on the medical officer's list until closed with a note.</li>
+      <li><strong>No diagnosis. No treatment advice. No language model.</strong> 38 rules a flight surgeon can read in one sitting.</li>
     </ul>
   </div>
   <img src="../docs/review/02-alert-detail-1.png" alt="Alert detail screen with recommended action and steps">
@@ -89,7 +89,7 @@
     <h1>The commander sees a flag, not the reason.</h1>
     <ul>
       <li>The crew member sets, per role and per body system, what is shared: private, status, trends or full detail.</li>
-      <li>A preview shows exactly what each role sees. Every look is logged.</li>
+      <li>A preview shows exactly what each role sees. Every look is logged. Some red-flag symptoms go to the medical officer only.</li>
       <li>One tested function guards everything that leaves the person's own view.</li>
     </ul>
   </div>
@@ -99,14 +99,14 @@
 <section class="solo">
   <div>
     <div class="n">6 · Does it work? Measured on real data</div>
-    <h2>251 people, 107 dated illness episodes, held-out people, a false-alert budget.</h2>
+    <h2>251 people, 107 dated illness episodes, two sensors, a false-alert budget.</h2>
     <div class="grid">
-      <div class="card"><div class="big">+30</div><p><strong>points above luck</strong> at flagging real illness, at one false alert per person-month (95% interval 20 to 40). Flagged 66%; luck alone gives 36%.</p></div>
-      <div class="card"><div class="big">+17</div><p><strong>for one threshold for everyone</strong>, at the same false-alert cost. Keel adds 14 points (interval 0 to 28).</p></div>
-      <div class="card"><div class="big">0.99</div><p><strong>false alerts per person-month</strong> on people the model never saw, against a budget of 1.00. With thresholds from simulation only: 1.38.</p></div>
+      <div class="card"><div class="big">+32</div><p><strong>points above luck</strong> at flagging real illness, with Keel as the app runs it (95% interval 22 to 41). Flagged 72%; luck alone gives 40%. Stricter alert tier: +19 (9 to 28).</p></div>
+      <div class="card"><div class="big">1.40</div><p><strong>false alerts per person-month</strong> at that result, against a budget of 1.00. Alert tier: 0.39 against 0.25. Both run over budget.</p></div>
+      <div class="card"><div class="big">+16</div><p><strong>lead over one threshold for everyone</strong> (interval 3 to 29): probably better, not proven. Against a simple personal rule the lead is +5 (−2 to 12), not distinguishable.</p></div>
     </div>
-    <p>NASA bed-rest data: after volunteers get up, a plain baseline flags 9 of 14; Keel's transition handling flags 4. Simulated missions, full sensor set: 67% flagged against 40% by luck.</p>
-    <p class="warn"><strong>What we cannot claim:</strong> early warning. The alert comes around the day symptoms start. Most alerts are false: ten in eleven or more at the strict tier. The data is from people on Earth. Everything beyond illness is tested in simulation.</p>
+    <p>NASA bed-rest data: after volunteers get up, a plain baseline flags 9 of 14; Keel's transition handling flags 4 (not significant, p = 0.06). Simulated missions, full sensor set: 67% flagged against 41% by luck.</p>
+    <p class="warn"><strong>What we cannot claim:</strong> early warning. The alert comes around the day symptoms start. Most alerts are false: between 1 in 11 and 1 in 25 alert-tier alerts would be a real illness. Much of the signal is people moving less when ill; heart rate alone is +22. The data is from people on Earth. No clinician has reviewed anything. Everything beyond illness is tested in simulation.</p>
   </div>
 </section>
 
@@ -115,9 +115,9 @@
     <div class="n">7 · Result</div>
     <h1>Detected, explained, acted on. No link required.</h1>
     <ul>
-      <li>Mission replay: a scripted illness on a simulated Mars transit, flagged <strong>around the day symptoms begin</strong>, during a two-week blackout, with a specific action.</li>
-      <li>Next: request NASA's in-flight data, move to hourly features, clinical review of the rule table.</li>
-      <li>Open source, reproducible with one command. Live demo and code on the project page.</li>
+      <li>Mission replay: a scripted illness on a simulated Mars transit, flagged <strong>on the day symptoms begin</strong>, during a two-week blackout, with a specific action.</li>
+      <li>Real data: <strong>+32 points above luck on 107 real illness episodes, at 1.4 false alerts per person-month.</strong> No early warning; most alerts are false.</li>
+      <li>Next: request NASA's in-flight data, clinical review of the rule table. Open source; live demo and code on the project page.</li>
     </ul>
     <p><strong>Keel</strong> — a crew health monitor that keeps working when Earth cannot answer.</p>
     <p style="font-size:.85rem">Independent student project for the 2026 NASA Space Apps Challenge. Not a NASA product. Decision support, not a medical device.</p>

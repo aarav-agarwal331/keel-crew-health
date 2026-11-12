@@ -6,7 +6,7 @@ Keel was built with substantial help from an AI coding assistant. This is what i
 |---|---|
 | Claude (Anthropic), run as the Claude Code agent | Wrote the application code (TypeScript, React), the research code (Python: simulator, baselines, detectors, evaluation), the tests, the documentation and the first drafts of every text in this submission, under the team's direction. |
 | Claude research sub-agents | Read the NASA, ESA and journal sources and the dataset hosts, and produced `docs/DOMAIN.md` and `docs/DATA.md`. Every cited source was opened by the agent; nothing is cited from memory. |
-| Claude review sub-agents | Four role-played reviewers (flight surgeon, statistician, tired astronaut, hackathon judge) critiqued the deployed app. Their findings and what was changed are in `docs/REVIEW.md`. |
+| Claude review sub-agents | Three rounds of role-played review (a flight surgeon, a statistician, an astronaut, a judge) critiqued the deployed app and the analysis. Analysis choices changed during these rounds and nothing was pre-registered. Their findings and what was changed are in `docs/REVIEW.md`. |
 
 What AI did **not** do:
 
@@ -18,6 +18,8 @@ What AI did **not** do:
   logos or insignia are used.
 - **No data was fabricated.** Simulated data is produced by the documented simulator and is labelled
   as simulated wherever it appears.
+- **No clinical review.** The role-played reviewers are AI, not clinicians. No clinician has reviewed
+  anything.
 
 Human responsibilities: choosing the problem and scope, checking the results, the final wording of the
 submission, recording the demo, and everything listed under "needs a human" in `FINAL_REPORT.md`.

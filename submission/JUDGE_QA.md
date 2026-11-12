@@ -3,109 +3,124 @@
 **1. You have no astronaut data. Why should we believe any of this applies in space?**
 You should be careful, and we say so in the app. No open astronaut wearable time series exists: NASA's
 in-flight actigraphy and cognition data are available on request only, and the open Inspiration4 data
-is omics and blood panels. What we can show: the personal-baseline method works on real people on
-Earth; the simulator reproduces published in-flight values such as 6.1 hours of sleep and the share of
-nights under six hours; and on NASA's public bed-rest data, the closest open stand-in for a gravity
-change, our transition handling cut false flags from 9 of 14 volunteers to 4 (p = 0.06, so suggestive only).
-The next step is to request the in-flight data.
+is omics and blood panels. What we can show: the personal-baseline method flags real illness in people
+on Earth above luck. What we cannot: that the simulator is a faithful stand-in. Its independent
+realism checks fail or are off (for example nights under six hours are 50% against a published 44%).
+On NASA's public bed-rest data, the closest open stand-in for a gravity change, a plain personal
+baseline flagged 9 of 14 volunteers after getting up and Keel flagged 4, which is not significant
+(p = 0.06) and has no ground truth. The next step is to request the in-flight data.
 
-**2. Does it give early warning before symptoms?**
-No, not on our evidence. On real data, at one false alert per person-month, 39% of illness episodes
-had an alert start in the ten days up to symptom onset, and luck alone gives 29%. The alert typically
-starts on or a day or two after onset. The original authors of the dataset reported 63%
-pre-symptomatic detection using hourly data and a different algorithm; we did not reproduce that with
-daily features.
+**2. Does it give early warning before symptoms? If not, what is the value?**
+No early warning, on our evidence. On real data 39% of illness episodes had an alert start in the ten
+days up to symptom onset, and luck alone gives 24%. In our scripted replay Keel flags the illness on
+the day symptoms begin, from the symptoms ticked at check-in combined with drifting readings; the
+sensors alone show it one day after. The dataset's original authors reported pre-symptomatic
+detection with hourly data and a different algorithm; we did not reproduce that with daily features.
+The value is elsewhere: it turns "I feel off" into a record against the person's own normal and tells
+the medical officer the same day, it covers slow changes nobody feels (sleep debt, missed exercise,
+low fluid intake), and it gives one specific, sourced action when nobody on Earth can be asked.
 
-**3. Then what is the value, if the person already feels ill?**
-Three things. It turns "I feel off" into an objective record against the person's own normal and tells
-the medical officer the same day. It covers slow changes nobody feels: sleep debt, missed exercise,
-low fluid intake, a slide in mood. And it gives a specific, sourced action when nobody on Earth can be
-asked.
+**3. Why is your headline not the best number you have?**
+Because the best number is not the product. With thresholds calibrated on other real people and
+daily steps as a feature, detection is 34 points above luck (interval 24 to 44; 66% flagged, luck
+33%). The app does not run that feature or those thresholds. Our headline is Keel as the app runs
+it: the model and thresholds from the simulator, heart rate and 7-day activity, applied unchanged to
+real people. That flags 72% of 107 episodes against 40% by luck: +32 points (22 to 41), at 1.40
+false alerts per person-month against a budget of 1.00. The alert tier, the one that brings in the
+medical officer, flags 32% against 13% by luck: +19 (9 to 28), at 0.39 against a budget of 0.25. On
+the 113 people nothing was fitted on (41 episodes) the notice tier is +38 (23 to 50).
 
-**4. Two thirds flagged, but a third of that is luck. Is that impressive?**
-It is modest, and we would rather show it than hide it. Keel flags 66% of real illness episodes;
-luck gives 36%, so the honest figure is 30 points above luck (interval 20 to 40). A fixed threshold
-is 17 above luck, so Keel adds 14 points (interval 0 to 28), and much of the signal comes from people
-moving less once they feel ill.
-Real illness moves resting heart rate by about 3 to 5 beats per minute on average, three episodes in
-ten show no rise at all, and heart rate varies by 3.5 from night to night. That is the physics of the
-problem with two indicators.
+**4. How do you know "above luck" is not just people staying home?**
+We do not. Much of the signal is behavioural: people move less when ill (median daily steps fall
+from 7,554 to 4,210), and that cannot be separated from isolating at home. "Above luck" is also an
+upper bound: the pretend illness dates we use to measure luck cannot be matched to the calendar,
+because dates are shifted for privacy, so travel, testing and isolation near a real onset are not
+reproduced. Heart rate alone is +22 (12 to 32), and that is the safer figure.
 
 **5. How do you know you did not overfit or leak?**
-People, not days, are held out: five-fold cross-validation over people on real data, and separate
-training and test missions in simulation. Baselines only look backwards, and that is unit-tested.
-Thresholds come from training people only. The simulator is calibrated on one half of the real people
-and checked against the other. The detector we deploy was chosen by a rule fixed in advance, on
-simulated training missions. Checks that it transfers: training on one Stanford cohort and testing on
-the other gives +29 and +36 points above luck with 0.87 and 1.11 false alerts per person-month, and
-five different fold splits give +30 to +32. Two cautions we state ourselves: the selection rule, the
-metric and the detection window were revised during review, and the original, wider window gives +27. We also had an
-independent statistician-style review and fixed what it found; that log is in the repository.
+People, not days, are held out: five folds over people on real data, and separate training and test
+missions in simulation. Baselines only look backwards, and that is unit-tested. The headline's
+thresholds come from the simulator, and on the 113 real people nothing was fitted on the result is
++38 (23 to 50). Checks on the
+cross-validated result: training on one Stanford cohort and testing on the other gives +33 and +33;
+five different fold splits give +34 to +36; the original, wider window gives +31 (22 to 40). The
+cautions are ours: nothing was pre-registered, analysis choices changed during three rounds of AI
+role-played review, and four detectors, two tiers and several windows were compared without
+correction. That log is in the repository.
 
-**6. A simple rule does nearly as well as your detector. Why the complexity?**
-We report that plainly: a two-of-three-days personal rule is 27 points above luck against 30 for the
-multivariate detector, and the intervals overlap. Our selection rule prefers the simplest detector
-unless a more complex one earns at least 3 points above luck on simulated training missions; the
-multivariate one cleared that bar narrowly, once the simulator was given the real correlation between
-heart rate and HRV, and the choice flipped once along the way. Even the personal baseline's edge
-over a fixed threshold is only suggestive for the simple rule (+11, interval −3 to 25).
+**6. Does your detector beat a simple rule?**
+No, that is not shown. A simple personal rule (two of three days outside the personal range) is
+28 points above luck on its own (19 to 38). Keel's detector leads it by +5 (−2 to 12), which is not
+distinguishable. Against one fixed threshold for everyone the lead is +16 (3 to 29) in the detection
+window used and +10 (−3 to 23) in the original wider window; with 7-day activity it is +24
+(11 to 36) at the notice tier and +8 (−1 to 18) at the alert tier. So a personal baseline is probably
+better than a fixed threshold, not proven, and the extra complexity of our detector has not earned
+its place on real data.
 
 **7. Most of your alerts are false. Is that not alarm fatigue by design?**
-At in-flight illness rates between one alert-tier alert in 11 and one in 28 would be a real respiratory
-illness, and about one notice in forty. We state that in the app. That is why there are two tiers. A notice is
-quiet, self-managed and shown as "worth a look". Only the alert tier, budgeted at one per four
-person-months, or a symptom the person reports, can recommend involving the medical officer. On real
-data an alert-tier flag was open on about 2% of healthy days and 56% of people never saw one. Whether
-those budgets are right is a question for crews and flight surgeons; the point is that it is a dial
-with a measured meaning, not a guess.
+At in-flight illness rates between 1 in 11 and 1 in 25 alert-tier alerts would be a real respiratory
+illness, and about 1 in 40 notices. We state that in the app. That is why there are two tiers. A
+notice is quiet, self-managed and shown as "worth a look". Only the alert tier, or a symptom the
+person reports, can recommend involving the medical officer. Both tiers ran over budget on real
+people: 1.40 false alerts per person-month against 1.00, and 0.39 against 0.25. Whether those
+budgets are right is a question for crews and flight surgeons; the point is that it is a dial with a
+measured meaning, not a guess.
 
 **8. Isn't the simulation just showing what you built into it?**
-Partly, and the app says which parts. The day-to-day noise, the correlation between indicators and
-the illness response in heart rate are fitted to real data on one half of the people. Effect sizes
-for the other event types and for HRV, temperature, oxygen and mood are assumptions, marked in a
-parameter table. Two checks tie it to reality, and neither flatters us: on the channels real data
-has, simulated illness is harder to detect than real illness (+13 against +32 above luck), and
-thresholds calibrated in simulation ran 38% over the false-alert budget on real people with two
-indicators and nearly four times over with five. The simulator also fails three of its nine pass marks.
+Largely, and the app says which parts. The simulator passes its realism checks only on quantities
+fitted to the other half of the same data. The independent checks fail or are off: simulated illness
+raises heart rate by 2.1 bpm against 4.6 in real episodes, HRV variability is 37% too high, and sleep
+carry-over is off. Thresholds from simulation gave 1.38 and 0.40 false alerts per person-month on 72
+real people (budgets 1.00 and 0.25), and 2.04 and 0.97 with five sensors on 16 people. Like for like
+on two channels, simulated illness is flagged +11 above luck against +35 for real episodes. In
+simulation overall Keel is +26 above luck (19 to 33), and for illness and low mood the interval
+includes zero.
 
 **9. Why not use an AI model to explain alerts or answer questions?**
 Because the crew cannot check it and nobody on Earth can catch its mistakes. Advice comes from a table
-of 32 rules that a flight surgeon can read in half an hour, each tied to a NASA document, a published
+of 38 rules that a flight surgeon can read in one sitting, each tied to a NASA document, a published
 study or public clinical guidance, with an audit trail on every alert. A unit test fails the build if
-rule text reads like a diagnosis.
+rule text reads like a diagnosis. By design Keel gives no medication or treatment advice.
 
 **10. Has a doctor reviewed the advice?**
-No practising clinician has. We ran two role-played flight-surgeon reviews with an AI reviewer and
-fixed what they found (missing red flags, no fixed safety thresholds, mis-tiered extreme readings,
-exercise advice before fever was excluded, a solar-storm alert that could not work), and we say
-plainly that this is not the same thing. The fixed thresholds, such as 38.0 °C or 92% oxygen, are public guidance for adults on Earth.
+No clinician has reviewed anything. We ran three rounds of role-played review with an AI reviewer (a
+flight surgeon, a statistician, an astronaut, a judge) and fixed what they found (missing red flags,
+no fixed safety thresholds, mis-tiered extreme readings, exercise advice before fever was excluded, a
+solar-storm alert that could not work), and we say plainly that this is not the same thing. The fixed
+thresholds, such as 38.0 °C or 92% oxygen, are public guidance for adults on Earth.
 Keel is decision support and a demonstration, not a medical device.
 
 **11. If a crew member hides everything, isn't that dangerous for the mission?**
-Three things are always visible. The commander sees a three-level flag for each person, never better
+Some things are always visible. The commander sees a three-level flag for each person, never better
 than that person's own worst reading, so nobody is assigned to a spacewalk blind. A red-flag symptom
-or an "act now" reading is shown at once to the medical officer and to the commander as backup; the
-crew agrees to that before flight and can switch it off. Cabin readings are never private. What stays
-private is the reason behind an ordinary flag. Where to draw that line is a policy choice for an
-agency; Keel makes it explicit and shows each person exactly what every role sees.
+or an "act now" reading is shown at once to the medical officer and stays on that list until the
+medical officer closes it with a note; most also reach the commander as backup, but some (thoughts of
+self-harm, an injury, tooth pain, one-sided swelling) go to the medical officer only. Cabin readings
+are never private. What stays private is the reason behind an ordinary flag. Where to draw that line
+is a policy choice for an agency; Keel makes it explicit and shows each person exactly what every
+role sees.
 
 **12. How does it avoid flagging normal adaptation to weightlessness as illness?**
 A phase change restarts the baseline, widens its band, and hands over to the person's own post-launch
-data within two weeks. In simulation this halves false alerts in the first month of flight; on NASA
-bed-rest data it cuts false flags after volunteers get up from 9 of 14 to 4. It has a cost we
-measured: while the band is wide, real problems that begin in those first weeks are much harder to
-see (20 against 35 points above luck). We have not tuned that trade-off yet.
+data as it arrives. In simulation this gives 0.90 false alerts per person-month in the first 30 flight
+days against 1.98 without it. It has a cost we measured: events that begin in the first 25 flight
+days are flagged +19 above luck against +34 without it. On NASA bed-rest data the same handling
+flagged 4 of 14 volunteers after getting up against 9, not significant, and the gain comes from
+widening the band. We have not tuned that trade-off yet.
 
-**13. What happens with missing data or a broken sensor?**
-The detector uses whatever indicators a person has. With the wearable unworn 40% of nights, simulated
-detection falls from 67% to 63%; without any check-ins it falls to 46%. False alerts fall too. After
-two days with no reading at all Keel shows "No recent data", not "Steady". Fixed safety rules work on
-a single entered reading with no history at all.
+**13. What happens with missing data, a broken sensor or a mistyped reading?**
+The detector uses whatever indicators a person has; in simulation detection falls when the wearable
+is often unworn and falls further without check-ins. After two days with no reading at all Keel shows
+"No recent data", not "Steady". Fixed safety rules work on a single entered reading with no history
+at all. Every entered reading is kept with its time and the worst reading of the day counts, so a
+repeat normal reading does not erase an abnormal one, and extreme values are accepted after a
+confirmation.
 
 **14. Is it really offline?**
-There is no server. A service worker caches every file. An automated test loads the build, disables
-the network, reloads, and uses every screen, including entering a check-in, changing sharing, cutting
-the link, running the replay and importing a file. It fails on any console error or network request.
+There is no server. A service worker caches every file. Two automated end-to-end tests run the build
+with the network disabled and use the screens, including entering a check-in, changing sharing,
+cutting the link, running the replay and importing a file. They fail on any console error or network
+request.
 
 **15. What would you do with another six months?**
 Get real spaceflight or analog data and repeat the evaluation. Move from daily to hourly features and

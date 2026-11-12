@@ -21,17 +21,17 @@ What these results do not show. Keel does not give early warning: on real data t
 Jump to: real data · simulated missions · simulator realism · NASA bed-rest data · limitations
 
 Detection above luck on real illness, notice tier
-Keel as the app runs it: thresholds from the sim…
+Keel as the app runs it
 32%
-Same sensors, thresholds from other real people
+Thresholds from real people
 31%
 Heart rate alone
 22%
-With daily steps instead of the 7-day average
+With daily steps
 34%
-One fixed threshold for everyone (heart rate + d…
+Fixed threshold, daily steps
 18%
-One fixed threshold for everyone (heart rate + 7…
+Fixed threshold, 7-day activity
 7%
 Share of 107 real illness episodes flagged, minus the share an alert would hit by luck. Bars show 95% intervals. The first bar is the app's own configuration; the next three use thresholds calibrated on other real people (5-fold over people) to one false alert per person-month; the last two are one fixed threshold for everyone. Heart rate alone is the figure most likely to carry over to a crew on a fixed exercise schedule.
 How this was measured

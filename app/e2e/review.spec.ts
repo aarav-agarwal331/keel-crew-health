@@ -23,6 +23,7 @@ const nav = async (page: Page, hash: string) => { await page.evaluate((h) => { l
 
 test.use({ viewport: { width: 820, height: 1200 }, baseURL: URL })
 test('capture for review', async ({ page }) => {
+  test.setTimeout(300_000)
   fs.mkdirSync(OUT, { recursive: true })
   const errors: string[] = []
   page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()) })
@@ -51,5 +52,15 @@ test('capture for review', async ({ page }) => {
   await nav(page, '#/more'); await capture(page, '13-more')
   // a steady day and a notice-tier day for contrast
   await page.getByTestId('who').selectOption('c0'); await page.getByTestId('day-slider').fill('95'); await nav(page, '#/today'); await capture(page, '14-today-steady-day-commander')
+  // entering readings: a low blood sugar, then a normal repeat; then an extreme heart rate
+  await nav(page, '#/more'); await page.getByTestId('who').selectOption('c2'); await page.getByRole('button', { name: 'Back to the demo day' }).click()
+  await nav(page, '#/checkin/measure')
+  await page.getByLabel(/Blood sugar/).fill('50'); await page.getByTestId('save-checkin').first().click(); await expect(page.getByText('Saved.', { exact: true })).toBeVisible()
+  await page.getByLabel(/Blood sugar/).fill('85'); await page.getByTestId('save-checkin').first().click(); await page.waitForTimeout(300)
+  await page.getByLabel(/Resting heart rate/).fill('170'); await page.getByTestId('save-checkin').first().click(); await page.waitForTimeout(300)
+  await capture(page, '15-checkin-after-entering-readings')
+  await page.getByTestId('confirm-rhr').first().click(); await page.waitForTimeout(300)
+  await nav(page, '#/today'); await capture(page, '16-today-after-entering-readings')
+  await nav(page, '#/crew'); await page.getByRole('button', { name: 'Medical officer' }).click(); await capture(page, '17-crew-as-medical-officer-after-readings')
   fs.writeFileSync(`${OUT}/console-errors.txt`, errors.length ? errors.join('\n') : 'No console errors during the capture.\n')
 })
