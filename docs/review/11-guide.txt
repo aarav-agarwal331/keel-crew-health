@@ -1,0 +1,195 @@
+SCREEN: 11-guide
+TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 126 | Simulated data
+BOTTOM NAV: Today | Trends | Check-in | Crew | More
+
+Guide to measurements
+
+You do not need medical training to use Keel. This page explains each reading: what it is, how to take it properly, and why spaceflight changes it.
+
+The five hazards of human spaceflight, and what Keel watches for each
+Hazard	What it does	What Keel tracks
+Space radiation	Cosmic rays and solar storms. Mostly a long-term risk; a solar storm can also matter within hours.	Daily and mission-total dose against the 600 mSv career limit; an alert with the shelter procedure when the dose rate jumps.
+Isolation and confinement	Mood and sleep problems become more likely the longer a small crew is shut in together.	Private mood check-ins, sleep duration and timing, reaction self-test, each against your own normal.
+Distance from Earth	Up to about 24 minutes of signal delay each way, blackouts, no resupply and no quick return.	Everything runs on board. The link only carries a summary you approve, when a link exists.
+Gravity fields	Without weight, bone and muscle are lost, fluid shifts toward the head, and the body must re-adapt at each gravity change.	Exercise against plan, resting heart rate and HRV; normal ranges are widened and re-learned after each gravity change.
+Hostile, closed environment	Recycled air and water, shared microbes, an immune system that behaves differently.	Cabin carbon dioxide with the levels linked to headaches; early signs of infection from heart rate, HRV and temperature.
+[6] NASA Human Research Program. "The Human Body in Space." nasa.gov, 2021 (updated 2026). Source
+[7] NASA Human Research Program. "5 Hazards of Human Spaceflight." nasa.gov (updated 2026). Source
+When to involve someone else
+Now, whatever Keel shows: chest pain or pressure, shortness of breath at rest, severe side or back pain, fainting, a resting oxygen reading of 92% or lower. Tell the medical officer.
+Today: when Keel shows "Act today" with the medical officer level, or a temperature of 38.0 °C or more.
+When a link opens: anything the medical officer wants a flight surgeon to review. Keel keeps the summary queued.
+
+These are general thresholds from public clinical guidance, not a flight rule.
+
+Brain, sleep and mood
+
+Isolation and confinement, plus a lost day-night cycle, disturb sleep and wear on mood and attention.
+
+Sleep duration (h)
+See my trend
+
+Hours actually asleep in the last sleep period.
+
+How to measure. Measured by the wearable. If you did not wear it, enter your best estimate at check-in.
+
+Why it matters. Crews sleep less in space than on Earth. Short sleep builds up as a debt that slows reactions and raises error risk.
+
+Sleep timing shift (h)
+See my trend
+
+How far the middle of your sleep moved from your scheduled sleep period. Zero means you slept when planned.
+
+How to measure. Calculated from when you fell asleep and woke up.
+
+Why it matters. When sleep slides away from the schedule, your body clock and the mission clock disagree, which hurts sleep quality and alertness.
+
+Reaction time (ms)
+See my trend
+
+Your average response time in the reaction self-test.
+
+How to measure. Tap as soon as the target appears. Do it at about the same time each day, sitting still, before caffeine if you can.
+
+Why it matters. Reaction time is a sensitive, objective sign of fatigue. It slows with sleep loss and may slow with high cabin carbon dioxide.
+
+Mood (/5)
+See my trend
+
+Your own rating of how you feel today, from 1 (very low) to 5 (very good).
+
+How to measure. Answer quickly and honestly at check-in. There is no right answer, and you decide who can see it.
+
+Why it matters. Isolation, confinement and distance from home wear on everyone. A slow slide is easier to turn around when it is noticed early.
+
+Heart and circulation
+
+Without gravity, blood shifts toward the head and the heart is loaded differently. Radiation and inactivity add long-term risk.
+
+Resting heart rate (bpm)
+See my trend
+
+How fast your heart beats when you are fully at rest, usually measured during sleep.
+
+How to measure. Wear the wrist or chest sensor overnight. Keel takes the lowest stable stretch while you sleep, so exercise and coffee do not distort it.
+
+Why it matters. A resting heart rate that climbs above your own normal is one of the earliest whole-body signs of infection, dehydration, poor recovery or loss of fitness.
+
+Heart rate variability (ms)
+See my trend
+
+The small beat-to-beat changes in your heart rhythm (RMSSD). Higher usually means your body is recovering well.
+
+How to measure. Measured automatically overnight by the wearable, or in a two-minute still reading with the chest strap.
+
+Why it matters. HRV drops when the body is under strain: illness, short sleep, heavy training or stress. It often moves before you feel anything.
+
+Blood pressure (upper) (mmHg)
+See my trend
+
+The upper (systolic) number of your blood pressure.
+
+How to measure. Sit still for five minutes, cuff on the upper arm at heart level, do not talk during the reading.
+
+Why it matters. Blood pressure regulation changes without gravity. Readings well outside your normal deserve a repeat and a word with the medical officer.
+
+Lungs and oxygen
+
+A sealed cabin recycles its own air: carbon dioxide can build up and dust does not settle.
+
+Blood oxygen (%)
+See my trend
+
+The share of your red blood cells carrying oxygen.
+
+How to measure. Overnight from the wearable, or a 30-second fingertip reading: warm hand, hold still, wait for a steady number.
+
+Why it matters. A sustained drop can point to a breathing or lung problem or a cabin atmosphere issue.
+
+Food and fluids
+
+Crews eat and drink less than they need in space, which speeds up body mass loss and raises kidney-stone risk.
+
+Fluid intake (L)
+See my trend
+
+How much you drank today.
+
+How to measure. Tap once per drink bag at check-in, or enter litres.
+
+Why it matters. Crews tend to drink too little in space. Low intake raises the risk of kidney stones and makes the heart work harder.
+
+Food intake (% of plan)
+See my trend
+
+How much of your planned food you ate today.
+
+How to measure. Estimate at check-in: all, most, about half, little.
+
+Why it matters. Under-eating is common in space and speeds up loss of body mass, muscle and bone.
+
+Blood sugar (mg/dL)
+See my trend
+
+The sugar level in a fingertip drop of blood.
+
+How to measure. Clean fingertip, first drop wiped away, measure before breakfast for a comparable number.
+
+Why it matters. Named in the challenge as a useful indicator. Keel shows it against your own previous readings and a general reference range.
+
+Muscle and bone
+
+Weight-bearing bones lose about 1 to 1.5% of their density per month without countermeasures. Daily loading is the defence.
+
+Exercise, 7-day average (min/day)
+See my trend
+
+Average minutes of exercise per day over the last week.
+
+How to measure. Logged by the exercise devices or entered at check-in.
+
+Why it matters. Daily exercise is the main protection against losing bone, muscle and heart fitness without gravity. Missed sessions add up quietly.
+
+Whole body
+
+Immune changes in flight make infections and reactivated viruses more likely; temperature is an early sign.
+
+Body temperature (°C)
+See my trend
+
+Your body temperature, from the wearable skin sensor overnight or a thermometer reading.
+
+How to measure. For a spot check use the thermometer at the same time each day, before exercise and before eating or drinking.
+
+Why it matters. A rise above your own normal supports the picture of infection or inflammation; body temperature also runs differently in space.
+
+Body mass (kg)
+See my trend
+
+Your body mass, measured on the mass-measurement device (a normal scale does not work without gravity).
+
+How to measure. Weekly, same time of day, before eating.
+
+Why it matters. Steady loss of body mass signals under-eating or dehydration.
+
+Cabin and radiation
+
+Beyond Earth's magnetic shield, cosmic rays give a steady dose and solar storms an occasional burst.
+
+Cabin carbon dioxide (mmHg)
+See my trend
+
+The average carbon dioxide level in the cabin air over the last day.
+
+How to measure. Read automatically from the cabin air monitor.
+
+Why it matters. In a closed cabin, exhaled carbon dioxide builds up. Higher levels are linked to headaches and may dull thinking.
+
+Radiation dose (mSv/day)
+See my trend
+
+The radiation dose your personal dosimeter recorded today, and your running mission total.
+
+How to measure. Read automatically from your personal dosimeter. Keep it on you.
+
+Why it matters. Beyond Earth's magnetic shield the crew receives a steady dose from cosmic rays and occasional bursts from solar storms. The total is tracked against a career limit.

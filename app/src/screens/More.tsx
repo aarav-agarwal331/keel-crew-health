@@ -13,11 +13,12 @@ export function More() {
         <LinkRow to={href('sharing')} title="Sharing and privacy" sub="You choose what each role can see. Every access is logged." />
         <LinkRow to={href('validation')} title="Does it work? Validation" sub="Detection rates and false alerts measured on real wearable data and on simulated missions." />
         <LinkRow to={href('method')} title="How Keel works, and its limits" sub="The method in plain language, with equations and limitations." />
-        <LinkRow to={href('guide')} title="Guide to measurements" sub="What each reading means, how to take it, and why space changes it." />
+        <LinkRow to={href('guide')} title="Guide: measurements and everything Keel can recommend" sub="What each reading means, how to take it, why space changes it, and the full list of actions with sources." />
         <LinkRow to={href('data')} title="Data sources and sensors" sub="Switch mission, import your own wearable data, connect a heart-rate strap." />
       </div>
 
-      <Card title="This device">
+      <Card title="Demo controls">
+        <p className="small muted">These exist only so you can explore the demo: switch crew member, data set and mission day.</p>
         <div className="field">
           <label htmlFor="who">Whose device is this?</label>
           <select id="who" value={me} onChange={(e) => setMe(e.target.value)} data-testid="who">
@@ -41,11 +42,13 @@ export function More() {
             {mission.default_day !== undefined && <button className="btn sm" onClick={() => setDay(mission.default_day!)}>Back to the demo day</button>}
           </div>
         </div>
+      </Card>
+      <Card title="This tablet">
         <div className="row wrap">
           <span className="lab">Display</span>
           <Seg label="Colour theme" value={theme} onChange={setTheme} options={[{ id: 'dark', label: 'Dark (cabin night)' }, { id: 'light', label: 'Light' }]} />
         </div>
-        <p className="small muted">All analysis for this crew ran on this device in {computeMs.toFixed(0)} ms, inside a background worker. Keel has no server.</p>
+        <p className="small muted">Keel last re-checked the whole crew's readings on this tablet in {computeMs.toFixed(0)} milliseconds. There is no server.</p>
         <button className="btn sm danger" onClick={() => { if (confirm('Delete every check-in, log, sharing setting and imported data set stored on this device?')) void resetLocal() }}>Erase my data on this device</button>
       </Card>
       <p className="banner">Keel is an independent student project for the 2026 NASA Space Apps Challenge. It is not a NASA product and is not endorsed by NASA. It is decision support, not a medical device.</p>

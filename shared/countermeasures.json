@@ -73,7 +73,7 @@
    "39",
    "9"
   ],
-  "text": "ISS operations lowered the cabin limit from 4.0 to 3.0 mmHg (24-hour average) after crews reported headaches and missed procedure steps. Each extra 1 mmHg doubled the odds of a headache report. Carbon dioxide can pool in poorly ventilated spots. Moving and raising local ventilation is our inference from that finding, not a quoted procedure."
+  "text": "ISS operations lowered the cabin limit from 4.0 to 3.0 mmHg (24-hour average) after crews reported headaches and missed procedure steps. Each extra 1 mmHg doubled the odds of a headache report, and a 7-day average under 2.5 mmHg kept headache risk under 1%. Carbon dioxide can pool in poorly ventilated spots. Moving and raising local ventilation is our inference from that finding, not a quoted procedure."
  },
  {
   "id": "CM-SHELTER",
@@ -84,7 +84,7 @@
    "47",
    "29"
   ],
-  "text": "The Orion plan is to build a shelter from stowage bags within an hour and stay up to 24 hours. Spacewalks are ended or delayed and the crew moves to the most shielded area. Career limit: under 600 mSv."
+  "text": "Shelter decisions come from the vehicle's radiation monitors and alarm, which react within minutes; Keel only sees a daily total afterwards. The Orion plan is to build a shelter from stowage bags within an hour and stay up to 24 hours; spacewalks are ended or delayed. Career limit: under 600 mSv, counting earlier flights."
  },
  {
   "id": "CM-INFECT",
@@ -96,7 +96,7 @@
    "6",
    "52e"
   ],
-  "text": "On Earth, wearables showed resting heart rate rising a median of 7 bpm about 4 days before infection symptoms. Immune function changes in space and latent viruses reactivate in most ISS crew. NASA lists hygiene, quarantine and monitoring as countermeasures."
+  "text": "In our own test on Earth data the resting heart rate rise during illness averaged about 3 bpm and usually appeared on or after the first day of symptoms; one published study reported larger, earlier rises in the cases it detected. Immune function changes in space and latent viruses reactivate in most ISS crew. NASA lists hygiene, quarantine and monitoring as countermeasures."
  },
  {
   "id": "CM-PMC",
@@ -155,5 +155,30 @@
    "29"
   ],
   "text": "NASA's standard requires medical clearance before every spacewalk."
+ },
+ {
+  "id": "CM-VITALS",
+  "title": "General clinical reference values",
+  "type": "literature",
+  "refs": [
+   "63",
+   "64",
+   "65",
+   "66",
+   "67",
+   "57"
+  ],
+  "text": "Public clinical guidance for adults on Earth: fever is likely above 37.2 to 37.5 °C by mouth, and care is advised if it stays at or above 39.4 °C or lasts more than two to three days; blood sugar below 70 mg/dL is low and below 54 mg/dL is dangerous; normal blood pressure is between 90/60 and 120/80 mmHg; resting oxygen of 92% or lower needs a clinician. These are not flight rules and have not been reviewed by a flight surgeon."
+ },
+ {
+  "id": "CM-MASS",
+  "title": "Body mass against pre-flight",
+  "type": "official",
+  "refs": [
+   "52d",
+   "29",
+   "22"
+  ],
+  "text": "ISS crews have typically been 2.8 to 4.4% below pre-flight body mass, mostly within the first month. NASA's standard is to provide 100% of energy needs. The 5% trigger Keel uses is a placeholder for a clinician to set."
  }
 ]

@@ -48,7 +48,7 @@ export function dayLabel(m: Mission, day: number): string {
 export function shortDay(m: Mission, day: number): string {
   if (m.day_label) return `${day + 1}`
   const fd = day - m.pre_days
-  return fd < 0 ? `L−${-fd}` : `FD ${fd + 1}`
+  return fd < 0 ? `${-fd} d to launch` : `Day ${fd + 1}`
 }
 
 export function phaseAt(m: Mission, day: number): { name: string; since: number } {

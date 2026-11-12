@@ -11,11 +11,15 @@ if ! gh auth status >/dev/null 2>&1; then
 fi
 REPO_NAME="${KEEL_REPO:-keel-crew-health}"
 OWNER="$(gh api user -q .login)"
-if ! git remote get-url origin >/dev/null 2>&1; then
-  gh repo create "$REPO_NAME" --public --source . --remote origin \
+URL="https://github.com/$OWNER/$REPO_NAME.git"
+# push over HTTPS with the GitHub CLI's token for this command only (no global git config is changed)
+GIT_AUTH=(-c "credential.helper=" -c "credential.helper=!gh auth git-credential")
+if ! gh repo view "$OWNER/$REPO_NAME" >/dev/null 2>&1; then
+  gh repo create "$REPO_NAME" --public \
     --description "Keel: a crew health monitor that keeps working when Earth cannot answer. NASA Space Apps 2026."
 fi
-git push -u origin main
+git remote get-url origin >/dev/null 2>&1 && git remote set-url origin "$URL" || git remote add origin "$URL"
+git "${GIT_AUTH[@]}" push -u origin main
 
 # rebuild with links from every figure to the script that made it
 (cd app && VITE_REPO_URL="https://github.com/$OWNER/$REPO_NAME" npm run build)
@@ -28,7 +32,7 @@ touch "$TMP/.nojekyll"
   git init -q -b gh-pages
   git add -A
   git -c user.name="$(git -C "$OLDPWD" config user.name)" -c user.email="$(git -C "$OLDPWD" config user.email)" commit -q -m "Deploy Keel"
-  git push -f "$(git -C "$OLDPWD" remote get-url origin)" gh-pages
+  git "${GIT_AUTH[@]}" push -f "$URL" gh-pages
 )
 rm -rf "$TMP"
 gh api -X POST "repos/$OWNER/$REPO_NAME/pages" -f "source[branch]=gh-pages" -f "source[path]=/" >/dev/null 2>&1 || true

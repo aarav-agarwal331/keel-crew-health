@@ -29,15 +29,25 @@ def test_flight_sleep_matches_published_mean():
     assert abs(np.nanmean(sl) - 6.09) < 0.25
 
 
-def test_illness_raises_heart_rate_before_symptoms():
+def test_illness_follows_the_fitted_template():
     P = load_params()
     sc = Scenario(events=[Event("illness", 1, 120, 1.0)])
     quiet = simulate(Scenario(), 21)
     ill = simulate(sc, 21)   # same seed: same noise, so the difference is the event itself
     d = col(ill, "rhr")[1] - col(quiet, "rhr")[1]
-    assert abs(d[:110]).max() < 1e-9
-    assert d[119] > 2.0                        # the day before symptom onset
-    assert abs(d[120:125].max() - P["illness_rhr_peak"]) < 1.5
+    pro, after = int(P["illness_prodrome_days"]), int(P["illness_rise_after_days"])
+    assert abs(d[:120 - pro]).max() < 1e-9                    # nothing before the prodrome
+    assert abs(d[120 + after - 1] - P["illness_rhr_peak"]) < 0.5   # peak a few days after symptom onset
+    assert 0 < d[120] < P["illness_rhr_peak"]                 # partly risen on the onset day
+    assert abs(d[160:]).max() < 0.5                           # and it resolves
+
+
+def test_illness_sizes_have_mean_one_and_include_non_responders():
+    from keel.simulator import illness_magnitude
+    rng = np.random.default_rng(0)
+    m = np.array([illness_magnitude(rng, 1.87) for _ in range(20000)])
+    assert abs(m.mean() - 1.0) < 0.05
+    assert 0.2 < (m == 0).mean() < 0.4
 
 
 def test_co2_event_is_crew_wide_and_raises_headaches():

@@ -1,0 +1,99 @@
+SCREEN: 08-replay-finished
+TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 126 | Simulated data
+BOTTOM NAV: Today | Trends | Check-in | Crew | More
+
+Mission replay
+
+A scripted health event from the simulated mission, played at about 4 mission days per second. Keel sees each day only as it arrives, exactly as it would on board.
+
+Event to replay
+Scripted cabin CO2 rise (scrubber degradation) · whole crew · FD 39
+Scripted low fluid intake · Tomás Novák · FD 59
+Scripted sleep restriction (schedule shift) · Amara Okafor · FD 79
+Scripted exercise device outage · Kenji Sato · FD 97
+Scripted illness (infection-like strain) · Lucía Reyes · FD 125
+Scripted low-mood period · Tomás Novák · FD 151
+Scripted solar particle event · whole crew · FD 164
+Play again
+Restart
+Step one day
+Slow
+Normal
+Fast
+Replay clock: FD 134 · Lucía Reyes
+Act today
+Earth link up
+Lucía's readings
+Your readings
+Your usual range
+Outside your range
+Resting heart rate (bpm)
+50
+60
+Keel alert
+Symptoms begin
+FD 109
+FD 117
+FD 126
+FD 134
+Heart rate variability (ms)
+25
+50
+Keel alert
+Symptoms begin
+FD 109
+FD 117
+FD 126
+FD 134
+Body temperature (°C)
+36
+37
+38
+Keel alert
+Symptoms begin
+FD 109
+FD 117
+FD 126
+FD 134
+What Keel did
+FD 133
+LINK
+Earth link restored
+
+Queued summaries go out now.
+
+FD 128
+Escalated: Your body looks like it is under strain
+
+Take your temperature now, swap today's hard exercise for a light session, and tell the medical officer. Contact the ground when a link is available.
+
+FD 126
+Escalated: Your body looks like it is under strain
+
+Take your temperature now, swap today's hard exercise for a light session, and tell the medical officer. Inform the crew medical officer.
+
+FD 125
+SCRIPTED EVENT
+Ground truth: Scripted illness (infection-like strain)
+
+This is the day the simulated crew member would first feel symptoms.
+
+FD 125
+Worth a look: Your body looks like it is under strain
+
+Take your temperature now, swap today's hard exercise for a light session. Manage it yourself.
+
+FD 119
+LINK
+Earth link lost
+
+Scripted two-week blackout (antenna fault), modelled on the two-week command pause at solar conjunction. Keel keeps working on board.
+
+RESULT OF THIS REPLAY
+
+Keel alerted on the day the scripted event started.
+
+One scripted event proves nothing by itself. The measured detection rates, lead times and false-alert rates over hundreds of simulated events and real wearable data are on the Validation screen.
+
+Open that day as Lucía
+See the validation

@@ -1,0 +1,69 @@
+SCREEN: 05-sharing
+TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 126 | Simulated data
+BOTTOM NAV: Today | Trends | Check-in | Crew | More
+
+Sharing and privacy
+
+Lucía Reyes, your health data is yours. Nothing personal leaves this device unless you allow it here. Cabin readings (air, radiation) are not personal and are visible to the whole crew.
+
+Who are you setting this for?
+Crew medical officer
+Commander
+Flight surgeon on the ground
+
+The crew member trained to provide care on board.
+
+Heart and circulation
+Private
+Status
+Trends
+Full detail
+Only steady / worth a look / act today.
+Sleep and body clock
+Private
+Status
+Trends
+Full detail
+Only steady / worth a look / act today.
+Exercise
+Private
+Status
+Trends
+Full detail
+Only steady / worth a look / act today.
+Mind and mood
+Private
+Status
+Trends
+Full detail
+Nothing.
+Food and fluids
+Private
+Status
+Trends
+Full detail
+Only steady / worth a look / act today.
+Symptoms
+Private
+Status
+Trends
+Full detail
+Only steady / worth a look / act today.
+Make everything private
+Share everything
+Exactly what the crew medical officer sees about you right now
+
+Overall: Act today
+
+Area	Level	They see
+Heart and circulation	Status	Act today
+Sleep and body clock	Status	Steady
+Exercise	Status	Steady
+Mind and mood	Private	Nothing
+Food and fluids	Status	Worth a look
+Symptoms	Status	Learning your normal
+Alert in heart and circulation: title hidden
+Access log
+Stored on your device
+
+Nobody has looked at your shared data yet. Open the Crew screen as the commander or the medical officer and it will appear here.

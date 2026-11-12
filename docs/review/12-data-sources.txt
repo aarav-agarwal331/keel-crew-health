@@ -1,0 +1,30 @@
+SCREEN: 12-data-sources
+TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 126 | Simulated data
+BOTTOM NAV: Today | Trends | Check-in | Crew | More
+
+Data sources and sensors
+Data set in use
+Simulated data
+
+Mars transit. Four crew, 30 days of pre-flight baseline, then a 180-day outbound transit to Mars.
+
+Mars transit
+Four crew, 180-day outbound transit. Simulated.
+IN USE
+Lunar surface stay
+Four crew, 35 days at a south-polar base. Simulated.
+SIMULATED
+Import your own wearable data
+
+Read in this browser only; the file is never uploaded. Keel then learns your baseline from it and shows the same Today and Trends screens for you. Supported: a CSV with a date column and any of rhr, hrv, spo2, temp, sleep_h, ex_min, mood, fluid, mass, sbp, glucose; Fitbit export JSON (resting heart rate, sleep); Apple Health export.xml.
+
+Choose a file
+Download a sample CSV
+
+Alert thresholds for imported data are the ones calibrated on simulated missions, so treat alerts on your own data as illustrations.
+
+Live heart-rate strap
+
+Connect any Bluetooth chest strap or watch that broadcasts the standard heart-rate service. Lie still for two minutes after waking, then save the reading as today's resting heart rate and HRV.
+
+Connect a strap

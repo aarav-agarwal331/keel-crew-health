@@ -12,15 +12,17 @@ export function CheckIn() {
   const existing = entries.find((e) => e.mission === mission.id && e.crew === me && e.day === day)
   const [mood, setMood] = useState<number | null>(existing?.values.mood ?? null)
   const [sym, setSym] = useState<string[]>(existing?.symptoms ?? [])
-  const [fluid, setFluid] = useState<number>(existing?.values.fluid ?? 0)
+  const usual = rawSeries(mission, me, 'fluid', []).slice(Math.max(0, day - 14), day).filter((v) => !Number.isNaN(v))
+  const fluidHint = usual.length ? usual.reduce((a, b) => a + b, 0) / usual.length : 2.25
+  const [fluid, setFluid] = useState<number>(existing?.values.fluid ?? Math.round(fluidHint * 4) / 4)
+  const [noSym, setNoSym] = useState(existing ? existing.symptoms.length === 0 : false)
+  const [more, setMore] = useState(false)
   const [food, setFood] = useState<number | null>(existing?.values.energy ?? null)
   const [ex, setEx] = useState<number | null>(existing?.values.ex_min ?? null)
   const [spot, setSpot] = useState<Record<string, string>>(() => Object.fromEntries(SPOT.filter((k) => existing?.values[k] !== undefined).map((k) => [k, String(existing!.values[k])])))
   const [pvt, setPvt] = useState<number | null>(existing?.values.pvt_rt ?? null)
   const [saved, setSaved] = useState(false)
   const [err, setErr] = useState('')
-  const usualFluid = rawSeries(mission, me, 'fluid', []).slice(Math.max(0, day - 14), day).filter((v) => !Number.isNaN(v))
-  const fluidHint = usualFluid.length ? usualFluid.reduce((a, b) => a + b, 0) / usualFluid.length : 2.25
 
   const save = async () => {
     const values: Record<string, number> = {}
@@ -43,64 +45,85 @@ export function CheckIn() {
   }
   const red = sym.some((s) => SYMPTOMS.find((x) => x.id === s)?.red_flag)
 
+  const routine = SYMPTOMS.filter((x) => !x.red_flag)
+  const redFlags = SYMPTOMS.filter((x) => x.red_flag)
+  const toggle = (id: string) => { setNoSym(false); setSym((p) => (p.includes(id) ? p.filter((x) => x !== id) : [...p, id])) }
+  const saveBtn = (
+    <div className="sticky-save col">
+      {err && <p className="banner strong" role="alert">{err}</p>}
+      <button className="btn primary block" onClick={save} data-testid="save-checkin">Save check-in</button>
+    </div>
+  )
   return (
     <>
       <h1>Check-in</h1>
-      <p className="muted">{dayLabel(mission, day)}. About a minute. Everything stays on this device unless you share it.</p>
+      <p className="muted">{dayLabel(mission, day)}. Four quick answers take about a minute. Everything stays on this tablet unless you share it.</p>
 
-      <Card title="How are you feeling?">
+      <Card title="1. How are you feeling?">
         <div className="choices five" role="group" aria-label="Mood, 1 very low to 5 very good">
           {MOODS.map((m, i) => <button key={m} className="choice" aria-pressed={mood === i + 1} onClick={() => setMood(i + 1)} data-testid={`mood-${i + 1}`}><span className="n">{i + 1}</span><span className="tiny">{m}</span></button>)}
         </div>
       </Card>
 
-      <Card title="Any symptoms today?">
+      <Card title="2. Any symptoms today?">
         <div className="choices" role="group" aria-label="Symptoms">
-          {SYMPTOMS.map((s) => <button key={s.id} className="choice" aria-pressed={sym.includes(s.id)} onClick={() => setSym((p) => (p.includes(s.id) ? p.filter((x) => x !== s.id) : [...p, s.id]))} data-testid={`sym-${s.id}`}>{s.label}</button>)}
+          <button className="choice" aria-pressed={noSym && sym.length === 0} onClick={() => { setSym([]); setNoSym(true) }} data-testid="sym-none">No symptoms</button>
+          {routine.map((s) => <button key={s.id} className="choice" aria-pressed={sym.includes(s.id)} onClick={() => toggle(s.id)} data-testid={`sym-${s.id}`}>{s.label}</button>)}
         </div>
-        {red && <p className="banner strong">That symptom should not wait. Save this check-in and tell the medical officer now.</p>}
+        <span className="lab">Tell the medical officer now if you have any of these:</span>
+        <div className="choices" role="group" aria-label="Symptoms that need the medical officer now">
+          {redFlags.map((s) => <button key={s.id} className="choice red" aria-pressed={sym.includes(s.id)} onClick={() => toggle(s.id)} data-testid={`sym-${s.id}`}>{s.label}</button>)}
+        </div>
+        {red && <p className="banner strong" role="alert"><strong>Do not wait.</strong> Save this check-in and tell the medical officer now, whatever else Keel shows.</p>}
       </Card>
 
       <div className="grid2">
-        <Card title="Fluids today">
+        <Card title="3. Fluids today">
           <div className="stepper">
             <button aria-label="One drink bag less" onClick={() => setFluid((v) => Math.max(0, Number((v - 0.25).toFixed(2))))}>−</button>
             <span className="v num" aria-live="polite">{fluid.toFixed(2)} L</span>
             <button aria-label="One drink bag more" onClick={() => setFluid((v) => Number((v + 0.25).toFixed(2)))} data-testid="fluid-plus">+</button>
           </div>
-          <p className="small muted">One tap is one 250 mL drink bag. Your recent average is {fluidHint.toFixed(1)} L; the in-flight target is 2.0 to 2.5 L.</p>
+          <p className="small muted">Starts at your recent average ({fluidHint.toFixed(1)} L). One tap is one 250 mL drink bag. The in-flight target is 2.0 to 2.5 L.</p>
         </Card>
-        <Card title="How much of your planned food did you eat?">
+        <Card title="4. How much of your planned food did you eat?">
           <div className="choices" role="group" aria-label="Food intake">{FOOD.map((f) => <button key={f.v} className="choice" aria-pressed={food === f.v} onClick={() => setFood(f.v)}>{f.label}</button>)}</div>
-        </Card>
-        <Card title="Exercise today">
-          <div className="stepper">
-            <button aria-label="15 minutes less" onClick={() => setEx((v) => Math.max(0, (v ?? 0) - 15))}>−</button>
-            <span className="v num" aria-live="polite">{ex ?? 0} min</span>
-            <button aria-label="15 minutes more" onClick={() => setEx((v) => (v ?? 0) + 15)}>+</button>
-          </div>
-          <p className="small muted">Only needed if the exercise devices did not log your session.</p>
-        </Card>
-        <Card title="Reaction self-test">
-          {pvt !== null ? <p>Saved: average response <strong className="num">{pvt.toFixed(0)} ms</strong>. <button className="btn sm" onClick={() => setPvt(null)}>Redo</button></p> : <Pvt onDone={setPvt} />}
         </Card>
       </div>
 
-      <Card title="Measurements (only what you took today)">
-        <div className="grid3">
-          {SPOT.map((k) => (
-            <div className="field" key={k}>
-              <label htmlFor={`f-${k}`}>{IND[k].label} <span className="muted small">({IND[k].unit})</span></label>
-              <input id={`f-${k}`} type="number" inputMode="decimal" step="any" value={spot[k] ?? ''} onChange={(e) => setSpot((p) => ({ ...p, [k]: e.target.value }))} />
-              <details><summary className="small">How to measure</summary><p className="small muted">{IND[k].how}</p></details>
-            </div>
-          ))}
-        </div>
-      </Card>
+      {saveBtn}
+      {saved && <div className="card" role="status"><strong>Saved.</strong><p className="muted">Keel has re-checked your readings on this tablet with your new entries.</p><div className="row wrap"><button className="btn" onClick={() => go('today')}>See Today</button><a className="btn" href={href('sharing')}>Who can see this?</a></div></div>}
 
-      {err && <p className="banner strong" role="alert">{err}</p>}
-      <button className="btn primary block" onClick={save} data-testid="save-checkin">Save check-in</button>
-      {saved && <div className="card" role="status"><strong>Saved.</strong><p className="muted">Keel has re-run its analysis on this device with your new entries.</p><div className="row wrap"><button className="btn" onClick={() => go('today')}>See Today</button><a className="btn" href={href('sharing')}>Who can see this?</a></div></div>}
+      <button className="btn block" aria-expanded={more} onClick={() => setMore((v) => !v)} data-testid="more-checkin">{more ? 'Hide the optional extras' : 'Add more: reaction test, exercise, measurements (optional)'}</button>
+      {more && (
+        <>
+          <div className="grid2">
+            <Card title="Reaction self-test (1 minute)">
+              {pvt !== null ? <p>Saved: average response <strong className="num">{pvt.toFixed(0)} ms</strong>. <button className="btn sm" onClick={() => setPvt(null)}>Redo</button></p> : <Pvt onDone={setPvt} />}
+            </Card>
+            <Card title="Exercise today">
+              <div className="stepper">
+                <button aria-label="15 minutes less" onClick={() => setEx((v) => Math.max(0, (v ?? 0) - 15))}>−</button>
+                <span className="v num" aria-live="polite">{ex ?? 0} min</span>
+                <button aria-label="15 minutes more" onClick={() => setEx((v) => (v ?? 0) + 15)}>+</button>
+              </div>
+              <p className="small muted">Only needed if the exercise devices did not log your session.</p>
+            </Card>
+          </div>
+          <Card title="Measurements (only what you took today)">
+            <div className="grid3 fields">
+              {SPOT.map((k) => (
+                <div className="field" key={k}>
+                  <label htmlFor={`f-${k}`}>{IND[k].label} <span className="muted small">({IND[k].unit})</span></label>
+                  <input id={`f-${k}`} type="number" inputMode="decimal" step="any" value={spot[k] ?? ''} onChange={(e) => setSpot((p) => ({ ...p, [k]: e.target.value }))} />
+                  <details><summary className="small">How to measure</summary><p className="small muted">{IND[k].how}</p></details>
+                </div>
+              ))}
+            </div>
+          </Card>
+          {saveBtn}
+        </>
+      )}
     </>
   )
 }

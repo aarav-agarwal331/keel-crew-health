@@ -18,7 +18,7 @@
    "source": "wearable",
    "detect": true,
    "plain": "How fast your heart beats when you are fully at rest, usually measured during sleep.",
-   "how": "Wear the wrist or chest sensor overnight. Keel takes the lowest stable stretch while you sleep, so exercise and coffee do not distort it.",
+   "how": "Wear the wrist or chest sensor while you sleep. Keel takes the typical heart rate over still minutes in your sleep period, so exercise and coffee do not distort it.",
    "why": "A resting heart rate that climbs above your own normal is one of the earliest whole-body signs of infection, dehydration, poor recovery or loss of fitness."
   },
   {
@@ -52,21 +52,21 @@
    "transform": "none",
    "concern": -1,
    "floor": 0.5,
-   "decimals": 1,
+   "decimals": 0,
    "range": [
     70,
     100
    ],
    "source": "wearable",
    "detect": true,
-   "plain": "The share of your red blood cells carrying oxygen.",
+   "plain": "The share of the haemoglobin in your blood that is carrying oxygen.",
    "how": "Overnight from the wearable, or a 30-second fingertip reading: warm hand, hold still, wait for a steady number.",
    "why": "A sustained drop can point to a breathing or lung problem or a cabin atmosphere issue."
   },
   {
    "id": "temp",
-   "label": "Body temperature",
-   "short": "Temp",
+   "label": "Skin temperature (overnight)",
+   "short": "Skin temp",
    "unit": "°C",
    "category": "cardio",
    "system": "core",
@@ -80,9 +80,9 @@
    ],
    "source": "wearable",
    "detect": true,
-   "plain": "Your body temperature, from the wearable skin sensor overnight or a thermometer reading.",
-   "how": "For a spot check use the thermometer at the same time each day, before exercise and before eating or drinking.",
-   "why": "A rise above your own normal supports the picture of infection or inflammation; body temperature also runs differently in space."
+   "plain": "Your wrist skin temperature while asleep, from the wearable. It moves with the cabin and bedding as well as with your body, so only a sustained rise means something.",
+   "how": "Measured automatically overnight. For a real body temperature use the thermometer and enter it at check-in.",
+   "why": "A sustained rise above your own normal supports the picture of infection or inflammation. It is not a fever reading."
   },
   {
    "id": "sleep_h",
@@ -103,7 +103,11 @@
    "detect": true,
    "plain": "Hours actually asleep in the last sleep period.",
    "how": "Measured by the wearable. If you did not wear it, enter your best estimate at check-in.",
-   "why": "Crews sleep less in space than on Earth. Short sleep builds up as a debt that slows reactions and raises error risk."
+   "why": "Crews sleep less in space than on Earth. Short sleep builds up as a debt that slows reactions and raises error risk.",
+   "standard": {
+    "value": 8.5,
+    "label": "Scheduled sleep period 8.5 h"
+   }
   },
   {
    "id": "sleep_mid",
@@ -208,7 +212,11 @@
    "detect": true,
    "plain": "How much you drank today.",
    "how": "Tap once per drink bag at check-in, or enter litres.",
-   "why": "Crews tend to drink too little in space. Low intake raises the risk of kidney stones and makes the heart work harder."
+   "why": "Crews tend to drink too little in space. Low intake raises the risk of kidney stones and makes the heart work harder.",
+   "standard": {
+    "value": 2.0,
+    "label": "At least 2.0 L"
+   }
   },
   {
    "id": "energy",
@@ -229,7 +237,32 @@
    "detect": true,
    "plain": "How much of your planned food you ate today.",
    "how": "Estimate at check-in: all, most, about half, little.",
-   "why": "Under-eating is common in space and speeds up loss of body mass, muscle and bone."
+   "why": "Under-eating is common in space and speeds up loss of body mass, muscle and bone.",
+   "standard": {
+    "value": 100,
+    "label": "Plan: 100%"
+   }
+  },
+  {
+   "id": "temp_oral",
+   "label": "Body temperature (thermometer)",
+   "short": "Thermometer",
+   "unit": "°C",
+   "category": "cardio",
+   "system": "core",
+   "transform": "none",
+   "concern": 1,
+   "floor": 0.2,
+   "decimals": 1,
+   "range": [
+    34,
+    42
+   ],
+   "source": "spot",
+   "detect": false,
+   "plain": "Your body temperature taken with the thermometer.",
+   "how": "Take it before exercise and before eating or drinking, mouth closed, and wait for the beep.",
+   "why": "A thermometer reading of 38.0 °C or more is a fever by general guidance and should go to the medical officer the same day. Body temperature may run higher on long flights, so compare with your own earlier readings too."
   },
   {
    "id": "mass",
@@ -270,7 +303,7 @@
    "source": "spot",
    "detect": false,
    "plain": "The upper (systolic) number of your blood pressure.",
-   "how": "Sit still for five minutes, cuff on the upper arm at heart level, do not talk during the reading.",
+   "how": "Rest quietly and restrained for five minutes, cuff on the upper arm, do not talk during the reading.",
    "why": "Blood pressure regulation changes without gravity. Readings well outside your normal deserve a repeat and a word with the medical officer."
   },
   {
@@ -292,7 +325,7 @@
    "detect": false,
    "plain": "The sugar level in a fingertip drop of blood.",
    "how": "Clean fingertip, first drop wiped away, measure before breakfast for a comparable number.",
-   "why": "Named in the challenge as a useful indicator. Keel shows it against your own previous readings and a general reference range."
+   "why": "A fingertip check is quick and the challenge names it as a useful indicator. Keel compares it with general reference values, not with a personal range."
   },
   {
    "id": "co2",
@@ -330,7 +363,7 @@
     0,
     1000
    ],
-   "source": "env",
+   "source": "dosimeter",
    "detect": false,
    "plain": "The radiation dose your personal dosimeter recorded today, and your running mission total.",
    "how": "Read automatically from your personal dosimeter. Keep it on you.",
@@ -377,6 +410,10 @@
    "label": "Nausea"
   },
   {
+   "id": "vomiting",
+   "label": "Vomited"
+  },
+  {
    "id": "congestion",
    "label": "Stuffy head or nose"
   },
@@ -401,6 +438,14 @@
    "label": "Vision change"
   },
   {
+   "id": "rash",
+   "label": "Rash or itchy skin"
+  },
+  {
+   "id": "other",
+   "label": "Something else"
+  },
+  {
    "id": "chest_pain",
    "label": "Chest pain or pressure",
    "red_flag": true
@@ -411,8 +456,58 @@
    "red_flag": true
   },
   {
+   "id": "fainting",
+   "label": "Fainted or nearly fainted",
+   "red_flag": true
+  },
+  {
+   "id": "palpitations",
+   "label": "Racing or irregular heartbeat",
+   "red_flag": true
+  },
+  {
+   "id": "vision_sudden",
+   "label": "Sudden loss of vision",
+   "red_flag": true
+  },
+  {
+   "id": "severe_headache",
+   "label": "Worst headache of your life",
+   "red_flag": true
+  },
+  {
+   "id": "confusion",
+   "label": "Confusion, weakness or trouble speaking",
+   "red_flag": true
+  },
+  {
+   "id": "abdominal",
+   "label": "Severe belly pain",
+   "red_flag": true
+  },
+  {
    "id": "flank_pain",
    "label": "Severe side or back pain",
+   "red_flag": true
+  },
+  {
+   "id": "vomiting_repeat",
+   "label": "Vomited more than twice, or cannot keep fluids down",
+   "red_flag": true
+  },
+  {
+   "id": "urine",
+   "label": "Cannot pass urine, or blood in urine",
+   "red_flag": true
+  },
+  {
+   "id": "injury",
+   "label": "Injury, or something in the eye",
+   "red_flag": true
+  },
+  {
+   "id": "dcs",
+   "label": "Joint pain or numbness after a spacewalk",
    "red_flag": true
   }
  ]

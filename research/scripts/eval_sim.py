@@ -15,9 +15,9 @@ sys.path.insert(0, str(ROOT / "research"))  # our own package; scripts run with 
 import numpy as np
 
 from keel.core import Params
-from keel.evaluate import METHOD_LABELS, METHODS, Windows, aggregate, bootstrap, calibrate, chance_rows, fit_model, person_outcome, score_people
-from keel.export import APP_PUBLIC, git_commit, write_json
-from keel.mission import detect_spec, people_from
+from keel.evaluate import METHOD_LABELS, METHODS, Windows, aggregate, bootstrap, calibrate, chance_rows, fit_model, net_stats, person_outcome, score_people
+from keel.export import APP_PUBLIC, code_version, git_commit, write_json
+from keel.mission import SPEC2, detect_spec, ground_people, people_from
 from keel.simulator import IND, WEARABLE, CHECKIN, Event, Scenario, apply_missing, random_events, simulate
 
 BUDGETS = [0.25, 0.5, 1.0, 2.0, 4.0]
@@ -41,14 +41,14 @@ def missions(n, seed0, events_per=2, **kw):
     return out
 
 
-def people(ms, seed0, aware=True, ids=None, drop=None, **miss):
+def people(ms, seed0, aware=True, ids=None, drop=None, prior_scale=1.0, **miss):
     out = []
     for k, m in enumerate(ms):
         x = apply_missing(m, seed0 + k, **miss)
         if drop:
             for name in drop:
                 x[:, :, IND.index("ex_min" if name == "ex7" else name)] = np.nan
-        out += people_from(m, x, ids=ids, aware=aware)
+        out += people_from(m, x, ids=ids, aware=aware, prior_scale=prior_scale)
     return out
 
 
@@ -73,8 +73,12 @@ def evaluate(train, test, spec, p, w, methods=METHODS, budgets=BUDGETS, keep=Fal
         for b in budgets:
             t = calibrate([s[m] for s in tr], on, b, w, p.merge_gap)
             thr[(m, b)] = t
-            out[m][b] = [person_outcome(s[m], t, q.onsets, w, p.merge_gap) for s, q in zip(te, test)]
+            out[m][b] = [{**person_outcome(s[m], t, q.onsets, w, p.merge_gap), "pid": q.pid} for s, q in zip(te, test)]
     return (out, thr, te, model) if keep else out
+
+
+def sc_len() -> int:
+    return Scenario().flight_days
 
 
 def stat(rows, n_boot=1000):
@@ -89,16 +93,17 @@ def main():
     out, thr, te_scores, model = evaluate(train, test, spec, p, w, keep=True)
 
     main_tbl = {}
+    chance = {(m, b): chance_rows(test, [s[m] for s in te_scores], [thr[(m, b)]] * len(test), w, p.merge_gap, 3, 1) for m in METHODS for b in BUDGETS}
     for m in METHODS:
         main_tbl[m] = {}
         for b in BUDGETS:
             st = stat(out[m][b])
-            ch = chance_rows(test, [s[m] for s in te_scores], [thr[(m, b)]] * len(test), w, p.merge_gap, 3, 1)
-            st["chance_detection_rate"] = aggregate(ch)["detection_rate"]
+            st["chance_detection_rate"] = aggregate(chance[(m, b)])["detection_rate"]
+            st.update(net_stats(out[m][b], chance[(m, b)], 600, 1, (out["fixed"][b], chance[("fixed", b)]) if m != "fixed" else None))
             main_tbl[m][str(b)] = st
         s = main_tbl[m]["1.0"]
-        print(f"{m:8s} @1.0 det {s['detection_rate']:.2f} [{s['detection_rate_ci'][0]:.2f},{s['detection_rate_ci'][1]:.2f}] chance {s['chance_detection_rate']:.2f} lead {s['median_lead']} FA {s['fa_per_person_month']:.2f}"
-              f" | @0.25 det {main_tbl[m]['0.25']['detection_rate']:.2f} FA {main_tbl[m]['0.25']['fa_per_person_month']:.2f}")
+        print(f"{m:8s} @1.0 det {s['detection_rate']:.2f} chance {s['chance_detection_rate']:.2f} net {s['net_detection']:.2f} [{s['net_detection_ci'][0]:.2f},{s['net_detection_ci'][1]:.2f}] FA {s['fa_per_person_month']:.2f}"
+              f" | @0.25 det {main_tbl[m]['0.25']['detection_rate']:.2f} net {main_tbl[m]['0.25']['net_detection']:.2f} FA {main_tbl[m]['0.25']['fa_per_person_month']:.2f}")
 
     # ---- by event type and size (deployed detector, both tiers) --------------------------------
     by_type = {}
@@ -108,21 +113,24 @@ def main():
         for ty in TYPES:
             leads = [l for r, q in zip(rows, test) for l, s, e in zip(r["leads"], r["scorable"], q.events_meta) if s and e["type"] == ty]
             det = [l for l in leads if l is not None]
+            after = [-l for l in det if l <= 0]
             bt[ty] = {"label": TYPE_LABELS[ty], "n": len(leads), "detection_rate": len(det) / max(1, len(leads)),
-                      "median_delay_days": float(-np.median(det)) if det else None}
+                      "share_alert_before_onset": sum(1 for l in det if l > 0) / max(1, len(leads)),
+                      "median_delay_days": float(np.median(after)) if after else None}
         by_type[str(b)] = bt
     # dose-response: one event type at a time, fixed sizes, fresh missions per cell
     sizes = [0.5, 1.0, 1.5, 2.0, 3.0]
     dose = {}
     for ty in TYPES:
-        dose[ty] = {"label": TYPE_LABELS[ty], "sizes": sizes, "0.25": [], "1.0": []}
+        dose[ty] = {"label": TYPE_LABELS[ty], "sizes": sizes, "0.25": [], "1.0": [], "n": []}
         for k, mag in enumerate(sizes):
-            ms = missions(24, 20000 + 100 * TYPES.index(ty) + k, events_per=2, types=[ty], magnitudes=(mag,), illness_spread=False)
+            ms = missions(40, 20000 + 100 * TYPES.index(ty) + k, events_per=2, types=[ty], magnitudes=(mag,), illness_spread=False)
             pe = people(ms, 20000 + k)
             sc = [r[DEPLOYED] for r in score_people(pe, model, p)]
             for b in [0.25, 1.0]:
                 rows = [person_outcome(s, thr[(DEPLOYED, b)], q.onsets, w, p.merge_gap) for s, q in zip(sc, pe)]
                 dose[ty][str(b)].append(aggregate(rows)["detection_rate"])
+            dose[ty]["n"].append(aggregate(rows)["n_events"])
         print("dose", ty, [round(v, 2) for v in dose[ty]["1.0"]])
 
     # ---- missing data and sensor dropout (thresholds stay as trained on nominal data) ----------
@@ -145,9 +153,10 @@ def main():
         print("dropout", label, round(dropout[-1]["1.0"]["detection_rate"], 2), round(dropout[-1]["1.0"]["fa_per_person_month"], 2))
 
     # ---- ablations: refit and recalibrate for each variant ---------------------------------------
-    def variant(label, pp=p, aware=True, ids=None):
+    def variant(label, pp=p, aware=True, ids=None, prior_scale=1.0):
         sp = detect_spec(ids) if ids else spec
-        tr_, te_ = people(tr_m, SEED_TRAIN, aware=aware, ids=ids), people(te_m, SEED_TEST, aware=aware, ids=ids)
+        tr_ = people(tr_m, SEED_TRAIN, aware=aware, ids=ids, prior_scale=prior_scale)
+        te_ = people(te_m, SEED_TEST, aware=aware, ids=ids, prior_scale=prior_scale)
         o, t_, sc_, _ = evaluate(tr_, te_, sp, pp, w, methods=[DEPLOYED], budgets=[0.25, 1.0], keep=True)
         res = {"label": label, **{str(b): stat(o[DEPLOYED][b], 400) for b in [0.25, 1.0]}}
         # false alerts in the first 30 flight days: is adaptation mistaken for a problem?
@@ -163,6 +172,9 @@ def main():
     ablation = [
         variant("Keel as deployed"),
         variant("Without mission-phase handling (naive rolling baseline)", aware=False),
+        variant("Phase handling told to expect no shift at all (prior x 0)", prior_scale=0.0),
+        variant("Phase handling with half the true shift (prior x 0.5)", prior_scale=0.5),
+        variant("Phase handling with twice the true shift (prior x 2)", prior_scale=2.0),
         variant("Baseline window 14 days", replace(p, window=14)),
         variant("Baseline window 56 days", replace(p, window=56)),
         variant("No gap before the baseline window", replace(p, gap=0)),
@@ -172,16 +184,31 @@ def main():
         variant("Wearable indicators only", ids=wear_ids),
     ]
 
-    # ---- like-for-like check against real data: illness only, on the two channels the real
-    # illness data has (resting heart rate + activity), with similar wear time ---------------------
-    lf_tr = missions(40, 70000, types=["illness"])
-    lf_te = missions(60, 71000, types=["illness"])
-    ids2 = ["rhr", "ex7"]
-    o2, _, _, _ = evaluate(people(lf_tr, 70000, ids=ids2, p_wear=0.3), people(lf_te, 71000, ids=ids2, p_wear=0.3), detect_spec(ids2), p, w,
-                           methods=[DEPLOYED], budgets=[0.25, 1.0], keep=True)
-    like = {"indicators": "Resting heart rate + exercise only, 30% of nights unworn, illness events with the real spread of sizes",
-            **{str(b): stat(o2[DEPLOYED][b], 400) for b in [0.25, 1.0]}}
-    print("like-for-like", round(like["1.0"]["detection_rate"], 2), round(like["0.25"]["detection_rate"], 2))
+    # ---- does the widened band after launch hide real events?  Events in flight days 3 to 25 ------
+    early_tr = missions(40, 80000, events_per=1, first_day=3, last_margin=sc_len() - 25, min_gap=1)
+    early_te = missions(80, 81000, events_per=1, first_day=3, last_margin=sc_len() - 25, min_gap=1)
+    early_events = {}
+    for label, aware in [("phase-aware", True), ("naive", False)]:
+        o, t_, sc_, _ = evaluate(people(early_tr + tr_m, 80000, aware=aware), people(early_te, 81000, aware=aware), spec, p, w, methods=[DEPLOYED], budgets=[1.0], keep=True)
+        te_ = people(early_te, 81000, aware=aware)
+        ch = chance_rows(te_, [s[DEPLOYED] for s in sc_], [t_[(DEPLOYED, 1.0)]] * len(te_), w, p.merge_gap, 3, 1)
+        early_events[label] = {**stat(o[DEPLOYED][1.0], 400), **net_stats(o[DEPLOYED][1.0], ch, 400, 1)}
+        print("events in the first 25 flight days,", label, round(early_events[label]["detection_rate"], 2), "net", round(early_events[label]["net_detection"], 2), "FA", round(early_events[label]["fa_per_person_month"], 2))
+
+    # ---- like-for-like check against real data: simulated people on the ground, illness only,
+    # the same two channels the real illness data has, similar wear time (eval_real.py scores
+    # the real validation-half episodes the same way) ------------------------------------------
+    g_tr, g_te = ground_people(40, 70000), ground_people(60, 71000)
+    g_model = fit_model(g_tr, SPEC2, p, w)
+    g_trs = [s[DEPLOYED] for s in score_people(g_tr, g_model, p)]
+    g_tes = [s[DEPLOYED] for s in score_people(g_te, g_model, p)]
+    like = {"indicators": "Resting heart rate + 7-day mean activity (log scale), 30% of nights unworn, simulated illnesses with the real spread of sizes, people on the ground"}
+    for b in [0.25, 1.0]:
+        t = calibrate(g_trs, [q.onsets for q in g_tr], b, w, p.merge_gap)
+        rows = [{**person_outcome(s, t, q.onsets, w, p.merge_gap), "pid": q.pid} for s, q in zip(g_tes, g_te)]
+        ch = chance_rows(g_te, g_tes, [t] * len(g_te), w, p.merge_gap, 3, 1)
+        like[str(b)] = {**bootstrap(rows, 600, 1), "chance_detection_rate": aggregate(ch)["detection_rate"], **net_stats(rows, ch, 600, 1), "threshold": t}
+    print("like-for-like sim: det", round(like["1.0"]["detection_rate"], 2), "net", round(like["1.0"]["net_detection"], 2), "| @0.25", round(like["0.25"]["detection_rate"], 2), "net", round(like["0.25"]["net_detection"], 2))
 
     # ---- false alerts over long quiet periods: missions with no events at all -------------------
     quiet_m = [simulate(Scenario(), 30000 + s) for s in range(40)]
@@ -189,18 +216,18 @@ def main():
     qs = [r[DEPLOYED] for r in score_people(qp, model, p)]
     quiet = {}
     for b in [0.25, 1.0]:
-        rows = [person_outcome(s, thr[(DEPLOYED, b)], [], w, p.merge_gap) for s in qs]
+        rows = [{**person_outcome(s, thr[(DEPLOYED, b)], [], w, p.merge_gap), "pid": q.pid} for s, q in zip(qs, qp)]
         per = [r["fa"] / (r["quiet_days"] / 30.44) for r in rows]
         quiet[str(b)] = {**{k: v for k, v in stat(rows).items() if k.startswith("fa_") or k in ("quiet_person_months", "false_alerts", "quiet_days_in_alert_frac")},
                          "share_of_people_with_zero": float(np.mean([v == 0 for v in per])), "per_person_p90": float(np.percentile(per, 90))}
 
     write_json(APP_PUBLIC / "results" / "sim_eval.json", {
-        "script": "research/scripts/eval_sim.py", "commit": git_commit(), "simulated": True, "deployed": DEPLOYED,
+        "script": "research/scripts/eval_sim.py", "commit": git_commit(), "code_version": code_version(), "simulated": True, "deployed": DEPLOYED,
         "design": {"train_missions": N_TRAIN, "test_missions": N_TEST, "crew": 4, "flight_days": 180, "events_per_mission": 2,
                    "seeds": {"train": SEED_TRAIN, "test": SEED_TEST}, "n_test_events": sum(len(q.onsets) for q in test),
                    "windows": {"det_pre": w.det_pre, "det_post": w.det_post}},
         "budgets": BUDGETS, "methods": METHODS, "method_labels": METHOD_LABELS, "main": main_tbl, "by_type": by_type, "dose": dose,
-        "missing": missing, "dropout": dropout, "ablation": ablation, "quiet": quiet, "like_for_like": like,
+        "missing": missing, "dropout": dropout, "ablation": ablation, "early_events": early_events, "quiet": quiet, "like_for_like": like,
     }, indent=1)
     print("wrote sim_eval.json")
 

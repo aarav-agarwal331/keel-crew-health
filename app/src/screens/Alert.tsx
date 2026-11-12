@@ -1,15 +1,17 @@
 import { useState } from 'react'
-import { CM, describeChange, REFS, RULE, STATUS_LABEL, TIER_LABEL, unusualness } from '../core/analysis'
+import { CM, describeChange, REFS, RULE, STATUS_LABEL, unusualness, URGENCY_LABEL, WHO_LABEL } from '../core/analysis'
 import { IND, shortDay } from '../core/mission'
 import type { ShareCategory } from '../core/sharing'
 import { SHARE_CATEGORIES } from '../core/sharing'
-import type { Tier } from '../core/types'
+import type { Tier, Urgency } from '../core/types'
 import { useApp } from '../state'
 import { TrendChart } from '../ui/charts'
 import { Card, href, Sources, StatusTag } from '../ui/kit'
 import { bandFor } from '../ui/series'
 
 const TIERS: Tier[] = ['self', 'cmo', 'ground']
+const URG: Urgency[] = ['routine', 'today', 'now']
+const WHO_SHORT: Record<Tier, string> = { self: 'You', cmo: 'Medical officer', ground: 'Medical officer + flight surgeon' }
 const DETECTOR_NAME: Record<string, string> = { zscore: 'personal z-score with persistence', cusum: 'CUSUM on personal z-scores', mewma: 'multivariate EWMA of personal z-scores', fusion: 'fused CUSUM and multivariate EWMA' }
 const DID = ['Did it', 'Did part of it', 'Not yet', 'Chose not to']
 
@@ -41,7 +43,7 @@ export function Alert({ alertKey }: { alertKey?: string }) {
   }
   return (
     <>
-      <a href={href('today')} className="small">← Today</a>
+      <a href={href('today')} className="btn sm" style={{ alignSelf: 'flex-start' }}>← Back to Today</a>
       <section className="card">
         <StatusTag status={f.status} label={STATUS_LABEL[f.status]} />
         <h1>{f.title}</h1>
@@ -78,15 +80,21 @@ export function Alert({ alertKey }: { alertKey?: string }) {
         <p className="tiny muted">Taken only from your own readings and check-ins, and the shared cabin sensors.</p>
       </Card>
 
-      <Card title="Who should know">
-        <div className="tier" role="list" aria-label="Escalation level">
-          {TIERS.map((t, i) => <div key={t} role="listitem" className={f.tier === t ? 'on' : ''} aria-current={f.tier === t ? 'step' : undefined}><span className="tiny">Level {i + 1}</span>{TIER_LABEL[t]}</div>)}
+      <Card title="How soon, and who should know">
+        <span className="lab small">How soon</span>
+        <div className="tier" role="list" aria-label="How soon">
+          {URG.map((u) => <div key={u} role="listitem" className={f.urgency === u ? 'on' : ''} aria-current={f.urgency === u ? 'step' : undefined}>{URGENCY_LABEL[u]}</div>)}
         </div>
-        <p>{f.tierReason}</p>
-        {f.tier === 'ground' && <p className="banner">{link.available ? 'A link is available. Keel has queued a summary; you decide what it contains in Sharing.' : 'No link right now. Keel keeps a summary queued and sends it when a link opens. Until then the medical officer decides on board.'}</p>}
-        {!f.crewWide && shareCats.length > 0 && (sharedWithCmo
+        <span className="lab small">Who</span>
+        <div className="tier" role="list" aria-label="Who should know">
+          {TIERS.map((t) => <div key={t} role="listitem" className={f.tier === t ? 'on' : ''} aria-current={f.tier === t ? 'step' : undefined}>{WHO_SHORT[t]}</div>)}
+        </div>
+        <p>{WHO_LABEL[f.tier]}. {f.tierReason}</p>
+        {f.tier === 'ground' && <p className="banner">{link.available ? 'A link is available. The medical officer leads care on board; a summary is queued for the flight surgeon and you decide what it contains in Sharing.' : 'No link right now. The medical officer leads care on board. Keel keeps a summary queued for the flight surgeon and sends it when a link opens.'}</p>}
+        {f.status === 'urgent' && <p className="banner info">{sharing[me]?.emergency !== false ? 'Because you agreed to emergency sharing, the medical officer and the commander can see this alert now.' : 'Emergency sharing is off, so nobody else can see this alert. Tell the medical officer yourself.'}</p>}
+        {f.status !== 'urgent' && !f.crewWide && shareCats.length > 0 && (sharedWithCmo
           ? <p className="small muted">The medical officer can see the details of this alert because you shared them.</p>
-          : <button className="btn" onClick={() => shareCats.forEach((c) => setShare(me, 'cmo', c, 'detail'))} data-testid="share-cmo">Share this alert's details with the medical officer</button>)}
+          : <button className="btn" onClick={() => shareCats.forEach((c) => setShare(me, 'cmo', c, 'detail'))} data-testid="share-cmo">Let the medical officer see this alert's details</button>)}
         {f.crewWide && <p className="small muted">Cabin-level readings are not personal data, so the whole crew sees this alert.</p>}
       </Card>
 
@@ -96,6 +104,7 @@ export function Alert({ alertKey }: { alertKey?: string }) {
         <div className="choices five" role="group" aria-label="How do you feel now, 1 worst to 5 best">{[1, 2, 3, 4, 5].map((n) => <button key={n} className="choice" aria-pressed={feel === n} onClick={() => { setFeel(n); setSaved(false) }}><span className="n">{n}</span><span className="tiny">{n === 1 ? 'Worse' : n === 3 ? 'Same' : n === 5 ? 'Better' : ''}</span></button>)}</div>
         <div className="field"><label htmlFor="note">Note (optional)</label><input id="note" type="text" value={note} onChange={(e) => setNote(e.target.value)} placeholder="" /></div>
         <button className="btn primary" disabled={!did && feel === null} onClick={submit} data-testid="log-action">Save to my log</button>
+        {!did && feel === null && !saved && <p className="small muted">Pick an answer above to save.</p>}
         {saved && <p role="status" className="small">Saved on this device.</p>}
         {logs.length > 0 && <ul className="list small">{logs.map((l) => <li key={l.id ?? l.ts}><strong>{shortDay(mission, l.day)}:</strong> {l.did}{l.feel ? `, feeling ${l.feel}/5` : ''}{l.note ? `. ${l.note}` : ''}</li>)}</ul>}
       </Card>
@@ -111,7 +120,7 @@ export function Alert({ alertKey }: { alertKey?: string }) {
         <details>
           <summary>Audit trail: exactly why Keel said this</summary>
           <div className="col small">
-            <p>Rule <code>{f.ruleId}</code> from the on-board rule table (<code>shared/rules.json</code>). No language model wrote any of this text.</p>
+            <p>Rule <code>{f.ruleId}</code> from the on-board rule table. No language model wrote any of this text. {f.kind === 'vital' || f.kind === 'symptom' ? 'This rule reacts to a single entered value or reported symptom and does not wait for the detector.' : ''}</p>
             {f.score !== undefined && <p>Detector ({DETECTOR_NAME[model.deployed ?? 'fusion']}): score {f.score.toFixed(2)} against the notice threshold {f.threshold?.toFixed(2)} and the alert threshold {model.thresholds.alert.toFixed(2)} ({f.detectorTier === 'alert' ? 'alert tier reached' : 'notice tier'}). Thresholds are set to a false-alert budget of {model.budgets?.notice ?? 1} per person-month for notices and {model.budgets?.alert ?? 0.25} for alerts{model.simulated_calibration ? ', calibrated on simulated missions' : ''}.</p>}
             <p>Rule condition: <code>{JSON.stringify(rule?.when)}</code></p>
             <p>Three-day deviations (robust SD, direction of concern): {Object.entries(a.u3).filter(([, v]) => !Number.isNaN(v)).map(([k, v]) => `${k} ${v.toFixed(1)}`).join(', ')}</p>

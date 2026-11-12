@@ -1,6 +1,6 @@
 {
- "version": "1.0",
- "note": "Auditable alert-to-action rules. Personal rules are only evaluated while the detector has an open alert, so the false-alert budget is set by the detector, not by these rules. u = mean deviation over the last three measured days, in robust standard deviations, in the direction of concern.",
+ "version": "1.1",
+ "note": "Auditable alert-to-action rules. Scopes: 'personal' rules are evaluated only while the detector has an open alert, so their false-alert rate is set by the detector's budget. 'vital', 'symptom', 'environment' and 'adaptation' rules bypass the detector: they react to a single entered value, a reported symptom or a cabin reading. u = mean deviation over the last three measured days, in robust standard deviations, in the direction of concern. Fixed thresholds are general clinical guidance or placeholders and need sign-off by a flight surgeon.",
  "rules": [
   {
    "id": "R-RED",
@@ -8,31 +8,307 @@
    "priority": 1,
    "title": "Symptom that needs the medical officer now",
    "when": {
-    "any": [
-     {
-      "sym": "chest_pain",
-      "min": 1
-     },
-     {
-      "sym": "breathless",
-      "min": 1
-     },
-     {
-      "sym": "flank_pain",
-      "min": 1
-     }
-    ]
+    "red_flag": true
    },
    "summary": "You reported a symptom that should never wait for a trend. Keel does not interpret it.",
    "action": "Tell the crew medical officer now.",
    "steps": [
     "Stop exercise and any demanding task.",
     "Stay with another crew member.",
-    "The medical officer runs the onboard medical checklist; Keel queues a summary for the ground for when a link is available."
+    "If you are the medical officer, tell the commander: they are your backup.",
+    "The medical officer leads care on board. Keel queues a summary for the flight surgeon for when a link is available."
    ],
-   "tier": "ground",
-   "tier_reason": "Red-flag symptom: medical officer now, ground as soon as a link exists.",
+   "tier": "cmo",
+   "tier_reason": "Red-flag symptom. The medical officer leads care on board; the flight surgeon is consulted when a link exists.",
    "cm": [
+    "CM-PMC"
+   ],
+   "categories": [
+    "symptoms"
+   ],
+   "urgency": "now"
+  },
+  {
+   "id": "R-V-SPO2",
+   "scope": "vital",
+   "priority": 1.1,
+   "urgency": "now",
+   "title": "Fingertip oxygen reading is 92% or lower",
+   "when": {
+    "val": "spo2_manual",
+    "max": 92
+   },
+   "summary": "The resting oxygen reading you entered is at or below the level at which general clinical guidance says to contact a clinician. Keel does not interpret it.",
+   "action": "Tell the medical officer now.",
+   "steps": [
+    "Repeat the reading once with a warm, still hand while someone fetches the medical officer.",
+    "Sit upright and rest.",
+    "Ask for the cabin oxygen, pressure and carbon dioxide readings."
+   ],
+   "tier": "cmo",
+   "tier_reason": "A fixed safety threshold, not a trend. Needs a second person now.",
+   "cm": [
+    "CM-SPO2",
+    "CM-VITALS"
+   ],
+   "categories": [
+    "cardio"
+   ]
+  },
+  {
+   "id": "R-V-TEMP-HI",
+   "scope": "vital",
+   "priority": 1.2,
+   "urgency": "now",
+   "title": "Thermometer reading is 39.4 °C or higher",
+   "when": {
+    "val": "temp_oral",
+    "min": 39.4
+   },
+   "summary": "You entered a high fever. Keel does not interpret it.",
+   "action": "Tell the medical officer now.",
+   "steps": [
+    "No exercise.",
+    "Drink, rest, and repeat the reading in an hour."
+   ],
+   "tier": "cmo",
+   "tier_reason": "A fixed safety threshold, not a trend.",
+   "cm": [
+    "CM-VITALS",
+    "CM-PMC"
+   ],
+   "categories": [
+    "cardio"
+   ]
+  },
+  {
+   "id": "R-V-TEMP",
+   "scope": "vital",
+   "priority": 1.3,
+   "urgency": "today",
+   "title": "Thermometer reading is 38.0 °C or higher",
+   "when": {
+    "val": "temp_oral",
+    "min": 38.0
+   },
+   "summary": "You entered a temperature in the fever range by general guidance. Body temperature may run higher on long flights, so the medical officer should judge it against your earlier readings.",
+   "action": "No exercise today, and see the medical officer today.",
+   "steps": [
+    "Repeat the reading in four hours and log symptoms at check-in.",
+    "Drink to your fluid target.",
+    "Keep some distance at meals and wipe shared surfaces."
+   ],
+   "tier": "cmo",
+   "tier_reason": "A fixed safety threshold, not a trend.",
+   "cm": [
+    "CM-VITALS",
+    "CM-INFECT"
+   ],
+   "categories": [
+    "cardio"
+   ]
+  },
+  {
+   "id": "R-V-GLU-LO",
+   "scope": "vital",
+   "priority": 1.4,
+   "urgency": "now",
+   "title": "Blood sugar reading is below 70 mg/dL",
+   "when": {
+    "val": "glucose",
+    "max": 69.99
+   },
+   "summary": "The reading you entered is below the level general guidance calls low. For some lean, fit people a fasting value just under 70 can be normal; Keel cannot tell.",
+   "action": "Eat or drink something sugary now and tell the medical officer.",
+   "steps": [
+    "Repeat the reading in 15 minutes.",
+    "Do not exercise or do critical tasks until it is back above 70 and you feel normal.",
+    "Below 54 mg/dL, or if you feel shaky, sweaty or confused: this is urgent."
+   ],
+   "tier": "cmo",
+   "tier_reason": "A fixed safety threshold, not a trend.",
+   "cm": [
+    "CM-VITALS"
+   ],
+   "categories": [
+    "nutrition"
+   ]
+  },
+  {
+   "id": "R-V-GLU-HI",
+   "scope": "vital",
+   "priority": 1.5,
+   "urgency": "today",
+   "title": "Blood sugar reading is 200 mg/dL or higher",
+   "when": {
+    "val": "glucose",
+    "min": 200
+   },
+   "summary": "The reading you entered is in a range that general guidance links to diabetes when it is found on a random test. One reading proves nothing.",
+   "action": "Repeat the reading before breakfast tomorrow and show both to the medical officer.",
+   "steps": [
+    "Clean the fingertip and wipe away the first drop.",
+    "Note when you last ate."
+   ],
+   "tier": "cmo",
+   "tier_reason": "A fixed safety threshold, not a trend.",
+   "cm": [
+    "CM-VITALS"
+   ],
+   "categories": [
+    "nutrition"
+   ]
+  },
+  {
+   "id": "R-V-BP-LO",
+   "scope": "vital",
+   "priority": 1.6,
+   "urgency": "today",
+   "title": "Upper blood pressure reading is below 90 mmHg",
+   "when": {
+    "val": "sbp",
+    "max": 89.99
+   },
+   "summary": "The reading you entered is below the normal adult range. Keel does not interpret it.",
+   "action": "Rest, drink, repeat the reading in ten minutes, and tell the medical officer today.",
+   "steps": [
+    "If you also feel faint or dizzy, tell the medical officer now.",
+    "Change posture slowly, especially after a gravity change."
+   ],
+   "tier": "cmo",
+   "tier_reason": "A fixed safety threshold, not a trend.",
+   "cm": [
+    "CM-VITALS"
+   ],
+   "categories": [
+    "cardio"
+   ],
+   "escalate": [
+    {
+     "when": {
+      "any": [
+       {
+        "sym": "dizziness",
+        "min": 1
+       },
+       {
+        "sym": "fainting",
+        "min": 1
+       }
+      ]
+     },
+     "tier": "cmo",
+     "reason": "Low reading with dizziness: tell the medical officer now."
+    }
+   ]
+  },
+  {
+   "id": "R-V-BP-HI",
+   "scope": "vital",
+   "priority": 1.7,
+   "urgency": "routine",
+   "title": "Upper blood pressure reading is 140 mmHg or higher",
+   "when": {
+    "val": "sbp",
+    "min": 140
+   },
+   "summary": "The reading you entered is above the normal adult range. A single high reading is common after effort, caffeine or stress.",
+   "action": "Rest quietly for five minutes, repeat the reading, and show both to the medical officer at your next conference.",
+   "steps": [
+    "With a severe headache, chest pain or vision change, tell the medical officer now."
+   ],
+   "tier": "cmo",
+   "tier_reason": "A fixed reference value, not a trend.",
+   "cm": [
+    "CM-VITALS"
+   ],
+   "categories": [
+    "cardio"
+   ]
+  },
+  {
+   "id": "R-V-HR",
+   "scope": "vital",
+   "priority": 1.8,
+   "urgency": "today",
+   "title": "Resting heart rate above 100 on two nights",
+   "when": {
+    "run": "rhr",
+    "min": 100.01,
+    "days": 2
+   },
+   "summary": "Your overnight resting heart rate has been above 100 beats per minute two nights running. Keel does not interpret it.",
+   "action": "Tell the medical officer today and take it easy until you have.",
+   "steps": [
+    "Take a still two-minute reading with the chest strap.",
+    "Check fluids, temperature and how you slept."
+   ],
+   "tier": "cmo",
+   "tier_reason": "A fixed safety threshold (a common clinical convention, placeholder for clinician sign-off).",
+   "cm": [
+    "CM-VITALS",
+    "CM-PMC"
+   ],
+   "categories": [
+    "cardio"
+   ]
+  },
+  {
+   "id": "R-V-MOOD",
+   "scope": "vital",
+   "priority": 1.9,
+   "urgency": "today",
+   "title": "Your mood has been very low for days",
+   "when": {
+    "any": [
+     {
+      "run": "mood",
+      "max": 1,
+      "days": 3
+     },
+     {
+      "run": "mood",
+      "max": 2,
+      "days": 7
+     }
+    ]
+   },
+   "summary": "Your check-ins have been at the bottom of the scale for several days in a row. That is hard to carry alone on a long mission.",
+   "action": "Keel strongly recommends talking to the medical officer today.",
+   "steps": [
+    "If you have thoughts of harming yourself, or cannot function, tell the medical officer or the commander now.",
+    "A private conference with the support team at home can be recorded and sent when a link opens.",
+    "You decide what is shared; this recommendation is shown only to you."
+   ],
+   "tier": "cmo",
+   "tier_reason": "Sustained very low mood should not wait for a trend.",
+   "cm": [
+    "CM-PPC"
+   ],
+   "categories": [
+    "cognition"
+   ]
+  },
+  {
+   "id": "R-VIS",
+   "scope": "symptom",
+   "priority": 1.95,
+   "urgency": "today",
+   "title": "You reported a change in vision",
+   "when": {
+    "sym": "vision",
+    "min": 1
+   },
+   "summary": "Vision changes are common on long flights and have no proven countermeasure, so they should be recorded and reviewed.",
+   "action": "Tell the medical officer today.",
+   "steps": [
+    "Now, not today, if it is sudden, in one eye, or comes with a headache.",
+    "Do the vision self-check and note which eye and what changed."
+   ],
+   "tier": "cmo",
+   "tier_reason": "Needs to be recorded and reviewed.",
+   "cm": [
+    "CM-VISION",
     "CM-PMC"
    ],
    "categories": [
@@ -43,25 +319,130 @@
    "id": "R-SPE",
    "scope": "environment",
    "priority": 2,
-   "title": "Radiation dose rate is far above normal",
+   "title": "Radiation dose was far above normal over the last day",
    "when": {
     "env": "rad_ratio",
     "min": 3
    },
-   "summary": "Today's dose rate is several times the mission's usual level, which is what a solar particle event looks like.",
-   "action": "Follow the solar storm shelter procedure with the whole crew.",
+   "summary": "Your dosimeter's daily total is several times the mission's usual level, which is what a solar particle event leaves behind. Keel only sees daily totals, so it cannot warn you in time to shelter: the vehicle's radiation alarm does that.",
+   "action": "Confirm with the commander that the shelter procedure was followed, and report any nausea or vomiting.",
    "steps": [
-    "End or delay any spacewalk.",
-    "Move to the most shielded area; build the shelter from stowage if the vehicle uses one.",
-    "Keep personal dosimeters on. Keel keeps tracking the mission total against the career limit."
+    "Keep your personal dosimeter on.",
+    "Log nausea, vomiting or unusual tiredness at check-in over the next two days.",
+    "Keel adds the dose to your mission total."
    ],
    "tier": "cmo",
-   "tier_reason": "Crew-wide environmental exposure: commander and medical officer are informed automatically.",
+   "tier_reason": "Whole-crew exposure: the commander and the medical officer should both know.",
    "cm": [
     "CM-SHELTER"
    ],
    "categories": [
     "environment"
+   ],
+   "urgency": "today"
+  },
+  {
+   "id": "R-SYM-ILL",
+   "scope": "symptom",
+   "priority": 2.0,
+   "urgency": "today",
+   "title": "Cold-like symptoms, and your readings are drifting",
+   "when": {
+    "all": [
+     {
+      "sym": "sore_throat",
+      "min": 1
+     },
+     {
+      "any": [
+       {
+        "u": "rhr",
+        "min": 0.8
+       },
+       {
+        "u": "hrv",
+        "min": 0.8
+       },
+       {
+        "u": "temp",
+        "min": 0.8
+       },
+       {
+        "u": "spo2",
+        "min": 1.0
+       }
+      ]
+     }
+    ]
+   },
+   "summary": "You reported a sore throat or cough, and your heart rate, HRV, skin temperature or oxygen has moved the way an infection would push it. Neither would trigger Keel alone; together they are worth acting on. Keel cannot tell you the cause.",
+   "action": "Take your temperature with the thermometer and hold exercise until you have. Tell the medical officer.",
+   "steps": [
+    "If it is 38.0 °C or more, or 1.0 °C above your own usual thermometer reading, or you have chest symptoms: no exercise today, and the medical officer decides what you do.",
+    "Otherwise a light session is reasonable; repeat the temperature in four hours and log symptoms at check-in.",
+    "Drink to your fluid target and protect tonight's sleep period.",
+    "Keep some distance at meals and wipe shared surfaces until this clears."
+   ],
+   "tier": "cmo",
+   "tier_reason": "A symptom you reported, backed by your readings. Possible illness in a closed cabin affects the whole crew.",
+   "cm": [
+    "CM-INFECT",
+    "CM-PMC"
+   ],
+   "categories": [
+    "symptoms",
+    "cardio"
+   ]
+  },
+  {
+   "id": "R-V-MASS",
+   "scope": "vital",
+   "priority": 2.5,
+   "urgency": "routine",
+   "title": "Body mass is 5% or more below pre-flight",
+   "when": {
+    "rel": "mass",
+    "max": -0.05
+   },
+   "summary": "Your latest body mass is at least 5% below your pre-flight level. Crews typically lose 3 to 4%; more than that deserves a look at food and fluids.",
+   "action": "Show the trend to the medical officer at your next conference and eat the full plan.",
+   "steps": [
+    "Add a planned snack each day.",
+    "Check fluid intake: dehydration also lowers the reading."
+   ],
+   "tier": "cmo",
+   "tier_reason": "A cumulative change that a rolling personal baseline would get used to.",
+   "cm": [
+    "CM-MASS",
+    "CM-FOOD"
+   ],
+   "categories": [
+    "nutrition"
+   ]
+  },
+  {
+   "id": "R-RASH",
+   "scope": "symptom",
+   "priority": 2.6,
+   "urgency": "routine",
+   "title": "You reported a rash or itchy skin",
+   "when": {
+    "sym": "rash",
+    "min": 2
+   },
+   "summary": "Skin problems are among the most common medical events on the space station.",
+   "action": "Show it to the medical officer at the next opportunity.",
+   "steps": [
+    "Keep the area clean and dry; do not share towels.",
+    "Note any new soap, wipe or glove material."
+   ],
+   "tier": "cmo",
+   "tier_reason": "Common and usually minor, but worth a look.",
+   "cm": [
+    "CM-PMC"
+   ],
+   "categories": [
+    "symptoms"
    ]
   },
   {
@@ -70,10 +451,10 @@
    "priority": 3,
    "title": "Cabin carbon dioxide is elevated",
    "when": {
-    "env": "co2_3d",
+    "env": "co2",
     "min": 3.0
    },
-   "summary": "The three-day average is above 3.0 mmHg, the level ISS operations adopted as a limit after crews reported headaches and slips at higher levels.",
+   "summary": "The 24-hour average is at or above 3.0 mmHg, the level ISS operations adopted as a limit after crews reported headaches and slips at higher levels.",
    "action": "Check the air revitalization system and move work and sleep to a better ventilated spot.",
    "steps": [
     "Commander or engineer: check scrubber status and fan airflow.",
@@ -82,19 +463,53 @@
     "Use buddy checks on procedures until the level is back down."
    ],
    "tier": "cmo",
-   "tier_reason": "Crew-wide environmental issue: commander and medical officer are informed automatically.",
+   "tier_reason": "Crew-wide cabin issue, visible to everyone on board.",
    "cm": [
     "CM-CO2"
    ],
    "categories": [
     "environment"
-   ]
+   ],
+   "urgency": "today"
+  },
+  {
+   "id": "R-CO2H",
+   "scope": "environment",
+   "priority": 3.5,
+   "title": "Your headache may be linked to cabin air",
+   "when": {
+    "all": [
+     {
+      "env": "co2",
+      "min": 2.5
+     },
+     {
+      "sym": "headache",
+      "min": 1
+     }
+    ]
+   },
+   "summary": "You reported a headache and cabin carbon dioxide is above 2.5 mmHg, the level above which ISS crews reported more headaches. Keel cannot tell whether the air is the cause.",
+   "action": "Move to a spot with better airflow and tell the commander the cabin reading.",
+   "steps": [
+    "Log the headache at each check-in so the pattern is visible.",
+    "If it does not ease within a few hours in better air, tell the medical officer."
+   ],
+   "tier": "self",
+   "tier_reason": "Often eases with better airflow; the commander decides on scrubber checks.",
+   "cm": [
+    "CM-CO2"
+   ],
+   "categories": [
+    "environment"
+   ],
+   "urgency": "routine"
   },
   {
    "id": "R-SMS",
    "scope": "adaptation",
    "priority": 4,
-   "title": "Expected adaptation to the new gravity level",
+   "title": "Nausea or dizziness soon after a gravity change",
    "when": {
     "all": [
      {
@@ -114,13 +529,15 @@
      }
     ]
    },
-   "summary": "Nausea and dizziness in the first days after a gravity change are expected in most crew and usually pass within two to three days. Keel has widened your normal ranges for this period.",
-   "action": "Take it easy today: slow head movements, light duty, small sips and snacks.",
+   "summary": "Common in most crew in the first two to three days after a gravity change. Keel cannot tell whether that is the cause: cabin air, low fluids and other problems can feel the same.",
+   "action": "Light duty today: slow head movements, small sips and snacks, and tell the medical officer before any suited work.",
    "steps": [
-    "Tell the medical officer if you cannot keep fluids down or if it lasts beyond day 4."
+    "Tell the medical officer today if you vomit more than twice, cannot keep fluids down, or have a headache with it. Medication is available.",
+    "Check the cabin carbon dioxide reading on the Today screen.",
+    "If it lasts beyond day 4, the medical officer should review it."
    ],
    "tier": "self",
-   "tier_reason": "Expected, self-limiting adaptation.",
+   "tier_reason": "Usually passes within a few days.",
    "cm": [
     "CM-SMS"
    ],
@@ -130,12 +547,21 @@
    "escalate": [
     {
      "when": {
-      "phase_days_min": 4
+      "any": [
+       {
+        "phase_days_min": 4
+       },
+       {
+        "sym": "vomiting",
+        "min": 1
+       }
+      ]
      },
      "tier": "cmo",
-     "reason": "Lasting longer than the usual two to three days."
+     "reason": "Vomiting, or lasting longer than the usual two to three days."
     }
-   ]
+   ],
+   "urgency": "routine"
   },
   {
    "id": "R-ILL",
@@ -165,30 +591,18 @@
        {
         "sym": "sore_throat",
         "min": 1
-       },
-       {
-        "all": [
-         {
-          "sym": "fatigue",
-          "min": 1
-         },
-         {
-          "sym": "congestion",
-          "min": 1
-         }
-        ]
        }
       ]
      }
     ]
    },
    "summary": "Resting heart rate is up together with other recovery signals. This combination is often seen in the days before or during an infection, but Keel cannot tell you the cause.",
-   "action": "Take your temperature now, swap today's hard exercise for a light session, and tell the medical officer.",
+   "action": "Take your temperature with the thermometer and hold exercise until you have. Tell the medical officer.",
    "steps": [
-    "Repeat temperature in four hours and log symptoms at check-in.",
+    "If it is 38.0 °C or more, or 1.0 °C above your own usual thermometer reading, or you have a cough or chest symptoms: no exercise today, and the medical officer decides what you do.",
+    "Otherwise a light session is reasonable; repeat the temperature in four hours and log symptoms at check-in.",
     "Drink to your fluid target and protect tonight's sleep period.",
-    "Keep some distance at meals and wipe shared surfaces until this clears.",
-    "If temperature is 38.0 °C or higher, or you feel worse, the medical officer should see you today."
+    "Keep some distance at meals and wipe shared surfaces until this clears."
    ],
    "tier": "cmo",
    "tier_reason": "Possible illness in a closed cabin affects the whole crew, and early rest is cheap.",
@@ -214,9 +628,10 @@
       ]
      },
      "tier": "ground",
-     "reason": "High temperature deviation or no improvement after four days: queue for the flight surgeon."
+     "reason": "Strong temperature deviation or no improvement after four days: the medical officer should consult the flight surgeon when a link is available."
     }
-   ]
+   ],
+   "urgency": "today"
   },
   {
    "id": "R-SPO2",
@@ -231,7 +646,7 @@
    "action": "Take a fingertip reading now, sitting still with a warm hand.",
    "steps": [
     "If the resting reading is 92% or lower, or you are short of breath, tell the medical officer now.",
-    "Check the cabin carbon dioxide and oxygen readings.",
+    "Check the cabin carbon dioxide reading. Keel does not show cabin oxygen or pressure; ask for them.",
     "If the reading is normal, wear the sensor snugly tonight and compare tomorrow."
    ],
    "tier": "cmo",
@@ -242,7 +657,8 @@
    ],
    "categories": [
     "cardio"
-   ]
+   ],
+   "urgency": "today"
   },
   {
    "id": "R-MOOD",
@@ -256,10 +672,6 @@
       "min": 1.5
      },
      {
-      "u": "sleep_h",
-      "max": 1.3
-     },
-     {
       "alert_days_min": 2
      }
     ]
@@ -268,8 +680,9 @@
    "action": "Book a private conversation: with the medical officer, or a recorded message to the support team at home.",
    "steps": [
     "Put one thing you enjoy and one contact with home on today's plan.",
-    "Keep exercise and the sleep period fixed; both lift mood.",
-    "You control who sees this. Sharing it with the medical officer is one tap in Sharing."
+    "Keep exercise and the sleep period fixed; both lift mood, and short sleep makes low mood worse.",
+    "You control who sees this. Sharing it with the medical officer is one tap in Sharing.",
+    "If you have thoughts of harming yourself, or cannot function, tell the medical officer or the commander now."
    ],
    "tier": "self",
    "tier_reason": "Private by default; you decide whether to involve anyone.",
@@ -287,7 +700,8 @@
      "tier": "cmo",
      "reason": "Lasting ten days or more: Keel recommends sharing it with the medical officer."
     }
-   ]
+   ],
+   "urgency": "routine"
   },
   {
    "id": "R-SLEEP",
@@ -339,7 +753,8 @@
      "tier": "cmo",
      "reason": "Reaction time is now affected or the pattern has lasted six days: the medical officer can adjust the schedule or discuss sleep aids."
     }
-   ]
+   ],
+   "urgency": "routine"
   },
   {
    "id": "R-HYDR",
@@ -377,7 +792,7 @@
    "summary": "Fluid intake is below your own normal, and your body is starting to show it. In space this also raises kidney-stone risk.",
    "action": "Drink one extra litre before the end of the day, spread over the next few hours.",
    "steps": [
-    "Aim for 2.0 to 2.5 litres a day and pale urine.",
+    "Aim for at least 2.0 to 2.5 litres a day and pale urine.",
     "Log each drink bag at check-in so the trend is visible.",
     "Tell the medical officer about any sharp side or back pain."
    ],
@@ -392,12 +807,21 @@
    "escalate": [
     {
      "when": {
-      "alert_days_min": 5
+      "any": [
+       {
+        "alert_days_min": 5
+       },
+       {
+        "sym": "dizziness",
+        "min": 1
+       }
+      ]
      },
      "tier": "cmo",
-     "reason": "No improvement after five days."
+     "reason": "Dizziness with low fluid intake, or no improvement after five days."
     }
-   ]
+   ],
+   "urgency": "routine"
   },
   {
    "id": "R-EX",
@@ -431,7 +855,8 @@
      "tier": "cmo",
      "reason": "Ten days below plan: the medical officer should adjust the prescription."
     }
-   ]
+   ],
+   "urgency": "routine"
   },
   {
    "id": "R-FOOD",
@@ -464,7 +889,8 @@
      "tier": "cmo",
      "reason": "A week below plan."
     }
-   ]
+   ],
+   "urgency": "routine"
   },
   {
    "id": "R-COG",
@@ -497,7 +923,8 @@
      "tier": "cmo",
      "reason": "Slower for four days."
     }
-   ]
+   ],
+   "urgency": "routine"
   },
   {
    "id": "R-CARD",
@@ -520,7 +947,7 @@
    "action": "Ease today's exercise intensity and check the basics: fluids, sleep, workload.",
    "steps": [
     "Take a two-minute still reading with the chest strap tomorrow after waking.",
-    "If it has not returned to your range in three days, Keel will suggest involving the medical officer."
+    "If it has not returned to your range in four days, Keel will suggest involving the medical officer."
    ],
    "tier": "self",
    "tier_reason": "Often explained by sleep, fluids or training load.",
@@ -539,7 +966,8 @@
      "tier": "cmo",
      "reason": "Not back in range after four days."
     }
-   ]
+   ],
+   "urgency": "routine"
   },
   {
    "id": "R-GEN",
@@ -571,7 +999,8 @@
      "tier": "cmo",
      "reason": "Persisting for five days without explanation."
     }
-   ]
+   ],
+   "urgency": "routine"
   }
  ]
 }

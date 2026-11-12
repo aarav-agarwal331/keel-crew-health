@@ -22,6 +22,19 @@ def git_commit() -> str:
         return "unknown"
 
 
+def code_version() -> str:
+    """Hash of the research code and shared configuration that produced a result, so a result
+    file can be matched to its code even before that code is committed."""
+    import hashlib
+    h = hashlib.sha256()
+    files = sorted((ROOT / "research" / "keel").glob("*.py")) + sorted((ROOT / "research" / "scripts").glob("*.py")) + [
+        ROOT / "shared" / "sim_params.json", ROOT / "shared" / "indicators.json"]
+    for f in files:
+        h.update(f.name.encode())
+        h.update(f.read_bytes())
+    return h.hexdigest()[:12]
+
+
 def clean(o):
     """JSON-safe: NaN/inf -> None, numpy -> python."""
     if isinstance(o, dict):

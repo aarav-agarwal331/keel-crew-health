@@ -29,21 +29,21 @@ export function Crew() {
   }, [rows, role, day, logAccess])
 
   // crew-level pattern: counts only, and only when at least two people are affected
-  const pattern = SHARE_CATEGORIES.map((cat) => ({ cat, n: rows.filter((x) => x.a && ['watch', 'act', 'urgent'].includes(categoryStatus(x.a, cat))).length })).filter((x) => x.n >= 2)
+  const pattern = SHARE_CATEGORIES.map((cat) => ({ cat, n: rows.filter((x) => x.a && ['watch', 'act', 'urgent'].includes(categoryStatus(x.a, cat))).length })).filter((x) => x.n >= 3)
   const env = rows[0]?.a?.findings.filter((f) => f.kind === 'environment') ?? []
   const ready = rows.filter((x) => x.r?.tier === 'go').length
 
   return (
     <>
       <div className="card-h"><h1>Crew readiness</h1><Seg label="View as" value={role} onChange={setRole} options={[{ id: 'commander', label: 'Commander' }, { id: 'cmo', label: 'Medical officer' }]} /></div>
-      <p className="muted">{shortDay(mission, day)}. {role === 'commander' ? 'Who is fit for a demanding task tomorrow, such as a spacewalk. You see a readiness tier for everyone; reasons appear only where a crew member has chosen to share them.' : 'What each crew member has chosen to share with you. Nothing is shown that they have not shared.'}</p>
+      <p className="muted">{shortDay(mission, day)}. {role === 'commander' ? 'Whether Keel has any flags for each crew member before a demanding task tomorrow, such as a spacewalk. You see a tier for everyone; reasons appear only where a crew member has chosen to share them.' : 'What each crew member has chosen to share with you. Nothing is shown that they have not shared, except emergencies they agreed to share.'}</p>
       <p className="banner">Demo view. On a mission each role has its own device; here you can switch roles. Every look is written to the crew member's access log.</p>
 
       {role === 'commander' && (
         <section className="card" data-testid="crew-summary">
           <h2>Task tomorrow: spacewalk</h2>
-          <p><strong className="num" style={{ fontSize: '1.5rem' }}>{ready} of {rows.length}</strong> crew are ready without conditions.</p>
-          <p className="small muted">NASA's medical operations standard requires medical clearance before every spacewalk. Keel's tier is an input to that conversation, not the clearance.</p>
+          <p><strong className="num" style={{ fontSize: '1.5rem' }}>Keel has no flags for {ready} of {rows.length}</strong> crew. This is not a medical clearance.</p>
+          <p className="small muted">NASA's medical operations standard requires medical clearance before every spacewalk. Keel's tier is one input to that conversation with the medical officer.</p>
         </section>
       )}
 
@@ -51,7 +51,7 @@ export function Crew() {
       {pattern.length > 0 && (
         <Card title="Crew-wide pattern">
           <ul className="list">{pattern.map((p) => <li key={p.cat}><strong>{p.n} of {rows.length}</strong> crew show a change in {catLabel(p.cat).toLowerCase()} over the last three days.</li>)}</ul>
-          <p className="small muted">When several people drift together, look for a shared cause: cabin air, schedule, workload. Counts are anonymous and only shown when two or more people are affected.</p>
+          <p className="small muted">When several people drift together, look for a shared cause: cabin air, schedule, workload. Counts only, no names, and only when three or more people are affected.</p>
         </Card>
       )}
 
@@ -67,6 +67,7 @@ export function Crew() {
                   ? <ul className="list small">{shown.map((x, i) => <li key={i}>{x.text}</li>)}</ul>
                   : <p className="small muted"><StatusTag status="private" label="" size={16} /> Reason not shared. Ask {c.name.split(' ')[0]} or the medical officer.</p>
               })()}
+              {v.findings.filter((x) => x.emergency).map((x) => <p key={x.key} className="banner strong"><strong>{x.title}.</strong> {x.action} <span className="small">(shared automatically: emergency sharing)</span></p>)}
               {role === 'cmo' && <p>{v.overall === 'private' ? <StatusTag status="private" label="Nothing shared with you" /> : <StatusTag status={v.overall} label={STATUS_LABEL[v.overall]} />}</p>}
               {role === 'cmo' && (
                 <ul className="list small">
@@ -75,7 +76,7 @@ export function Crew() {
                     const outs = x.indicators?.filter((i) => !i.inRange) ?? []
                     return <li key={cat}><StatusTag status={x.status!} label={catLabel(cat)} size={16} />{outs.length > 0 && <span className="muted">: {outs.map((i) => `${IND[i.ind].short}${i.value !== undefined && !Number.isNaN(i.value) ? ` ${i.value.toFixed(IND[i.ind].decimals)} ${IND[i.ind].unit}` : ' out of range'}`).join(', ')}</span>}</li>
                   })}
-                  {v.findings.map((f) => <li key={f.key}><strong>{f.title ?? `Alert in ${catLabel(f.category).toLowerCase()}`}</strong>{f.action ? <span className="muted"> · advised: {f.action}</span> : ''} <span className="muted">({f.days} d)</span></li>)}
+                  {v.findings.filter((x) => !x.emergency).map((f) => <li key={f.key}><strong>{f.title ?? `Alert in ${catLabel(f.category).toLowerCase()}`}</strong>{f.action ? <span className="muted"> · advised: {f.action}</span> : ''} <span className="muted">({f.days} d)</span></li>)}
                   {SHARE_CATEGORIES.every((cat) => v.categories[cat].status === undefined) && <li className="muted">This crew member keeps their data private. They can share from their own Sharing screen.</li>}
                 </ul>
               )}
@@ -83,7 +84,7 @@ export function Crew() {
           </section>
         ))}
       </div>
-      <p className="banner">The readiness tier is a rule-based summary of sleep, reaction time and open alerts. It is not a validated fitness-for-duty test.</p>
+      <p className="banner">The tier is a rule-based summary: it is never better than the worst area on the crew member's own screen, and nausea or clearly slowed reactions always mean a conversation first. It is not a validated fitness-for-duty test and not a clearance.</p>
     </>
   )
 }

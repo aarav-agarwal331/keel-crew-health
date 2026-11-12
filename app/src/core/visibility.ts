@@ -15,7 +15,7 @@ import { allows, SHARE_CATEGORIES, type Level, type Role, type SharingSettings }
 import type { Finding, Status } from './types'
 
 export interface VisibleIndicator { ind: string; inRange: boolean; value?: number; expected?: number }
-export interface VisibleFinding { key: string; category: string; status: Status; days: number; title?: string; tier?: string; action?: string; summary?: string; changes?: Finding['changes']; factors?: Finding['factors'] }
+export interface VisibleFinding { emergency?: boolean; key: string; category: string; status: Status; days: number; title?: string; tier?: string; action?: string; summary?: string; changes?: Finding['changes']; factors?: Finding['factors'] }
 export interface RoleView {
   overall: Status | 'private'
   categories: Record<string, { level: Level; status?: Status; indicators?: VisibleIndicator[] }>
@@ -26,16 +26,7 @@ export interface RoleView {
 const rank: Record<string, number> = { urgent: 4, act: 3, watch: 2, steady: 1, learning: 0 }
 
 export function categoryStatus(a: DayAnalysis, cat: string): Status {
-  let best: Status = 'steady'
-  let any = false
-  for (const [ind, u] of Object.entries(a.u3)) {
-    if (IND[ind]?.category !== cat || Number.isNaN(u)) continue
-    any = true
-    const st: Status = u >= 2.5 ? 'act' : u >= 1.5 ? 'watch' : 'steady'
-    if (rank[st] > rank[best]) best = st
-  }
-  for (const f of a.findings) if (f.kind !== 'environment' && f.categories[0] === cat && rank[f.status] > rank[best]) best = f.status
-  return any || best !== 'steady' ? best : 'learning'
+  return a.categories[cat] ?? 'learning'
 }
 
 export function viewFor(role: Role, a: DayAnalysis, share: SharingSettings, values: Record<string, number> = {}): RoleView {
@@ -65,6 +56,12 @@ export function viewFor(role: Role, a: DayAnalysis, share: SharingSettings, valu
   for (const f of a.findings) {
     if (f.kind === 'environment') continue
     const cat = f.categories[0]
+    // emergency consent: urgent findings go to the medical officer and the commander (the backup) with their title and action
+    if (f.status === 'urgent' && share.emergency !== false && role !== 'ground') {
+      findings.push({ key: f.key, category: cat, status: f.status, days: f.days, title: f.title, tier: f.tier, action: f.action, emergency: true })
+      if (overall === 'private' || rank[f.status] > rank[overall]) overall = f.status
+      continue
+    }
     const level = (s as Record<string, Level>)[cat] ?? 'none'
     if (!allows(level, 'status')) continue
     const v: VisibleFinding = { key: f.key, category: cat, status: f.status, days: f.days }

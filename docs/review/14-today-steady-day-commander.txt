@@ -1,0 +1,51 @@
+SCREEN: 14-today-steady-day-commander
+TOP BAR: Keel | Earth link: 1 min 34 s delay | Amara · Flight day 66 | Simulated data
+BOTTOM NAV: Today | Trends | Check-in | Crew | More
+
+Steady
+
+Your readings are inside your own normal range.
+
+Nothing unusual
+All trends
+
+Every tracked reading is within your usual range over the last three days.
+
+Your body at a glance
+Brain, sleep and mood
+Heart and circulation
+Lungs and oxygen
+Food and fluids
+Muscle and bone
+Whole body
+Cabin and radiation
+Heart and circulation
+Steady
+
+Resting heart rate, heart rate variability and blood pressure.
+
+Why space matters here: Without gravity, blood shifts toward the head and the heart is loaded differently. Radiation and inactivity add long-term risk.
+
+Resting HR
+HRV
+BP
+How to measure
+Today's routine
+6-day streak
+100%
+Exercise this week
+807 of 720 planned minutes. Every session protects bone, muscle and heart.
+Daily check-in (1 minute)
+Start
+Sensor worn last night
+Exercise done today
+Cabin
+Deep-space transit vehicle
+Carbon dioxide
+2.6 mmHg
+Headache risk rises above 2.5
+Radiation, mission total
+118 of 600 mSv career limit
+Today 1.60 mSv
+
+Keel is decision support, not a medical device. It does not diagnose. It shows how your readings compare with your own normal and points to documented countermeasures. Microgravity.

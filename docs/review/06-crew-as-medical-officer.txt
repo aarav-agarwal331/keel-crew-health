@@ -1,0 +1,60 @@
+SCREEN: 06-crew-as-medical-officer
+TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 126 | Simulated data
+BOTTOM NAV: Today | Trends | Check-in | Crew | More
+
+Crew readiness
+Commander
+Medical officer
+
+FD 126. What each crew member has chosen to share with you. Nothing is shown that they have not shared.
+
+Demo view. On a mission each role has its own device; here you can switch roles. Every look is written to the crew member's access log.
+
+Crew-wide pattern
+2 of 4 crew show a change in heart and circulation over the last three days.
+
+When several people drift together, look for a shared cause: cabin air, schedule, workload. Counts are anonymous and only shown when two or more people are affected.
+
+Amara Okafor
+Commander
+
+Steady
+
+Heart and circulation
+Sleep and body clock
+Exercise
+Food and fluids
+Symptoms
+Kenji Sato
+Crew medical officer
+
+Steady
+
+Heart and circulation
+Sleep and body clock
+Exercise
+Food and fluids
+Symptoms
+Lucía Reyes
+Flight engineer
+
+Act today
+
+Heart and circulation
+Sleep and body clock
+Exercise
+Food and fluids
+Symptoms
+Alert in heart and circulation (2 d)
+Tomás Novák
+Mission specialist
+
+Act today
+
+Heart and circulation
+Sleep and body clock
+Exercise
+Food and fluids
+Symptoms
+
+The readiness tier is a rule-based summary of sleep, reaction time and open alerts. It is not a validated fitness-for-duty test.

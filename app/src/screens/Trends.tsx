@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { deployedScore, episodes } from '../core/detect'
+import { concernDev, deployedScore, episodes } from '../core/detect'
 import { CATEGORIES, IND, INDICATORS, shortDay } from '../core/mission'
 import { useApp } from '../state'
 import { TrendChart, TrendLegend, type Marker } from '../ui/charts'
@@ -15,13 +15,20 @@ export function Trends({ focus }: { focus?: string }) {
   const mine = useMemo(() => entries.filter((e) => e.mission === mission.id && e.crew === me), [entries, mission.id, me])
   const an = analyses[me]
   const from = range === 'all' ? 0 : Math.max(0, day - Number(range) + 1)
-  const markers: Marker[] = useMemo(() => {
+  const starts = useMemo(() => (an ? episodes(deployedScore(an.scored, model), model.thresholds.notice, model.params.merge_gap, day).map(([s]) => s) : []), [an, model, day])
+  // an alert is drawn only on the charts of the readings that were out of range when it opened
+  const markersFor = (ind: string): Marker[] => {
     const out: Marker[] = mission.phases.map((p) => ({ day: p.start, label: p.name, kind: 'phase' as const }))
-    if (an) for (const [s] of episodes(deployedScore(an.scored, model), model.thresholds.notice, model.params.merge_gap, day)) out.push({ day: s, label: 'Alert', kind: 'alert' })
-    for (const a of actions.filter((x) => x.mission === mission.id && x.crew === me)) out.push({ day: a.day, label: 'Logged', kind: 'log' })
+    const j = model.indicators.indexOf(ind)
+    if (an && j >= 0) for (const s of starts) {
+      let hit = false
+      for (let t = s; t <= Math.min(day, s + 3); t++) if (concernDev(an.scored.z[t][j], model.concern[j]) >= 1.5) hit = true
+      if (hit) out.push({ day: s, label: `Alert began ${shortDay(mission, s)}`, kind: 'alert' })
+    }
+    for (const a of actions.filter((x) => x.mission === mission.id && x.crew === me)) out.push({ day: a.day, label: 'You logged', kind: 'log' })
     return out
-  }, [mission, an, model, day, actions, me])
-  const list = INDICATORS.filter((i) => i.id !== 'ex7' || true).filter((i) => cat === 'all' || i.category === cat)
+  }
+  const list = INDICATORS.filter((i) => cat === 'all' || i.category === cat)
   const ordered = focus && IND[focus] ? [IND[focus], ...list.filter((i) => i.id !== focus)] : list
   return (
     <>
@@ -39,13 +46,19 @@ export function Trends({ focus }: { focus?: string }) {
         {ordered.map((def) => {
           const b = bandFor(mission, model, an, me, def.id, mine)
           const last = [...Array(4).keys()].map((k) => b.values[day - k]).find((v) => v !== undefined && !Number.isNaN(v))
-          const refLines = def.id === 'co2' ? [{ y: 2.5, label: 'Headache risk rises (2.5)' }, { y: 3.0, label: 'ISS limit (3.0)' }] : undefined
+          if (!b.values.slice(0, day + 1).some((v) => !Number.isNaN(v))) return focus === def.id ? <Card key={def.id} title={def.label}><p className="muted">No readings yet. Enter one at check-in.</p><p className="small">{def.how}</p></Card> : null
+          const std = (def as unknown as { standard?: { value: number; label: string } }).standard
+          const refLines = def.id === 'co2' ? [{ y: 2.5, label: 'Headaches more likely above 2.5' }, { y: 3.0, label: 'ISS limit 3.0' }]
+            : def.id === 'glucose' ? [{ y: 70, label: 'Low below 70' }, { y: 99, label: 'Fasting normal up to 99' }]
+            : def.id === 'sbp' ? [{ y: 90, label: 'Normal from 90' }, { y: 120, label: 'to 120' }]
+            : std ? [{ y: std.value, label: std.label }] : undefined
+          const band = b.hasBand && def.id !== 'glucose'
           const rows = Array.from({ length: Math.min(14, day - from + 1) }, (_, k) => day - k)
           return (
             <Card key={def.id} id={`ind-${def.id}`} className={focus === def.id ? 'action' : ''} title={def.label} right={<span className="num"><strong style={{ fontSize: '1.25rem' }}>{last === undefined ? '–' : last.toFixed(def.decimals)}</strong> <span className="small muted">{def.unit}</span></span>}>
-              <TrendChart values={b.values} expected={b.hasBand ? b.expected : undefined} lo={b.hasBand ? b.lo : undefined} hi={b.hasBand ? b.hi : undefined} from={from} to={day}
-                labelFor={(t) => shortDay(mission, t)} unit={def.unit} decimals={def.decimals} markers={markers} refLines={refLines} concern={def.concern} ariaLabel={`${def.label} over time against your usual range`} />
-              <p className="small muted">{def.plain}</p>
+              <TrendChart values={b.values} expected={band ? b.expected : undefined} lo={band ? b.lo : undefined} hi={band ? b.hi : undefined} from={from} to={day}
+                labelFor={(t) => shortDay(mission, t)} unit={def.unit} decimals={def.decimals} markers={markersFor(def.id)} refLines={refLines} concern={def.concern} ariaLabel={`${def.label} over time against your usual range`} />
+              <p className="small muted">{def.plain}{std ? ` Your usual is not the standard: ${std.label.toLowerCase()}.` : ''}{def.id === 'glucose' ? ' Shown against general reference values, not a personal range.' : ''}</p>
               <details>
                 <summary>Why it matters, how to measure, and the numbers</summary>
                 <div className="col small">
@@ -54,7 +67,7 @@ export function Trends({ focus }: { focus?: string }) {
                   {!def.detect && def.source === 'spot' && <p className="muted">Measured about weekly, so it is shown against your own past readings but is not part of the automatic alert.</p>}
                   <div className="tablewrap"><table>
                     <thead><tr><th>Day</th><th className="n">Reading</th><th className="n">Usual range</th></tr></thead>
-                    <tbody>{rows.map((t) => <tr key={t}><td>{shortDay(mission, t)}</td><td className="n">{Number.isNaN(b.values[t]) ? 'not measured' : b.values[t].toFixed(def.decimals)}</td><td className="n">{b.hasBand && !Number.isNaN(b.lo[t]) ? `${b.lo[t].toFixed(def.decimals)} to ${b.hi[t].toFixed(def.decimals)}` : '–'}</td></tr>)}</tbody>
+                    <tbody>{rows.map((t) => <tr key={t}><td>{shortDay(mission, t)}</td><td className="n">{Number.isNaN(b.values[t]) ? 'not measured' : b.values[t].toFixed(def.decimals)}</td><td className="n">{band && !Number.isNaN(b.lo[t]) ? `${b.lo[t].toFixed(def.decimals)} to ${b.hi[t].toFixed(def.decimals)}` : '–'}</td></tr>)}</tbody>
                   </table></div>
                   <a href={href('guide', def.system)}>More in the guide</a>
                 </div>

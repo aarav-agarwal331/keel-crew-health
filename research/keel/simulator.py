@@ -108,7 +108,7 @@ def event_drivers(ev: Event, T: int, P: dict) -> dict[str, np.ndarray]:
     if ev.type == "illness":
         pro = int(P["illness_prodrome_days"])
         dur = ev.duration or int(P["illness_duration_days"])
-        return {"illness": m * _bump(T, ev.onset - pro, pro + 2, int(P.get("illness_hold_days", 2)), dur),
+        return {"illness": m * _bump(T, ev.onset - pro, pro + int(P.get("illness_rise_after_days", 2)), int(P.get("illness_hold_days", 2)), dur),
                 "symptomatic": (np.arange(T) >= ev.onset) & (np.arange(T) < ev.onset + dur)}
     if ev.type == "sleep_loss":
         dur = ev.duration or 8
@@ -197,8 +197,16 @@ def simulate(sc: Scenario, seed: int, P: dict | None = None) -> Mission:
         if landing is not None and tr["sms"]:
             sms = np.maximum(sms, ((day >= landing) & (day < landing + 2)) * 0.5)
 
+        # day-to-day noise shares one factor across indicators (a rough night raises heart rate,
+        # lowers HRV, warms the skin and shortens sleep together); loadings are fitted to real data
+        fac = rng.normal(0, 1, T)
+
+        def noise(key: str, sd: float, rho: float) -> np.ndarray:
+            l = float(P.get(f"noise_load_{key}", 0.0))
+            return sd * (l * fac + math.sqrt(max(0.0, 1 - l * l)) * _ar1(rng, T, 1.0, rho))
+
         # ---- sleep, sleep debt ---------------------------------------------------------
-        n_sleep = _ar1(rng, T, P["sleep_within_sd"] * ns["sleep"], 0.25)
+        n_sleep = noise("sleep", P["sleep_within_sd"] * ns["sleep"], 0.25)
         sleep = (tr["sleep_need"] + tr["d_sleep"] * a - P["sleep_loss_cut_h"] * drv["sleep_cut"]
                  - 0.5 * drv["low_mood"] - 0.35 * np.minimum(co2_excess, 3) - 0.8 * sms
                  + 0.6 * drv["illness"] * (rng.random(T) - 0.6) * 2 + n_sleep)
@@ -237,11 +245,11 @@ def simulate(sc: Scenario, seed: int, P: dict | None = None) -> Mission:
         ill = drv["illness"]
         rhr = (tr["rhr"] + tr["d_rhr"] * a + P["rhr_per_debt_h"] * debt + P["rhr_per_ex_hour"] * ex_dev
                + P["illness_rhr_peak"] * ill + P["decond_rhr_max"] * dec + P["dehyd_rhr"] * dehyd
-               + 2.0 * sms + _ar1(rng, T, P["rhr_within_sd"] * ns["rhr"], P["rhr_ar1"]))
+               + 2.0 * sms + noise("rhr", P["rhr_within_sd"] * ns["rhr"], P["rhr_ar1"]))
         lnhrv = (tr["lnhrv"] + tr["d_lnhrv"] * a - 0.04 * debt - 0.03 * ex_dev - P["illness_lnhrv_drop"] * ill
-                 - 0.15 * dec - 0.12 * dehyd - 0.08 * drv["low_mood"] + _ar1(rng, T, P["lnhrv_within_sd"] * ns["lnhrv"], 0.4))
+                 - 0.15 * dec - 0.12 * dehyd - 0.08 * drv["low_mood"] + noise("lnhrv", P["lnhrv_within_sd"] * ns["lnhrv"], 0.4))
         spo2 = np.clip(tr["spo2"] - P["illness_spo2_drop"] * ill + rng.normal(0, P["spo2_within_sd"] * ns["spo2"], T), 85, 100)
-        temp = tr["temp"] + P["illness_temp_peak"] * ill + 0.1 * dehyd + _ar1(rng, T, P["temp_within_sd"] * ns["temp"], 0.3)
+        temp = tr["temp"] + P["illness_temp_peak"] * ill + 0.1 * dehyd + noise("temp", P["temp_within_sd"] * ns["temp"], 0.3)
         sbp = tr["sbp"] + P["flight_sbp_shift"] * a + 3 * dec - 4 * dehyd + rng.normal(0, 5, T)
         glucose = tr["glucose"] + 4 * np.minimum(1, ill) + rng.normal(0, 5, T)
 
@@ -308,11 +316,27 @@ def apply_missing(m: Mission, seed: int, p_wear: float = 0.04, p_checkin: float 
     return X
 
 
+def _trunc_mean(cv: float) -> float:
+    """Mean of max(0, N(1, cv))."""
+    from math import erf, exp, pi, sqrt
+    a = 1.0 / cv
+    return 0.5 * (1 + erf(a / sqrt(2))) + cv * exp(-a * a / 2) / sqrt(2 * pi)
+
+
+def illness_magnitude(rng: np.random.Generator, cv: float) -> float:
+    """Size of one illness relative to the average real response.  Real episodes range from no
+    heart-rate response at all to more than twice the average, so the size is a normal variable
+    with mean 1 and the real (noise-corrected) coefficient of variation, floored at 0 and
+    rescaled so that the mean over episodes is exactly 1.  A size of 0 is a non-responder."""
+    return float(min(4.0, max(0.0, rng.normal(1.0, cv)) / _trunc_mean(cv)))
+
+
 def random_events(rng: np.random.Generator, sc: Scenario, n_events: int, types: list[str] | None = None,
-                  magnitudes: tuple[float, ...] = (0.5, 1.0, 1.5, 2.0), min_gap: int = 35, illness_spread: bool = True) -> list[Event]:
+                  magnitudes: tuple[float, ...] = (0.5, 1.0, 1.5, 2.0), min_gap: int = 35, illness_spread: bool = True,
+                  first_day: int = 30, last_margin: int = 30) -> list[Event]:
     """Scatter events through the flight with a quiet gap between them so each can be scored alone."""
     types = types or ["illness", "sleep_loss", "co2", "decond", "dehydration", "low_mood"]
-    lo, hi = sc.pre_days + 30, sc.T - 30
+    lo, hi = sc.pre_days + first_day, sc.T - last_margin
     onsets: list[int] = []
     tries = 0
     while len(onsets) < n_events and tries < 500:
@@ -321,12 +345,10 @@ def random_events(rng: np.random.Generator, sc: Scenario, n_events: int, types: 
         if all(abs(t - o) >= min_gap for o in onsets):
             onsets.append(t)
     out = []
-    sigma = load_params().get("illness_magnitude_sigma", 1.0)
+    cv = load_params().get("illness_magnitude_cv", 1.0)
     for t in sorted(onsets):
         ty = str(rng.choice(types))
         crew = -1 if ty in ("co2", "spe") else int(rng.integers(0, sc.n_crew))
-        # illness size follows the spread seen between real episodes (log-normal around the
-        # fitted mean response); other event types use the fixed grid
-        mag = float(np.clip(np.exp(rng.normal(0, sigma)), 0.25, 4.0)) if ty == "illness" and illness_spread else float(rng.choice(magnitudes))
+        mag = illness_magnitude(rng, cv) if ty == "illness" and illness_spread else float(rng.choice(magnitudes))
         out.append(Event(ty, crew, t, mag))
     return out

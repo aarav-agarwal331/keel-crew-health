@@ -86,6 +86,7 @@ export interface ActionLog {
 }
 
 export type Tier = 'self' | 'cmo' | 'ground'
+export type Urgency = 'now' | 'today' | 'routine'
 export type Status = 'learning' | 'steady' | 'watch' | 'act' | 'urgent'
 
 export interface CrewAnalysis {
@@ -110,6 +111,12 @@ export interface Change {
   /** share of this person's last 60 scored days that were less unusual than today */
   percentile: number
   daysOut: number
+  /** history used for the comparison: measured days, and how many of them were less unusual */
+  nHist?: number
+  nLess?: number
+  uToday?: number
+  /** clearly outside the usual range (smaller drifts are kept only as supporting evidence for a rule) */
+  notable?: boolean
 }
 
 export interface Factor {
@@ -120,7 +127,7 @@ export interface Factor {
 
 export interface Finding {
   key: string
-  kind: 'personal' | 'environment' | 'symptom' | 'adaptation'
+  kind: 'personal' | 'environment' | 'symptom' | 'adaptation' | 'vital'
   crewWide: boolean
   status: Status
   start: number
@@ -134,6 +141,8 @@ export interface Finding {
   steps: string[]
   tier: Tier
   tierReason: string
+  /** how soon: now, today, or at the next routine opportunity */
+  urgency: Urgency
   countermeasures: string[]
   score?: number
   threshold?: number

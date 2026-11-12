@@ -1,6 +1,6 @@
 {
  "1": {
-  "text": "NASA. \"Space Communications: 7 Things You Need to Know.\" nasa.gov (year not shown on fetch).",
+  "text": "NASA. \"Space Communications: 7 Things You Need to Know.\" nasa.gov.",
   "url": "https://www.nasa.gov/missions/tech-demonstration/space-communications-7-things-you-need-to-know"
  },
  "2": {
@@ -48,7 +48,7 @@
   "url": "https://ntrs.nasa.gov/citations/20250000009"
  },
  "13": {
-  "text": "Urbina M, Rubin D, Hailey M, Reyes D, Antonsen E. \"Medical System Concept of Operations for Mars Exploration Missions.\" NASA Technical Reports Server, 2017. (abstract record also opened:.",
+  "text": "Urbina M, Rubin D, Hailey M, Reyes D, Antonsen E. \"Medical System Concept of Operations for Mars Exploration Missions.\" NASA Technical Reports Server, 2017.",
   "url": "https://ntrs.nasa.gov/citations/20170000500"
  },
  "14": {
@@ -164,7 +164,7 @@
   "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=23723233,24324275,24806559&rettype=abstract&retmode=text"
  },
  "42": {
-  "text": "Hassler DM, Zeitlin C, Wimmer-Schweingruber RF, et al. \"Mars' surface radiation environment measured with the Mars Science Laboratory's Curiosity rover.\" Science 343(6169):1244797, 2014. Same URL as [41] (abstract contains no dose values).",
+  "text": "Hassler DM, Zeitlin C, Wimmer-Schweingruber RF, et al. \"Mars' surface radiation environment measured with the Mars Science Laboratory's Curiosity rover.\" Science 343(6169):1244797, 2014.",
   "url": null
  },
  "43": {
@@ -200,7 +200,7 @@
   "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=22549960&rettype=abstract&retmode=text"
  },
  "51": {
-  "text": "Multi-record PubMed abstract page:.",
+  "text": "PubMed abstract records; see the lettered entries below.",
   "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=33299095,24970852,26630198,28153941,28985128,24337701,23713210,20824997&rettype=abstract&retmode=text"
  },
  "51b": {
@@ -216,7 +216,7 @@
   "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=33299095,24970852,26630198,28153941,28985128,24337701,23713210,20824997&rettype=abstract&retmode=text"
  },
  "52": {
-  "text": "Multi-record PubMed abstract page:.",
+  "text": "PubMed abstract records; see the lettered entries below.",
   "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=16935570,27843335,25197887,30792698,26630196,19765769&rettype=abstract&retmode=text"
  },
  "52a": {
@@ -252,7 +252,7 @@
   "url": "https://ntrs.nasa.gov/citations/20000020539"
  },
  "55": {
-  "text": "Multi-record PubMed abstract pages: and.",
+  "text": "PubMed abstract records; see the lettered entries below.",
   "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=28050606,23637139,23291736,22764612,19833299,29991811,26137491,25392280,15113425&rettype=abstract&retmode=text"
  },
  "55a": {
@@ -292,7 +292,7 @@
   "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pmc&id=9020268"
  },
  "59": {
-  "text": "Multi-record PubMed abstract page:.",
+  "text": "PubMed abstract records; see the lettered entries below.",
   "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=33208926,33334565,33122860,34586364&rettype=abstract&retmode=text"
  },
  "59a": {
@@ -318,5 +318,25 @@
  "62": {
   "text": "NASA. \"ISS Daily Summary Report – 3/24/2021.\" nasa.gov, 2021.",
   "url": "https://www.nasa.gov/blogs/stationreport/2021/03/24/iss-daily-summary-report-3-24-2021"
+ },
+ "63": {
+  "text": "MedlinePlus Medical Encyclopedia. \"Fever.\" U.S. National Library of Medicine, reviewed 2024.",
+  "url": "https://medlineplus.gov/ency/article/003090.htm"
+ },
+ "64": {
+  "text": "MedlinePlus Medical Encyclopedia. \"Low blood sugar.\" U.S. National Library of Medicine, reviewed 2026.",
+  "url": "https://medlineplus.gov/ency/article/000386.htm"
+ },
+ "65": {
+  "text": "MedlinePlus Medical Encyclopedia. \"Low blood pressure.\" U.S. National Library of Medicine, reviewed 2025.",
+  "url": "https://medlineplus.gov/ency/article/007278.htm"
+ },
+ "66": {
+  "text": "MedlinePlus Medical Encyclopedia. \"Blood sugar test.\" U.S. National Library of Medicine, reviewed 2025.",
+  "url": "https://medlineplus.gov/ency/article/003482.htm"
+ },
+ "67": {
+  "text": "MedlinePlus Medical Encyclopedia. \"High blood pressure in adults - hypertension.\" U.S. National Library of Medicine, reviewed 2025.",
+  "url": "https://medlineplus.gov/ency/article/000468.htm"
  }
 }

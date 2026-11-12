@@ -18,7 +18,10 @@ export const LEVELS: { id: Level; label: string; reveals: string }[] = [
 export const SHARE_CATEGORIES = ['cardio', 'sleep', 'exercise', 'cognition', 'nutrition', 'symptoms'] as const
 export type ShareCategory = (typeof SHARE_CATEGORIES)[number]
 
-export type SharingSettings = Record<Role, Record<ShareCategory, Level>>
+export type SharingSettings = Record<Role, Record<ShareCategory, Level>> & {
+  /** agreed before flight: a red-flag symptom or a fixed safety threshold is shown to the medical officer and the commander (the backup) at once */
+  emergency?: boolean
+}
 
 const all = (l: Level): Record<ShareCategory, Level> => ({ cardio: l, sleep: l, exercise: l, cognition: l, nutrition: l, symptoms: l })
 
@@ -28,6 +31,7 @@ export function defaultSharing(): SharingSettings {
     cmo: { ...all('status'), cognition: 'none', symptoms: 'status' },
     commander: all('none'),
     ground: all('none'),
+    emergency: true,
   }
 }
 

@@ -57,10 +57,13 @@ def adaptation_prior(ids: list[str], P: dict | None = None) -> dict:
     return {"shift": [float(shift.get(i, 0.0)) for i in ids], "tau": [float(tau.get(i, P["adapt_tau_days"])) for i in ids]}
 
 
-def phases_for(m: Mission, ids: list[str], aware: bool = True, kappa: float = 2.5) -> list[Phase] | None:
+def phases_for(m: Mission, ids: list[str], aware: bool = True, kappa: float = 2.5, prior_scale: float = 1.0) -> list[Phase] | None:
+    """prior_scale mis-specifies the expected shift on purpose (0 = no shift expected, 2 = twice
+    the simulator's true population shift), to test how much the result leans on a correct prior."""
     if not aware:
         return None
     pr = adaptation_prior(ids)
+    pr = {"shift": [v * prior_scale for v in pr["shift"]], "tau": pr["tau"]}
     out = [Phase(m.scenario.pre_days, np.array(pr["shift"]), np.array(pr["tau"]), kappa)]
     if m.scenario.landing_day is not None:
         P = load_params()
@@ -70,7 +73,7 @@ def phases_for(m: Mission, ids: list[str], aware: bool = True, kappa: float = 2.
     return out
 
 
-def people_from(m: Mission, x: np.ndarray | None = None, ids: list[str] | None = None, aware: bool = True) -> list[Person]:
+def people_from(m: Mission, x: np.ndarray | None = None, ids: list[str] | None = None, aware: bool = True, prior_scale: float = 1.0) -> list[Person]:
     """One Person per crew member.  Crew-wide events (crew = -1) count for everyone."""
     spec_ids = ids or detect_spec()["indicators"]
     X = m.x if x is None else x
@@ -78,5 +81,34 @@ def people_from(m: Mission, x: np.ndarray | None = None, ids: list[str] | None =
     for i in range(X.shape[0]):
         evs = [e for e in m.events if e.crew in (i, -1) and e.type != "spe"]
         out.append(Person(pid=f"{m.scenario.name}-{m.seed}-c{i}", x=features(X[i], spec_ids), onsets=[e.onset for e in evs],
-                          phases=phases_for(m, spec_ids, aware), events_meta=[e.to_json() for e in evs]))
+                          phases=phases_for(m, spec_ids, aware, prior_scale=prior_scale), events_meta=[e.to_json() for e in evs]))
+    return out
+
+
+# Two-channel setting that exists in BOTH the real illness data and the simulator: overnight
+# resting heart rate, and the 7-day mean of daily activity on the log scale (steps on Earth,
+# exercise minutes for the simulated crew).  Used for the like-for-like and transfer checks.
+SPEC2 = {"indicators": ["rhr", "act7"], "transform": ["none", "log"], "concern": [1, -1], "floor": [1.5, 0.05]}
+
+
+def ground_people(n_missions: int, seed0: int, events_per: int = 2, p_wear: float = 0.3, days: int = 240) -> list[Person]:
+    """Simulated people on the ground (no gravity change), with illnesses of realistic sizes
+    and wear time similar to the real data.  Features follow SPEC2."""
+    from .simulator import Event, Scenario, apply_missing, illness_magnitude, simulate
+    P = load_params()
+    rng = np.random.default_rng(seed0)
+    out = []
+    for s in range(n_missions):
+        sc = Scenario(pre_days=days, flight_days=1)
+        onsets: list[int] = []
+        while len(onsets) < events_per:
+            t = int(rng.integers(70, days - 30))
+            if all(abs(t - o) >= 35 for o in onsets):
+                onsets.append(t)
+        sc.events = [Event("illness", int(rng.integers(0, sc.n_crew)), t, illness_magnitude(rng, P["illness_magnitude_cv"])) for t in sorted(onsets)]
+        m = simulate(sc, seed0 + s)
+        x = apply_missing(m, seed0 + s, p_wear=p_wear)
+        for i in range(x.shape[0]):
+            ev = [e for e in sc.events if e.crew == i]
+            out.append(Person(pid=f"ground-{seed0 + s}-c{i}", x=features(x[i, :days], ["rhr", "ex7"]), onsets=[e.onset for e in ev], events_meta=[e.to_json() for e in ev]))
     return out

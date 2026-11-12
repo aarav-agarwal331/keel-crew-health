@@ -38,6 +38,7 @@ interface Ctx {
   logAction: (a: Omit<ActionLog, 'id' | 'ts' | 'mission'>) => Promise<void>
   sharing: Record<string, SharingSettings>
   setShare: (crew: string, role: Role, cat: string, level: Level) => void
+  setEmergency: (crew: string, on: boolean) => void
   access: AccessEntry[]
   logAccess: (a: Omit<AccessEntry, 'id' | 'ts' | 'mission'>) => void
   link: LinkState
@@ -266,6 +267,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
       return { ...prev, [crew]: next }
     })
   }, [mission])
+  const setEmergency = useCallback((crew: string, on: boolean) => {
+    if (!mission) return
+    setSharing((prev) => {
+      const next = { ...(prev[crew] ?? defaultSharing()), emergency: on }
+      void store.putSharing(`${mission.id}|${crew}`, next)
+      return { ...prev, [crew]: next }
+    })
+  }, [mission])
   const seen = useRef(new Set<string>())
   const logAccess = useCallback((a: Omit<AccessEntry, 'id' | 'ts' | 'mission'>) => {
     if (!mission) return
@@ -288,7 +297,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const ready = !!mission && !!model && Object.keys(analyses).length > 0 && !!me
   const value: Ctx | null = mission && model ? {
     ready, error, mission, model, missions, loadMission, addMission, analyses, computeMs, day, setDay, me, setMe, today, entries, saveEntry,
-    actions, logAction, sharing, setShare, access, logAccess, link, linkCut, setLinkCut, outbox, theme, setTheme, resetLocal,
+    actions, logAction, sharing, setShare, setEmergency, access, logAccess, link, linkCut, setLinkCut, outbox, theme, setTheme, resetLocal,
   } : null
 
   if (error) return <div className="boot"><h1>Keel could not start</h1><p>{error}</p><button className="btn" onClick={() => location.reload()}>Try again</button></div>

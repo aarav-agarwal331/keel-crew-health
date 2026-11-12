@@ -48,15 +48,22 @@ def build(sc: Scenario, seed: int, extra: dict) -> dict:
         e["label"] = EVENT_LABELS[e["type"]]
         if e["type"] == "illness":
             e["detail"] = (f"Scripted at {e['magnitude']:g} times the average real response: a peak resting heart rate rise of about "
-                           f"{e['magnitude'] * P['illness_rhr_peak']:.0f} bpm, close to the upper quartile of real episodes.")
+                           f"{e['magnitude'] * P['illness_rhr_peak']:.0f} bpm, the published median among detected cases and near the upper quartile of real episodes. "
+                           "About three real episodes in ten show no heart-rate rise at all.")
     return j
 
 
-def main():
+def main(ill_fd: dict | None = None):
+    """ill_fd optionally moves the scripted illness (flight day) in each demo mission; it is set
+    by fit_mission_model.py so that the replay starts from two quiet weeks."""
+    ill_fd = {"mars_transit": 124, "lunar_surface": 30, **(ill_fd or {})}
     L = 30
+    # the scripted illness peaks at about 7 bpm: the published median rise among detected cases
+    # (DOMAIN ref 58) and near the upper quartile of the real episodes the simulator was fitted to
+    ILL = round(7.0 / load_params()["illness_rhr_peak"], 2)
     mars = Scenario(name="mars_transit", title="Mars transit", pre_days=L, flight_days=180, events=[
         Event("co2", -1, L + 38, 1.0), Event("dehydration", 3, L + 58, 1.0), Event("sleep_loss", 0, L + 78, 1.0),
-        Event("decond", 1, L + 96, 1.0), Event("illness", 2, L + 124, 2.5), Event("low_mood", 3, L + 150, 1.0),
+        Event("decond", 1, L + 96, 1.0), Event("illness", 2, L + ill_fd["mars_transit"], ILL), Event("low_mood", 3, L + 150, 1.0),
         Event("spe", -1, L + 163, 1.0),
     ])
     write_json(APP_PUBLIC / "data" / "missions" / "mars_transit.json", build(mars, 2039, {
@@ -65,11 +72,13 @@ def main():
         "blurb": "Four crew, 30 days of pre-flight baseline, then a 180-day outbound transit to Mars."}))
     moon = Scenario(name="lunar_surface", title="Lunar surface stay", pre_days=L, flight_days=40, landing_day=5,
                     rad_key="rad_lunar_surface", events=[Event("sleep_loss", 2, L + 14, 1.0), Event("dehydration", 0, L + 24, 1.5),
-                                                         Event("illness", 3, L + 30, 2.5)])
+                                                         Event("illness", 3, L + ill_fd["lunar_surface"], ILL)])
     write_json(APP_PUBLIC / "data" / "missions" / "lunar_surface.json", build(moon, 2031, {
         "environment": "Lunar surface habitat and rover", "link": {"profile": "lunar"},
         "default_day": L + 31, "default_crew": "c3", "kind": "simulated",
         "blurb": "Four crew, a five-day transit, then a 35-day stay at a south-polar surface base in one-sixth gravity."}))
+    # optional list of extra data sets; shipped empty so the app never requests a missing file
+    write_json(APP_PUBLIC / "data" / "missions" / "index.json", [])
     print("missions written")
 
 

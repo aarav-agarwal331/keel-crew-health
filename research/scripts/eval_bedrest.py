@@ -21,7 +21,7 @@ import numpy as np
 import pandas as pd
 
 from keel.core import Model, Params, Phase, concern_dev, zscores
-from keel.export import APP_PUBLIC, git_commit, write_json
+from keel.export import APP_PUBLIC, code_version, git_commit, write_json
 from keel.realdata import split_half
 
 BASE = ROOT / "data" / "raw" / "nasa_lsda_nlsp_public" / "CRF"
@@ -80,34 +80,49 @@ def main():
         hit = np.nan_to_num(seg, nan=-9) >= FLAG_U
         return any(hit[t:t + N].sum() >= K for t in range(0, max(1, len(seg) - N + 1)))
 
+    variants = {
+        "naive": lambda tr: None,
+        "reset": lambda tr: [Phase(i, np.array([0.0]), np.array([4.0]), 1.0) for i, n in tr],          # baseline restarts at the transition, nothing else
+        "reset_widen": lambda tr: [Phase(i, np.array([0.0]), np.array([4.0]), 2.5) for i, n in tr],    # ... and the band is widened
+        "aware": lambda tr: [Phase(i, np.array([shift[n]["median"]]), np.array([4.0]), 2.5) for i, n in tr],  # ... and the learned shift is expected
+    }
     rows = []
-    quiet_days = quiet_flags = {"naive": 0, "aware": 0}
-    qd = {"naive": 0, "aware": 0}
-    qf = {"naive": 0, "aware": 0}
+    qd = {k: 0 for k in variants}
+    qf = {k: 0 for k in variants}
     for s in val:
         x, tr = transitions(subj[s])
-        phases = [Phase(i, np.array([shift[n]["median"]]), np.array([4.0]), 2.5) for i, n in tr]
-        zn = concern_dev(zscores(x[:, None], model, p)[0], model.concern)[:, 0]
-        za = concern_dev(zscores(x[:, None], model, p, phases)[0], model.concern)[:, 0]
+        zs = {k: concern_dev(zscores(x[:, None], model, p, mk(tr))[0], model.concern)[:, 0] for k, mk in variants.items()}
         near = np.zeros(len(x), bool)
         for i, n in tr:
             near[i:i + WINDOW_AFTER] = True
-            ok = np.sum(~np.isnan(zn[i:i + WINDOW_AFTER])) >= 5 and np.sum(~np.isnan(za[i:i + WINDOW_AFTER])) >= 5
-            if ok:
-                rows.append({"subject": s, "transition": n, "naive": bool(flags(zn, i)), "aware": bool(flags(za, i)),
-                             "naive_mean_u": float(np.nanmean(zn[i:i + WINDOW_AFTER])), "aware_mean_u": float(np.nanmean(za[i:i + WINDOW_AFTER]))})
-        for key, z in (("naive", zn), ("aware", za)):
+            if all(np.sum(~np.isnan(z[i:i + WINDOW_AFTER])) >= 5 for z in zs.values()):
+                rows.append({"subject": s, "transition": n, **{k: bool(flags(z, i)) for k, z in zs.items()},
+                             "naive_mean_u": float(np.nanmean(zs["naive"][i:i + WINDOW_AFTER])), "aware_mean_u": float(np.nanmean(zs["aware"][i:i + WINDOW_AFTER]))})
+        for key, z in zs.items():
             far = ~near & ~np.isnan(z)
             qd[key] += int(far.sum())
             qf[key] += int((z[far] >= FLAG_U).sum())
+
+    def mcnemar(a: list[bool], b: list[bool]) -> float:
+        """Exact two-sided McNemar test on paired yes/no outcomes."""
+        from math import comb
+        n01 = sum(1 for u, v in zip(a, b) if u and not v)
+        n10 = sum(1 for u, v in zip(a, b) if v and not u)
+        n = n01 + n10
+        if n == 0:
+            return 1.0
+        k = min(n01, n10)
+        return min(1.0, 2 * sum(comb(n, j) for j in range(k + 1)) / 2 ** n)
+
     res = {}
     for name in ("PRE_TEST>IN_TEST", "IN_TEST>POST_TEST"):
         r = [q for q in rows if q["transition"] == name]
-        res[name] = {"n": len(r), "naive_flagged": sum(q["naive"] for q in r), "aware_flagged": sum(q["aware"] for q in r),
+        res[name] = {"n": len(r), **{f"{k}_flagged": sum(q[k] for q in r) for k in variants},
+                     "p_naive_vs_aware": mcnemar([q["naive"] for q in r], [q["aware"] for q in r]),
                      "naive_mean_u": float(np.mean([q["naive_mean_u"] for q in r])) if r else None, "aware_mean_u": float(np.mean([q["aware_mean_u"] for q in r])) if r else None}
         print(name, res[name])
     write_json(APP_PUBLIC / "results" / "bedrest.json", {
-        "script": "research/scripts/eval_bedrest.py", "commit": git_commit(),
+        "script": "research/scripts/eval_bedrest.py", "commit": git_commit(), "code_version": code_version(),
         "data": "NASA Life Sciences Data Archive, public head-down-tilt bed-rest campaigns (UTMB campaigns 1 and 3, CFT70): daily nurse-taken pulse",
         "n_subjects": len(subj), "n_calibration": len(cal), "n_validation": len(val), "expected_shift_bpm": shift, "transitions": res,
         "days_outside_transitions": {k: {"days": qd[k], "share_of_days_at_or_above_2sd": qf[k] / max(1, qd[k])} for k in qd},

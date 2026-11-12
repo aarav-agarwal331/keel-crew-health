@@ -22,10 +22,10 @@ DAYS_PER_MONTH = 30.44
 METHODS = ["fixed", "zscore", "cusum", "mewma", "fusion"]
 METHOD_LABELS = {
     "fixed": "Fixed threshold (same for everyone)",
-    "zscore": "Personal baseline z-score",
+    "zscore": "Personal baseline, 2-of-3-days rule",
     "cusum": "Personal baseline + CUSUM",
     "mewma": "Personal baseline + multivariate EWMA",
-    "fusion": "Keel (CUSUM + multivariate, fused)",
+    "fusion": "Personal baseline, CUSUM and multivariate fused",
 }
 
 
@@ -266,13 +266,15 @@ def chance_rows(people: list[Person], scores: list[np.ndarray], thrs: list[float
 
 
 def aggregate(rows: list[dict]) -> dict:
-    ev = [(l, s) for r in rows for l, s in zip(r["leads"], r["scorable"]) if s]
-    n_ev = len(ev)
-    det = [l for l, _ in ev if l is not None]
+    """Every labeled event counts.  An event with no score anywhere in its detection window (no
+    baseline yet, or no data) is a miss, so all methods are compared on the same events."""
+    leads = [l if s else None for r in rows for l, s in zip(r["leads"], r["scorable"])]
+    n_ev = len(leads)
+    det = [l for l in leads if l is not None]
     fa = sum(r["fa"] for r in rows)
     months = sum(r["quiet_days"] for r in rows) / DAYS_PER_MONTH
     return {
-        "n_people": len(rows), "n_events": n_ev, "n_detected": len(det),
+        "n_people": len(rows), "n_events": n_ev, "n_scorable": sum(1 for r in rows for s in r["scorable"] if s), "n_detected": len(det),
         "detection_rate": len(det) / n_ev if n_ev else float("nan"),
         "early_rate": sum(1 for l in det if l >= 1) / n_ev if n_ev else float("nan"),
         "by_onset_rate": sum(1 for l in det if l >= 0) / n_ev if n_ev else float("nan"),
@@ -281,6 +283,41 @@ def aggregate(rows: list[dict]) -> dict:
         "fa_per_person_month": fa / months if months > 0 else float("nan"),
         "quiet_days_in_alert_frac": sum(r.get("alert_days", 0) for r in rows) / max(1, sum(r["quiet_days"] for r in rows)),
     }
+
+
+def net_stats(rows: list[dict], chance: list[dict], n_boot: int = 2000, seed: int = 0, other: tuple | None = None) -> dict:
+    """Detection net of luck: detection rate minus the chance rate from pseudo-events, with a
+    bootstrap interval that resamples people (their real events and their pseudo-events move
+    together).  `other` = (rows, chance) of a second method gives the paired difference in net
+    detection (this method minus the other)."""
+    by_pid = {r["pid"]: r for r in chance}
+    empty = {"leads": [], "scorable": [], "fa": 0, "quiet_days": 0}
+
+    def net(rs, ch):
+        a, c = aggregate(rs), aggregate(ch)
+        return a["detection_rate"] - c["detection_rate"], a["by_onset_rate"] - c["by_onset_rate"]
+    ch_rows = [by_pid.get(r["pid"], empty) for r in rows]
+    point = net(rows, ch_rows)
+    out = {"net_detection": point[0], "net_by_onset": point[1]}
+    if other is not None:
+        o_by = {r["pid"]: r for r in other[1]}
+        o_ch = [o_by.get(r["pid"], empty) for r in other[0]]
+        out["net_diff"] = point[0] - net(other[0], o_ch)[0]
+    rng = np.random.default_rng(seed)
+    n = len(rows)
+    acc, acc_o, acc_d = [], [], []
+    for _ in range(n_boot):
+        idx = rng.integers(0, n, n)
+        v = net([rows[i] for i in idx], [ch_rows[i] for i in idx])
+        acc.append(v[0])
+        acc_o.append(v[1])
+        if other is not None:
+            acc_d.append(v[0] - net([other[0][i] for i in idx], [o_ch[i] for i in idx])[0])
+    q = lambda a: [float(np.nanpercentile(a, 2.5)), float(np.nanpercentile(a, 97.5))]  # noqa: E731
+    out["net_detection_ci"], out["net_by_onset_ci"] = q(acc), q(acc_o)
+    if other is not None:
+        out["net_diff_ci"] = q(acc_d)
+    return out
 
 
 def bootstrap(rows: list[dict], n_boot: int = 2000, seed: int = 0) -> dict:

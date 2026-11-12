@@ -20,26 +20,42 @@ is decision support, not a medical device.
 - **Measured, not asserted.** Detection is evaluated on real wearable data with dated illness
   (251 people, 103 episodes), with false-alert rates, intervals, a chance level and held-out people.
   The app shows the results, including where a simple method does as well and what is *not* shown.
+- **Safety rules that do not wait for a trend.** Red-flag symptoms and single readings beyond a
+  sourced threshold are acted on at once.
 - **Alarm fatigue treated as a hazard.** Thresholds come from an explicit false-alert budget.
-- **Auditable advice.** A fixed rule table maps patterns to cited countermeasures. No language model
-  writes medical text.
+- **Auditable advice.** A fixed table of 28 rules maps patterns, entered readings and reported
+  symptoms to cited countermeasures, each with how soon and who. No language model writes medical text.
 - **Crew-owned data.** Per-role, per-area sharing with an access log; the commander sees readiness,
   not reasons.
 
 ## Headline results
 
-| | Keel | One threshold for everyone | By luck |
-|---|---|---|---|
-| Real illness episodes flagged, at 1 false alert per person-month | **65%** (56–75) | 40% (30–50) | 37% |
-| Same, at 0.25 false alerts per person-month | **42%** (32–51) | 19% (11–27) | 13% |
-| Measured false alerts per person-month on held-out people (budget 1.00 / 0.25) | 0.99 / 0.25 | | |
-| Simulated mission events flagged, full sensor set, 1 per person-month | **75%** (69–81) | 64% | 38% |
-| False flags after getting up from bed rest, NASA analog data (14 volunteers) | **4** | 9 with a plain personal baseline | |
+Detection is reported **above luck**: at one false alert per person-month an alert falls inside a
+two-week window by chance about a third of the time, so that share is subtracted.
 
-Honest reading: on real data the alert usually arrives on or just after the day symptoms start. Early
-warning before symptoms is **not** demonstrated. The real data is from people on Earth. Everything
-beyond illness is tested in simulation. Details: the app's Validation screen and
-[docs/METHOD.md](docs/METHOD.md).
+| | Keel | One threshold for everyone |
+|---|---|---|
+| Real illness episodes flagged, at 1 false alert per person-month | 67% (luck 36%) | 40% (luck 24%) |
+| **Above luck** (95% interval) | **+31 points** (21 to 41) | +15 points (6 to 25) |
+| Same, at 0.25 false alerts per person-month | 43% (luck 12%): **+31** (21 to 41) | 19% (luck 8%): +12 (5 to 19) |
+| Keel's advantage above luck | +15 points (2 to 30) at 1 per month; +19 (8 to 30) at 0.25 | |
+| Measured false alerts per person-month on held-out people (budget 1.00 / 0.25) | 1.00 / 0.24 | |
+| Simulated mission events flagged, full sensor set, 1 per person-month | 67% (luck 40%): +26 (20 to 33) | +20 |
+| False flags after getting up from bed rest, NASA analog data (14 volunteers) | 4 | 9 with a plain personal baseline (p = 0.06) |
+
+Honest reading:
+
+- **No early warning.** On real data the alert usually starts on or just after the day symptoms begin.
+- **Most alerts are false.** At in-flight illness rates about one alert-tier alert in eleven would be
+  a real respiratory illness.
+- **The four personal-baseline detectors perform alike.** Keel runs the one a pre-set rule picked on
+  simulated training missions; a simple two-of-three-days rule does nearly as well.
+- **Handling gravity changes halves false alerts after launch but hides real problems** in the first
+  weeks (19 against 34 points above luck in simulation).
+- The real data is from people on Earth with two indicators. Everything beyond illness is tested in
+  simulation, and simulated thresholds ran 40 to 70% over budget when applied to real people.
+
+Details: the app's Validation screen, [docs/METHOD.md](docs/METHOD.md) and [docs/REVIEW.md](docs/REVIEW.md).
 
 ## Quickstart
 
@@ -114,26 +130,26 @@ statement saved in [docs/CHALLENGE.md](docs/CHALLENGE.md).
 
 | ID | Requirement | Where to see it |
 |---|---|---|
-| A1 | Gathers health indicators | 16 indicators; wearable import, Bluetooth strap, check-in, cabin sensors (Data sources, Check-in) |
+| A1 | Gathers health indicators | 17 indicators; wearable import, Bluetooth strap, check-in, cabin sensors (Data sources, Check-in) |
 | A2 | Astronauts evaluate their own health | Today status against a personal baseline; Trends; body map |
-| A3 | Act on it; guidance on treatments and improvements | One recommended action on Today; Alert detail with steps and cited countermeasures |
+| A3 | Act on it; guidance on treatments and improvements | One recommended action on Today; Alert detail with steps and cited countermeasures; Guide → "Everything Keel can recommend" (all 28 rules) |
 | A4 | A visual tool | Charts with personal bands, clickable body map, replay |
 | A5 | Any input: keyboard, clicks, files | Check-in taps and number entry; file import; live sensor. Camera input is not done |
 | A6 | Data represents a health indicator, with units | Units on every reading and entry field (for example blood sugar in mg/dL) |
-| A7 | Blood pressure, heart rate, blood sugar, temperature, sleep hours, mood | All six are indicators (Check-in → Measurements, Trends) |
+| A7 | Blood pressure, heart rate, blood sugar, temperature, sleep hours, mood | All six are indicators; blood pressure, blood sugar and thermometer readings have fixed safety rules with sourced reference values |
 | A8 | Immune changes, bone loss, cardiovascular events, nutrition, behavioral health | Illness-pattern rule; exercise adherence for bone and muscle; heart indicators; food and fluid logs; mood and reaction test |
 | A9 | Grounded in the five hazards | Guide → five hazards table; body map "why space matters here" |
 | A10 | Uses NASA HRP and other agencies' resources | docs/DOMAIN.md (62 opened sources); Method → Sources |
 | B1 | Which measurements can be performed in space? | Guide; DOMAIN.md section 3 |
 | B2 | Why is an exam needed? | "Why it matters" on every indicator (Trends, Guide) |
 | B3 | How do hazards affect indicators? | Guide; body map; simulator adaptation model |
-| B4 | When does a result warrant crew or flight-surgeon attention? | Three-level escalation on every alert; Guide → "When to involve someone else" |
+| B4 | When does a result warrant crew or flight-surgeon attention? | "How soon" and "who" on every alert; red-flag symptoms and safety thresholds that bypass the detector; Guide → "When to involve someone else" |
 | B5 | Actions that prevent a critical condition | Rule table mapped to countermeasures (Method → From alert to action) |
 | B6 | Clear UI with animation and interactivity | Replay, hover readouts on every chart, status by colour, shape and words |
 | B7 | Clickable human figure | Today → "Your body at a glance" |
 | C1 | Different environments | Mars transit and lunar surface missions (gravity change, radiation, link delay differ) |
 | C2 | Prompts to measure as part of routine | Today → "Today's routine" with due measurements |
-| C3 | Gamification | Streak and weekly exercise ring (deliberately light) |
+| C3 | Gamification | Streak, weekly exercise ring, shared crew exercise goal (deliberately light) |
 | C4 | Dynamic charts over time | Trends: 2 weeks, 8 weeks, mission |
 | C5 | Colour coding at a glance | Four status levels, each with a colour, a shape and a label (colourblind-safe) |
 | C6 | Instructions and explanations | "How to measure" on every entry field; Guide |
@@ -144,7 +160,7 @@ statement saved in [docs/CHALLENGE.md](docs/CHALLENGE.md).
 | E4 | Simulation labelled | "Simulated data" chip on every screen that shows it |
 | E5 | Auditable alert-to-action | Alert detail → audit trail; `shared/rules.json` |
 | E6 | Crew-owned data, access log | Sharing |
-| E7 | Privacy-preserving readiness | Crew |
+| E7 | Privacy-preserving readiness | Crew (tier never better than the crew member's own worst area; reasons only if shared) |
 | E8 | Link delay, blackout, queued summary | Link |
 | E9 | Mission replay | Replay |
 | E10 | Decision support, not diagnosis | Stated on Today, Alert, More; enforced by a unit test on the rule text |
@@ -172,7 +188,7 @@ Raw data is not redistributed in this repository; `make data` downloads it from 
 [PLAN.md](PLAN.md) · [DECISIONS.md](DECISIONS.md) · [docs/METHOD.md](docs/METHOD.md) ·
 [docs/DOMAIN.md](docs/DOMAIN.md) · [docs/DATA.md](docs/DATA.md) ·
 [docs/REQUIREMENTS.md](docs/REQUIREMENTS.md) · [submission/](submission/) ·
-[FINAL_REPORT.md](FINAL_REPORT.md) · screenshots in [docs/shots/](docs/shots/)
+[docs/REVIEW.md](docs/REVIEW.md) · [FINAL_REPORT.md](FINAL_REPORT.md) · screenshots in [docs/shots/](docs/shots/)
 
 ## License
 

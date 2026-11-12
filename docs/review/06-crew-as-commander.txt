@@ -1,0 +1,46 @@
+SCREEN: 06-crew-as-commander
+TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 126 | Simulated data
+BOTTOM NAV: Today | Trends | Check-in | Crew | More
+
+Crew readiness
+Commander
+Medical officer
+
+FD 126. Who is fit for a demanding task tomorrow, such as a spacewalk. You see a readiness tier for everyone; reasons appear only where a crew member has chosen to share them.
+
+Demo view. On a mission each role has its own device; here you can switch roles. Every look is written to the crew member's access log.
+
+Task tomorrow: spacewalk
+
+3 of 4 crew are ready without conditions.
+
+NASA's medical operations standard requires medical clearance before every spacewalk. Keel's tier is an input to that conversation, not the clearance.
+
+Crew-wide pattern
+2 of 4 crew show a change in heart and circulation over the last three days.
+
+When several people drift together, look for a shared cause: cabin air, schedule, workload. Counts are anonymous and only shown when two or more people are affected.
+
+Amara Okafor
+Commander
+
+Ready
+
+Kenji Sato
+Crew medical officer
+
+Ready
+
+Lucía Reyes
+Flight engineer
+
+Talk to the medical officer first
+
+ Reason not shared. Ask Lucía or the medical officer.
+
+Tomás Novák
+Mission specialist
+
+Ready
+
+The readiness tier is a rule-based summary of sleep, reaction time and open alerts. It is not a validated fitness-for-duty test.

@@ -1,6 +1,7 @@
 {
  "script": "research/scripts/eval_bedrest.py",
- "commit": "b7b27cd",
+ "commit": "99ffc22",
+ "code_version": "699d6ab3e831",
  "data": "NASA Life Sciences Data Archive, public head-down-tilt bed-rest campaigns (UTMB campaigns 1 and 3, CFT70): daily nurse-taken pulse",
  "n_subjects": 29,
  "n_calibration": 14,
@@ -27,22 +28,36 @@
   "PRE_TEST>IN_TEST": {
    "n": 15,
    "naive_flagged": 2,
+   "reset_flagged": 1,
+   "reset_widen_flagged": 0,
    "aware_flagged": 1,
-   "naive_mean_u": -0.21108227193482537,
-   "aware_mean_u": -0.01897746990262355
+   "p_naive_vs_aware": 1.0,
+   "naive_mean_u": -0.2110822719348254,
+   "aware_mean_u": -0.018977469902623553
   },
   "IN_TEST>POST_TEST": {
    "n": 14,
    "naive_flagged": 9,
+   "reset_flagged": 8,
+   "reset_widen_flagged": 4,
    "aware_flagged": 4,
+   "p_naive_vs_aware": 0.0625,
    "naive_mean_u": 0.8099349936785194,
-   "aware_mean_u": 0.32898560626563705
+   "aware_mean_u": 0.3289856062656371
   }
  },
  "days_outside_transitions": {
   "naive": {
    "days": 1017,
    "share_of_days_at_or_above_2sd": 0.09832841691248771
+  },
+  "reset": {
+   "days": 1017,
+   "share_of_days_at_or_above_2sd": 0.1111111111111111
+  },
+  "reset_widen": {
+   "days": 1017,
+   "share_of_days_at_or_above_2sd": 0.1111111111111111
   },
   "aware": {
    "days": 1017,

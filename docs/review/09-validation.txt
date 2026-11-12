@@ -1,0 +1,363 @@
+SCREEN: 09-validation
+TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 126 | Simulated data
+BOTTOM NAV: Today | Trends | Check-in | Crew | More
+
+Does it work?
+
+Every number on this page was produced by a script in the repository from data described here. Real data is used wherever it exists; everything else is simulated and labelled. Intervals are 95% bootstrap intervals over people. Nothing was tuned on the people it was tested on.
+
+The short version
+65%
+of real illness episodes flagged
+within 10 days before to 4 days after symptom onset, at one false alert per person-month. Interval 56 to 75%. A fixed threshold: 40%. By luck alone: 37%.
+0.99
+false alerts per person-month
+measured on held-out people against a budget of 1.00. At the stricter alert tier: 0.25 against 0.25, with 42% detected.
+75%
+of simulated mission events flagged
+six event types, full sensor set, same budget (interval 69 to 81%; by luck 38%). Simulated data
+What these results do not show. On real data Keel mostly flags illness on or just after the day symptoms start, not days before: only 41% of episodes had an alert open by the onset day, and a good part of that is luck. The real data is from people on Earth with a heart-rate watch, not astronauts. Detection of anything other than illness is tested in simulation only.
+1. Real wearable data with dated illness
+
+Stanford COVID-19 wearables phase 1 (Mishra et al. 2020) and phase 2 subset (Alavi et al. 2022). 251 people with at least 28 nights of data, 37,234 person-days, 103 illness episodes (79 COVID-19 with a symptom date, 19 with only a test date, 5 other illness), 1068 quiet person-months. Indicators available: resting heart rate + daily steps. No HRV, oxygen or temperature exists in this data.
+
+Detection at one false alert per person-month
+One threshold for all
+40%
+Personal, simple rule
+63%
+Personal + CUSUM
+56%
+Keel: personal + mult…
+65%
+Personal, fused
+59%
+Share of illness episodes with an alert starting between 10 days before and 4 days after onset. Bars show 95% intervals. Keel's detector beats one threshold for everyone by 25 points (interval 13 to 38). The simple personal rule does about as well as Keel's detector here.
+How this was measured
+Made by research/scripts/eval_real.py
+Show the numbers as a table
+Detection against false alerts
+Keel
+Fixed threshold
+By luck (Keel thresholds)
+0%
+25%
+50%
+75%
+100%
+1
+2
+3
+False alerts per person-month (measured)
+Episodes detected
+Each point is a false-alert budget (0.25, 0.5, 1, 2, 4 per person-month); the horizontal position is the rate actually measured on held-out people. The dashed line is how often an alert lands in the window by luck. The gap between the solid and dashed lines is the real signal.
+How this was measured
+Made by research/scripts/eval_real.py
+Show the numbers as a table
+When the alert came, relative to symptom onset
+0
+5
+10
+-10
+-5
+0
+Days from symptom onset to alert (negative = alert came first)
+Episodes
+Onset
+Keel at one false alert per person-month. Left of the line, the alert came before symptoms; right of it, after. 35 of 101 episodes had no alert in the window. The cluster just after onset is the real response; alerts a week or more before onset are mostly coincidence.
+How this was measured
+Made by research/scripts/eval_real.py
+What real illness looks like in resting heart rate
+0.0
+5.0
+-20
+-10
+0
+10
+Days from symptom onset
+Resting heart rate change, bpm
+Onset
+Mean change from each person's own earlier level, 67 dated episodes, with a 95% band. The rise is small before symptoms and peaks about a day after onset. This is why early warning from heart rate alone is hard.
+How this was measured
+Made by research/scripts/eval_real.py
+False alerts over long quiet periods
+
+People with no reported illness (150 people, 439 person-months). At the notice tier Keel raised 0.99 false alerts per person-month (interval 0.89 to 1.09) and an alert was open on 10% of quiet days. At the alert tier: 0.23 per person-month, open on 2% of days, and 56% of people never saw one. False alerts are uneven: the noisiest fifth of people produced 65% of alert-tier false alerts.
+
+0 per month
+20 people
+up to 0.5 per month
+16 people
+0.5 to 1 per month
+38 people
+1 to 2 per month
+54 people
+2 to 3 per month
+11 people
+3 to 5 per month
+3 people
+over 5 per month
+0 people
+
+People grouped by their own false-alert rate at the notice tier. The "non-positive" group in phase 2 was never confirmed healthy, so some of these alerts may be real illness. How this was measured · research/scripts/eval_real.py
+
+Which indicators and components earn their place (real data)
+Variant	Detected, Keel	Interval	Detected, fixed threshold
+Resting heart rate only	50%	40 to 60%	26%
+Resting heart rate + daily steps	65%	56 to 75%	40%
+Night and whole-day resting heart rate + steps (exploratory, added after seeing the main result)	62%	53 to 72%	42%
+… + adjust heart rate for the previous day's steps	64%	55 to 74%	–
+Adding sleep duration (18 people who have it): without → with	83% → 83%	67 to 100%	–
+Steps earn their place. Activity falls to about half after symptoms start, and adding it to heart rate raises detection.
+Adjusting heart rate for the previous day's activity does not. It changed detection by -1 points, so the app leaves it off.
+Sleep is undecided. Too few people have sleep data to tell.
+Device matters. Fitbit: 75% detected. Apple Watch: 18% of 17 episodes; its overnight heart-rate samples are sparse in this release.
+The window matters. -14..+7 days: 71% detected, 46% by luck; -10..+4 days: 65% detected, 37% by luck; -7..+0 days: 35% detected, 21% by luck; -3..+0 days: 22% detected, 11% by luck.
+Published comparison. The dataset's authors reported 63% of 32 cases detectable before symptoms with about 0.66 alarms per month, using hourly data and their own algorithm on phase 1. Our daily-feature result is weaker on early warning and we did not reproduce theirs.
+2. Simulated missions Simulated data
+
+100 test missions of 4 crew and 180 days with 284 injected events of six kinds; the model and thresholds were fitted on 60 separate training missions. The simulator's day-to-day noise and its illness response are calibrated to real data (section 3); the other event types use assumed effect sizes.
+
+Detection by method, simulated missions
+One threshold for all
+64%
+Personal, simple rule
+75%
+Personal + CUSUM
+65%
+Keel: personal + mult…
+75%
+Personal, fused
+70%
+Full indicator set, one false alert per person-month. Intervals are over missions, because crewmates share a cabin.
+How this was measured
+Made by research/scripts/eval_sim.py
+Show the numbers as a table
+Detection against false alerts, simulated missions
+Keel
+Fixed threshold
+By luck (Keel thresholds)
+0%
+25%
+50%
+75%
+100%
+1
+2
+3
+False alerts per person-month (measured)
+Events detected
+Same reading as the real-data chart. Thresholds trained on other missions hold their budget on test missions.
+How this was measured
+Made by research/scripts/eval_sim.py
+Show the numbers as a table
+By event type and size
+Event	size 0.5×	size 1×	size 1.5×	size 2×	size 3×	Typical delay
+Illness (infection-like)	71%	85%	94%	98%	96%	-2 d
+Sleep restriction	88%	94%	98%	100%	96%	1 d
+Cabin CO2 rise (crew-wide)	41%	57%	65%	67%	82%	-1 d
+Exercise outage	69%	81%	94%	88%	92%	2 d
+Low fluid intake	44%	83%	90%	98%	98%	1 d
+Low-mood period	44%	52%	81%	88%	94%	0 d
+
+Share detected at the notice tier, by event size (1× is the average size; for illness that is the average real heart-rate response). Typical delay is days from the event's start to the alert. Cabin CO2 events are the hardest for the personal detector, which is why Keel also watches the cabin sensor directly. How events are simulated · research/scripts/eval_sim.py
+
+Missing data
+Nominal: 4% of nights…
+75%
+Wearable unworn 20% o…
+73%
+Wearable unworn 40% o…
+67%
+Check-in skipped 30% …
+67%
+Check-in skipped 60% …
+60%
+Week-long wearable ou…
+73%
+Both: 40% unworn and …
+51%
+Detection when the wearable is not worn or check-ins are skipped. Thresholds are not re-tuned, so both detection and false alerts fall as data thins out.
+How this was measured
+Made by research/scripts/eval_sim.py
+Show the numbers as a table
+Losing a sensor
+All sensors
+75%
+No HRV
+72%
+No temperature
+74%
+No blood oxygen
+74%
+No resting heart rate
+73%
+No sleep tracking
+62%
+No exercise log
+58%
+No reaction test
+67%
+No mood check-in
+70%
+No fluid log
+67%
+No food log
+74%
+Wearable only (no che…
+51%
+Check-ins only (no we…
+50%
+Detection with one input removed for the whole mission. The exercise log, sleep tracking and the check-ins carry the most weight in this simulation.
+How this was measured
+Made by research/scripts/eval_sim.py
+Show the numbers as a table
+Which design choices earn their place (simulated)
+Variant	Detected	Interval	False alerts / person-month	… in the first 30 flight days
+Keel as deployed	75%	69 to 81%	1.00	0.93
+Without mission-phase handling (naive rolling baseline)	68%	62 to 74%	0.98	2.00
+Baseline window 14 days	79%	73 to 84%	1.04	0.85
+Baseline window 56 days	72%	67 to 79%	1.05	1.22
+No gap before the baseline window	76%	70 to 82%	1.02	0.94
+Slower smoothing (lambda 0.15)	68%	62 to 74%	1.00	0.95
+Faster smoothing (lambda 0.5)	79%	72 to 85%	1.01	0.89
+Heart indicators only (resting HR, HRV)	43%	37 to 48%	1.02	1.13
+Wearable indicators only	56%	50 to 62%	1.00	0.97
+Mission-phase handling earns its place: without it, false alerts in the first month of flight rise from 0.93 to 2.00 per person-month, because adaptation to weightlessness looks like a problem.
+Check-ins earn their place: wearable-only detection is 56%.
+Some defaults are not optimal. A shorter baseline window or faster smoothing did slightly better here. We kept the values chosen before testing rather than tune on the test missions.
+Quiet missions. In 1050 person-months with no event at all: 1.05 false alerts per person-month at the notice tier and 0.27 at the alert tier.
+
+How this was measured · research/scripts/eval_sim.py
+
+3. Is the simulator realistic?
+
+Real values come from the validation half of each dataset; the calibration script only saw the other half. The simulator is tuned on one half of the real people and compared here with the other half.
+
+Like-for-like check: simulated against real illness detection
+
+On the two channels the real illness data has (resting heart rate and activity), with similar wear time, Keel detects 68% of simulated illnesses (interval 59 to 76%) against 68% of real symptom-dated episodes (interval 57 to 79%). At the alert tier: 37% simulated against 47% real. Where the two can be compared, the simulator is about as hard as reality, or slightly easier.
+
+research/scripts/eval_sim.py and research/scripts/eval_real.py
+
+Day-to-day variability: Resting heart rate
+Real people
+Simulated crew
+0%
+10%
+20%
+0
+2
+4
+6
+Within-person standard deviation, bpm
+Share of people
+How much one person's reading moves from day to day (bpm). Real median 3.333 (middle half 2.56 to 4.20; 73 people, Stanford wearables, validation half). Simulated median 3.622 (middle half 3.03 to 4.33). Day-to-day carry-over: real 0.13, simulated 0.18.
+How this was measured
+Made by research/scripts/sim_realism.py
+Day-to-day variability: Heart rate variability (log scale)
+Real people
+Simulated crew
+0%
+10%
+20%
+30%
+0
+0.2
+0.4
+Within-person standard deviation, ln ms
+Share of people
+How much one person's reading moves from day to day (ln ms). Real median 0.184 (middle half 0.16 to 0.28; 17 people, LifeSnaps, validation half). Simulated median 0.239 (middle half 0.20 to 0.28). Day-to-day carry-over: real 0.25, simulated 0.39.
+How this was measured
+Made by research/scripts/sim_realism.py
+Day-to-day variability: Blood oxygen
+Real people
+Simulated crew
+0%
+20%
+40%
+0
+0.5
+1
+1.5
+2
+Within-person standard deviation, %
+Share of people
+How much one person's reading moves from day to day (%). Real median 0.801 (middle half 0.62 to 0.99; 10 people, LifeSnaps, validation half). Simulated median 0.967 (middle half 0.82 to 1.21). Day-to-day carry-over: real 0.03, simulated 0.00.
+How this was measured
+Made by research/scripts/sim_realism.py
+Day-to-day variability: Skin temperature
+Real people
+Simulated crew
+0%
+10%
+20%
+30%
+0
+0.3
+0.5
+0.8
+1
+Within-person standard deviation, °C
+Share of people
+How much one person's reading moves from day to day (°C). Real median 0.480 (middle half 0.41 to 0.61; 25 people, LifeSnaps, validation half). Simulated median 0.500 (middle half 0.41 to 0.57). Day-to-day carry-over: real 0.12, simulated 0.29.
+How this was measured
+Made by research/scripts/sim_realism.py
+Day-to-day variability: Sleep duration
+Real people
+Simulated crew
+0%
+10%
+20%
+30%
+0
+1
+2
+Within-person standard deviation, h
+Share of people
+How much one person's reading moves from day to day (h). Real median 1.272 (middle half 1.02 to 1.59; 26 people, LifeSnaps, validation half). Simulated median 1.336 (middle half 1.09 to 1.58). Day-to-day carry-over: real -0.02, simulated 0.23.
+How this was measured
+Made by research/scripts/sim_realism.py
+Illness response: real against simulated
+Real
+Simulated
+0.0
+5.0
+-10
+0
+10
+Days from symptom onset
+Change, bpm
+Onset
+Mean resting heart rate change around symptom onset. Real: 30 episodes from the validation half. Simulated: 150 episodes with the real spread of sizes. The simulated response is smoother and wider than the real one, which peaks more sharply a day after onset.
+How this was measured
+Made by research/scripts/sim_realism.py
+Published in-flight values the simulator should reproduce
+Quantity	Published	Simulated	Note
+Mean in-flight sleep	6.09 h	6.05 h	ISS actigraphy, Barger et al. 2014 [31]
+Nights under 6 h of sleep in flight	43.8 %	48.3 %	ISS, same study. Not used to tune the simulator. [31]
+Body mass change after the first month	-3.6 %	-3.5 %	Published range -2.8% to -4.4% [52d]
+Crew with space motion sickness	70 %	70.0 %	Published range 60% to 80% [52a]
+Headache odds ratio, CO2 at or above 2.8 mmHg versus below 2.3	–	1.3 ratio	Published: odds double per 1 mmHg (expect about 1.9 between these bands). The simulated ratio is lower because simulated headaches also come from dehydration, illness and motion sickness. [37]
+
+Fitted illness response: peak 3.1 bpm on average, with real episodes ranging from no rise (lower quartile -0.4) to 7.4 bpm (upper quartile), from 38 episodes. Reference numbers refer to the source list. research/scripts/sim_realism.py, research/scripts/calibrate_sim.py
+
+4. Gravity transitions on real NASA analog data
+
+NASA Life Sciences Data Archive, public head-down-tilt bed-rest campaigns (UTMB campaigns 1 and 3, CFT70): daily nurse-taken pulse. 29 volunteers; the expected pulse shift was learned from 14 of them and tested on the other 15. Bed rest with the head tilted down is NASA's standard ground stand-in for weightlessness.
+
+Transition	Volunteers	Flagged by a plain rolling baseline	Flagged by Keel's phase-aware baseline
+Going into bed rest (head-down tilt)	15	2	1
+Getting up after bed rest (return to upright)	14	9	4
+
+A flag here means pulse at least 2.0 robust SD above the personal baseline on 2 of 3 consecutive days within 14 days after the transition. Getting up after weeks in bed raises the pulse, and a plain personal baseline calls that a problem in most volunteers. Telling the baseline that a transition happened removes about half of those flags. The numbers are small and this is pulse only, taken once a day by a nurse.
+
+How phase changes are handled · research/scripts/eval_bedrest.py
+
+Limits you should know before trusting any of this
+No open dataset has astronaut wearable time series. The real evaluation uses people on Earth; spaceflight physiology is represented only by published summary values and the bed-rest analog.
+The real illness data has two indicators. Claims about HRV, oxygen, temperature, mood, reaction time, fluids and food rest on simulation with assumed effect sizes.
+103 real episodes is a small sample; intervals are wide. Symptom dates are self-reported and shifted for privacy.
+Thresholds for the full indicator set are calibrated on simulated missions, because no real data has the full set.
+The detector that the app runs was chosen among four on simulated training missions; it also happened to be the best on real data, which we saw only afterwards.
+Full limitations and what a clinician would need to review

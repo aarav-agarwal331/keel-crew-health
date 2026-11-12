@@ -1,0 +1,124 @@
+SCREEN: 02-alert-detail
+TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 126 | Simulated data
+BOTTOM NAV: Today | Trends | Check-in | Crew | More
+
+← Today
+Act today
+Your body looks like it is under strain
+
+Resting heart rate is up together with other recovery signals. This combination is often seen in the days before or during an infection, but Keel cannot tell you the cause.
+
+Open for 2 days, since FD 125.
+
+RECOMMENDED ACTION
+
+Take your temperature now, swap today's hard exercise for a light session, and tell the medical officer.
+
+Repeat temperature in four hours and log symptoms at check-in.
+Drink to your fluid target and protect tonight's sleep period.
+Keep some distance at meals and wipe shared surfaces until this clears.
+If temperature is 38.0 °C or higher, or you feel worse, the medical officer should see you today.
+What changed
+Resting heart rate is higher than your normal: 57 bpm against your usual 51.
+How unusual for you: More unusual than 96% of your last 60 days. It has been outside your usual range for 3 days.
+40
+50
+60
+Alert opened
+FD 99
+FD 104
+FD 108
+FD 113
+FD 117
+FD 122
+FD 126
+Heart rate variability is lower than your normal: 26 ms against your usual 42.
+How unusual for you: More unusual than 98% of your last 60 days. It has been outside your usual range for 6 days.
+20
+40
+60
+Alert opened
+FD 99
+FD 104
+FD 108
+FD 113
+FD 117
+FD 122
+FD 126
+Body temperature is higher than your normal: 37.7 °C against your usual 36.7.
+How unusual for you: More unusual than 89% of your last 60 days. It has been outside your usual range for 2 days.
+36
+37
+Alert opened
+FD 99
+FD 104
+FD 108
+FD 113
+FD 117
+FD 122
+FD 126
+Blood oxygen is lower than your normal: 96.9 % against your usual 98.7.
+How unusual for you: More unusual than 96% of your last 60 days. It has been outside your usual range for 2 days.
+95
+100
+Alert opened
+FD 99
+FD 104
+FD 108
+FD 113
+FD 117
+FD 122
+FD 126
+What may be contributing
+Eating less than planned. About 71% of plan over the last three days; your normal is 84%.
+Symptoms you reported. stuffy head or nose (2 of the last 3 days), unusual tiredness (1 of the last 3 days), sore throat or cough (1 of the last 3 days).
+
+Taken only from your own readings and check-ins, and the shared cabin sensors.
+
+Who should know
+Level 1
+Manage it yourself
+Level 2
+Inform the crew medical officer
+Level 3
+Contact the ground when a link is available
+
+Possible illness in a closed cabin affects the whole crew, and early rest is cheap.
+
+Share this alert's details with the medical officer
+What did you do?
+Did it
+Did part of it
+Not yet
+Chose not to
+How do you feel now?
+1
+Worse
+2
+3
+Same
+4
+5
+Better
+Note (optional)
+Save to my log
+Where this advice comes from
+Symptom check, rest, limit spread, consult
+PUBLISHED RESEARCH
+
+On Earth, wearables showed resting heart rate rising a median of 7 bpm about 4 days before infection symptoms. Immune function changes in space and latent viruses reactivate in most ISS crew. NASA lists hygiene, quarantine and monitoring as countermeasures.
+
+[58] Mishra T, Wang M, Metwally AA, et al. "Pre-symptomatic detection of COVID-19 from smartwatch data." Nat Biomed Eng 4(12):1208–1220, 2020. Source
+[60] Natarajan A, Su HW, Heneghan C. "Assessment of physiological signs associated with COVID-19 measured using wearable devices." NPJ Digit Med 3(1):156, 2020. Source
+[6] NASA Human Research Program. "The Human Body in Space." nasa.gov, 2021 (updated 2026). Source
+[52e] Rooney BV, Crucian BE, Pierson DL, et al. "Herpes Virus Reactivation in Astronauts During Spaceflight and Its Application on Earth." Front Microbiol 10:16, 2019. Source
+Private medical conference
+NASA DOCUMENT
+
+NASA's medical operations standard gives every crew member private medical conferences: real time when possible, store-and-forward when communication is delayed.
+
+[30] NASA. "NASA-STD-3001 Volume 1, Section 6.0 Medical Operations." nasa.gov (updated 2026). Source
+[8] Jones JA. "International Space Station Medical Operations." NASA Technical Reports Server, 2008. Source
+Audit trail: exactly why Keel said this
+
+Decision support only. Keel does not diagnose and cannot rule anything out. If you feel unwell, tell the medical officer whatever this screen says.

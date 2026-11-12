@@ -11,9 +11,9 @@ export function useWidth<T extends HTMLElement>(): [React.RefObject<T | null>, n
   useLayoutEffect(() => {
     const el = ref.current
     if (!el) return
-    setW(el.clientWidth || 320)
+    setW(Math.max(60, el.clientWidth || 320))
     if (typeof ResizeObserver === 'undefined') return
-    const ro = new ResizeObserver((e) => setW(Math.max(200, e[0].contentRect.width)))
+    const ro = new ResizeObserver((e) => setW(Math.max(60, e[0].contentRect.width)))
     ro.observe(el)
     return () => ro.disconnect()
   }, [])
@@ -125,11 +125,11 @@ export function TrendChart(p: TrendProps) {
         {ticksY.map((v) => <g key={v}><line x1={padL} x2={W - padR} y1={y(v)} y2={y(v)} stroke="var(--grid)" /><text className="axis" x={padL - 6} y={y(v) + 4} textAnchor="end">{Number(v.toFixed(2))}</text></g>)}
         {bands.map((d, i) => <path key={i} d={d} fill="var(--band)" />)}
         {p.expected && !p.compact && <path d={linePath(days.map((t) => (ok(p.expected![t]) ? [x(t), y(p.expected![t])] : null)))} fill="none" stroke="var(--text-3)" strokeWidth="1" strokeDasharray="4 4" />}
-        {(p.refLines ?? []).map((r) => <g key={r.label}><line x1={padL} x2={W - padR} y1={y(r.y)} y2={y(r.y)} stroke="var(--text-3)" strokeDasharray="2 4" /><text className="axis" x={W - padR} y={y(r.y) - 4} textAnchor="end">{r.label}</text></g>)}
+        {(p.refLines ?? []).map((r, i) => <g key={r.label}><line x1={padL} x2={W - padR} y1={y(r.y)} y2={y(r.y)} stroke="var(--text-2)" strokeDasharray="2 4" />{!p.compact && <text className="axis halo" x={padL + 4} y={y(r.y) + (i % 2 ? 13 : -5)} textAnchor="start">{r.label}</text>}</g>)}
         {(p.markers ?? []).filter((m) => m.day >= from && m.day <= p.to).map((m, i) => (
           <g key={i}>
             <line x1={x(m.day)} x2={x(m.day)} y1={padT} y2={H - padB} stroke={m.kind === 'alert' ? 'var(--serious)' : m.kind === 'truth' ? 'var(--text)' : 'var(--text-3)'} strokeWidth={m.kind === 'alert' ? 2 : 1.5} strokeDasharray={m.kind === 'phase' ? '6 4' : m.kind === 'truth' ? '2 3' : undefined} />
-            {!p.compact && <text className="axis" x={Math.min(W - padR - 2, x(m.day) + 4)} y={padT + 10 + (i % 2) * 12} fill="var(--text-2)">{m.label}</text>}
+            {!p.compact && <text className="axis halo" x={x(m.day) > W - padR - 90 ? x(m.day) - 5 : x(m.day) + 5} textAnchor={x(m.day) > W - padR - 90 ? 'end' : 'start'} y={padT + 10 + (i % 3) * 14}>{m.label}</text>}
           </g>
         ))}
         <path d={linePath(days.map((t) => (ok(p.values[t]) ? [x(t), y(p.values[t])] : null)))} fill="none" stroke="var(--series)" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
@@ -171,7 +171,7 @@ export interface BarRow { label: string; value: number; lo?: number; hi?: number
 export function BarCI({ rows, max, unit, decimals = 0, ariaLabel, pct }: { rows: BarRow[]; max?: number; unit?: string; decimals?: number; ariaLabel: string; pct?: boolean }) {
   const [ref, W] = useWidth<HTMLDivElement>()
   const [hover, setHover] = useState<number | null>(null)
-  const labelW = Math.min(230, Math.max(120, W * 0.4))
+  const labelW = Math.min(300, Math.max(130, W * 0.46))
   const rowH = 34
   const padR = 64
   const mx = max ?? Math.max(...rows.map((r) => Math.max(r.value || 0, r.hi ?? 0))) * 1.08
@@ -185,7 +185,7 @@ export function BarCI({ rows, max, unit, decimals = 0, ariaLabel, pct }: { rows:
           return (
             <g key={r.label} onPointerEnter={() => setHover(i)} onPointerLeave={() => setHover(null)}>
               <rect x="0" y={yy - 4} width={W} height={rowH} fill="transparent" />
-              <text x={labelW - 8} y={yy + 15} textAnchor="end" fontSize="12.5" fill="var(--text)" fontWeight={r.highlight ? 700 : 400}>{r.label.length > labelW / 6.4 ? r.label.slice(0, Math.floor(labelW / 6.4) - 1) + '…' : r.label}</text>
+              <text x={labelW - 8} y={yy + 15} textAnchor="end" fontSize="12.5" fill="var(--text)" fontWeight={r.highlight ? 700 : 400}>{r.label.length > labelW / 6.1 ? r.label.slice(0, Math.floor(labelW / 6.1) - 1) + '…' : r.label}</text>
               {!Number.isNaN(r.value) && <path d={`M${labelW} ${yy} H${x(r.value) - 4} a4 4 0 0 1 4 4 v12 a4 4 0 0 1 -4 4 H${labelW} Z`} fill={r.highlight ? 'var(--series)' : 'var(--text-3)'} opacity={r.highlight ? 1 : 0.75} />}
               {ok(r.lo) && ok(r.hi) && <g stroke="var(--text)" strokeWidth="1.6"><line x1={x(r.lo)} x2={x(r.hi)} y1={yy + 10} y2={yy + 10} /><line x1={x(r.lo)} x2={x(r.lo)} y1={yy + 5} y2={yy + 15} /><line x1={x(r.hi)} x2={x(r.hi)} y1={yy + 5} y2={yy + 15} /></g>}
               <text x={Math.min(W - 2, x(Math.max(r.value || 0, r.hi ?? 0)) + 8)} y={yy + 15} fontSize="12.5" fill="var(--text)" className="num">{f(r.value)}</text>

@@ -1,0 +1,237 @@
+SCREEN: 03-trends
+TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 126 | Simulated data
+BOTTOM NAV: Today | Trends | Check-in | Crew | More
+
+Trends
+2 weeks
+8 weeks
+Mission
+
+Each chart shows your readings against your own usual range, learned from your previous four weeks. Alerts and mission phase changes are marked.
+
+All
+Heart and circulation
+Sleep and body clock
+Exercise
+Mind and mood
+Food and fluids
+Cabin environment
+Your readings
+Your usual range
+Outside your range
+Resting heart rate
+57 bpm
+40
+50
+60
+Alert
+FD 71
+FD 89
+FD 108
+FD 126
+
+How fast your heart beats when you are fully at rest, usually measured during sleep.
+
+Why it matters, how to measure, and the numbers
+Heart rate variability
+26 ms
+20
+40
+60
+Alert
+FD 71
+FD 89
+FD 108
+FD 126
+
+The small beat-to-beat changes in your heart rhythm (RMSSD). Higher usually means your body is recovering well.
+
+Why it matters, how to measure, and the numbers
+Blood oxygen
+96.9 %
+95
+100
+Alert
+FD 71
+FD 89
+FD 108
+FD 126
+
+The share of your red blood cells carrying oxygen.
+
+Why it matters, how to measure, and the numbers
+Body temperature
+37.7 °C
+36
+37
+Alert
+FD 71
+FD 89
+FD 108
+FD 126
+
+Your body temperature, from the wearable skin sensor overnight or a thermometer reading.
+
+Why it matters, how to measure, and the numbers
+Sleep duration
+3.8 h
+5
+10
+Alert
+FD 71
+FD 89
+FD 108
+FD 126
+
+Hours actually asleep in the last sleep period.
+
+Why it matters, how to measure, and the numbers
+Sleep timing shift
+1.2 h
+0
+2
+Alert
+FD 71
+FD 89
+FD 108
+FD 126
+
+How far the middle of your sleep moved from your scheduled sleep period. Zero means you slept when planned.
+
+Why it matters, how to measure, and the numbers
+Exercise, 7-day average
+91 min/day
+50
+100
+Alert
+FD 71
+FD 89
+FD 108
+FD 126
+
+Average minutes of exercise per day over the last week.
+
+Why it matters, how to measure, and the numbers
+Reaction time
+229 ms
+200
+250
+Alert
+FD 71
+FD 89
+FD 108
+FD 126
+
+Your average response time in the reaction self-test.
+
+Why it matters, how to measure, and the numbers
+Mood
+2 /5
+2
+3
+4
+Alert
+FD 71
+FD 89
+FD 108
+FD 126
+
+Your own rating of how you feel today, from 1 (very low) to 5 (very good).
+
+Why it matters, how to measure, and the numbers
+Fluid intake
+2.8 L
+2
+3
+Alert
+FD 71
+FD 89
+FD 108
+FD 126
+
+How much you drank today.
+
+Why it matters, how to measure, and the numbers
+Food intake
+60 % of plan
+60
+80
+100
+Alert
+FD 71
+FD 89
+FD 108
+FD 126
+
+How much of your planned food you ate today.
+
+Why it matters, how to measure, and the numbers
+Body mass
+82.9 kg
+82
+83
+84
+Alert
+FD 71
+FD 89
+FD 108
+FD 126
+
+Your body mass, measured on the mass-measurement device (a normal scale does not work without gravity).
+
+Why it matters, how to measure, and the numbers
+Blood pressure (upper)
+108 mmHg
+100
+120
+Alert
+FD 71
+FD 89
+FD 108
+FD 126
+
+The upper (systolic) number of your blood pressure.
+
+Why it matters, how to measure, and the numbers
+Blood sugar
+95 mg/dL
+80
+90
+Alert
+FD 71
+FD 89
+FD 108
+FD 126
+
+The sugar level in a fingertip drop of blood.
+
+Why it matters, how to measure, and the numbers
+Cabin carbon dioxide
+1.8 mmHg
+2
+3
+Headache risk rises (2.5)
+ISS limit (3.0)
+Alert
+FD 71
+FD 89
+FD 108
+FD 126
+
+The average carbon dioxide level in the cabin air over the last day.
+
+Why it matters, how to measure, and the numbers
+Radiation dose
+1.83 mSv/day
+1.5
+1.75
+2
+Alert
+FD 71
+FD 89
+FD 108
+FD 126
+
+The radiation dose your personal dosimeter recorded today, and your running mission total.
+
+Why it matters, how to measure, and the numbers

@@ -12,7 +12,8 @@ Daily features (docs/METHOD.md section 2):
   rhr      median heart rate over minutes between 00:00 and 07:00 with no steps in the previous
            12 minutes (the resting definition of Mishra et al.), needs >= 30 such minutes
   rhr_day  same resting definition over the whole day, needs >= 60 minutes
-  steps    total steps that day (only if the device was worn >= 10 h)
+  steps    total steps that day, only if the device was worn most of the day (Fitbit: >= 600 min of
+           heart rate; other devices: step records in >= 10 different hours)
   sleep_h  hours in non-wake sleep stages in the night ending that day (phase 1 only)
 Dates in both releases were shifted by the authors to protect identity; only intervals matter.
 """
@@ -31,7 +32,7 @@ RAW = ROOT / "data" / "raw"
 OUT = ROOT / "data" / "interim"
 
 
-def daily_features(hr: pd.DataFrame, st: pd.DataFrame | None, sleep: pd.DataFrame | None) -> pd.DataFrame:
+def daily_features(hr: pd.DataFrame, st: pd.DataFrame | None, sleep: pd.DataFrame | None, sparse_hr: bool = False) -> pd.DataFrame:
     hr = hr.dropna()
     hr = hr[(hr["heartrate"] >= 30) & (hr["heartrate"] <= 220)]
     if hr.empty:
@@ -43,9 +44,11 @@ def daily_features(hr: pd.DataFrame, st: pd.DataFrame | None, sleep: pd.DataFram
         s = s.reindex(pd.date_range(lo, hi, freq="1min"), fill_value=0.0)
         still = (s.rolling(12, min_periods=1).sum() == 0).reindex(m.index, fill_value=True)
         steps_day = s.groupby(s.index.date).sum()
+        st_hours = st.groupby(st["datetime"].dt.date)["datetime"].agg(lambda v: v.dt.hour.nunique())
     else:
         still = pd.Series(True, index=m.index)
         steps_day = pd.Series(dtype=float)
+        st_hours = pd.Series(dtype=float)
     rest = m[still.values]
     night = rest[rest.index.hour < 7]
     g = pd.DataFrame({
@@ -54,7 +57,11 @@ def daily_features(hr: pd.DataFrame, st: pd.DataFrame | None, sleep: pd.DataFram
         "wear_min": m.groupby(m.index.date).size(),
     })
     g["steps"] = steps_day.reindex(g.index)
-    g.loc[g["wear_min"] < 600, "steps"] = np.nan
+    # a day's step total is trusted only if the device was worn most of the day.  Fitbit logs
+    # heart rate continuously, so 600 minutes of heart rate is the test.  Other devices sample
+    # heart rate sparsely, so for them the test is step records in at least 10 different hours.
+    worn = (st_hours.reindex(g.index).fillna(0) >= 10) if sparse_hr else (g["wear_min"] >= 600)
+    g.loc[~worn, "steps"] = np.nan
     if sleep is not None and not sleep.empty:
         sl = sleep[~sleep["stage"].astype(str).str.lower().isin(["wake", "awake", "restless"])].copy()
         sl["night"] = (sl["datetime"] + pd.Timedelta(hours=6)).dt.date   # 18:00 belongs to the next day's night
@@ -123,7 +130,7 @@ def phase1() -> tuple[list[pd.DataFrame], list[dict], list[dict]]:
             g.insert(0, "pid", pid)
             g.insert(0, "dataset", "phase1")
             frames.append(g)
-            people.append({"dataset": "phase1", "pid": pid, "group": group.get(pid, "no_reported_illness"), "device": "Fitbit", "n_days": len(g)})
+            people.append({"dataset": "phase1", "pid": pid, "group": group.get(pid, "no_reported_illness"), "device": "Fitbit", "mode": "retrospective", "n_days": len(g)})
             print(f"phase1 {i + 1}/{len(hr_files)} {pid} {len(g)} days", flush=True)
     return frames, events, people
 
@@ -132,12 +139,13 @@ def phase2() -> tuple[list[pd.DataFrame], list[dict], list[dict]]:
     import openpyxl
     base = RAW / "stanford_covid_wearables_phase2"
     wb = openpyxl.load_workbook(base / "41591_2021_1593_MOESM3_ESM.xlsx", read_only=True, data_only=True)
-    events, device = [], {}
+    events, device, mode = [], {}, {}
     for r in list(wb["SourceData_COVID19_Positives"].iter_rows(values_only=True))[1:]:
         if not r[0]:
             continue
         pid = str(r[0]).strip()
         device[pid] = str(r[4])
+        mode[pid] = str(r[3]).strip().lower()
         if r[2] and str(r[2]).strip() not in ("-", "None"):
             events.append({"dataset": "phase2", "pid": pid, "kind": "covid_symptom", "date": pd.Timestamp(str(r[2])).date()})
         if r[1] and str(r[1]).strip() not in ("-", "None"):
@@ -167,14 +175,15 @@ def phase2() -> tuple[list[pd.DataFrame], list[dict], list[dict]]:
         st = rd(["_ST."], "steps")
         if hr is None or hr.empty:
             continue
-        g = daily_features(hr, st, None)
+        non_fitbit = any("NonFitbit" in f.name for f in d.iterdir())
+        g = daily_features(hr, st, None, sparse_hr=non_fitbit)
         if g.empty:
             continue
         g.insert(0, "pid", d.name)
         g.insert(0, "dataset", "phase2")
         frames.append(g)
         people.append({"dataset": "phase2", "pid": d.name, "group": "covid" if grp == "covid_positive" else "non_positive",
-                       "device": device.get(d.name, "unknown" if grp == "covid_positive" else "not stated"), "n_days": len(g)})
+                       "device": device.get(d.name, "Other" if non_fitbit else "Fitbit"), "mode": mode.get(d.name, ""), "n_days": len(g)})
         print(f"phase2 {i + 1}/{len(dirs)} {d.name} {len(g)} days", flush=True)
     return frames, events, people
 

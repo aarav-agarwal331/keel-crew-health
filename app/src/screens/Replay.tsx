@@ -58,18 +58,25 @@ export function Replay() {
         else if (rank > prev) out.push({ day: d, kind: 'alert', status: f.status as FeedItem['status'], title: `Escalated: ${f.title}`, body: `${f.action} ${TIER_LABEL[f.tier]}.` })
         seen.set(f.key, Math.max(prev ?? 0, rank))
       }
-      for (const e of events) if (e.onset === d && (e.crew === crewIdx || e.crew < 0)) out.push({ day: d, kind: 'truth', title: `Ground truth: ${e.label}`, body: e.type === 'illness' ? 'This is the day the simulated crew member would first feel symptoms.' : 'This is the day the scripted event starts.' })
+      for (const e of events) if (e.onset === d && (e.crew === crewIdx || e.crew < 0)) out.push({ day: d, kind: 'truth', title: `What was scripted: ${e.label.replace(/^Scripted /, '')}`, body: e.type === 'illness' ? `This is the day the simulated crew member first feels symptoms and ticks them at check-in. ${e.detail ?? ''}` : 'This is the day the scripted event starts.' })
     }
     return out
   }, [t, start, mission, today, crew.id, events, crewIdx])
 
-  const firstAlert = feed.find((f) => f.kind === 'alert' && f.day >= (ev ? ev.onset - 14 : 0))
+  // only an alert that opens from three days before the event counts as a response to it;
+  // anything earlier in the window is an unrelated (false) alert and is said to be one
+  const firstAlert = feed.find((f) => f.kind === 'alert' && f.day >= (ev ? ev.onset - 3 : 0))
+  const unrelated = feed.filter((f) => f.kind === 'alert' && ev && f.day < ev.onset - 3)
   const done = t >= end
   const an = analyses[crew.id]
   const inds = ev ? SHOW[ev.type] ?? ['rhr', 'hrv', 'sleep_h'] : ['rhr', 'hrv', 'sleep_h']
   const pct = ((t - start) / Math.max(1, end - start)) * 100
   const lead = ev && firstAlert ? ev.onset - firstAlert.day : null
   const cur = today(crew.id, t)
+  const [val, setVal] = useState<{ det: number; net: number; n: number } | null>(null)
+  useEffect(() => {
+    fetch(`${import.meta.env.BASE_URL}results/real_eval.json`).then((r) => r.json()).then((j) => { const s = j.main[j.deployed]['1.0']; setVal({ det: s.detection_rate, net: s.net_detection, n: s.n_events }) }).catch(() => setVal(null))
+  }, [])
 
   return (
     <>
@@ -96,7 +103,7 @@ export function Replay() {
         <div className="card-h">
           <span className="num">Replay clock: <strong data-testid="replay-day">{shortDay(mission, t)}</strong> · {crew.name}</span>
           {cur && <StatusTag status={cur.status} label={STATUS_LABEL[cur.status]} />}
-          <span className={`chip ${linkState(mission, t, false).available ? '' : 'down'}`}><span className="dot" />{linkState(mission, t, false).available ? 'Earth link up' : 'No Earth link'}</span>
+          <span className={`chip ${linkState(mission, t, false).available ? '' : 'down'}`}><span className="dot" />{linkState(mission, t, false).available ? 'In replay: link up' : 'In replay: no Earth link'}</span>
         </div>
       </Card>
 
@@ -135,10 +142,12 @@ export function Replay() {
       {done && ev && (
         <section className="card action" data-testid="replay-result">
           <span className="tag">Result of this replay</span>
-          {lead === null ? <p className="do">Keel did not raise an alert for this event inside the replay window.</p>
-            : lead > 0 ? <p className="do">Keel alerted {lead} day{lead === 1 ? '' : 's'} before {ev.type === 'illness' ? 'the first symptoms' : 'the scripted start'}, with a specific action, and with no link to Earth required.</p>
-              : <p className="do">Keel alerted {lead === 0 ? 'on the day' : `${-lead} day${lead === -1 ? '' : 's'} after`} the scripted event started.</p>}
-          <p className="small muted">One scripted event proves nothing by itself. The measured detection rates, lead times and false-alert rates over hundreds of simulated events and real wearable data are on the Validation screen.</p>
+          {lead === null ? <p className="do">Keel did not flag this event inside the replay window.</p>
+            : lead > 0 ? <p className="do">Keel flagged this {lead} day{lead === 1 ? '' : 's'} before {ev.type === 'illness' ? 'the first symptoms' : 'the scripted start'}, with a specific action and no link to Earth.</p>
+              : <p className="do">Keel flagged this {lead === 0 ? (ev.type === 'illness' ? 'on the day symptoms began' : 'on the day it started') : `${-lead} day${lead === -1 ? '' : 's'} after ${ev.type === 'illness' ? 'symptoms began' : 'it started'}`}, with a specific action and no link to Earth.</p>}
+          {unrelated.length > 0 && <p className="small">Earlier in this replay Keel also raised {unrelated.length} alert{unrelated.length === 1 ? '' : 's'} that had nothing to do with the scripted event. False alerts like that are part of the picture: the budget is about one notice per person-month.</p>}
+          {val && <p className="small"><strong>Across all the real data, not this one script:</strong> Keel flagged {Math.round(val.det * 100)}% of {val.n} real illness episodes at one false alert per person-month, {Math.round(val.net * 100)} points more than luck. It did not give early warning. Everything except illness is tested in simulation only.</p>}
+          <p className="small muted">One scripted event proves nothing by itself.</p>
           <div className="row wrap">
             <button className="btn primary" onClick={() => { setMe(crew.id); setDay(firstAlert ? Math.max(firstAlert.day + 1, Math.min(end, ev.onset - 1)) : ev.onset); go('today') }} data-testid="replay-open-today">Open that day as {crew.name.split(' ')[0]}</button>
             <a className="btn" href="#/validation">See the validation</a>

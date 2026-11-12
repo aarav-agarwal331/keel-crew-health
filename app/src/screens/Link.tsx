@@ -7,7 +7,7 @@ import { XYChart } from '../ui/charts'
 import { Card, Sources, StatusTag } from '../ui/kit'
 
 export function LinkScreen() {
-  const { mission, day, link, linkCut, setLinkCut, outbox, computeMs } = useApp()
+  const { mission, day, setDay, link, linkCut, setLinkCut, outbox, computeMs } = useApp()
   const curve = useMemo(() => {
     const x: number[] = [], y: number[] = []
     for (let t = mission.pre_days; t < mission.days; t++) { x.push(t - mission.pre_days + 1); y.push(delayFor(mission, t).delayS / 60) }
@@ -28,19 +28,24 @@ export function LinkScreen() {
             <p className="muted">{link.reason}{link.available && day >= mission.pre_days && !Number.isNaN(link.delayS) ? `. A question and its answer take at least ${fmtDelay(link.delayS * 2)}.` : ''}</p>
           </div>
         </div>
-        <p><strong>Keel does not use the link to work.</strong> Detection, explanations and recommended actions all run on this device (last full analysis: {computeMs.toFixed(0)} ms). The link only carries a summary for the flight surgeon when one is available.</p>
-        {hasLink && (
+        <p><strong>Keel does not use the link to work.</strong> Detection, explanations and recommended actions all run on this tablet: it last re-checked the whole crew's readings in {computeMs.toFixed(0)} milliseconds. The link only carries a summary for the flight surgeon when one is available.</p>
+        {hasLink && (link.scheduledBlackout && !linkCut ? (
+          <div className="col">
+            <p className="banner info">The link is already down today (a scripted blackout), so there is nothing to cut. Every screen you have used so far was running without it.</p>
+            <div className="row wrap"><button className="btn" onClick={() => setDay(mission.pre_days + 100)} data-testid="jump-link-up">Go to a day with a working link and cut it yourself</button></div>
+          </div>
+        ) : (
           <div className="row wrap">
             <button className={`btn ${linkCut ? 'primary' : 'danger'}`} onClick={() => setLinkCut(!linkCut)} data-testid="cut-link" aria-pressed={linkCut}>{linkCut ? 'Restore the link' : 'Cut the link now'}</button>
             <span className="small muted">Demo control. Cut it, then use any screen: nothing stops working.</span>
           </div>
-        )}
+        ))}
       </section>
 
       {hasLink && (
         <Card title="Queued for the ground" right={<span className="chip num" data-testid="queue-count">{queued.length} waiting</span>}>
-          <p className="small muted">One compact summary per mission day, containing only what {`you`} share with the flight surgeon. While there is no link, summaries wait here and go out together when it returns.</p>
-          {queued.length > 0 && <ul className="list small num">{queued.slice(-6).map((o) => <li key={o.day}>{shortDay(mission, o.day)} · {o.bytes} bytes · waiting</li>)}</ul>}
+          <p className="small muted">One summary per mission day, smaller than a text message, containing only what you share with the flight surgeon. While there is no link, summaries wait here and go out together when it returns.</p>
+          {queued.length > 0 && <ul className="list small num">{queued.slice(-6).map((o) => <li key={o.day}>{shortDay(mission, o.day)} · {o.bytes} bytes · waiting</li>)}{queued.length > 6 && <li className="muted">and {queued.length - 6} earlier</li>}</ul>}
           {sent.length > 0 && <><span className="lab small">Recently sent</span><ul className="list small num">{sent.map((o) => <li key={o.day}>{shortDay(mission, o.day)} · {o.bytes} bytes · sent {o.sentDay !== undefined && o.sentDay !== o.day ? `on ${shortDay(mission, o.sentDay)} (was queued)` : 'same day'}{o.delayS ? `, arrived ${fmtDelay(o.delayS)} later` : ''}</li>)}</ul></>}
           {outbox.length > 0 && <details><summary>See exactly what the latest summary contains</summary><pre className="eq" data-testid="summary-payload">{JSON.stringify(JSON.parse(outbox[outbox.length - 1].payload), null, 1)}</pre></details>}
         </Card>
@@ -55,8 +60,8 @@ export function LinkScreen() {
       {mission.link?.profile === 'lunar' && <Card title="Lunar link"><p className="small">Light takes about 1.3 seconds each way between Earth and the Moon; NASA expects 3 to 14 seconds of operational latency on lunar missions. Short outages still happen when a rover drives out of line of sight of its relay, which is what this mission's scripted blackout shows.</p></Card>}
 
       <Card title="Why this matters">
-        <p className="small">On the International Space Station, flight surgeons in Mission Control watch crew health and cabin air in real time and talk to each crew member privately every week. NASA's own planning documents say that on a Mars mission delays and blackouts will end reliable real-time telemedicine, and that medical decisions must move on board.</p>
-        <Sources ids={['1', '2', '4', '8', '12', '13']} refs={REFS} />
+        <p className="small">On the International Space Station a flight surgeon is seconds away by voice, talks privately with each crew member about once a week, and the ground team follows exercise and cabin-air data. Routine vital signs are not streamed to the ground, so Keel proposes more self-monitoring than ISS crews have today, on purpose. NASA's own planning documents say that on a Mars mission delays and blackouts will end reliable real-time telemedicine, and that medical decisions must move on board.</p>
+        <Sources ids={['1', '2', '4', '8', '9', '12', '13']} refs={REFS} />
       </Card>
     </>
   )

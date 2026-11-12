@@ -8,7 +8,7 @@ import cmJson from '../../../shared/countermeasures.json'
 import refsJson from '../../../shared/references.json'
 import { concernDev, deployedScore, episodes, inverseTransform, type ModelJson } from './detect'
 import { IND, phaseAt, rawSeries, SYM, symptomsOn } from './mission'
-import type { Change, CrewAnalysis, Entry, Factor, Finding, Mission, Status, Tier } from './types'
+import type { Change, CrewAnalysis, Entry, Factor, Finding, Mission, Status, Tier, Urgency } from './types'
 
 export interface Countermeasure { id: string; title: string; type: string; refs: string[]; text: string }
 export const COUNTERMEASURES = cmJson as Countermeasure[]
@@ -24,12 +24,17 @@ type Cond =
   | { phase_days_min: number }
   | { alert_days_min: number }
   | { always: boolean }
+  | { red_flag: boolean }
+  | { val: string; min?: number; max?: number }
+  | { run: string; min?: number; max?: number; days: number }
+  | { rel: string; max: number }
   | { all: Cond[] }
   | { any: Cond[] }
 
 export interface Rule {
   id: string
-  scope: 'personal' | 'environment' | 'symptom' | 'adaptation'
+  scope: 'personal' | 'environment' | 'symptom' | 'adaptation' | 'vital'
+  urgency: Urgency
   priority: number
   title: string
   when: Cond
@@ -52,6 +57,13 @@ export interface RuleFeatures {
   phaseDays: number
   hasPhase: boolean
   alertDays: number
+  /** latest entered or measured value within the last two days, for fixed-threshold rules */
+  val: Record<string, number>
+  /** the last n measured values of an indicator (within n + 3 days), newest last; empty if fewer than n */
+  run: (ind: string, n: number) => number[]
+  /** relative change against the pre-flight level */
+  rel: Record<string, number>
+  redFlag: boolean
 }
 
 export function evalCond(c: Cond, f: RuleFeatures): boolean {
@@ -65,6 +77,17 @@ export function evalCond(c: Cond, f: RuleFeatures): boolean {
   if ('phase_days_min' in c) return f.hasPhase && f.phaseDays >= c.phase_days_min
   if ('alert_days_min' in c) return f.alertDays >= c.alert_days_min
   if ('always' in c) return true
+  if ('red_flag' in c) return f.redFlag
+  if ('val' in c) {
+    const v = f.val[c.val]
+    if (v === undefined || Number.isNaN(v)) return false
+    return (c.min === undefined || v >= c.min) && (c.max === undefined || v <= c.max)
+  }
+  if ('run' in c) {
+    const v = f.run(c.run, c.days)
+    return v.length >= c.days && v.every((x) => (c.min === undefined || x >= c.min) && (c.max === undefined || x <= c.max))
+  }
+  if ('rel' in c) return (f.rel[c.rel] ?? 0) <= c.max
   return false
 }
 
@@ -90,6 +113,7 @@ export function applyRule(r: Rule, f: RuleFeatures): { tier: Tier; reason: strin
   return { tier, reason }
 }
 
+const URGENCY_STATUS: Record<Urgency, Status> = { now: 'urgent', today: 'act', routine: 'watch' }
 const mean = (v: number[]) => (v.length ? v.reduce((a, b) => a + b, 0) / v.length : NaN)
 const lastValid = (v: number[], day: number, back = 3) => {
   for (let t = day; t > day - back && t >= 0; t--) if (!Number.isNaN(v[t])) return v[t]
@@ -104,16 +128,29 @@ export interface DayAnalysis {
   learning: boolean
   baselineDays: number
   adapting: { name: string; day: number } | null
+  /** days in a row, up to today, with no reading at all (2 or more means the status cannot be trusted) */
+  staleDays: number
   u3: Record<string, number>
   systems: Record<string, Status>
+  /** the same statuses grouped by sharing area */
+  categories: Record<string, Status>
+  /** cabin CO2 (mmHg) when it is above the level linked to headaches but below the alert rule */
+  co2Advisory: number | null
   alert: { start: number; days: number; tier: 'notice' | 'alert'; score: number } | null
   features: RuleFeatures
+}
+
+export const URGENCY_LABEL: Record<Urgency, string> = { now: 'Now', today: 'Today', routine: 'At the next routine opportunity' }
+export const WHO_LABEL: Record<Tier, string> = {
+  self: 'You manage this yourself',
+  cmo: 'The crew medical officer',
+  ground: 'The medical officer, who consults the flight surgeon when a link is available',
 }
 
 export const TIER_LABEL: Record<Tier, string> = {
   self: 'Manage it yourself',
   cmo: 'Inform the crew medical officer',
-  ground: 'Contact the ground when a link is available',
+  ground: 'Medical officer leads on board; flight surgeon consulted when a link is available',
 }
 
 export const STATUS_LABEL: Record<Status, string> = {
@@ -148,7 +185,8 @@ export function analyzeDay(
   for (let j = 0; j < d; j++) {
     const id = ids[j]
     const uu = u3[id]
-    if (!(uu >= 1.2)) continue
+    const uToday = uAt(day, j)
+    if (!(uu >= 0.8) && !(uToday >= 2)) continue
     const raw = rawSeries(m, crewId, id, entries)
     const tLast = [day, day - 1, day - 2].find((t) => t >= 0 && !Number.isNaN(sc.z[t][j]))
     if (tLast === undefined) continue
@@ -162,6 +200,7 @@ export function analyzeDay(
       if (q >= 1.2) daysOut++
       else break
     }
+    const notable = uu >= 1.2 || uToday >= 2
     const hist: number[] = []
     for (let t = Math.max(0, day - 60); t < day - 2; t++) if (!Number.isNaN(uAt(t, j))) hist.push(uAt(t, j))
     const pct = hist.length >= 10 ? hist.filter((h) => h < uu).length / hist.length : NaN
@@ -169,9 +208,10 @@ export function analyzeDay(
       ind: id, value: raw[tLast], expected: inverseTransform(mt, tr),
       lo: inverseTransform(mt - 2 * st, tr), hi: inverseTransform(mt + 2 * st, tr),
       u3: uu, z: sc.z[tLast][j], direction: sc.z[tLast][j] >= 0 ? 'higher' : 'lower', percentile: pct, daysOut,
+      nHist: hist.length, nLess: hist.filter((h) => h < uu).length, uToday: Number.isNaN(uToday) ? uu : uToday, notable,
     })
   }
-  changes.sort((a, b) => b.u3 - a.u3)
+  changes.sort((a, b) => Math.max(b.u3, b.uToday ?? 0) - Math.max(a.u3, a.uToday ?? 0))
 
   // --- symptoms, environment, phase --------------------------------------------------------
   const sym: Record<string, number> = {}
@@ -195,7 +235,33 @@ export function analyzeDay(
     for (let t = last[0]; t <= day; t++) if (deployedScore(sc, model)[t] > peak) peak = deployedScore(sc, model)[t]
     alert = { start: last[0], days: day - last[0] + 1, tier: peak >= model.thresholds.alert ? 'alert' : 'notice', score: peak }
   }
-  const f: RuleFeatures = { u: u3, sym, env, phaseDays: ph.since, hasPhase, alertDays: alert?.days ?? 0 }
+  const mineE = entries.filter((e) => e.crew === crewId && e.mission === m.id)
+  const recent = (id: string, back: number) => lastValid(rawSeries(m, crewId, id, entries), day, back)
+  const manual = (id: string) => {
+    for (let t = day; t > day - 2; t--) { const e = mineE.find((q) => q.day === t); if (e && id in e.values) return e.values[id] }
+    return NaN
+  }
+  const run = (id: string, n: number): number[] => {
+    const v = rawSeries(m, crewId, id, entries)
+    const out: number[] = []
+    for (let t = day; t > day - n - 3 && t >= 0 && out.length < n; t--) if (!Number.isNaN(v[t])) out.unshift(v[t])
+    return out.length >= n ? out : []
+  }
+  const massS = rawSeries(m, crewId, 'mass', entries)
+  const pre = massS.slice(0, Math.max(1, m.pre_days)).filter((v) => !Number.isNaN(v)).sort((x, y) => x - y)
+  const massNow = lastValid(massS, day, 10)
+  const rel: Record<string, number> = m.pre_days > 0 && pre.length >= 2 && !Number.isNaN(massNow) && day >= m.pre_days ? { mass: massNow / pre[Math.floor(pre.length / 2)] - 1 } : {}
+  const symRecent = new Set<string>([...symptomsOn(m, crewId, day, entries), ...(day > 0 ? symptomsOn(m, crewId, day - 1, entries) : [])])
+  const redFlag = [...symRecent].some((x) => SYM[x]?.red_flag)
+  const val: Record<string, number> = { temp_oral: recent('temp_oral', 2), glucose: recent('glucose', 2), sbp: recent('sbp', 2), spo2_manual: manual('spo2') }
+  const f: RuleFeatures = { u: u3, sym, env, phaseDays: ph.since, hasPhase, alertDays: alert?.days ?? 0, val, run, rel, redFlag }
+  // days in a row with no fresh reading at all (rolling averages do not count as fresh)
+  const fresh = ['rhr', 'hrv', 'spo2', 'temp', 'sleep_h', 'mood', 'pvt_rt', 'fluid', 'energy', 'ex_min', 'steps'].map((id) => rawSeries(m, crewId, id, entries))
+  let staleDays = 0
+  for (let t = day; t >= 0; t--) {
+    if (fresh.some((v) => !Number.isNaN(v[t])) || mineE.some((q) => q.day === t)) break
+    staleDays++
+  }
 
   // --- contributing factors from the person's own recent data ---------------------------
   const factors: Factor[] = []
@@ -227,9 +293,9 @@ export function analyzeDay(
   const mk = (r: (typeof RULES)[number], kind: Finding['kind'], start: number, status: Status, ch: Change[], extra: Partial<Finding> = {}): Finding => {
     const t = applyRule(r, f)
     return {
-      key: `${m.id}|${kind === 'environment' ? 'crew' : crewId}|${kind === 'personal' ? 'P' : r.id}|${start}`, kind, crewWide: kind === 'environment', status, start,
+      key: `${m.id}|${kind === 'environment' && r.id !== 'R-CO2H' ? 'crew' : crewId}|${kind === 'personal' ? 'P' : r.id}|${start}`, kind, crewWide: kind === 'environment' && r.id !== 'R-CO2H', status, start,
       days: day - start + 1, ruleId: r.id, title: r.title, summary: r.summary, changes: ch, factors: kind === 'personal' ? factors : factors.filter((x) => x.id === 'co2' || x.id === 'symptoms' || x.id === 'phase'),
-      action: r.action, steps: r.steps, tier: t.tier, tierReason: t.reason, countermeasures: r.cm, categories: r.categories, ...extra,
+      action: r.action, steps: r.steps, tier: t.tier, tierReason: t.reason, urgency: r.urgency ?? 'routine', countermeasures: r.cm, categories: r.categories, ...extra,
     }
   }
   const firstDay = (test: (t: number) => boolean) => {
@@ -238,16 +304,17 @@ export function analyzeDay(
     return s
   }
   for (const r of RULES) {
-    if (r.scope === 'symptom' && evalCond(r.when, f)) findings.push(mk(r, 'symptom', day, 'urgent', []))
-    if (r.scope === 'environment' && day >= m.pre_days && evalCond(r.when, f)) {
-      const start = r.id === 'R-CO2'
-        ? firstDay((t) => mean(co2.slice(Math.max(0, t - 2), t + 1).filter((v) => !Number.isNaN(v))) >= 3.0)
-        : firstDay((t) => rad[t] / radMed >= 3)
-      const ind = r.id === 'R-CO2' ? 'co2' : 'rad'
-      const v = env[ind]
-      findings.push(mk(r, 'environment', start, 'act', [{ ind, value: v, expected: r.id === 'R-CO2' ? 2.5 : radMed, lo: 0, hi: r.id === 'R-CO2' ? 3.0 : radMed * 3, u3: NaN, z: NaN, direction: 'higher', percentile: NaN, daysOut: day - start + 1 }]))
+    if ((r.scope === 'symptom' || r.scope === 'vital') && evalCond(r.when, f)) {
+      const named = condIndicators(r.when)
+      findings.push(mk(r, r.scope, day, URGENCY_STATUS[r.urgency ?? 'routine'], changes.filter((c) => named.includes(c.ind)).slice(0, 4)))
     }
-    if (r.scope === 'adaptation' && evalCond(r.when, f)) findings.push(mk(r, 'adaptation', Math.max(0, day - ph.since), 'watch', []))
+    if (r.scope === 'environment' && day >= m.pre_days && evalCond(r.when, f) && !(r.id === 'R-CO2H' && findings.some((x) => x.ruleId === 'R-CO2'))) {
+      const start = r.id === 'R-CO2' ? firstDay((t) => co2[t] >= 3.0) : r.id === 'R-CO2H' ? day : firstDay((t) => rad[t] / radMed >= 3)
+      const ind = r.id === 'R-SPE' ? 'rad' : 'co2'
+      const v = env[ind]
+      findings.push(mk(r, 'environment', start, r.id === 'R-CO2H' ? 'watch' : 'act', [{ ind, value: v, expected: r.id === 'R-SPE' ? radMed : 2.5, lo: 0, hi: r.id === 'R-SPE' ? radMed * 3 : 3.0, u3: NaN, z: NaN, direction: 'higher', percentile: NaN, daysOut: day - start + 1 }]))
+    }
+    if (r.scope === 'adaptation' && evalCond(r.when, f)) findings.push(mk(r, 'adaptation', Math.max(0, day - ph.since), applyRule(r, f).tier !== 'self' ? 'act' : 'watch', []))
   }
   if (alert && !learning) {
     const r = RULES.find((q) => q.scope === 'personal' && evalCond(q.when, f)) ?? RULE['R-GEN']
@@ -258,28 +325,50 @@ export function analyzeDay(
     const early = t.tier !== 'self' && !corroborated
     const status: Status = alert.tier === 'alert' || (t.tier !== 'self' && corroborated) ? 'act' : 'watch'
     const named = condIndicators(r.when)
-    const evidence = [...changes.filter((c) => named.includes(c.ind)), ...changes.filter((c) => !named.includes(c.ind))].slice(0, 4)
+    const evidence = [...changes.filter((c) => named.includes(c.ind)), ...changes.filter((c) => !named.includes(c.ind) && c.notable)].slice(0, 4)
     const cats = new Set<string>([...r.categories, ...evidence.map((c) => IND[c.ind]?.category ?? 'cardio')])
     findings.push(mk(r, 'personal', alert.start, status, evidence, {
-      score: alert.score, threshold: model.thresholds.notice, categories: [...cats], detectorTier: alert.tier,
-      ...(early ? { tier: 'self' as Tier, tierReason: 'Early signal. Keel will suggest involving the medical officer if it strengthens, lasts, or you report symptoms.', action: r.action.replace(/,? and tell the medical officer\.$/, '.') } : {}),
+      score: alert.score, threshold: model.thresholds.notice, categories: [...cats], detectorTier: alert.tier, urgency: (t.tier !== 'self' && !early ? 'today' : 'routine') as Urgency,
+      ...(early ? { tier: 'self' as Tier, tierReason: 'Early signal. Keel will suggest involving the medical officer if it strengthens, lasts, or you report symptoms.', action: r.action.replace(/,? and tell the medical officer\.$/, '.').replace(/ Tell the medical officer\.$/, '') } : {}),
     }))
   }
   const rank: Record<Status, number> = { urgent: 4, act: 3, watch: 2, steady: 1, learning: 0 }
+  // one illness finding, not two: when the detector's own illness pattern is open it replaces the symptom-led one
+  if (findings.some((x) => x.ruleId === 'R-ILL')) for (let i = findings.length - 1; i >= 0; i--) if (findings[i].ruleId === 'R-SYM-ILL') findings.splice(i, 1)
   findings.sort((a, b) => rank[b.status] - rank[a.status])
-  const status: Status = findings.length ? findings[0].status : learning ? 'learning' : 'steady'
+  const status: Status = findings.length ? findings[0].status : learning || staleDays >= 2 ? 'learning' : 'steady'
 
-  // --- body systems --------------------------------------------------------------------------
-  const systems: Record<string, Status> = {}
-  for (const id of ids) {
-    const sysId = IND[id].system
-    const uu = u3[id]
-    const st: Status = Number.isNaN(uu) ? 'learning' : uu >= 2.5 ? 'act' : uu >= 1.5 ? 'watch' : 'steady'
-    if (!(sysId in systems) || rank[st] > rank[systems[sysId]]) systems[sysId] = st
+  // --- one status per area, used by every screen (body map, sharing preview, role views) ------
+  const co2Today = lastValid(co2, day)
+  const envStatus: Status = findings.some((x) => x.kind === 'environment') ? 'act' : co23 >= 2.5 || co2Today >= 2.5 ? 'watch' : 'steady'
+  const areaStatus = (inds: string[]): Status => {
+    let st: Status = 'learning'
+    for (const id of inds) {
+      const j = ids.indexOf(id)
+      if (j < 0) continue
+      const uu = u3[id]
+      if (Number.isNaN(uu)) continue
+      // without an open alert an area can be at most "worth a look"; "act" always comes from a finding
+      const one: Status = uu >= 1.5 || uAt(day, j) >= 2 ? 'watch' : 'steady'
+      if (rank[one] > rank[st]) st = one
+    }
+    for (const fd of findings) {
+      if (fd.kind === 'environment') continue
+      const ev = fd.changes.map((c) => c.ind)
+      if (ev.some((e) => inds.includes(e)) && rank[fd.status] > rank[st]) st = fd.status
+    }
+    return st
   }
-  systems.environment = findings.some((x) => x.kind === 'environment') ? 'act' : co23 >= 2.5 ? 'watch' : 'steady'
+  const systems: Record<string, Status> = {}
+  for (const sysId of [...new Set(ids.map((i) => IND[i].system))]) systems[sysId] = areaStatus(ids.filter((i) => IND[i].system === sysId))
+  systems.environment = envStatus
+  const categories: Record<string, Status> = {}
+  for (const cat of [...new Set(ids.map((i) => IND[i].category))]) categories[cat] = areaStatus(ids.filter((i) => IND[i].category === cat))
+  const symFinding = findings.find((x) => x.kind === 'symptom' || x.kind === 'adaptation')
+  categories.symptoms = symFinding ? symFinding.status : symList.length ? 'watch' : 'steady'
+  categories.environment = envStatus
 
-  return { status, findings, changes, learning, baselineDays, adapting, u3, systems, alert, features: f }
+  return { status, findings, changes, learning, baselineDays, adapting, staleDays, u3, systems, categories, alert, features: f, co2Advisory: envStatus === 'watch' ? Math.max(co2Today || 0, co23 || 0) : null }
 }
 
 /** Plain-language sentence for one change. */
@@ -293,9 +382,8 @@ export function describeChange(c: Change): string {
 }
 
 export function unusualness(c: Change): string {
-  if (Number.isNaN(c.percentile)) return 'Not enough history yet to say how unusual this is for you.'
-  const pct = Math.round(c.percentile * 100)
-  const days = c.daysOut > 1 ? ` It has been outside your usual range for ${c.daysOut} days.` : ''
-  if (pct >= 99) return `More unusual than any of your last 60 days.${days}`
-  return `More unusual than ${pct}% of your last 60 days.${days}`
+  if (Number.isNaN(c.percentile) || !c.nHist) return 'Not enough history yet to say how unusual this is for you.'
+  const days = c.daysOut > 1 ? ` Outside your usual range for ${c.daysOut} days.` : c.daysOut === 1 ? ' Outside your usual range today.' : ''
+  if ((c.nLess ?? 0) >= c.nHist) return `Further from your normal than on any of your last ${c.nHist} measured days.${days}`
+  return `Further from your normal than on ${c.nLess} of your last ${c.nHist} measured days.${days}`
 }

@@ -16,14 +16,14 @@
    "note": "Between-astronaut SD of sleeping heart rate"
   },
   "rhr_within_sd": {
-   "value": 3.4577,
+   "value": 3.5645,
    "unit": "bpm",
    "basis": "calibrated",
    "ref": null,
    "note": "Fitted so simulated within-person SD matches 3.508 from Stanford wearables, people with no reported illness (calibration half), n = 74 people"
   },
   "rhr_ar1": {
-   "value": 0.1633,
+   "value": 0.339,
    "unit": "",
    "basis": "calibrated",
    "ref": null,
@@ -42,7 +42,7 @@
    "ref": null
   },
   "lnhrv_within_sd": {
-   "value": 0.2363,
+   "value": 0.2486,
    "unit": "ln ms",
    "basis": "calibrated",
    "ref": null,
@@ -56,7 +56,7 @@
    "note": "Normal range 95-100% (terrestrial)"
   },
   "spo2_within_sd": {
-   "value": 1.0343,
+   "value": 1.0468,
    "unit": "%",
    "basis": "calibrated",
    "ref": null,
@@ -69,7 +69,7 @@
    "ref": null
   },
   "temp_within_sd": {
-   "value": 0.5182,
+   "value": 0.4669,
    "unit": "degC",
    "basis": "calibrated",
    "ref": null,
@@ -83,7 +83,7 @@
    "note": "Post-flight actigraphy sleep 6.95 h on ISS missions, used as the ground value"
   },
   "sleep_within_sd": {
-   "value": 1.353,
+   "value": 1.4075,
    "unit": "h",
    "basis": "calibrated",
    "ref": null,
@@ -312,25 +312,25 @@
    "ref": null
   },
   "illness_prodrome_days": {
-   "value": 6.0,
+   "value": 2.0,
    "unit": "days",
    "basis": "calibrated",
    "ref": null,
    "note": "Fitted to the mean resting-heart-rate change around 38 dated illness onsets (calibration half, Stanford phases 1 and 2)"
   },
   "illness_duration_days": {
-   "value": 4.0,
+   "value": 6.0,
    "unit": "days",
    "basis": "calibrated",
    "ref": null,
    "note": "Fitted with the prodrome (same fit)"
   },
   "illness_rhr_peak": {
-   "value": 3.1137,
+   "value": 4.7787,
    "unit": "bpm",
    "basis": "calibrated",
    "ref": null,
-   "note": "Fitted peak of the mean resting-heart-rate change around 38 dated illness onsets (calibration half, Stanford phases 1 and 2). Per-episode quartiles -0.4 / 3.0 / 7.4 bpm; the published median among detected cases is 7 bpm (DOMAIN ref 58)"
+   "note": "Fitted peak of the mean resting-heart-rate change around 38 dated illness onsets (calibration half, Stanford phases 1 and 2). Observed per-episode quartiles 0.4 / 3.0 / 6.8 bpm; the published median among detected cases is 7 bpm (DOMAIN ref 58)"
   },
   "illness_lnhrv_drop": {
    "value": 0.22,
@@ -346,7 +346,7 @@
    "ref": null
   },
   "illness_temp_peak": {
-   "value": 0.37,
+   "value": 0.56,
    "unit": "degC",
    "basis": "assumption",
    "ref": "60",
@@ -385,17 +385,10 @@
   },
   "illness_hold_days": {
    "unit": "days",
-   "value": 3.0,
+   "value": 0.0,
    "basis": "calibrated",
    "ref": null,
    "note": "Fitted with the prodrome (same fit)"
-  },
-  "illness_magnitude_sigma": {
-   "unit": "log units",
-   "value": 1.2,
-   "basis": "calibrated",
-   "ref": null,
-   "note": "Spread of the per-episode response (log-normal), from the upper quartile over the median"
   },
   "within_sd_person_sigma": {
    "value": 0.2974,
@@ -424,6 +417,48 @@
    "basis": "assumption",
    "ref": null,
    "note": "Sessions lost to operations (maintenance, spacewalk days)"
+  },
+  "illness_rise_after_days": {
+   "unit": "days",
+   "value": 3.0,
+   "basis": "calibrated",
+   "ref": null,
+   "note": "Days from symptom onset to the peak (same fit)"
+  },
+  "illness_magnitude_cv": {
+   "unit": "ratio",
+   "value": 1.874,
+   "basis": "calibrated",
+   "ref": null,
+   "note": "Between-episode SD of the true response over its mean: observed SD 7.8 bpm, of which 2.3 bpm is measurement noise"
+  },
+  "noise_load_rhr": {
+   "value": 0.8003,
+   "unit": "loading",
+   "basis": "calibrated",
+   "ref": null,
+   "note": "Loading on a shared day-to-day factor, from within-person correlations in LifeSnaps (calibration half, 20 people): heart rate with HRV -0.64, with skin temperature 0.20, with sleep -0.11"
+  },
+  "noise_load_lnhrv": {
+   "value": -0.8003,
+   "unit": "loading",
+   "basis": "calibrated",
+   "ref": null,
+   "note": "Loading on a shared day-to-day factor, from within-person correlations in LifeSnaps (calibration half, 20 people): heart rate with HRV -0.64, with skin temperature 0.20, with sleep -0.11"
+  },
+  "noise_load_temp": {
+   "value": 0.253,
+   "unit": "loading",
+   "basis": "calibrated",
+   "ref": null,
+   "note": "Loading on a shared day-to-day factor, from within-person correlations in LifeSnaps (calibration half, 20 people): heart rate with HRV -0.64, with skin temperature 0.20, with sleep -0.11"
+  },
+  "noise_load_sleep": {
+   "value": -0.135,
+   "unit": "loading",
+   "basis": "calibrated",
+   "ref": null,
+   "note": "Loading on a shared day-to-day factor, from within-person correlations in LifeSnaps (calibration half, 20 people): heart rate with HRV -0.64, with skin temperature 0.20, with sleep -0.11"
   }
  }
 }

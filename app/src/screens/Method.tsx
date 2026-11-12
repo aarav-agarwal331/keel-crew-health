@@ -1,9 +1,14 @@
 import { useEffect } from 'react'
 import simParams from '../../../shared/sim_params.json'
-import { CM, REFS, RULES, TIER_LABEL } from '../core/analysis'
+import { CM, REFS, RULES, URGENCY_LABEL, WHO_LABEL } from '../core/analysis'
 import { INDICATORS } from '../core/mission'
 import { useApp } from '../state'
-import { Card, href } from '../ui/kit'
+import type { ReactNode } from 'react'
+import { href } from '../ui/kit'
+
+function Card({ id, title, children, open }: { id: string; title: string; children: ReactNode; open?: boolean }) {
+  return <details className="card" id={id} open={open}><summary><h2 style={{ display: 'inline' }}>{title}</h2></summary><div className="col" style={{ marginTop: 10 }}>{children}</div></details>
+}
 
 const PARAMS = (simParams as { params: Record<string, { value: number; unit: string; basis: string; ref: string | null; note?: string }> }).params
 const SECTIONS = [
@@ -15,7 +20,8 @@ const SECTIONS = [
 export function Method({ section }: { section?: string }) {
   const { model } = useApp()
   useEffect(() => {
-    if (section) document.getElementById(`m-${section}`)?.scrollIntoView({ block: 'start' })
+    const el = section ? document.getElementById(`m-${section}`) : null
+    if (el) { el.setAttribute('open', ''); el.scrollIntoView({ block: 'start' }) }
   }, [section])
   const p = model.params
   const counts = Object.values(PARAMS).reduce<Record<string, number>>((a, v) => ({ ...a, [v.basis]: (a[v.basis] ?? 0) + 1 }), {})
@@ -25,9 +31,9 @@ export function Method({ section }: { section?: string }) {
       <p className="muted">Written for a careful reader who is not a specialist. The full version with every equation is <code>docs/METHOD.md</code> in the repository.</p>
       <nav className="row wrap" aria-label="Sections">{SECTIONS.map(([id, label]) => <a key={id} className="chip" href={href('method', id)}>{label}</a>)}</nav>
 
-      <Card id="m-idea" title="The idea">
+      <Card id="m-idea" title="The idea" open>
         <div className="prose">
-          <p>On the International Space Station a flight surgeon on Earth watches crew health in near real time. On the way to Mars the signal takes minutes each way and sometimes there is no link at all, so the crew has to notice and act on health changes themselves.</p>
+          <p>On the International Space Station a flight surgeon is seconds away by voice, speaks privately with each crew member about once a week, and the ground team follows exercise and cabin-air data. On the way to Mars the signal takes minutes each way and sometimes there is no link at all, so the crew has to notice and act on health changes themselves.</p>
           <p>Keel learns what is normal <em>for each person</em>, notices when their readings drift away from that, says what changed in plain words, and points to one documented action. All of it runs on the device. The crew member owns the data and chooses what the medical officer, the commander and the ground can see.</p>
           <p><strong>Keel is decision support, not a medical device.</strong> It never states a diagnosis. It says "this is unusual for you" and "this is what the documented countermeasure is".</p>
         </div>
@@ -36,9 +42,9 @@ export function Method({ section }: { section?: string }) {
       <Card id="m-indicators" title="What is measured, and why">
         <div className="tablewrap"><table>
           <thead><tr><th>Indicator</th><th>Unit</th><th>Comes from</th><th>In the automatic alert?</th><th>Risk it tracks</th></tr></thead>
-          <tbody>{INDICATORS.map((i) => <tr key={i.id}><td><a href={href('trends', i.id)}>{i.label}</a></td><td>{i.unit}</td><td>{{ wearable: 'Wearable', checkin: 'Daily check-in', spot: 'Weekly measurement', env: 'Cabin sensor' }[i.source]}</td><td>{i.detect ? 'Yes' : i.source === 'env' ? 'Own rule' : 'Shown only'}</td><td className="small">{i.why}</td></tr>)}</tbody>
+          <tbody>{INDICATORS.map((i) => <tr key={i.id}><td><a href={href('trends', i.id)}>{i.label}</a></td><td>{i.unit}</td><td>{{ wearable: 'Wearable', checkin: 'Daily check-in', spot: 'Spot measurement', env: 'Cabin sensor', dosimeter: 'Personal dosimeter' }[i.source]}</td><td>{i.detect ? 'Yes' : ['co2', 'rad', 'temp_oral', 'sbp', 'glucose', 'mass'].includes(i.id) ? 'Own fixed rule' : 'Shown only'}</td><td className="small">{i.why}</td></tr>)}</tbody>
         </table></div>
-        <p className="small muted">Bone loss and eye changes (SANS) cannot be measured daily with small hardware. Keel tracks the countermeasure instead (exercise done) and asks about vision at check-in.</p>
+        <p className="small muted">Bone loss and eye changes cannot be measured daily with small hardware. Keel tracks the countermeasure instead (exercise done) and asks about vision at check-in. Skin temperature from the wearable and thermometer readings are kept as separate series.</p>
       </Card>
 
       <Card id="m-data" title="Data and adapters">
@@ -83,7 +89,8 @@ z[t] = clip( (x[t] - m[t]) / s[t], -${p.z_clip}, +${p.z_clip} )`}</div>
 w        = min(1, n_new / ${p.n_full})
 m[t]     = (1 - w) * prior[t] + w * median(new data)
 s[t]     = (1 - w) * s_before * (1 + 1.5 * exp(-(t - t0)/tau)) + w * s_new`}</div>
-          <p>On NASA bed-rest data this roughly halves false flags when volunteers get up after weeks in bed; in simulation it halves false alerts in the first month of flight (Validation, sections 2 and 4).</p>
+          <p>What testing showed: in simulation this halves false alerts in the first month of flight, and on NASA bed-rest data it roughly halves false flags after volunteers get up. The benefit comes from restarting the baseline and widening the band; the expected shift itself adds little. The cost is real: while the band is wide, problems that begin in the first weeks after a transition are much harder to see (Validation, sections 2 and 4). We have not tuned that trade-off.</p>
+          <p><strong>Your usual is not the standard.</strong> A personal baseline gets used to whatever you do. Someone who always eats 84% of the plan or sleeps six hours will be "normal" at that level. Trends therefore also show the standard (100% of plan, an 8.5-hour sleep period, at least 2 litres), and body mass is compared with pre-flight, not with last month.</p>
         </div>
       </Card>
 
@@ -100,9 +107,10 @@ s[t]     = (1 - w) * s_before * (1 + 1.5 * exp(-(t - t0)/tau)) + w * s_new`}</di
           <div className="eq">{`y[t] = ${p.ewma_lambda} * z[t] + ${(1 - p.ewma_lambda).toFixed(1)} * y[t-1]            (a missing reading counts as 0)
 y+   = y clipped to the direction of concern (e.g. only high heart rate, only low HRV)
 T2   = y+' * inverse( ${p.ewma_lambda}/(2-${p.ewma_lambda}) * R ) * y+          R = correlation of z between indicators`}</div>
-          <p>The app runs <strong>{{ mewma: 'the multivariate EWMA', zscore: 'the personal z-score rule', cusum: 'CUSUM', fusion: 'the fusion' }[model.deployed ?? 'fusion']}</strong>. That choice was made on simulated <em>training</em> missions only; test missions and real data had no vote.</p>
+          <p>The app runs <strong>{{ mewma: 'the multivariate EWMA', zscore: 'the personal 2-of-3-days rule', cusum: 'CUSUM', fusion: 'the fusion' }[model.deployed ?? 'fusion']}</strong>. The choice follows a rule set in advance and applied to simulated <em>training</em> missions only: take the simplest detector unless a more complex one flags at least 3 points more events <em>above luck</em>. Test missions and real data had no vote. In testing the four personal detectors turned out to be hard to tell apart.</p>
           <p><strong>Alarm fatigue is a hazard, so thresholds are set from a false-alert budget.</strong> A notice may fire at most {model.budgets?.notice ?? 1} time per person-month by mistake; an alert, which is the only tier that can recommend involving the medical officer without a reported symptom, at most {model.budgets?.alert ?? 0.25}. An alert that stays open counts again every {p.realert_days} days, so one endless alert cannot hide inside the budget. Runs separated by {p.merge_gap} days or fewer are one alert.</p>
-          <p>Cabin CO2, radiation and red-flag symptoms do not go through the detector: they have their own fixed rules, because they are not about a personal baseline.</p>
+          <p><strong>Some things never wait for the detector.</strong> Fixed rules react at once to a red-flag symptom, to a single entered reading beyond a safety threshold (thermometer 38.0 °C, fingertip oxygen 92%, blood sugar below 70 mg/dL, upper blood pressure below 90 mmHg), to very low mood for days, to body mass 5% under pre-flight, and to cabin CO2 at the 3.0 mmHg limit. These thresholds are general public guidance or placeholders and need a flight surgeon's sign-off. If nothing has been measured for two days, Keel shows "No recent data", not "Steady".</p>
+          <p>Keel does not warn of solar storms. It sees a daily dose total, far too slow for a shelter decision; that is the job of the vehicle's radiation alarm.</p>
         </div>
       </Card>
 
@@ -112,7 +120,8 @@ T2   = y+' * inverse( ${p.ewma_lambda}/(2-${p.ewma_lambda}) * R ) * y+          
             <li><strong>Held-out people.</strong> Real data: five-fold cross-validation over people. Population statistics, correlations and thresholds come from the training folds; each person is scored once by a model that never saw them. Simulation: separate training and test missions.</li>
             <li><strong>Detection.</strong> An episode counts as detected if an alert <em>starts</em> between 10 days before and 4 days after onset. Lead time is onset minus alert start.</li>
             <li><strong>False alerts.</strong> Alerts that start more than 21 days before or 28 days after any labeled onset, per person-month of such quiet time.</li>
-            <li><strong>Luck.</strong> At one false alert per month an alert lands in a two-week window by chance fairly often. We place pretend events on random quiet days and report that rate next to every detection rate.</li>
+            <li><strong>Luck.</strong> At one false alert per month an alert lands in a two-week window by chance about a third of the time. We place pretend events on random quiet days, score them the same way, and report detection <em>above luck</em>. Methods are compared on that, because a detector that alerts in more separate bursts gets more lucky hits.</li>
+            <li><strong>Same events for every method.</strong> An episode a method cannot score (no baseline yet) counts as a miss.</li>
             <li><strong>Intervals.</strong> Bootstrap over people (real) or missions (simulated), 95%.</li>
             <li><strong>Leakage checks.</strong> Baselines only look backwards (unit-tested). Thresholds never see test people (unit-tested). The simulator is calibrated on one half of the real people and checked against the other. The deployed detector was picked on training missions.</li>
           </ul>
@@ -122,47 +131,53 @@ T2   = y+' * inverse( ${p.ewma_lambda}/(2-${p.ewma_lambda}) * R ) * y+          
 
       <Card id="m-action" title="From alert to action">
         <div className="prose">
-          <p>When the detector has an alert open, Keel looks at which indicators moved over the last three days and walks down a fixed table of {RULES.length} rules. The first rule that matches supplies the wording, the single recommended action, the follow-up steps and the escalation level. Each rule cites a countermeasure with its source. No language model writes or rephrases any of it.</p>
-          <p>Escalation has three levels: {Object.values(TIER_LABEL).map((t) => t.toLowerCase()).join('; ')}. A rule can raise the level when a pattern persists. Going beyond self-management needs either the stricter alert tier or a symptom the crew member reported, so a single noisy night cannot summon the medical officer.</p>
+          <p>A fixed table of {RULES.length} rules turns what Keel sees into wording, one recommended action, follow-up steps, how soon and who. When the detector has an alert open, Keel looks at which indicators moved over the last three days and takes the first matching pattern rule. Each rule cites a countermeasure with its source. No language model writes or rephrases any of it.</p>
+          <p>Each recommendation says <strong>how soon</strong> (now, today, or at the next routine opportunity) and <strong>who</strong> should know (you alone, the medical officer, or the medical officer with the flight surgeon consulted when a link exists). A rule can raise either when a pattern persists. For detector-driven rules, going beyond self-management needs the stricter alert tier or a symptom the crew member reported, so a single noisy night cannot summon the medical officer.</p>
+          <p>Rules triggered by a reported symptom or an entered reading are not covered by the false-alert budget: they fire as often as people report those things.</p>
         </div>
         <details>
           <summary>The complete rule table</summary>
           <div className="tablewrap"><table>
-            <thead><tr><th>Rule</th><th>Says</th><th>Recommended action</th><th>Starts at</th><th>Source</th></tr></thead>
-            <tbody>{RULES.map((r) => <tr key={r.id}><td><code>{r.id}</code></td><td>{r.title}</td><td className="small">{r.action}</td><td className="small">{TIER_LABEL[r.tier]}</td><td className="small">{r.cm.map((c) => `${CM[c]?.title} [${CM[c]?.refs.join(', ')}]`).join('; ')}</td></tr>)}</tbody>
+            <thead><tr><th>Rule</th><th>Says</th><th>Recommended action</th><th>How soon, who</th><th>Source</th></tr></thead>
+            <tbody>{RULES.map((r) => <tr key={r.id}><td><code>{r.id}</code></td><td>{r.title}</td><td className="small">{r.action}</td><td className="small">{URGENCY_LABEL[r.urgency]}; {WHO_LABEL[r.tier].toLowerCase()}</td><td className="small">{r.cm.map((c) => `${CM[c]?.title} [${CM[c]?.refs.join(', ')}]`).join('; ')}</td></tr>)}</tbody>
           </table></div>
         </details>
       </Card>
 
       <Card id="m-readiness" title="Crew readiness and privacy">
         <div className="prose">
-          <p>The commander sees one of three readiness tiers per person for a demanding task tomorrow, derived from open alerts, reaction time and recent sleep. The tier is always visible; the reasons are visible only where the crew member has shared that area. Crew-wide patterns are shown as counts, and only when at least two people are affected.</p>
-          <p>Sharing is set per role and per area at four levels: private, status, trends, full detail. One function decides what any other role may see, and it is unit-tested to leak nothing that was not shared. Every view by another role is written to the crew member's access log. Cabin readings are not personal and are visible to all.</p>
+          <p>The commander sees one of three tiers per person before a demanding task: no Keel flags, minor flags, or talk to the medical officer first. It is never better than the worst area on the crew member's own screen, and nausea or clearly slowed reactions always mean a conversation first. The tier is always visible; the reasons only where the crew member has shared that area. Crew-wide patterns are shown as counts, and only when at least three people are affected. It is not a clearance.</p>
+          <p>Sharing is set per role and per area at four levels: private, status, trends, full detail. One function decides what any other role may see, and it is unit-tested to leak nothing that was not shared. Every view by another role is written to the crew member's access log. Cabin readings are not personal and are visible to all. One exception, agreed before flight and switchable: a red-flag symptom or an "act now" reading is shown at once to the medical officer and to the commander as backup.</p>
           <p>The summary queued for the ground contains only what the crew member shares with the flight surgeon, and is a few hundred bytes.</p>
         </div>
       </Card>
 
-      <Card id="m-limits" title="Limitations">
+      <Card id="m-limits" title="Limitations" open>
         <div className="prose">
           <ul>
             <li><strong>Ground data stands in for spaceflight data.</strong> The people in the real evaluation were on Earth, wore consumer watches and mostly had COVID-19. Astronauts are fitter, live on a schedule and are in a different physiological state.</li>
-            <li><strong>Early warning is not demonstrated.</strong> On real data the alert usually arrives on or after the day symptoms start.</li>
+            <li><strong>Early warning is not demonstrated.</strong> On real data the alert usually starts on or after the day symptoms begin.</li>
+            <li><strong>Most alerts are false.</strong> At in-flight illness rates only about one alert-tier alert in ten would be a real respiratory illness. Keel is a prompt to look, not a verdict.</li>
             <li><strong>Small samples.</strong> About a hundred illness episodes; 29 bed-rest volunteers; 71 people for variability.</li>
-            <li><strong>Only illness is tested on real data.</strong> Sleep loss, CO2, deconditioning, dehydration and low mood are tested in simulation with assumed effect sizes.</li>
-            <li><strong>Sensors differ.</strong> Overnight heart rate from a wrist watch varies by about 3.5 bpm from night to night; flight hardware may be better or worse. Apple Watch data in the real set performed poorly.</li>
-            <li><strong>What is simulated:</strong> every mission in the app, the cabin CO2 and radiation readings, the link delay and blackouts, and thresholds for the full indicator set.</li>
+            <li><strong>Only illness is tested on real data,</strong> and most of that signal comes from people moving less once they feel ill. Sleep loss, CO2, deconditioning, dehydration and low mood are tested in simulation with assumed effect sizes.</li>
+            <li><strong>Sensors differ.</strong> Overnight heart rate from a wrist watch varies by about 3.5 bpm from night to night; flight hardware may be better or worse. Non-Fitbit data in the real set performed poorly. Wearable sleep detection is not validated in weightlessness.</li>
+            <li><strong>Thresholds for the full sensor set are calibrated in simulation.</strong> When simulated thresholds for two indicators were applied to real people, false alerts ran about 40 to 70% over budget. Expect the same or worse for the full set.</li>
+            <li><strong>Handling of gravity changes has a blind spot:</strong> for the first weeks after launch or landing the widened band hides real problems.</li>
+            <li><strong>A personal baseline can normalise a slow, harmful drift.</strong> Showing the standard next to "your usual" and comparing body mass with pre-flight only partly addresses this.</li>
+            <li><strong>Not modelled:</strong> sleep aids, anti-nausea and other medication; menstrual-cycle effects on temperature and heart rate; body temperature running higher on long flights, which a reviewer pointed out and which would make a fixed 38.0 °C line too low or too high.</li>
+            <li><strong>What is simulated:</strong> every mission in the app, the cabin CO2 and radiation readings, the link delay and blackouts.</li>
             <li><strong>Assumed, not verified:</strong> the size of in-flight changes in heart rate and HRV (sources say "unchanged" or disagree), typical cabin CO2, crewed-mission blackout lengths.</li>
-            <li><strong>The readiness tier and the action rules have not been reviewed by a clinician.</strong> Thresholds such as 38.0 °C or 92% oxygen are general public guidance, not flight rules.</li>
+            <li><strong>No clinician has reviewed the rules, the fixed thresholds or the readiness tier.</strong> The thresholds are general public guidance for adults on Earth, not flight rules.</li>
             <li><strong>The one-minute reaction test</strong> is shorter than the validated three-minute test and depends on the touchscreen.</li>
           </ul>
-          <p><strong>What a clinician would need to review before any real use:</strong> the rule table and its wording; escalation thresholds; which red-flag symptoms bypass the detector; the false-alert budgets; behaviour during medication use; and whether personal baselines might normalise a slow, harmful drift.</p>
+          <p><strong>What a clinician would need to review before any real use:</strong> every rule's wording, urgency and audience; each fixed threshold; the red-flag list; the false-alert budgets; what emergency sharing covers; behaviour during medication use; and how long the band stays widened after a gravity change.</p>
         </div>
       </Card>
 
       <Card id="m-sources" title="Sources">
         <p className="small muted">Every source below was opened while researching. The full research notes are in <code>docs/DOMAIN.md</code>, the data survey in <code>docs/DATA.md</code>.</p>
         <ol className="list small" style={{ listStyle: 'none' }}>
-          {Object.entries(REFS).filter(([k]) => /^\d+$/.test(k)).map(([k, r]) => <li key={k}><span className="muted">[{k}]</span> {r.text} {r.url && <a href={r.url} target="_blank" rel="noreferrer">Link</a>}</li>)}
+          {Object.entries(REFS).filter(([, r]) => !r.text.startsWith('PubMed abstract records')).sort(([a], [b]) => parseInt(a) - parseInt(b) || a.localeCompare(b)).map(([k, r]) => <li key={k}><span className="muted">[{k}]</span> {r.text} {r.url && <a href={r.url} target="_blank" rel="noreferrer">Link</a>}</li>)}
         </ol>
         <p className="small">Data: Mishra et al. 2020 and Alavi et al. 2022 (Stanford COVID-19 wearables); Yfantidou et al. 2022, LifeSnaps (CC BY 4.0); NASA Life Sciences Data Archive, public bed-rest campaigns.</p>
       </Card>

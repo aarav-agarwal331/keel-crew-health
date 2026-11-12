@@ -281,8 +281,9 @@ def score_mewma(z: np.ndarray, model: Model, p: Params) -> np.ndarray:
 
 
 def score_fusion(c: np.ndarray, m: np.ndarray, model: Model) -> np.ndarray:
-    """Keel's deployed score: whichever of CUSUM or MEWMA is closer to its own reference
-    threshold.  1.0 means 'one of them is at its threshold'."""
+    """Fusion candidate: whichever of CUSUM or MEWMA is closer to its own reference threshold.
+    1.0 means 'one of them is at its threshold'.  (Which detector the app deploys is decided by
+    fit_mission_model.py; this was the original plan and is kept as a comparison.)"""
     a = c / model.h_cusum
     b = m / model.h_mewma
     return np.where(np.isnan(a), b, np.where(np.isnan(b), a, np.maximum(a, b)))
