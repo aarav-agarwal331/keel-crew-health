@@ -27,7 +27,7 @@ Lucía's readings
 Your readings
 Your usual range
 Outside your range
-Resting heart rate (bpm)
+Resting heart rate (overnight) (bpm)
 50
 60
 Symptoms + flag
@@ -55,22 +55,22 @@ What Keel did
 DAY 128
 Act today: Several readings have drifted from your normal
 
-The notice open since Day 115 now looks like this. Do a full check-in today and repeat any reading that looks wrong. (today; self-managed)
+The notice open since Day 115 now looks like this. Do a full check-in today and repeat any reading that looks wrong. (today; medical officer)
 
 DAY 127
 Act today: Your mood has been lower than usual
 
-The notice open since Day 115 now looks like this. Book a private conversation with the medical officer. (today; self-managed)
+The notice open since Day 115 now looks like this. Book a private conversation with the medical officer. (today; medical officer)
 
 DAY 126
 Act today: Several readings have drifted from your normal
 
-The notice open since Day 115 now looks like this. Do a full check-in today and repeat any reading that looks wrong. (today; self-managed)
+The notice open since Day 115 now looks like this. Do a full check-in today and repeat any reading that looks wrong. (today; medical officer)
 
 DAY 125
 Act today: Your mood has been lower than usual
 
-The notice open since Day 115 now looks like this. Book a private conversation with the medical officer. (today; self-managed)
+The notice open since Day 115 now looks like this. Book a private conversation with the medical officer. (today; medical officer)
 
 DAY 124
 Act today: Blood oxygen is below your normal
@@ -91,7 +91,7 @@ DAY 120
 SCRIPTED EVENT
 What was scripted: illness (infection-like strain)
 
-This is the day the scripted illness symptoms begin and the simulated crew member ticks them at check-in. An odd tired or congested day before this is ordinary simulated background, not the script. Scripted at 2.15 times the average real response: a peak resting heart rate rise of about 7 bpm. That is above the upper quartile of the real episodes (5.3 bpm) and matches the published median among cases a detector caught, so this is an easy case. The simulated rise starts up to 4 days before the symptom day. About three real episodes in ten show no heart-rate rise at all. On any one night, ordinary night-to-night variation of about 3.5 bpm comes on top of the scripted rise.
+This is the day the scripted illness symptoms begin and the simulated crew member ticks them at check-in. An odd tired or congested day before this is ordinary simulated background, not the script. Scripted at 2.15 times the average real response: a peak resting heart rate rise of about 7 bpm. That is above the upper quartile of the real episodes (5.3 bpm) and matches the published median among cases a detector caught, so this is an easy case. The simulated rise starts up to 4 days before the symptom day. Real responses vary widely; in the simulator about three illnesses in ten have no heart-rate rise at all. On any one night, ordinary night-to-night variation of about 3.5 bpm comes on top of the scripted rise.
 
 DAY 120
 Act today: Throat or cough symptoms, and your readings are drifting
@@ -151,7 +151,7 @@ Keel's log for this replay also has 7 entries that are not about the scripted ev
 
 Across all the real data, not this one script: with two sensors and thresholds from the simulator, Keel flagged 72% of 107 real illness episodes, 32 points more than luck, at 1.4 false alerts per person-month. Useful early warning was not shown. Everything except illness is tested in simulation only.
 
-One scripted event proves nothing by itself.
+One scripted event proves nothing by itself. The day of the scripted illness was chosen, when the demo missions were built, so that the replay opens on a stretch without detector alerts; notices from ordinary lapses in the simulated routine can still appear.
 
 Open that day as Lucía
 See the validation

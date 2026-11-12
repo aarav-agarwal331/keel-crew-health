@@ -19,7 +19,7 @@ Cabin environment
 Your readings
 Your usual range
 Outside your range
-Resting heart rate
+Resting heart rate (overnight)
 66 bpm
 50
 60

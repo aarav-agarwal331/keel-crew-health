@@ -36,19 +36,10 @@ Flight engineer
 Heart rate reading at rest is 150 or more. (shared automatically: emergency sharing)
 
 Entered readings, in order:
-Heart rate at rest 170 bpm, at 17:27
+Heart rate at rest 170 bpm, at 17:47
 Every reading is kept. On the most recent day with a reading, the most abnormal one counts, and anything urgent stays on the medical officer's list until they close it.
 
 Lucía was told: "Stop, rest, and tell the medical officer now."
-
-Blood sugar reading is below 54 mg/dL. (shared automatically: emergency sharing)
-
-Entered readings, in order:
-Blood sugar 50 mg/dL, at 17:27
-Blood sugar 85 mg/dL, at 17:27
-Every reading is kept. On the most recent day with a reading, the most abnormal one counts, and anything urgent stays on the medical officer's list until they close it.
-
-Lucía was told: "If you are awake and can swallow, eat or drink something sugary now, and tell the medical officer now."
 
 Act now
 
@@ -57,6 +48,7 @@ Sleep and body clock
 Exercise
 Food and fluids
 Symptoms
+Alert in food and fluids (act today for 1 d)
 Alert in heart, oxygen and temperature (act today for 2 d)
 Open items for you to close
 Heart rate reading at rest is 150 or more (Day 121, needed attention at once)
@@ -64,7 +56,7 @@ Close
 Blood sugar reading is below 54 mg/dL (Day 121, needed attention at once)
 Close
 
-A later normal reading does not close an item. Only a note from you does.
+A later normal reading does not close an item. Only a note from you does, and a new abnormal reading after your note reopens it. Consider consulting the flight surgeon at the next link for anything marked "at once".
 
 Tomás Novák
 Mission specialist

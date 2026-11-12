@@ -4,7 +4,7 @@ BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
 Check-in
 
-Flight day 121. Four quick answers take about a minute. Your answers are stored on your own tablet. Other crew members see only what Sharing allows: by default the commander sees a readiness tier without the reason, a symptom marked serious goes to the medical officer at once, and the daily summary for the ground carries only what you set for the flight surgeon.
+Flight day 121. Four quick answers take about a minute. Your answers are stored on your own tablet. Other crew members see only what Sharing allows: by default the commander sees a readiness tier without the reason, a serious symptom or a reading past a safety line (marked "act now") is shown at once to the medical officer and, as backup, the commander, and the daily summary for the ground carries only what you set for the flight surgeon.
 
 Today's check-in in this demo came from the simulation. Anything you save here is added to it.
 
@@ -49,7 +49,6 @@ Vomited more than twice, or cannot keep fluids down
 Coughing or vomiting blood, or bleeding that will not stop
 Cannot pass urine, or blood in urine
 Injury, or something in the eye
-(medical officer only)
 Smoke or chemical exposure
 Joint pain or numbness after a spacewalk
 New swelling or pain in one leg, or on one side of the neck
@@ -57,6 +56,8 @@ New swelling or pain in one leg, or on one side of the neck
 Severe tooth or jaw pain
 (medical officer only)
 Thoughts of harming yourself
+(medical officer only)
+Thoughts of harming someone else
 (medical officer only)
 3. Fluids today
 −
@@ -109,7 +110,7 @@ A rash, an eye, a wound. Up to three a day, shrunk and stored on this tablet whe
 Measurements (only what you took today)
 Body temperature (thermometer) (°C)
 How to measure
-Blood oxygen (%)
+Fingertip oxygen now (spot check) (%)
 How to measure
 Blood pressure (upper) (mmHg)
 How to measure
@@ -121,7 +122,7 @@ Body mass (kg)
 How to measure
 Sleep duration (h)
 How to measure
-Resting heart rate (bpm)
+Heart rate now, sitting at rest (spot check) (bpm)
 How to measure
 
 Taking a reading again? Type the new value and save: the earlier one is kept with its time, and both are shown to whoever you share them with.

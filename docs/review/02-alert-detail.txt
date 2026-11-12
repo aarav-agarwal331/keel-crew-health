@@ -24,8 +24,8 @@ Also showing in your readings
 Your mood has been lower than usual. Book a private conversation with the medical officer.
 Your reactions are slower than usual. Repeat the test after a ten-minute break; if it is still slow, ask for a buddy check on critical tasks today.
 What changed
-Resting heart rate: 66 bpm, higher than your usual 53.
-Your most unusual reading in 53 days. TESTED ON REAL DATA
+Resting heart rate (overnight): 66 bpm, higher than your usual 53.
+Your most unusual reading in 53 days.
 50
 60
 This pattern began
@@ -37,7 +37,7 @@ Day 112
 Day 117
 Day 121
 Heart rate variability: 21 ms, lower than your usual 43.
-More unusual than 50 of your last 53 days. TESTED IN SIMULATION ONLY
+More unusual than 50 of your last 53 days.
 20
 40
 60
@@ -50,7 +50,7 @@ Day 112
 Day 117
 Day 121
 Skin temperature (overnight): 35.1 °C, higher than your usual 34.1. Wrist skin temperature, not a fever reading.
-More unusual than 48 of your last 53 days. Out of your range for 2 days. TESTED IN SIMULATION ONLY
+More unusual than 48 of your last 53 days. Out of your range for 2 days.
 33
 34
 35
@@ -63,7 +63,7 @@ Day 112
 Day 117
 Day 121
 Reaction time: 297 ms, higher than your usual 261.
-Your most unusual reading in 52 days. Out of your range for 5 days. TESTED IN SIMULATION ONLY
+Your most unusual reading in 52 days. Out of your range for 5 days.
 250
 300
 This pattern began

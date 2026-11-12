@@ -32,7 +32,7 @@ No link to Earth right now. Everything on this screen was worked out on this dev
 
 What changed
 All trends
-Resting heart rate 66 bpm
+Resting heart rate (overnight) 66 bpm
 Higher than your usual 53. Your most unusual reading in 53 days.
 Heart rate variability 21 ms
 Lower than your usual 43. More unusual than 50 of your last 53 days.
@@ -42,11 +42,14 @@ Skin temperature (overnight) 35.1 °C
 Higher than your usual 34.1. More unusual than 48 of your last 53 days. Out of your range for 2 days. Wrist skin temperature, not a fever reading.
 Your body at a glance
 Brain, sleep and mood
+Today
 Heart and circulation
+Today
 Lungs and oxygen
 Food and fluids
 Muscle and bone
 Whole body
+Today
 Cabin and radiation
 Brain, sleep and mood
 Act today

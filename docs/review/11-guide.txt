@@ -20,11 +20,12 @@ When to involve someone else
 This list is built from the rule table itself, so it cannot disagree with what Keel does.
 
 Now, whatever else Keel shows. Tell the medical officer; if you are the medical officer, tell the commander.
-Any of these symptoms: chest pain or pressure; short of breath at rest; fainted, blacked out or had a seizure; racing or irregular heartbeat; swelling of lips, face or tongue, or a rash with trouble breathing; sudden loss of vision, or a painful red eye; worst headache of your life, or fever with a stiff neck; confusion, weakness or trouble speaking; severe belly pain; severe side or back pain; vomited more than twice, or cannot keep fluids down; coughing or vomiting blood, or bleeding that will not stop; cannot pass urine, or blood in urine; injury, or something in the eye; smoke or chemical exposure; joint pain or numbness after a spacewalk; new swelling or pain in one leg, or on one side of the neck; severe tooth or jaw pain; thoughts of harming yourself.
+Any of these symptoms: chest pain or pressure; short of breath at rest; fainted, blacked out or had a seizure; racing or irregular heartbeat; swelling of lips, face or tongue, or a rash with trouble breathing; sudden loss of vision, or a painful red eye; worst headache of your life, or fever with a stiff neck; confusion, weakness or trouble speaking; severe belly pain; severe side or back pain; vomited more than twice, or cannot keep fluids down; coughing or vomiting blood, or bleeding that will not stop; cannot pass urine, or blood in urine; injury, or something in the eye; smoke or chemical exposure; joint pain or numbness after a spacewalk; new swelling or pain in one leg, or on one side of the neck; severe tooth or jaw pain; thoughts of harming yourself; thoughts of harming someone else.
 Fingertip oxygen reading is 92% or lower.
+Two heart rate readings at rest of 120 or more.
 Heart rate reading at rest is 150 or more.
 Heart rate reading at rest is 35 or less.
-Upper blood pressure reading is very low.
+Upper blood pressure reading is under 80, or under 90 with dizziness or fainting.
 Thermometer reading is 39.4 °C or higher.
 Blood sugar reading is below 54 mg/dL.
 Blood sugar reading is 300 mg/dL or higher.
@@ -47,17 +48,18 @@ Cabin carbon dioxide is elevated.
 When a link opens: anything the medical officer wants a flight surgeon to review. The daily summary contains only what you chose to share.
 If you have thoughts of harming yourself, or cannot function: tell the medical officer now. Keel shows that tick to the medical officer only.
 
-Keel does not recommend medication or treatment; that is for the medical officer with the onboard medical checklist. The fixed thresholds are public clinical guidance for adults on Earth. Several are provisional values that no flight surgeon has reviewed, and each rule below says which. A fixed rule looks at every reading from the most recent day that has one, and anything needing attention now or today stays on the medical officer's list until they close it with a note. "Steady" on the Today screen means no change was detected, not that you are well.
+Keel gives first steps (rest, fluids, a repeat reading, sugar for a low blood sugar) but never recommends medication; that is for the medical officer with the onboard medical checklist. The fixed thresholds are public clinical guidance for adults on Earth. Several are provisional values that no flight surgeon has reviewed, and each rule below says which. A fixed rule looks at every reading from the most recent day that has one, and anything needing attention now or today stays on the medical officer's list until they close it with a note. "Steady" on the Today screen means no change was detected, not that you are well.
 
 Everything Keel can recommend
 
-The complete list of 39 rules. Each has one action, how soon, who should know, and where the advice comes from. Nothing else can appear on an alert.
+The complete list of 40 rules. Each has one action, how soon, who should know, and where the advice comes from. Nothing else can appear on an alert.
 
 Symptom that needs the medical officer now
 Fingertip oxygen reading is 92% or lower
+Two heart rate readings at rest of 120 or more
 Heart rate reading at rest is 150 or more
 Heart rate reading at rest is 35 or less
-Upper blood pressure reading is very low
+Upper blood pressure reading is under 80, or under 90 with dizziness or fainting
 Thermometer reading is 39.4 °C or higher
 Thermometer reading is in the fever range, or well above your usual
 Blood sugar reading is below 54 mg/dL
@@ -139,7 +141,7 @@ Heart and circulation
 
 Without gravity, blood shifts toward the head and the heart is loaded differently. Radiation and inactivity add long-term risk.
 
-Resting heart rate (bpm)
+Resting heart rate (overnight) (bpm)
 See my trend
 
 How fast your heart beats when you are fully at rest, usually measured during sleep.

@@ -23,22 +23,20 @@ A fixed safety threshold, not a trend.
 
 Shown to the medical officer and the commander at once (emergency sharing).
 
-Also needs attention now: Blood sugar reading is below 54 mg/dL. Each is listed below.
-
 Readings this is based on:
-Heart rate at rest 170 bpm, at 17:27
+Heart rate at rest 170 bpm, at 17:47
 Every reading is kept. On the most recent day with a reading, the most abnormal one counts, and anything urgent stays on the medical officer's list until they close it.
 Why, and what next
 
 No link to Earth right now. Everything on this screen was worked out on this device.
 
 Blood sugar reading is below 54 mg/dL
-If you are awake and can swallow, eat or drink something sugary now, and tell the medical officer now.
+Your repeat reading (85) is back on the safe side. The earlier one stays on the medical officer's list: tell them today, and at once if you feel unwell.
 Your body looks like it is under strain
 Take your temperature now. No exercise until you have. Tell the medical officer.
 What changed
 All trends
-Resting heart rate 66 bpm
+Resting heart rate (overnight) 66 bpm
 Higher than your usual 53. Your most unusual reading in 53 days.
 Heart rate variability 21 ms
 Lower than your usual 43. More unusual than 50 of your last 53 days.
@@ -48,11 +46,15 @@ Mood 2 /5
 Lower than your usual 4. Your most unusual reading in 52 days. Out of your range for 9 days.
 Your body at a glance
 Brain, sleep and mood
+Today
 Heart and circulation
+Now
 Lungs and oxygen
 Food and fluids
+Today
 Muscle and bone
 Whole body
+Today
 Cabin and radiation
 Heart and circulation
 Act now

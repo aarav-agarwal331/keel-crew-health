@@ -25,7 +25,7 @@ Day 118 · sent same day, arrived 3 min 54 s later
 Day 117 · sent same day, arrived 3 min 51 s later
 Day 116 · sent same day, arrived 3 min 49 s later
 Day 115 · sent same day, arrived 3 min 46 s later
-See exactly what the latest summary contains (85 bytes)
+See exactly what the latest summary contains (93 bytes)
 Signal delay over this transit
 0.0
 2.0

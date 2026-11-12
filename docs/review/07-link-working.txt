@@ -22,7 +22,7 @@ Day 100 · sent same day, arrived 3 min 04 s later
 Day 99 · sent same day, arrived 3 min 01 s later
 Day 98 · sent same day, arrived 2 min 58 s later
 Day 97 · sent same day, arrived 2 min 55 s later
-See exactly what the latest summary contains (85 bytes)
+See exactly what the latest summary contains (93 bytes)
 Signal delay over this transit
 0.0
 2.0

@@ -10,7 +10,7 @@ You cut the link (demo control)
 Keel does not use the link to work. Detection, explanations and recommended actions all run on the tablet. In this demo one tablet holds the whole simulated crew (on a mission each person's tablet holds their own data); it last re-checked all four in a fraction of a second. The link only carries a summary for the flight surgeon when one is available.
 
 Restore the link
-Demo control. Cut it, then use any screen: nothing stops working.
+Link cut. Use any screen: nothing stops working. Restore it when you are done.
 
 Today's summary had already gone out before you cut the link, so nothing is waiting yet. The next one is made tomorrow and will wait here until the link is back. Go to tomorrow and see it wait
 
@@ -25,7 +25,7 @@ Day 100 · sent same day, arrived 3 min 04 s later
 Day 99 · sent same day, arrived 3 min 01 s later
 Day 98 · sent same day, arrived 2 min 58 s later
 Day 97 · sent same day, arrived 2 min 55 s later
-See exactly what the latest summary contains (85 bytes)
+See exactly what the latest summary contains (93 bytes)
 Signal delay over this transit
 0.0
 2.0

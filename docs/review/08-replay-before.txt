@@ -27,7 +27,7 @@ Lucía's readings
 Your readings
 Your usual range
 Outside your range
-Resting heart rate (bpm)
+Resting heart rate (overnight) (bpm)
 50
 60
 Day 104
