@@ -57,20 +57,10 @@ Day 112
 Day 121
 Day 129
 What Keel did
-DAY 125
-Act today: Cold-like symptoms, and your readings are drifting
-
-Take your temperature with the thermometer and hold exercise until you have. Tell the medical officer. Inform the crew medical officer.
-
-DAY 124
-Act today: Cold-like symptoms, and your readings are drifting
-
-Take your temperature with the thermometer and hold exercise until you have. Tell the medical officer. Inform the crew medical officer.
-
 DAY 121
-Escalated: Your body looks like it is under strain
+More serious now: Your body looks like it is under strain
 
-Take your temperature with the thermometer and hold exercise until you have. Tell the medical officer. Medical officer leads on board; flight surgeon consulted when a link is available.
+Take your temperature with the thermometer and hold exercise until you have. Tell the medical officer. (today; medical officer, flight surgeon when a link exists)
 
 DAY 120
 SCRIPTED EVENT
@@ -79,14 +69,14 @@ What was scripted: illness (infection-like strain)
 This is the day the simulated crew member first feels symptoms and ticks them at check-in. Scripted at 1.46 times the average real response: a peak resting heart rate rise of about 7 bpm, the published median among detected cases and near the upper quartile of real episodes. About three real episodes in ten show no heart-rate rise at all.
 
 DAY 120
-Escalated: Your mood has been lower than usual
+More serious now: Your mood has been lower than usual
 
-Book a private conversation: with the medical officer, or a recorded message to the support team at home. Manage it yourself.
+Book a private conversation: with the medical officer, or a recorded message to the support team at home. (at the next routine opportunity; self-managed)
 
 DAY 120
 Act today: Cold-like symptoms, and your readings are drifting
 
-Take your temperature with the thermometer and hold exercise until you have. Tell the medical officer. Inform the crew medical officer.
+Take your temperature with the thermometer and hold exercise until you have. Tell the medical officer. (today; medical officer)
 
 DAY 119
 LINK
@@ -97,23 +87,23 @@ Scripted two-week blackout (antenna fault), modelled on the two-week command pau
 DAY 115
 Worth a look: You are running short on sleep
 
-Protect a full 8.5-hour sleep period tonight. Manage it yourself.
+Protect a full 8.5-hour sleep period tonight. (at the next routine opportunity; self-managed)
 
 DAY 107
 Worth a look: Exercise has dropped below your plan
 
-Do today's session, even a shortened one, and plan the next three. Manage it yourself.
+Do today's session, even a shortened one, and plan the next three. (at the next routine opportunity; self-managed)
 
 DAY 104
 Worth a look: Exercise has dropped below your plan
 
-Do today's session, even a shortened one, and plan the next three. Manage it yourself.
+Do today's session, even a shortened one, and plan the next three. (at the next routine opportunity; self-managed)
 
 RESULT OF THIS REPLAY
 
 Keel flagged this on the day symptoms began, with a specific action and no link to Earth.
 
-Earlier in this replay Keel also raised 3 alerts that had nothing to do with the scripted event. False alerts like that are part of the picture: the budget is about one notice per person-month.
+Earlier in this replay Keel also raised 3 notices that the scripted event did not cause. Some reflect ordinary lapses in the simulated routine, such as a missed exercise session; some are false alerts. That is part of the picture: notices are budgeted at about one false one per person-month.
 
 Across all the real data, not this one script: Keel flagged 67% of 103 real illness episodes at one false alert per person-month, 31 points more than luck. It did not give early warning. Everything except illness is tested in simulation only.
 

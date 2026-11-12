@@ -7,7 +7,7 @@ Earth link
 
 Link nominal. A question and its answer take at least 6 min 13 s.
 
-Keel does not use the link to work. Detection, explanations and recommended actions all run on this tablet: it last re-checked the whole crew's readings in 30 milliseconds. The link only carries a summary for the flight surgeon when one is available.
+Keel does not use the link to work. Detection, explanations and recommended actions all run on this tablet: it last re-checked the whole crew's readings in 33 milliseconds. The link only carries a summary for the flight surgeon when one is available.
 
 Cut the link now
 Demo control. Cut it, then use any screen: nothing stops working.

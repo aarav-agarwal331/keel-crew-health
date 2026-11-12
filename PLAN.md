@@ -54,3 +54,19 @@ Never cut: real-data evaluation, offline operation, mission replay.
 
 `make all` on a clean clone runs `data → sim → model → validate → test → build`. Random seeds are
 fixed and recorded in each results file together with the script path and the git commit.
+
+## Outcome (2026-11-12)
+
+All milestones M0 to M8 and two review rounds were completed in one working session. Nothing on the
+cut list had to be cut except the optional language model, which was never started. What changed
+against this plan:
+
+- The planned CUSUM-plus-multivariate fusion was not deployed; a selection rule fixed in advance chose
+  the multivariate detector on training missions, and the four personal detectors turned out to be
+  hard to tell apart (DECISIONS.md 13 and 21).
+- The simulator was re-fitted to real data three times as the evaluation exposed optimistic
+  assumptions: noise levels, the illness response, and the correlation between indicators
+  (DECISIONS.md 12, 14 and 23).
+- Review round 1 added a class of fixed safety rules that the plan did not have (DECISIONS.md 22).
+
+Open items for a person are in FINAL_REPORT.md section 5.

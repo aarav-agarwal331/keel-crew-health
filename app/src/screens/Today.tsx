@@ -64,11 +64,11 @@ export function Today() {
     <>
       {intro && mission.simulated && (
         <section className="card intro" data-testid="intro">
-          <p><strong>Keel is a crew health monitor that works with no link to Earth.</strong> It learns each crew member's own normal, flags drift, and gives one action with its source. You are looking at {crew?.name}'s tablet on a simulated mission: {mission.title}.</p>
+          <p className="small"><strong>Keel is a crew health monitor that works with no link to Earth.</strong> It learns each person's own normal and gives one action with its source. Demo: {crew?.name.split(' ')[0]}'s tablet, simulated {mission.title}.</p>
           <div className="row wrap">
-            <a className="btn primary" href={href('replay')} data-testid="intro-replay">Watch Keel catch a health event (40 s)</a>
-            <a className="btn" href={href('validation')}>Does it work? The evidence</a>
-            <button className="btn" onClick={() => { setIntro(false); void store.putKv('intro-dismissed', true) }}>Hide this</button>
+            <a className="btn primary sm" href={href('replay')} data-testid="intro-replay">Watch it catch an event (40 s)</a>
+            <a className="btn sm" href={href('validation')}>The evidence</a>
+            <button className="btn sm" onClick={() => { setIntro(false); void store.putKv('intro-dismissed', true) }} aria-label="Hide this introduction">Hide</button>
           </div>
         </section>
       )}

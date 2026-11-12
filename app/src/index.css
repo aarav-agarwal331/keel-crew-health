@@ -101,7 +101,7 @@ main { flex: 1; width: 100%; max-width: 980px; margin: 0 auto; padding: 16px 16p
 .choice.red { border-color: var(--critical); }
 .choice.red[aria-pressed='true'] { background: color-mix(in srgb, var(--critical) 25%, var(--surface)); border-color: var(--critical); }
 .sticky-save { position: sticky; bottom: 72px; z-index: 10; }
-.intro { border: 2px solid var(--text-2); }
+.intro { border: 1px solid var(--text-2); padding: 12px 14px; gap: 8px; }
 .sep { height: 1px; background: var(--border); border: 0; margin: 2px 0; }
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: var(--tap); padding: 10px 20px; border-radius: 14px; border: 1px solid var(--border); background: var(--surface-2); color: var(--text); font-weight: 650; font-size: 1rem; cursor: pointer; text-decoration: none; text-align: center; }
 .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }

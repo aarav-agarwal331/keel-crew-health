@@ -3,6 +3,12 @@
 Access date for everything below: **2026-11-12**. Machine-readable companion: `data/SOURCES.json`
 (slug, URLs, licence, bytes and sha256 of every file under `data/raw/`).
 
+> **What Keel ended up using** (added after the build): Stanford COVID-19 wearables phases 1 and 2 for
+> detection testing; LifeSnaps for day-to-day variability and correlations between indicators; the
+> NASA Life Sciences Data Archive bed-rest daily vitals for gravity-transition handling. `make data`
+> fetches exactly these (`research/scripts/fetch_data.py`). PMData, the stress datasets and the other
+> entries below were surveyed and downloaded as samples but are not used.
+
 ## 1. What this survey is for
 
 The app learns a personal physiological baseline (resting heart rate, HRV, SpO2, sleep, activity,
