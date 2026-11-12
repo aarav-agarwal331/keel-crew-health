@@ -94,7 +94,7 @@ launch into weightlessness and, for the lunar scenario, landing in one-sixth gra
 1. Day-to-day variability. For each real person the within-person SD is the SD of the daily values
    after removing a 28-day rolling median. The simulator's noise SD is scaled until the *total*
    simulated within-person SD (which also contains sleep-debt and exercise effects) matches the real
-   median. Sources: Stanford wearables (resting heart rate, people with no reported illness) and
+   median. Sources: Stanford wearables (resting heart rate, recordings with no dated illness, which includes phase 2 participants who were never confirmed healthy) and
    LifeSnaps (HRV, oxygen, skin temperature, sleep).
 2. Between-person spread of that variability: `sigma_person` = mean over indicators of
    `ln(Q3/Q1)/1.349` of the real within-person SDs.
@@ -104,10 +104,15 @@ launch into weightlessness and, for the lunar scenario, landing in one-sixth gra
    correlations. (The first version generated them independently; the realism check caught it.)
 4. Illness response. The mean resting-heart-rate change around dated illness onsets is fitted with the
    event template by least squares over days of rise before onset, days to the peak, hold and
-   recovery; the amplitude is the fitted peak (4.8 bpm, about two days after onset). Episodes differ a
-   great deal: the between-episode SD of the response, after subtracting measurement noise, is 1.9
-   times its mean. Each simulated illness is scaled by `max(0, N(1, 1.87))`, renormalised to mean 1,
-   so about three in ten have no heart-rate response at all.
+   recovery; the amplitude is the fitted peak (3.3 bpm, three days after onset, with a rise that starts
+   four days before it). Episodes differ a great deal: the between-episode SD of the response, after
+   subtracting measurement noise, is 2.0 times its mean. Each simulated illness is scaled by
+   `max(0, N(1, 2.0))`, renormalised to mean 1, so about three in ten have no heart-rate response at
+   all. The fit uses 38 episodes (the calibration half of the people with a dated illness); those 38
+   are also among the 107 episodes of the real-data evaluation, which is why section 8 reports the
+   app's configuration separately on people the simulator never saw.
+5. The fits start from fixed initial values, so running `calibrate_sim.py` twice gives the same
+   parameter file.
 
 **Realism check** (`sim_realism.py`, Validation section 3) uses the *other* half of the people:
 distributions of within-person SD, lag-1 autocorrelation, the event-aligned illness response, and
@@ -180,10 +185,13 @@ fusion) and move to a more complex one only if it flags more than 3 percentage p
 *above luck* (section 6), averaged over the two tiers. This rule was written during review round 1,
 after the first results; the original rule was "highest raw detection". Under the new rule the choice
 flipped once: it first selected the z-score rule, and after the simulator was given the real
-correlation between heart rate and HRV it selected the multivariate EWMA (30.8 against 27.8). Real
-data and test missions had no vote, but the history means this is not a pre-registered choice. On
-the test missions the z-score rule was slightly ahead, on real data the multivariate detector was;
-at the notice tier the four personal detectors cannot be told apart.
+correlation between heart rate and HRV it selected the multivariate EWMA (currently 31.7 against
+27.3 points above luck on the training missions, a difference with no interval and well inside what
+the test missions show as noise). Test missions had no vote. Real data had none directly, but the
+simulator's illness response is fitted on 38 real episodes, so the choice is not fully independent
+of them, and the history means it is not pre-registered. On the test missions the z-score rule was
+slightly ahead, on real data the multivariate detector was (+5 points, −2 to 12); the four personal
+detectors cannot be told apart, and the choice is best read as arbitrary among equals.
 
 **Rules outside the detector.** Some things do not depend on a personal baseline or cannot wait for
 one, and have fixed rules that are always evaluated: red-flag symptoms; a single entered reading
@@ -221,14 +229,31 @@ radiation alarm [47][48]. After two days without any reading the status is "no r
   identically. At 1 false alert per person-month a 15-day window catches an alert by luck 30–40% of
   the time, and detectors that alert in more separate bursts get more lucky hits. The headline metric
   is therefore *detection above luck* = detection rate − that method's own chance rate, and methods
-  are compared on it.
+  are compared on it. On real data a pseudo-window only has to lie in label-quiet time, so it carries
+  the same missing data as a real window (one with no score at all is a miss), and the chance rate is
+  computed per device group and weighted to the device mix of the real episodes. In simulation, where
+  missing data and device are unrelated to events, pseudo-windows must be fully scored and are pooled.
+  **Remaining bias.** Dates are shifted per person, so pseudo-events cannot be matched to the calendar:
+  exposure, travel, testing, isolation and (for prospective phase 2 cases) the original study's own
+  alerts all cluster near real onsets and are not reproduced. Detection above luck is therefore an
+  upper bound on what physiology alone explains; heart rate alone is the more transferable figure.
+  The subtraction is not rescaled by 1 − chance; the rescaled value is in the result file.
+- **Sensitivity analyses** (`eval_real.py`): three other ways of estimating luck; an alert that is
+  already open in the window also counting as detection; the original wider window; five other fold
+  seeds; train on one cohort, test on the other.
+- **The app's own configuration.** The app cannot calibrate on real people, so its model and
+  thresholds come from the simulator. `eval_real.py` therefore also scores real people with a model
+  fitted on simulated ground people (heart rate and 7-day activity, the two channels both sides have)
+  at the simulator-calibrated thresholds, on everyone and on the people neither the simulator's noise
+  fit nor its illness fit saw.
 - **Intervals.** 95% percentile bootstrap, resampling people (real) or missions (simulated, because
   crewmates share a cabin). A person's real events and pseudo-events are resampled together; method
-  differences use paired resampling.
+  differences use paired resampling. Thresholds are held fixed inside the bootstrap. No correction is
+  made for the number of comparisons (four detectors, two tiers, several windows).
 - **The window.** It was narrowed from −14..+7 to −10..+4 days while the real-data evaluation was
   being written. The commit history cannot show that this preceded the first run, and of the four
-  windows later tabulated it has the largest gap above luck, so the original window's result (+27) is
-  the conservative figure.
+  windows later tabulated it has the largest gap above luck, so the original window's results are
+  given beside the main ones and are the conservative figures.
 - **Leakage guards.** Causal baselines; thresholds from training people (unit test
   `test_cv_never_scores_a_person_with_a_model_that_saw_them`); simulator calibrated on a different half
   of the people than the realism check uses; detector selected on training missions.
@@ -273,7 +298,7 @@ baseline, with the baseline restarted, with the band also widened, and with the 
 
 Keel computes, for each indicator, the mean `u` over the last three measured days; symptom counts
 over three days; the latest entered spot readings; the cabin readings; days since the last phase
-change; and days the detector's alert has been open. A fixed, ordered table of 32 rules is evaluated.
+change; and days the detector's alert has been open. A fixed, ordered table of 38 rules is evaluated.
 Rules have a scope:
 
 - **personal**: evaluated only while the detector has an alert open; the first one whose condition
@@ -305,41 +330,64 @@ every screen's status for a person agrees.
 
 ## 8. What the evaluation showed
 
-Numbers are in the app's Validation screen and in `app/public/results/*.json` (all four files carry
-the same code version).
+Numbers are in the app's Validation screen and in `app/public/results/*.json` (all five files carry
+the same code version). Real data: 251 people, 107 illness episodes, two sensors.
 
-- **Real data, 1 false alert per person-month.** Keel flags 66% of 107 illness episodes; luck gives
-  36%; **+30 points above luck (95% interval 20 to 40)**. A fixed threshold: 41%, luck 25%, +17
-  (7 to 27). Keel's advantage above luck: +14 (0 to 28). Measured false alerts: 0.99.
-- **At 0.25 per person-month.** With daily steps: 43%, luck 11%, +32 (22 to 42); fixed threshold +9
-  (3 to 17). With the 7-day activity average, which is what the app's detector uses: +12 (3 to 20).
-- **No early warning.** 39% of episodes had an alert start in the ten days up to onset; luck gives 29%.
+- **The app's own configuration on real people** (simulator-fitted model and thresholds, heart rate
+  and 7-day activity). Notice tier: 72% of episodes flagged, luck 40%, **+32 points above luck (95%
+  interval 22 to 41)**, at 1.40 false alerts per person-month against a budget of 1.00. On the 113
+  people nothing was fitted on (41 episodes): +38 (23 to 50), 1.37. Alert tier: 32%, luck 13%, +19
+  (9 to 28), at 0.39 against a budget of 0.25; held out, +23 (8 to 38).
+- **Thresholds calibrated on other real people** (5-fold over people, false alerts 0.99 to 1.00 by
+  construction). Heart rate alone: +22 (12 to 32). Heart rate and 7-day activity: +31 (21 to 41), and
+  +13 (4 to 21) at the alert tier. Heart rate and daily steps: 66%, luck 33%, +34 (24 to 44), and +33
+  (23 to 43) at the alert tier.
+- **Against one fixed threshold for everyone.** Fixed threshold with daily steps: 41%, luck 23%, +18
+  (8 to 27); with 7-day activity +7 (−1 to 15). Keel's lead with daily steps: +16 (3 to 29); in the
+  original −14..+7 window +10 (−3 to 23); counting an already-open alert +16 (3 to 29); with 7-day
+  activity +24 (11 to 36) at the notice tier and +8 (−1 to 18) at the alert tier. A personal baseline
+  is probably better than a fixed threshold; with uncorrected multiple comparisons and a window chosen
+  after seeing data, it is not proven.
+- **Against the simple personal rule.** Two-of-three-days z-score rule: +28 (19 to 38); its lead over
+  the fixed threshold is +11 (−3 to 25). Keel's detector minus the simple rule: +5 (−2 to 12). Not
+  distinguishable.
+- **No early warning.** 39% of episodes had an alert start in the ten days up to onset; luck gives 24%.
 - **Most alerts are false.** At 0.97 upper-respiratory episodes per person-year [52b], between 1 in 11
-  (daily steps) and 1 in 28 (7-day activity) alert-tier alerts would be such an illness; about 1 in 41
-  to 46 notices.
-- **The simple rule nearly matches.** Two-of-three-days personal z-score: +27 (17 to 38); its lead
-  over the fixed threshold, the like-for-like test of the personal baseline, is +11 (−3 to 25).
-- **Steps carry much of the signal.** Heart rate alone: +17 (7 to 27). Median daily steps fall from
-  7,554 to 4,210 in the five days from onset. Dates are shifted per person, so this cannot be
-  separated from isolation and lockdowns. Adjusting heart rate for the previous day's steps does not
-  help.
-- **Robustness.** Train on phase 1, test on phase 2: +29 above luck, 0.87 false alerts per
-  person-month; the reverse: +36, 1.11. Five fold seeds: +30 to +32. Original window: +27.
-- **Simulation, full sensor set.** 67% (60 to 73), luck 40%, +26 (20 to 33); lead over the fixed
-  threshold +7 (−2 to 14). The z-score rule: +30.
-- **Mission-phase handling.** False alerts in the first 30 flight days: 0.89 per person-month against
-  1.97 without it, and it does not depend on a correct prior (1.05 with no expected shift). Cost:
-  events beginning in the first 25 flight days are flagged +20 above luck against +35 without it.
+  (daily steps) and 1 in 25 (7-day activity) alert-tier alerts would be such an illness; about 1 in 37
+  to 41 notices.
+- **How luck is measured matters by a few points.** Device-weighted pseudo-events with real
+  missingness: luck 33%, gap +34. Only people who had an episode: 32%, +34. Requiring a score on every
+  day of a pseudo-window (our earlier method): 36%, +30.
+- **Activity carries much of the signal.** Heart rate alone is +22. Median daily steps fall from 7,554
+  to 4,210 in the five days from onset. Dates are shifted per person, so this cannot be separated from
+  isolation and lockdowns. Adjusting heart rate for the previous day's steps does not help.
+- **Device.** Fitbit: +39 (28 to 48), 89 episodes. Other devices: +10 (−12 to 32), 18 episodes. Of the
+  73 recordings excluded for too few nights, 21 had a dated illness (17 Apple Watch).
+- **Robustness.** Train on phase 1, test on phase 2: +33 above luck, 0.87 false alerts per
+  person-month; the reverse: +33, 1.11. Five fold seeds: +34 to +36. Original window: +31 (22 to 40).
+- **Simulation, full sensor set.** 67%, luck 41%, +26 (19 to 33); lead over the fixed threshold +6
+  (−2 to 14). The z-score rule: +31. By event type, above luck: sleep restriction +55 and exercise
+  outage +54 (both are events whose scripted variable is itself a detector input), low fluids +26
+  (10 to 40), cabin CO2 +11 (1 to 21), illness +11 (−9 to 30), low mood +13 (−5 to 32). The overall
+  figure depends on the event mix, and for illness and low mood the interval includes zero.
+- **Mission-phase handling.** False alerts in the first 30 flight days: 0.90 per person-month against
+  1.98 without it, and it does not depend on a correct prior (1.04 with no expected shift). Cost:
+  events beginning in the first 25 flight days are flagged +19 above luck against +34 without it.
 - **NASA bed-rest data.** After getting up, a plain baseline flags 9 of 14 volunteers; restarting the
-  baseline, 8; widening the band, 4; adding the learned shift, 4 (exact paired p = 0.06).
-- **Simulator against reality.** Like for like on two channels, simulated illness is flagged +13 above
-  luck (3 to 22) against +32 (15 to 48) for real validation-half episodes; the simulated exercise cut
-  (30%) was set by hand with this comparison in view. Thresholds calibrated in simulation and applied
-  to 72 real quiet people (validation half) gave 1.38 false alerts per person-month against a budget
-  of 1.00, and 0.39 against 0.25; with five indicators on 36 LifeSnaps people, 1.85 and 0.93. Against
-  its pass marks the simulator fails on HRV variability (37% too high), sleep carry-over, and the
-  size of the illness heart-rate rise over the four days from onset (2.1 bpm simulated, 4.6 real);
-  it passes on the other variabilities and on all four between-indicator correlations.
+  baseline, 8; widening the band, 4; adding the learned shift, 4. The difference is not significant
+  (exact paired p = 0.06), there is no ground truth that these flags are false (a faster pulse after
+  bed rest is real), and the learned shift adds nothing beyond widening the band.
+- **Simulator against reality.** The pass marks were set during review, not in advance. What passes
+  was fitted on the other half of the same datasets: four of five variabilities, four of five
+  carry-overs, all four between-indicator correlations. Every independent check fails or is off: the
+  illness heart-rate rise over the four days from onset (2.1 bpm simulated, 4.6 real); HRV variability
+  (37% too high); sleep carry-over; thresholds calibrated in simulation and applied to 72 real quiet
+  people (1.38 false alerts per person-month against 1.00, 0.40 against 0.25) and, with five
+  indicators, to 16 LifeSnaps people of the validation half (2.04 and 0.97); nights under six hours
+  (50% against a published 44%); the CO2 headache odds ratio (2.4 against about 1.9). Like for like
+  on two channels, simulated illness is flagged +11 above luck (2 to 21) against +35 (19 to 49) for
+  real validation-half episodes; the simulated exercise cut (30%) was set by hand with this comparison
+  in view, so that check is not independent either.
 
 ## 9. Crew readiness, sharing and the link
 
@@ -353,7 +401,17 @@ the same code version).
   commander always sees the readiness tier, never the reasons unless shared. Crew-wide counts are
   shown only when three or more people are affected. With emergency sharing on (the default, and a
   setting the crew member can switch off), an "act now" finding is shown to the medical officer and
-  to the commander as backup. Views are logged.
+  to the commander as backup, except red-flag symptoms marked "medical officer only" (thoughts of
+  self-harm, an injury, tooth pain, one-sided swelling), which the commander sees only when the
+  patient is the medical officer. Medication classes and photos added at check-in belong to the
+  Symptoms area and are visible only at full detail. Nothing is sent to the ground automatically.
+  Views are logged.
+- **Readings and closure** (`app/src/state.tsx`, `analysis.ts`): every spot reading is appended to a
+  log with its time. A fixed rule looks at all readings of the most recent day that has one, so a
+  later normal reading does not erase an abnormal one. "Now" and "today" findings from the crew
+  member's own entries stay on a list until the medical officer (for the medical officer as patient,
+  the commander) closes each with a note. Values far outside the usual range are accepted after a
+  confirmation; a mistyped number never blocks saving symptoms.
 - **Link** (`app/src/core/link.ts`): simulated one-way delay from simplified geometry, scripted
   blackouts, and a manual cut. The ground summary is the output of the sharing gate for the ground
   role, queued while there is no link.
@@ -362,8 +420,9 @@ the same code version).
 
 See the app's *How Keel works → Limitations* and the Validation screen's closing section. In short:
 ground data stands in for spaceflight data; about a hundred real illness episodes; only illness is
-tested on real data and most of that signal is behavioural; early warning is not shown; most alerts
-are false; the full-sensor thresholds and all non-illness effect sizes rest on simulation and
+tested on real data and much of that signal is behavioural; detection above luck is an upper bound
+because pretend dates cannot be calendar-matched; Keel's detector is not shown to beat a simple
+personal rule; early warning is not shown; most alerts are false; the analysis was not pre-registered; the full-sensor thresholds and all non-illness effect sizes rest on simulation and
 probably run over budget on real people; the handling of gravity changes hides real problems for the
 first weeks; a personal baseline can normalise a harmful drift; and the action rules, fixed
 thresholds and readiness tiers have not had clinical review.

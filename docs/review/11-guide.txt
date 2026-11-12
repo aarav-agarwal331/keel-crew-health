@@ -12,47 +12,56 @@ Space radiation	Cosmic rays and solar storms. Mostly a long-term risk; a solar s
 Isolation and confinement	Mood and sleep problems become more likely the longer a small crew is shut in together.	Private mood check-ins, sleep duration and timing, reaction self-test, each against your own normal.
 Distance from Earth	Up to about 24 minutes of signal delay each way, blackouts, no resupply and no quick return.	Everything runs on board. When a link exists it carries a small daily summary containing only what you chose to share.
 Gravity fields	Without weight, bone and muscle are lost, fluid shifts toward the head, and the body must re-adapt at each gravity change.	Exercise against plan, resting heart rate and HRV; normal ranges are widened and re-learned after each gravity change.
-Hostile, closed environment	Recycled air and water, shared microbes, an immune system that behaves differently.	Cabin carbon dioxide with the levels linked to headaches; signs of infection in heart rate, HRV and temperature, usually visible once symptoms have started.
+Hostile, closed environment	Recycled air and water, shared microbes, an immune system that behaves differently.	Cabin carbon dioxide, with an advisory line at 2.5 mmHg, an alert at 3.0 and an urgent alert at 4.0; signs of infection in heart rate, HRV and temperature, usually visible once symptoms have started.
 [6] NASA Human Research Program. "The Human Body in Space." nasa.gov, 2021 (updated 2026). Source
 [7] NASA Human Research Program. "5 Hazards of Human Spaceflight." nasa.gov (updated 2026). Source
 When to involve someone else
-Now, whatever Keel shows: chest pain or pressure; short of breath at rest; fainted, blacked out or had a seizure; racing or irregular heartbeat; swelling of lips, face or tongue, or a rash with trouble breathing; sudden loss of vision, or a painful red eye; worst headache of your life, or fever with a stiff neck; confusion, weakness or trouble speaking; severe belly pain; severe side or back pain; vomited more than twice, or cannot keep fluids down; coughing or vomiting blood, or bleeding that will not stop; cannot pass urine, or blood in urine; injury, something in the eye, or smoke or chemical exposure; joint pain or numbness after a spacewalk; severe tooth or jaw pain; thoughts of harming yourself; a fingertip oxygen reading of 92% or lower; a thermometer reading of 39.4 °C or more; blood sugar below 54 mg/dL; an upper blood pressure below 80 mmHg. Tell the medical officer. If you are the medical officer, tell the commander.
-Today: a thermometer reading of 38.0 °C or more; blood sugar below 70 mg/dL; an upper blood pressure of 180 mmHg or more after a repeat; a change in vision; very low mood for days; or when Keel shows "Act today".
-When a link opens: anything the medical officer wants a flight surgeon to review. Keel keeps the summary queued.
-If you have thoughts of harming yourself, or cannot function: tell the medical officer or the commander now.
 
-Keel does not recommend medication or treatment; that is for the medical officer with the onboard medical checklist. These are general thresholds from public clinical guidance for adults on Earth, or placeholders, not flight rules. "Steady" on the Today screen means no change was detected, not that you are well.
+This list is built from the rule table itself, so it cannot disagree with what Keel does.
+
+Now, whatever else Keel shows: any of these symptoms: chest pain or pressure; short of breath at rest; fainted, blacked out or had a seizure; racing or irregular heartbeat; swelling of lips, face or tongue, or a rash with trouble breathing; sudden loss of vision, or a painful red eye; worst headache of your life, or fever with a stiff neck; confusion, weakness or trouble speaking; severe belly pain; severe side or back pain; vomited more than twice, or cannot keep fluids down; coughing or vomiting blood, or bleeding that will not stop; cannot pass urine, or blood in urine; injury, or something in the eye; smoke or chemical exposure; joint pain or numbness after a spacewalk; new swelling or pain in one leg, or on one side of the neck; severe tooth or jaw pain; thoughts of harming yourself. Also: fingertip oxygen reading is 92% or lower; thermometer reading is 39.4 °C or higher; blood sugar reading is below 54 mg/dL; blood sugar reading is 300 mg/dL or higher; upper blood pressure reading is very low; heart rate reading at rest is extremely fast or slow; vomiting after a high radiation dose; cabin carbon dioxide is above 4 mmHg. Tell the medical officer. If you are the medical officer, tell the commander.
+Today: thermometer reading is in the fever range, or well above your usual; blood sugar reading is between 54 and 69 mg/dL; blood sugar reading is 200 mg/dL or higher; upper blood pressure reading is below 90 mmHg; blood pressure reading is 180 upper or 120 lower, or higher; resting heart rate of 120 or more; resting heart rate above 100 on two nights; your mood has been very low for days; you reported a change in vision; radiation dose was far above normal over the last day; throat or cough symptoms, and your readings are drifting; the same symptom three days running; cabin carbon dioxide is elevated; or whenever Keel shows "Act today".
+When a link opens: anything the medical officer wants a flight surgeon to review. The daily summary contains only what you chose to share.
+If you have thoughts of harming yourself, or cannot function: tell the medical officer now. Keel shows that tick to the medical officer only.
+
+Keel does not recommend medication or treatment; that is for the medical officer with the onboard medical checklist. The fixed thresholds are public clinical guidance for adults on Earth. Several are provisional values that no flight surgeon has reviewed, and each rule below says which. A fixed rule looks at every reading from the most recent day that has one, and anything needing attention now or today stays on the medical officer's list until they close it with a note. "Steady" on the Today screen means no change was detected, not that you are well.
 
 Everything Keel can recommend
 
-The complete list of 32 rules. Each has one action, how soon, who should know, and where the advice comes from. Nothing else can appear on an alert.
+The complete list of 38 rules. Each has one action, how soon, who should know, and where the advice comes from. Nothing else can appear on an alert.
 
 Symptom that needs the medical officer now
 Fingertip oxygen reading is 92% or lower
 Thermometer reading is 39.4 °C or higher
-Thermometer reading is in the fever range
+Thermometer reading is in the fever range, or well above your usual
 Blood sugar reading is below 54 mg/dL
 Blood sugar reading is between 54 and 69 mg/dL
 Blood sugar reading is 300 mg/dL or higher
 Blood sugar reading is 200 mg/dL or higher
 Upper blood pressure reading is very low
 Upper blood pressure reading is below 90 mmHg
-Upper blood pressure reading is 180 mmHg or higher
-Upper blood pressure reading is 140 mmHg or higher
+Blood pressure reading is 180 upper or 120 lower, or higher
+Blood pressure reading is 140 upper or 90 lower, or higher
+Heart rate reading at rest is extremely fast or slow
+Resting heart rate of 120 or more
 Resting heart rate above 100 on two nights
 Your mood has been very low for days
 You reported a change in vision
+Vomiting after a high radiation dose
 Radiation dose was far above normal over the last day
 Throat or cough symptoms, and your readings are drifting
 Body mass is 5% or more below pre-flight
+The same symptom three days running
 You reported a rash or itchy skin
+Three nights in a row under five hours of sleep
+Cabin carbon dioxide is above 4 mmHg
 Cabin carbon dioxide is elevated
 Your headache may be linked to cabin air
 Nausea or dizziness soon after a gravity change
 Your body looks like it is under strain
 Blood oxygen is below your normal
 Your mood has been lower than usual
-You are running short on sleep
+Your sleep is short or has shifted
 You are drinking less than usual
 Exercise has dropped below your plan
 You are eating less than planned
@@ -153,7 +162,7 @@ The share of the haemoglobin in your blood that is carrying oxygen.
 
 How to measure. Overnight from the wearable, or a 30-second fingertip reading: warm hand, hold still, wait for a steady number.
 
-Why it matters. A sustained drop can point to a breathing or lung problem or a cabin atmosphere issue.
+Why it matters. A sustained drop can point to a breathing or lung problem or a cabin atmosphere issue. The fixed 92% line assumes a cabin near sea-level pressure; a lower-pressure exploration cabin would need its own line.
 
 Food and fluids
 
@@ -184,7 +193,7 @@ The sugar level in a fingertip drop of blood.
 
 How to measure. Clean fingertip, first drop wiped away, measure before breakfast for a comparable number.
 
-Why it matters. A fingertip check is quick and the challenge names it as a useful indicator. Keel compares it with general reference values, not with a personal range.
+Why it matters. A fingertip check is quick, and very low or very high values need action the same day. Keel compares it with general reference values, not with a personal range.
 
 Muscle and bone
 

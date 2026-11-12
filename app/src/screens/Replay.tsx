@@ -17,7 +17,15 @@ const RANK: Record<string, number> = { learning: 0, steady: 1, watch: 2, act: 3,
 const TIER_RANK: Record<string, number> = { self: 0, cmo: 1, ground: 2 }
 const WHO: Record<string, string> = { self: 'self-managed', cmo: 'medical officer', ground: 'medical officer, flight surgeon when a link exists' }
 
-interface FeedItem { day: number; kind: 'alert' | 'truth' | 'link' | 'info'; title: string; body: string; status?: 'watch' | 'act' | 'urgent' | 'steady' }
+interface FeedItem { day: number; kind: 'alert' | 'truth' | 'link' | 'info'; title: string; body: string; status?: 'watch' | 'act' | 'urgent' | 'steady'; ruleId?: string; led?: string }
+
+// which rules count as Keel responding to each kind of scripted event.  A notice that reads the
+// change as something else (low mood the day before an illness, say) is not counted as a flag for it.
+const RELATED: Record<string, string[]> = {
+  illness: ['R-ILL', 'R-SYM-ILL', 'R-V-TEMP', 'R-V-TEMP-HI', 'R-V-HR'],
+  co2: ['R-CO2', 'R-CO2H', 'R-COG', 'R-SLEEP'], dehydration: ['R-HYDR', 'R-V-MASS'], sleep_loss: ['R-SLEEP', 'R-COG'],
+  decond: ['R-EX', 'R-CARD'], low_mood: ['R-MOOD', 'R-V-MOOD'], spe: ['R-SPE'],
+}
 
 export function Replay() {
   const { mission, model, today, analyses, setDay, setMe } = useApp()
@@ -42,7 +50,7 @@ export function Replay() {
 
   const feed = useMemo(() => {
     const out: FeedItem[] = []
-    const seen = new Map<string, number>()
+    const seen = new Map<string, { rank: number; rule: string; day: number }>()
     let linkUp = true
     for (let d = start; d <= t; d++) {
       const ls = linkState(mission, d, false)
@@ -52,45 +60,50 @@ export function Replay() {
       }
       const a = today(crew.id, d)
       if (a) for (const f of a.findings) {
-        // one entry when a finding opens, and another only if it gets more serious.  Findings led
-        // by a reported symptom or an entered reading are re-raised daily, so they are tracked by rule.
+        // one entry when a finding opens, one if the same open notice comes to look like something
+        // else, and one if it gets more serious.  Findings led by a reported symptom or an entered
+        // reading are re-raised daily, so they are tracked by rule.
         const id = f.kind === 'personal' || f.kind === 'environment' ? f.key : `${f.kind}:${f.ruleId}`
         const rank = RANK[f.status] * 10 + TIER_RANK[f.tier]
         const prev = seen.get(id)
         const body = `${f.action} (${URGENCY_LABEL[f.urgency].toLowerCase()}; ${WHO[f.tier]})`
-        if (prev === undefined) out.push({ day: d, kind: 'alert', status: f.status as FeedItem['status'], title: `${STATUS_LABEL[f.status]}: ${f.title}`, body })
-        else if (rank > prev) out.push({ day: d, kind: 'alert', status: f.status as FeedItem['status'], title: `More serious now: ${f.title}`, body })
-        seen.set(id, Math.max(prev ?? 0, rank))
+        const item = { day: d, kind: 'alert' as const, status: f.status as FeedItem['status'], ruleId: f.ruleId, led: f.kind }
+        if (prev === undefined) out.push({ ...item, title: `${STATUS_LABEL[f.status]}: ${f.title}`, body })
+        else if (prev.rule !== f.ruleId) out.push({ ...item, title: `${STATUS_LABEL[f.status]}: ${f.title}`, body: `The notice open since ${shortDay(mission, prev.day)} now looks like this. ${body}` })
+        else if (rank > prev.rank) out.push({ ...item, title: `More serious now: ${f.title}`, body })
+        seen.set(id, { rank: prev && prev.rule === f.ruleId ? Math.max(prev.rank, rank) : rank, rule: f.ruleId, day: prev?.day ?? d })
       }
-      for (const e of events) if (e.onset === d && (e.crew === crewIdx || e.crew < 0)) out.push({ day: d, kind: 'truth', title: `What was scripted: ${e.label.replace(/^Scripted /, '')}`, body: e.type === 'illness' ? `This is the day the simulated crew member first feels symptoms and ticks them at check-in. ${e.detail ?? ''}` : 'This is the day the scripted event starts.' })
+      for (const e of events) if (e.onset === d && (e.crew === crewIdx || e.crew < 0)) out.push({ day: d, kind: 'truth', title: `What was scripted: ${e.label.replace(/^Scripted /, '')}`, body: e.type === 'illness' ? `This is the day the scripted illness symptoms begin and the simulated crew member ticks them at check-in. An odd tired or congested day before this is ordinary simulated background, not the script. ${e.detail ?? ''}` : 'This is the day the scripted event starts.' })
     }
     return out
   }, [t, start, mission, today, crew.id, events, crewIdx])
 
-  // only an alert that opens from three days before the event counts as a response to it;
-  // anything earlier in the window is an unrelated (false) alert and is said to be one
-  const firstAlert = feed.find((f) => f.kind === 'alert' && f.day >= (ev ? ev.onset - 3 : 0))
-  const unrelated = feed.filter((f) => f.kind === 'alert' && ev && f.day < ev.onset - 3)
-  // when would the sensors alone have said so?  The first day from three days before onset on which
-  // the detector's own pattern rule for this kind of event, or its alert tier, is showing
+  // only a notice whose rule matches the scripted event, opening from three days before it, counts
+  // as a response to it; anything else in the window is listed as unrelated
+  const related = ev ? RELATED[ev.type] ?? [] : []
+  const firstAlert = feed.find((f) => f.kind === 'alert' && !!ev && f.day >= ev.onset - 3 && related.includes(f.ruleId ?? ''))
+  const unrelated = feed.filter((f) => f.kind === 'alert' && f !== firstAlert && !!ev && !related.includes(f.ruleId ?? '') && (!firstAlert || f.day <= firstAlert.day))
+  // when did the sensors alone say so?  The first day from three days before onset on which the
+  // detector's own reading of the pattern (no symptom report needed) matches the scripted event
   const sensorDay = useMemo(() => {
     if (!ev) return null
     for (let d = Math.max(start, ev.onset - 3); d <= t; d++) {
-      const a = today(crew.id, d)
-      const pf = a?.findings.find((x) => x.kind === 'personal')
-      if (pf && (pf.detectorTier === 'alert' || (ev.type === 'illness' && pf.ruleId === 'R-ILL'))) return d
+      const pf = today(crew.id, d)?.findings.find((x) => x.kind === 'personal')
+      if (pf && (RELATED[ev.type] ?? []).includes(pf.ruleId)) return d
     }
     return null
   }, [ev, start, t, today, crew.id])
+  // a detector alert in the three days before onset that read the change as something else
+  const misread = ev ? feed.find((f) => f.kind === 'alert' && f.led === 'personal' && f.day >= ev.onset - 3 && f.day < ev.onset && !related.includes(f.ruleId ?? '')) : undefined
   const done = t >= end
   const an = analyses[crew.id]
   const inds = ev ? SHOW[ev.type] ?? ['rhr', 'hrv', 'sleep_h'] : ['rhr', 'hrv', 'sleep_h']
   const pct = ((t - start) / Math.max(1, end - start)) * 100
   const lead = ev && firstAlert ? ev.onset - firstAlert.day : null
   const cur = today(crew.id, t)
-  const [val, setVal] = useState<{ det: number; net: number; n: number } | null>(null)
+  const [val, setVal] = useState<{ det: number; net: number; n: number; fa: number } | null>(null)
   useEffect(() => {
-    fetch(`${import.meta.env.BASE_URL}results/real_eval.json`).then((r) => r.json()).then((j) => { const s = j.main[j.deployed]['1.0']; setVal({ det: s.detection_rate, net: s.net_detection, n: s.n_events }) }).catch(() => setVal(null))
+    fetch(`${import.meta.env.BASE_URL}results/real_eval.json`).then((r) => r.json()).then((j) => { const s = j.deployed_config.all['1.0']; setVal({ det: s.detection_rate, net: s.net_detection, n: s.n_events, fa: s.fa_per_person_month }) }).catch(() => setVal(null))
   }, [])
 
   return (
@@ -162,14 +175,15 @@ export function Replay() {
             : <p className="do">In this scripted case Keel flagged it {lead > 0 ? `${lead} day${lead === 1 ? '' : 's'} before` : lead === 0 ? 'on the day' : `${-lead} day${lead === -1 ? '' : 's'} after`} {ev.type === 'illness' ? 'symptoms began' : 'it started'}, with a specific action and no link to Earth.</p>}
           {ev.type === 'illness' && lead !== null && lead > 0 && <p className="small"><strong>Do not read this as early warning.</strong> On real data the alert usually starts on or after the day symptoms begin, and an alert a day or two ahead is about as likely to be luck.</p>}
           {ev.type === 'illness' && firstAlert && (
-            <p className="small"><strong>Sensors alone, or with her check-in?</strong> {sensorDay === null
-              ? 'The detector alone did not reach its illness pattern or alert tier in this window. The flag came from her check-in combined with drifting readings.'
-              : sensorDay <= firstAlert.day
-                ? `The sensors alone showed the pattern on ${shortDay(mission, sensorDay)}; no symptom report was needed for this flag.`
-                : `The flag on ${shortDay(mission, firstAlert.day)} came from her check-in combined with drifting readings. The sensors alone showed the illness pattern on ${shortDay(mission, sensorDay)}, ${sensorDay - ev.onset} day${sensorDay - ev.onset === 1 ? '' : 's'} after symptoms began.`}</p>
+            <p className="small"><strong>Sensors alone, or with her check-in?</strong> {firstAlert.led === 'personal'
+              ? `The sensors alone showed the pattern on ${shortDay(mission, firstAlert.day)}; no symptom report was needed for this flag.`
+              : sensorDay === null
+                ? `The flag on ${shortDay(mission, firstAlert.day)} came from the symptoms she ticked at check-in, combined with drifting readings. The sensors alone did not show the illness pattern in this window.`
+                : `The flag on ${shortDay(mission, firstAlert.day)} came from the symptoms she ticked at check-in, combined with drifting readings. The sensors alone showed the illness pattern on ${shortDay(mission, sensorDay)}, ${sensorDay - ev.onset} day${sensorDay - ev.onset === 1 ? '' : 's'} after symptoms began.`}</p>
           )}
-          {unrelated.length > 0 && <p className="small">Earlier in this replay Keel also raised {unrelated.length} notice{unrelated.length === 1 ? '' : 's'} that the scripted event did not cause. Some reflect ordinary lapses in the simulated routine, such as a missed exercise session; some are false alerts. That is part of the picture: notices are budgeted at about one false one per person-month.</p>}
-          {val && <p className="small"><strong>Across all the real data, not this one script:</strong> Keel flagged {Math.round(val.det * 100)}% of {val.n} real illness episodes at one false alert per person-month, {Math.round(val.net * 100)} points more than luck. It did not give early warning. Everything except illness is tested in simulation only.</p>}
+          {misread && firstAlert && <p className="small">On {shortDay(mission, misread.day)} the detector had already moved, but the readings then looked like something else ("{misread.title.replace(/^[^:]+: /, '')}") and the advice was for that. It is not counted as flagging this event.</p>}
+          {unrelated.length > 0 && <p className="small">Keel's log for this replay also has {unrelated.length} {unrelated.length === 1 ? 'entry that is' : 'entries that are'} not about the scripted event. Some are one open notice being read differently as the days pass; some reflect ordinary lapses in the simulated routine, such as a missed exercise session; some are false alerts. That is part of the picture: notices are budgeted at about one false one per person-month.</p>}
+          {val && <p className="small"><strong>Across all the real data, not this one script:</strong> run as the app runs it, Keel flagged {Math.round(val.det * 100)}% of {val.n} real illness episodes, {Math.round(val.net * 100)} points more than luck, at {val.fa.toFixed(1)} false alerts per person-month. It did not give early warning. Everything except illness is tested in simulation only.</p>}
           <p className="small muted">One scripted event proves nothing by itself.</p>
           <div className="row wrap">
             <button className="btn primary" onClick={() => { setMe(crew.id); setDay(firstAlert ? Math.max(firstAlert.day + 1, Math.min(end, ev.onset - 1)) : ev.onset); go('today') }} data-testid="replay-open-today">Open that day as {crew.name.split(' ')[0]}</button>

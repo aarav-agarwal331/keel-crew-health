@@ -48,7 +48,7 @@ export function Trends({ focus }: { focus?: string }) {
           const last = [...Array(Math.min(day + 1, 14)).keys()].map((k) => b.values[day - k]).find((v) => v !== undefined && !Number.isNaN(v))
           if (!b.values.slice(0, day + 1).some((v) => !Number.isNaN(v))) return focus === def.id ? <Card key={def.id} title={def.label}><p className="muted">No readings yet. Enter one at check-in.</p><p className="small">{def.how}</p></Card> : null
           const std = (def as unknown as { standard?: { value: number; label: string } }).standard
-          const refLines = def.id === 'co2' ? [{ y: 2.5, label: 'Headaches more likely above 2.5' }, { y: 3.0, label: 'Level ISS operations manage to: 3.0' }]
+          const refLines = def.id === 'co2' ? [{ y: 2.5, label: 'Advisory line 2.5' }, { y: 3.0, label: 'ISS operating level 3.0' }]
             : def.id === 'glucose' ? [{ y: 70, label: 'Low below 70' }, { y: 99, label: 'Fasting normal up to 99' }]
             : def.id === 'sbp' ? [{ y: 120, label: 'Normal 90 to 120' }, { y: 90, label: '' }]
             : std ? [{ y: std.value, label: std.label }] : undefined

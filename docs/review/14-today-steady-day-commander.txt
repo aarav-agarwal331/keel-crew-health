@@ -4,14 +4,14 @@ BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
 Keel is a crew health monitor that works with no link to Earth. It learns each person's own normal and gives one action with its source. Demo: Amara's tablet, simulated Mars transit.
 
-Watch it catch an event (40 s)
+Demo: replay a scripted event (40 s)
 The evidence
 Hide
-Steady
+Worth a look
 
-Nothing needs action. One reading is a little off your usual; Keel is watching.
+No action needed yet. Keep an eye on: brain, sleep and mood, cabin air.
 
-Cabin CO2 is 2.6 mmHg, above the 2.5 level where headaches become more likely. If you have a headache, log it at check-in and move to better airflow.
+Cabin CO2 is 2.6 mmHg. Headaches get more likely the higher it goes; 2.5 is Keel's advisory line and 3.0 its alert. If you have a headache, log it at check-in and move to better airflow.
 
 Demo crew member, simulated readings.
 
@@ -19,7 +19,6 @@ Worth knowing
 All trends
 Sleep timing shift 1.5 h
 Shifted from your usual -0.8. Your most unusual reading in 51 days. Out of your range for 4 days.
-Tested in simulation only
 Your body at a glance
 Brain, sleep and mood
 Heart and circulation
@@ -49,19 +48,21 @@ Exercise this week
 Crew goal this week: 89% of planned exercise done together. Individual numbers stay private.
 
 Report a symptom now
-Check-in done (simulated entry; you can redo it)
+Check-in done (simulated)
 Sensor worn last night
 Exercise done today
+Weekly measurement due: body temperature (thermometer)
+ Enter
 Sleep last night 5.1 h. The scheduled sleep period is 8.5 h.
 Cabin
 Deep-space transit vehicle
 Carbon dioxide 
 2.6 mmHg
-Above 2.5, where headaches become more likely
+Above Keel's advisory line of 2.5
 Radiation dose
 118 mSv this mission (dosimeter estimate)
-Today 1.60 mSv. The 600 mSv career limit also counts earlier flights.
+Today 1.60 mSv. At this rate about 320 mSv by the end of this mission. The 600 mSv career limit also counts earlier flights.
 
-Keel raised 1 notice for you in the last 30 days. The budget allows about one false one per person-month, so some of these are false.
+Keel opened 1 notice from your readings in the last 30 days. Keel can be wrong: expect one or two false notices a month. How often it is right
 
 Keel is decision support, not a medical device. It does not diagnose. It shows how your readings compare with your own normal and points to documented countermeasures.

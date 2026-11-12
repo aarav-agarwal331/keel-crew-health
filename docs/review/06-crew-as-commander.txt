@@ -12,30 +12,21 @@ Demo view. On a mission each role has its own device; here you can switch roles.
 
 Task tomorrow: spacewalk
 
-1 of 4 should talk to the medical officer first. 3 have minor flags. 0 have none.
+1 of 4 should talk to the medical officer first. 1 has minor flags. 2 have none.
 
 This is not a medical clearance.
 
 NASA's medical operations standard requires medical clearance before every spacewalk. Keel's tier is one input to that conversation with the medical officer.
 
-Crew-wide pattern
-3 of 4 crew show a change in symptoms over the last three days.
-
-When several people drift together, look for a shared cause: an infection spreading, water or food, cabin air, schedule, workload. Tell the medical officer. Counts only, no names, and only when three or more people are affected.
-
 Amara Okafor
 Commander
 
-Minor flags
-
- Reason not shared. Ask Amara or the medical officer.
+No Keel flags
 
 Kenji Sato
 Crew medical officer
 
-Minor flags
-
- Reason not shared. Ask Kenji.
+No Keel flags
 
 Lucía Reyes
 Flight engineer

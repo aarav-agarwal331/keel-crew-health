@@ -10,7 +10,7 @@ Mission
 Each chart shows your readings against your own usual range, learned from your previous four weeks. Alerts and mission phase changes are marked.
 
 All
-Heart and circulation
+Heart, oxygen and temperature
 Sleep and body clock
 Exercise
 Mind and mood
@@ -23,6 +23,7 @@ Resting heart rate
 66 bpm
 50
 60
+Notice
 Day 66
 Day 84
 Day 103
@@ -36,6 +37,7 @@ Heart rate variability
 25
 50
 75
+Notice
 Notice
 Notice
 Day 66
@@ -91,6 +93,7 @@ Sleep timing shift
 -2
 0
 Notice
+Notice
 Day 66
 Day 84
 Day 103
@@ -102,6 +105,7 @@ Why it matters, how to measure, and the numbers
 Exercise, 7-day average
 89 min/day
 100
+Notice
 Notice
 Notice
 Day 66
@@ -209,8 +213,8 @@ Cabin carbon dioxide
 1.9 mmHg
 2
 3
-Headaches more likely above 2.5
-Level ISS operations manage to: 3.0
+Advisory line 2.5
+ISS operating level 3.0
 Day 66
 Day 84
 Day 103

@@ -1,6 +1,6 @@
 {
- "version": "1.2",
- "note": "Auditable alert-to-action rules. Scopes: 'personal' rules are evaluated only while the detector has an open alert, so their false-alert rate is set by the detector's budget. 'vital', 'symptom', 'environment' and 'adaptation' rules bypass the detector: they react to a single entered value, a reported symptom or a cabin reading. u = mean deviation over the last three measured days, in robust standard deviations, in the direction of concern. Fixed thresholds are general clinical guidance or placeholders and need sign-off by a flight surgeon.",
+ "version": "1.3",
+ "note": "Auditable alert-to-action rules. Scopes: 'personal' rules are evaluated only while the detector has an open alert, so their false-alert rate is set by the detector's budget. 'vital', 'symptom', 'environment' and 'adaptation' rules bypass the detector: they react to a single entered value, a reported symptom or a cabin reading. u = mean deviation over the last three measured days, in robust standard deviations, in the direction of concern. Fixed thresholds are general clinical guidance or placeholders and need sign-off by a flight surgeon. A fixed rule looks at every reading taken on the most recent day that has one, so a later normal reading does not erase an abnormal one.",
  "rules": [
   {
    "id": "R-RED",
@@ -16,7 +16,8 @@
     "Stop exercise and any demanding task.",
     "Stay with another crew member.",
     "If you are the medical officer, tell the commander: they are your backup.",
-    "The medical officer leads care on board. Keel queues a summary for the flight surgeon for when a link is available."
+    "The medical officer closes this in Keel with a note once it has been dealt with; until then it stays on your Today screen.",
+    "The medical officer leads care on board and decides whether to consult the flight surgeon. Keel sends nothing to the ground by itself: the daily summary carries only what you chose to share."
    ],
    "tier": "cmo",
    "tier_reason": "Red-flag symptom. The medical officer leads care on board; the flight surgeon is consulted when a link exists.",
@@ -86,7 +87,7 @@
    "scope": "vital",
    "priority": 1.3,
    "urgency": "today",
-   "title": "Thermometer reading is in the fever range",
+   "title": "Thermometer reading is in the fever range, or well above your usual",
    "when": {
     "any": [
      {
@@ -99,7 +100,7 @@
      }
     ]
    },
-   "summary": "You entered a temperature of 38.0 °C or more, or at least 1.0 °C above your own earlier thermometer readings. Body temperature may run higher on long flights, so the medical officer should judge it against your earlier readings.",
+   "summary": "You entered a temperature of 38.0 °C or more, or at least 1.0 °C above your own earlier thermometer readings. Resting body temperature has been measured about 1 °C higher after two to three months in orbit, so the medical officer should judge a reading against your own earlier in-flight readings.",
    "action": "No exercise today, and see the medical officer today.",
    "steps": [
     "Repeat the reading in four hours and log symptoms at check-in.",
@@ -110,7 +111,8 @@
    "tier_reason": "A fixed safety threshold, not a trend.",
    "cm": [
     "CM-VITALS",
-    "CM-INFECT"
+    "CM-INFECT",
+    "CM-TEMPBASE"
    ],
    "categories": [
     "cardio"
@@ -253,7 +255,7 @@
     ]
    },
    "summary": "You entered an upper reading below 80 mmHg, or below 90 with dizziness or fainting. Keel does not interpret it.",
-   "action": "Lie flat if you can, and tell the medical officer now.",
+   "action": "Stop what you are doing, hold on or strap in (lie flat with legs raised if you are under gravity), and tell the medical officer now.",
    "steps": [
     "Stay with another crew member.",
     "Repeat the reading in five minutes."
@@ -299,13 +301,21 @@
    "scope": "vital",
    "priority": 1.65,
    "urgency": "today",
-   "title": "Upper blood pressure reading is 180 mmHg or higher",
+   "title": "Blood pressure reading is 180 upper or 120 lower, or higher",
    "when": {
-    "val": "sbp",
-    "min": 180
+    "any": [
+     {
+      "val": "sbp",
+      "min": 180
+     },
+     {
+      "val": "dbp",
+      "min": 120
+     }
+    ]
    },
    "summary": "You entered a very high upper reading. Keel does not interpret it.",
-   "action": "Rest five minutes and repeat. If it is still 180 or more, tell the medical officer today.",
+   "action": "Rest five minutes and repeat. If it is still that high, tell the medical officer today; with chest pain, severe headache or vision change, tell them now.",
    "steps": [
     "Tell the medical officer now if you have a headache, chest pain, breathlessness or a vision change."
    ],
@@ -323,11 +333,20 @@
    "scope": "vital",
    "priority": 1.7,
    "urgency": "routine",
-   "title": "Upper blood pressure reading is 140 mmHg or higher",
+   "title": "Blood pressure reading is 140 upper or 90 lower, or higher",
    "when": {
-    "val": "sbp",
-    "min": 140,
-    "max": 179.99
+    "any": [
+     {
+      "val": "sbp",
+      "min": 140,
+      "max": 179.99
+     },
+     {
+      "val": "dbp",
+      "min": 90,
+      "max": 119.99
+     }
+    ]
    },
    "summary": "The reading you entered is above the normal adult range. A single high reading is common after effort, caffeine or stress.",
    "action": "Rest quietly for five minutes, repeat the reading, and show both to the medical officer at your next conference.",
@@ -336,6 +355,76 @@
    ],
    "tier": "cmo",
    "tier_reason": "A fixed reference value, not a trend.",
+   "cm": [
+    "CM-VITALS"
+   ],
+   "categories": [
+    "cardio"
+   ]
+  },
+  {
+   "id": "R-V-HR2",
+   "scope": "vital",
+   "priority": 1.74,
+   "urgency": "now",
+   "title": "Heart rate reading at rest is extremely fast or slow",
+   "when": {
+    "any": [
+     {
+      "val": "rhr_manual",
+      "min": 150
+     },
+     {
+      "val": "rhr_manual",
+      "max": 35
+     }
+    ]
+   },
+   "summary": "You entered a resting heart rate of 150 or more, or 35 or less. Keel does not interpret it. These two values are provisional and have not been reviewed by a flight surgeon.",
+   "action": "Stop, rest, and tell the medical officer now.",
+   "steps": [
+    "Stay with another crew member.",
+    "Count your pulse by hand for a full minute to confirm the device.",
+    "Note the time, and any chest pain, breathlessness or light-headedness."
+   ],
+   "tier": "cmo",
+   "tier_reason": "A fixed safety threshold, not a trend.",
+   "cm": [
+    "CM-VITALS"
+   ],
+   "categories": [
+    "cardio"
+   ]
+  },
+  {
+   "id": "R-V-HR1",
+   "scope": "vital",
+   "priority": 1.75,
+   "urgency": "today",
+   "title": "Resting heart rate of 120 or more",
+   "when": {
+    "any": [
+     {
+      "run": "rhr",
+      "min": 120,
+      "days": 1
+     },
+     {
+      "val": "rhr_manual",
+      "min": 120,
+      "max": 149.99
+     }
+    ]
+   },
+   "summary": "Your overnight resting heart rate, or one you entered at rest, was 120 or more. One such reading is enough for the medical officer to look. The value 120 is provisional and has not been reviewed by a flight surgeon.",
+   "action": "Rest for ten minutes, repeat the reading, and tell the medical officer today.",
+   "steps": [
+    "No exercise until the medical officer has seen it.",
+    "Take your temperature and drink to your fluid target.",
+    "Note any chest pain, breathlessness or light-headedness: with any of them, tell the medical officer now."
+   ],
+   "tier": "cmo",
+   "tier_reason": "A fixed safety threshold, not a trend.",
    "cm": [
     "CM-VITALS"
    ],
@@ -361,7 +450,7 @@
     "Check fluids, temperature and how you slept."
    ],
    "tier": "cmo",
-   "tier_reason": "A fixed safety threshold (a common clinical convention, placeholder for clinician sign-off).",
+   "tier_reason": "A fixed safety threshold (a common clinical convention, provisional, not reviewed by a clinician).",
    "cm": [
     "CM-VITALS",
     "CM-PMC"
@@ -433,6 +522,40 @@
    ]
   },
   {
+   "id": "R-SPE-V",
+   "scope": "symptom",
+   "priority": 1.96,
+   "urgency": "now",
+   "title": "Vomiting after a high radiation dose",
+   "when": {
+    "all": [
+     {
+      "env": "rad_ratio_3d",
+      "min": 3
+     },
+     {
+      "sym": "vomiting",
+      "min": 1
+     }
+    ]
+   },
+   "summary": "You reported vomiting within three days of a daily dose far above normal. Keel cannot tell whether the two are linked. How soon vomiting starts helps the medical officer judge the dose.",
+   "action": "Tell the medical officer now, and note the time the vomiting started.",
+   "steps": [
+    "Sip fluids; do not take anything for nausea until the medical officer says so.",
+    "Tell the commander your personal dosimeter reading."
+   ],
+   "tier": "cmo",
+   "tier_reason": "Possible early effect of radiation: the medical officer leads, and consults the flight surgeon when a link is available.",
+   "cm": [
+    "CM-SHELTER",
+    "CM-PMC"
+   ],
+   "categories": [
+    "symptoms"
+   ]
+  },
+  {
    "id": "R-SPE",
    "scope": "environment",
    "priority": 2,
@@ -446,7 +569,8 @@
    "steps": [
     "Keep your personal dosimeter on.",
     "Log nausea, vomiting or unusual tiredness at check-in over the next two days.",
-    "Keel adds the dose to your mission total."
+    "Keel adds the dose to your mission total.",
+    "If you vomit, tell the medical officer at once and note the time: how soon it starts after the dose matters."
    ],
    "tier": "cmo",
    "tier_reason": "Whole-crew exposure: the commander and the medical officer should both know.",
@@ -564,6 +688,47 @@
    ]
   },
   {
+   "id": "R-SYM-PERSIST",
+   "scope": "symptom",
+   "priority": 2.55,
+   "urgency": "today",
+   "title": "The same symptom three days running",
+   "when": {
+    "any": [
+     {
+      "sym": "headache",
+      "min": 3
+     },
+     {
+      "sym": "vomiting",
+      "min": 3
+     },
+     {
+      "sym": "dizziness",
+      "min": 3
+     },
+     {
+      "sym": "cough",
+      "min": 3
+     }
+    ]
+   },
+   "summary": "You reported a headache, vomiting, dizziness or a cough on each of the last three days. A symptom that does not go away deserves a look whatever your readings show.",
+   "action": "Tell the medical officer today.",
+   "steps": [
+    "Say when it started, what makes it better or worse, and anything you have taken for it.",
+    "Keep logging it at check-in so the medical officer can see the course."
+   ],
+   "tier": "cmo",
+   "tier_reason": "A symptom lasting three days.",
+   "cm": [
+    "CM-PMC"
+   ],
+   "categories": [
+    "symptoms"
+   ]
+  },
+  {
    "id": "R-RASH",
    "scope": "symptom",
    "priority": 2.6,
@@ -577,7 +742,8 @@
    "action": "Show it to the medical officer at the next opportunity.",
    "steps": [
     "Keep the area clean and dry; do not share towels.",
-    "Note any new soap, wipe or glove material."
+    "Note any new soap, wipe or glove material.",
+    "A painful, blistering rash in a band on one side of the body should not wait: tell the medical officer today."
    ],
    "tier": "cmo",
    "tier_reason": "Common and usually minor, but worth a look.",
@@ -586,6 +752,71 @@
    ],
    "categories": [
     "symptoms"
+   ]
+  },
+  {
+   "id": "R-V-SLEEP",
+   "scope": "vital",
+   "priority": 2.7,
+   "urgency": "routine",
+   "title": "Three nights in a row under five hours of sleep",
+   "when": {
+    "run": "sleep_h",
+    "max": 4.99,
+    "days": 3
+   },
+   "summary": "Each of your last three nights was shorter than five hours. This is a fixed floor, checked whatever your own usual sleep is, because a personal baseline can make chronic short sleep look normal. The value is provisional: NASA schedules 8.5 hours and ISS crews average about six.",
+   "action": "Protect a full sleep period tonight, and tell the medical officer if tonight is short too.",
+   "steps": [
+    "Ask the commander to move or drop a task if the schedule is the cause.",
+    "Dim the lights and stop screen work an hour before the sleep period.",
+    "Use buddy checks on critical tasks tomorrow."
+   ],
+   "tier": "self",
+   "tier_reason": "A fixed floor on sleep, not a trend.",
+   "cm": [
+    "CM-SLEEP"
+   ],
+   "categories": [
+    "sleep"
+   ],
+   "escalate": [
+    {
+     "when": {
+      "run": "sleep_h",
+      "max": 4.99,
+      "days": 5
+     },
+     "tier": "cmo",
+     "reason": "Five nights in a row under five hours: the medical officer can adjust the schedule or discuss a sleep aid."
+    }
+   ]
+  },
+  {
+   "id": "R-CO2-HI",
+   "scope": "environment",
+   "priority": 2.9,
+   "urgency": "now",
+   "title": "Cabin carbon dioxide is above 4 mmHg",
+   "when": {
+    "env": "co2",
+    "min": 4.0
+   },
+   "summary": "The 24-hour average is at or above 4.0 mmHg, the limit ISS operations used from 2010 before lowering it to 3.0.",
+   "action": "Whole crew: check the air revitalization system now and move to the best-ventilated module.",
+   "steps": [
+    "Commander or engineer: check scrubber status and fan airflow now.",
+    "Stop demanding exercise until the level is falling.",
+    "Anyone with a severe headache, confusion or breathlessness: tell the medical officer now.",
+    "Use buddy checks on every procedure until the level is back under 3.0."
+   ],
+   "tier": "cmo",
+   "tier_reason": "Crew-wide cabin issue: the commander or the engineer leads the fix, and everyone on board sees it.",
+   "cm": [
+    "CM-CO2"
+   ],
+   "categories": [
+    "environment"
    ]
   },
   {
@@ -606,7 +837,7 @@
     "Use buddy checks on procedures until the level is back down."
    ],
    "tier": "cmo",
-   "tier_reason": "Crew-wide cabin issue, visible to everyone on board.",
+   "tier_reason": "Crew-wide cabin issue: the commander or the engineer leads the fix, and everyone on board sees it.",
    "cm": [
     "CM-CO2"
    ],
@@ -632,7 +863,7 @@
      }
     ]
    },
-   "summary": "You reported a headache and cabin carbon dioxide is above 2.5 mmHg, the level above which ISS crews reported more headaches. Keel cannot tell whether the air is the cause.",
+   "summary": "Cabin carbon dioxide is above Keel's advisory line of 2.5 mmHg and you reported a headache. On the ISS, headache reports became more likely the higher the CO2 level went; an average under about 2.5 mmHg kept the risk very low. Keel cannot tell whether your headache is from the air.",
    "action": "Move to a spot with better airflow and tell the commander the cabin reading.",
    "steps": [
     "Log the headache at each check-in so the pattern is visible.",
@@ -824,7 +1055,7 @@
     ]
    },
    "summary": "Your check-ins have been lower than your own normal for a while. That is common on long, isolated missions and easier to turn around early.",
-   "action": "Book a private conversation: with the medical officer, or a recorded message to the support team at home.",
+   "action": "Book a private conversation with the medical officer. You can also record a message for the support team at home; it goes when a link is available.",
    "steps": [
     "Put one thing you enjoy and one contact with home on today's plan.",
     "Keep exercise and the sleep period fixed; both lift mood, and short sleep makes low mood worse.",
@@ -854,7 +1085,7 @@
    "id": "R-SLEEP",
    "scope": "personal",
    "priority": 20,
-   "title": "You are running short on sleep",
+   "title": "Your sleep is short or has shifted",
    "when": {
     "any": [
      {
@@ -936,7 +1167,7 @@
      }
     ]
    },
-   "summary": "Fluid intake is below your own normal, and your body is starting to show it. In space this also raises kidney-stone risk.",
+   "summary": "You are drinking clearly less than your own usual. A faster resting heart rate, headache or dizziness often follow, and Keel lists any of them it sees below.",
    "action": "Drink one extra litre before the end of the day, spread over the next few hours.",
    "steps": [
     "Aim for at least 2.0 to 2.5 litres a day and pale urine.",
@@ -982,7 +1213,7 @@
    "summary": "Your weekly exercise is well under your own normal. Without gravity, fitness, muscle and bone are only held by daily loading, and the loss is silent.",
    "action": "Do today's session, even a shortened one, and plan the next three.",
    "steps": [
-    "If a device is down, use the substitute session: elastic bands and bodyweight circuits.",
+    "If a device is down, use the substitute session: elastic bands, or the resistance device at a load it can still give.",
     "If you are skipping because you feel unwell or low, say so at check-in so Keel can connect it.",
     "Resting heart rate creeping up over the next weeks is the first sign of lost fitness."
    ],

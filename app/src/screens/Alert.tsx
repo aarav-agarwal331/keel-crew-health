@@ -5,7 +5,7 @@ import type { ShareCategory } from '../core/sharing'
 import { SHARE_CATEGORIES } from '../core/sharing'
 import { useApp } from '../state'
 import { TrendChart } from '../ui/charts'
-import { Card, href, Sources, StatusTag } from '../ui/kit'
+import { ReadingLog, Card, href, Sources, StatusTag } from '../ui/kit'
 import { bandFor } from '../ui/series'
 import { TempEntry } from '../ui/TempEntry'
 import { CATEGORIES } from '../core/mission'
@@ -58,7 +58,8 @@ export function Alert({ alertKey }: { alertKey?: string }) {
         <span className="tag plain">Recommended action</span>
         <p className="do">{f.action}</p>
         <ol className="list steps">{f.steps.map((s) => <li key={s}><span>{s}</span></li>)}</ol>
-        {['R-ILL', 'R-SYM-ILL', 'R-V-TEMP', 'R-V-TEMP-HI'].includes(f.ruleId) && <TempEntry />}
+        {['R-ILL', 'R-SYM-ILL', 'R-V-TEMP', 'R-V-TEMP-HI'].includes(f.ruleId) ? <TempEntry /> : <ReadingLog readings={f.readings ?? []} title="Readings this is based on" />}
+        {(f.kind === 'vital' || f.kind === 'symptom') && f.urgency !== 'routine' && <p className="small muted">This stays on the medical officer's list until they close it with a note. A later normal reading does not close it.</p>}
       </section>
       {(f.also ?? []).length > 0 && (
         <Card title="Also showing in your readings">
@@ -90,13 +91,13 @@ export function Alert({ alertKey }: { alertKey?: string }) {
       </Card>
 
       <Card title="How soon, and who should know">
-        <p><strong>{URGENCY_LABEL[f.urgency]}.</strong> {iAmCmo && f.tier !== 'self' ? 'You are the medical officer. Do not manage your own case: hand it to the commander, who is your backup, and to the flight surgeon when a link is available.' : `${WHO_LABEL[f.tier]}.`}</p>
+        <p><strong>{URGENCY_LABEL[f.urgency]}.</strong> {iAmCmo && f.tier !== 'self' ? 'You are the medical officer. Do not manage your own case: hand it to the commander, who is your backup, and to the flight surgeon when a link is available.' : `${f.who ?? WHO_LABEL[f.tier]}.`}</p>
         <p>{f.tierReason}</p>
-        {f.tier === 'ground' && <p className="banner">{link.available ? 'A link is available. The medical officer leads care on board; a summary is queued for the flight surgeon and you decide what it contains in Sharing.' : 'No link right now. The medical officer leads care on board. Keel keeps a summary queued for the flight surgeon and sends it when a link opens.'}</p>}
-        {f.status === 'urgent' && <p className="banner info">{sharing[me]?.emergency !== false ? 'Because you agreed to emergency sharing, the medical officer and the commander can see this alert now.' : 'Emergency sharing is off, so nobody else can see this alert. Tell the medical officer yourself.'}</p>}
+        {f.tier === 'ground' && <p className="banner">{link.available ? 'A link is available. The medical officer leads care on board and decides whether to consult the flight surgeon. The daily summary to the ground contains only what you set in Sharing.' : 'No link right now. The medical officer leads care on board. The daily summary to the ground waits in a queue and contains only what you set in Sharing; Keel adds nothing by itself.'}</p>}
+        {f.status === 'urgent' && <p className="banner info">{sharing[me]?.emergency !== false ? (f.cmoOnly && !f.patientIsCmo ? 'Because you agreed to emergency sharing, the medical officer can see this alert now. The commander cannot.' : 'Because you agreed to emergency sharing, the medical officer and the commander can see this alert now.') : 'Emergency sharing is off, so nobody else can see this alert. Tell the medical officer yourself.'}</p>}
         {f.status !== 'urgent' && !f.crewWide && shareCats.length > 0 && (sharedWithCmo
           ? <p className="small muted">The medical officer can see the details of this alert because you shared them.</p>
-          : <><button className="btn" onClick={() => shareCats.forEach((c) => setShare(me, 'cmo', c, 'detail'))} data-testid="share-cmo">Share this alert with the medical officer ({shareCats.map((c) => CAT[c]).join(', ').toLowerCase()})</button><p className="tiny muted">Opens only that area to the medical officer, until you change it in Sharing. Everything else stays as you set it.</p></>)}
+          : <><button className="btn" onClick={() => shareCats.forEach((c) => setShare(me, 'cmo', c, 'detail'))} data-testid="share-cmo">Show the medical officer the readings behind this alert</button><p className="small muted">This changes one setting: <strong>{shareCats.map((c) => CAT[c]).join(', ')}</strong> becomes "Full detail" for the medical officer, until you change it back in Sharing. Nothing else changes.</p></>)}
         {f.crewWide && <p className="small muted">Cabin-level readings are not personal data, so the whole crew sees this alert.</p>}
       </Card>
 

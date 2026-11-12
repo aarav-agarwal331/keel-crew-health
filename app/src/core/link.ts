@@ -60,7 +60,7 @@ export function linkState(m: Mission, day: number, manualCut: boolean): LinkStat
   const { delayS, distanceAu } = delayFor(m, day)
   const sched = scheduledBlackout(m, day)
   if (m.kind === 'personal' || m.kind === 'real') return { available: false, delayS: NaN, distanceAu: NaN, reason: 'No ground link is modelled for this data set. Everything runs on this device.', manualCut, scheduledBlackout: false }
-  if (manualCut) return { available: false, delayS, distanceAu, reason: 'Link cut from the demo control', manualCut, scheduledBlackout: !!sched }
+  if (manualCut) return { available: false, delayS, distanceAu, reason: 'You cut the link (demo control)', manualCut, scheduledBlackout: !!sched }
   if (sched) return { available: false, delayS, distanceAu, reason: sched, manualCut, scheduledBlackout: true }
   return { available: true, delayS, distanceAu, reason: day < m.pre_days ? 'On Earth: direct contact' : 'Link nominal', manualCut, scheduledBlackout: false }
 }

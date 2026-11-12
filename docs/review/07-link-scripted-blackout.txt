@@ -7,9 +7,9 @@ No link to Earth
 
 Scripted two-week blackout (antenna fault), modelled on the two-week command pause at solar conjunction
 
-Keel does not use the link to work. Detection, explanations and recommended actions all run on this tablet: it last re-checked the whole crew's readings in 44 milliseconds. The link only carries a summary for the flight surgeon when one is available.
+Keel does not use the link to work. Detection, explanations and recommended actions all run on this tablet: it last re-checked the whole crew's readings in a fraction of a second. The link only carries a summary for the flight surgeon when one is available.
 
-The link is already down today (a scripted blackout), so there is nothing to cut. Every screen you have used so far was running without it.
+Day 3 of a 14-day blackout. The link is expected back on Day 133. Every screen you have used so far was running without it, and 3 daily summaries are waiting to go.
 
 Go to a day with a working link and cut it yourself
 Queued for the ground
@@ -17,15 +17,15 @@ Queued for the ground
 
 One summary per mission day goes out automatically, smaller than a text message. It contains only what you have chosen to share with the flight surgeon in Sharing (by default nothing personal, only cabin alerts). While there is no link, summaries wait here and go out together when it returns.
 
-Day 119 · 85 bytes · waiting
-Day 120 · 85 bytes · waiting
-Day 121 · 85 bytes · waiting
+Day 119 · waiting
+Day 120 · waiting
+Day 121 · waiting
 Recently sent
-Day 118 · 85 bytes · sent same day, arrived 3 min 54 s later
-Day 117 · 85 bytes · sent same day, arrived 3 min 51 s later
-Day 116 · 85 bytes · sent same day, arrived 3 min 49 s later
-Day 115 · 85 bytes · sent same day, arrived 3 min 46 s later
-See exactly what the latest summary contains
+Day 118 · sent same day, arrived 3 min 54 s later
+Day 117 · sent same day, arrived 3 min 51 s later
+Day 116 · sent same day, arrived 3 min 49 s later
+Day 115 · sent same day, arrived 3 min 46 s later
+See exactly what the latest summary contains (85 bytes)
 Signal delay over this transit
 0.0
 2.0

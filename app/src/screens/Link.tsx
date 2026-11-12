@@ -17,6 +17,12 @@ export function LinkScreen() {
   const sent = outbox.filter((o) => o.state === 'sent').slice(-5).reverse()
   const hasLink = mission.kind !== 'personal' && mission.kind !== 'real'
   const upcoming = [...Array(mission.days - day).keys()].map((k) => day + k).find((t) => scheduledBlackout(mission, t))
+  // where in a scripted blackout are we, and when is the link expected back?
+  let b0 = day, b1 = day
+  if (link.scheduledBlackout) {
+    while (b0 > 0 && scheduledBlackout(mission, b0 - 1)) b0--
+    while (b1 < mission.days - 1 && scheduledBlackout(mission, b1 + 1)) b1++
+  }
   return (
     <>
       <h1>Earth link</h1>
@@ -28,16 +34,17 @@ export function LinkScreen() {
             <p className="muted">{link.reason}{link.available && day >= mission.pre_days && !Number.isNaN(link.delayS) ? `. A question and its answer take at least ${fmtDelay(link.delayS * 2)}.` : ''}</p>
           </div>
         </div>
-        <p><strong>Keel does not use the link to work.</strong> Detection, explanations and recommended actions all run on this tablet: it last re-checked the whole crew's readings in {computeMs.toFixed(0)} milliseconds. The link only carries a summary for the flight surgeon when one is available.</p>
+        <p><strong>Keel does not use the link to work.</strong> Detection, explanations and recommended actions all run on this tablet: it last re-checked the whole crew's readings in {computeMs < 1000 ? 'a fraction of a second' : `${(computeMs / 1000).toFixed(1)} seconds`}. The link only carries a summary for the flight surgeon when one is available.</p>
         {hasLink && (link.scheduledBlackout && !linkCut ? (
           <div className="col">
-            <p className="banner info">The link is already down today (a scripted blackout), so there is nothing to cut. Every screen you have used so far was running without it.</p>
+            <p className="banner info"><strong>Day {day - b0 + 1} of a {b1 - b0 + 1}-day blackout.</strong> The link is expected back on {shortDay(mission, b1 + 1)}. Every screen you have used so far was running without it, and {queued.length} daily {queued.length === 1 ? 'summary is' : 'summaries are'} waiting to go.</p>
             <div className="row wrap"><button className="btn" onClick={() => setDay(mission.pre_days + 100)} data-testid="jump-link-up">Go to a day with a working link and cut it yourself</button></div>
           </div>
         ) : (
           <div className="row wrap">
             <button className={`btn ${linkCut ? 'primary' : 'danger'}`} onClick={() => setLinkCut(!linkCut)} data-testid="cut-link" aria-pressed={linkCut}>{linkCut ? 'Restore the link' : 'Cut the link now'}</button>
             <span className="small muted">Demo control. Cut it, then use any screen: nothing stops working.</span>
+            {linkCut && queued.length === 0 && <p className="banner info">Today's summary had already gone out before you cut the link, so nothing is waiting yet. The next one is made tomorrow and will wait here until the link is back. <button className="btn sm" onClick={() => setDay(day + 1)} data-testid="link-next-day">Go to tomorrow and see it wait</button></p>}
           </div>
         ))}
       </section>
@@ -45,9 +52,9 @@ export function LinkScreen() {
       {hasLink && (
         <Card title="Queued for the ground" right={<span className="chip num" data-testid="queue-count">{queued.length} waiting</span>}>
           <p className="small muted">One summary per mission day goes out automatically, smaller than a text message. It contains only what you have chosen to share with the flight surgeon in Sharing (by default nothing personal, only cabin alerts). While there is no link, summaries wait here and go out together when it returns.</p>
-          {queued.length > 0 && <ul className="list small num">{queued.slice(-6).map((o) => <li key={o.day}>{shortDay(mission, o.day)} · {o.bytes} bytes · waiting</li>)}{queued.length > 6 && <li className="muted">and {queued.length - 6} earlier</li>}</ul>}
-          {sent.length > 0 && <><span className="lab small">Recently sent</span><ul className="list small num">{sent.map((o) => <li key={o.day}>{shortDay(mission, o.day)} · {o.bytes} bytes · sent {o.sentDay !== undefined && o.sentDay !== o.day ? `on ${shortDay(mission, o.sentDay)} (was queued)` : 'same day'}{o.delayS ? `, arrived ${fmtDelay(o.delayS)} later` : ''}</li>)}</ul></>}
-          {outbox.length > 0 && <details><summary>See exactly what the latest summary contains</summary><pre className="eq" data-testid="summary-payload">{JSON.stringify(JSON.parse(outbox[outbox.length - 1].payload), null, 1)}</pre></details>}
+          {queued.length > 0 && <ul className="list small num">{queued.slice(-6).map((o) => <li key={o.day}>{shortDay(mission, o.day)} · waiting</li>)}{queued.length > 6 && <li className="muted">and {queued.length - 6} earlier</li>}</ul>}
+          {sent.length > 0 && <><span className="lab small">Recently sent</span><ul className="list small num">{sent.map((o) => <li key={o.day}>{shortDay(mission, o.day)} · sent {o.sentDay !== undefined && o.sentDay !== o.day ? `on ${shortDay(mission, o.sentDay)} (was queued)` : 'same day'}{o.delayS ? `, arrived ${fmtDelay(o.delayS)} later` : ''}</li>)}</ul></>}
+          {outbox.length > 0 && <details><summary>See exactly what the latest summary contains ({outbox[outbox.length - 1].bytes} bytes)</summary><pre className="eq" data-testid="summary-payload">{JSON.stringify(JSON.parse(outbox[outbox.length - 1].payload), null, 1)}</pre></details>}
         </Card>
       )}
 

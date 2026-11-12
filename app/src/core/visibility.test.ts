@@ -5,7 +5,7 @@ import { scorePerson, type ModelJson } from './detect'
 import { features } from './mission'
 import { defaultSharing, SHARE_CATEGORIES, type SharingSettings } from './sharing'
 import type { Mission } from './types'
-import { groundSummary, viewFor } from './visibility'
+import { groundSummary, viewFor, visibleExtras, visibleOpenItems } from './visibility'
 
 const m = JSON.parse(fs.readFileSync('public/data/missions/mars_transit.json', 'utf8')) as Mission
 const model = JSON.parse(fs.readFileSync('public/data/model_mission.json', 'utf8')) as ModelJson
@@ -96,5 +96,40 @@ describe('emergency consent', () => {
   })
   it('without consent, nobody sees it', () => {
     for (const role of ['cmo', 'commander', 'ground'] as const) expect(viewFor(role, urgent, none()).findings).toHaveLength(0)
+  })
+  it('symptoms marked for the medical officer only are not shown to the commander, unless the patient is the medical officer', () => {
+    const share = defaultSharing()
+    for (const c of SHARE_CATEGORIES) { share.commander[c] = 'none'; share.cmo[c] = 'none' }
+    const run = (crewId: string, symptoms: string[]) => {
+      const xx = features(m, crewId, model.indicators, [])
+      return analyzeDay(m, crewId, { crewId, x: xx, scored: scorePerson(xx, model, m.phases) }, model, 100, [{ key: 'k', mission: m.id, crew: crewId, day: 100, values: {}, symptoms, ts: 0 }])
+    }
+    const patient = m.crew.find((c) => c.role !== 'cmo' && c.role !== 'commander')!.id
+    const priv = run(patient, ['self_harm'])
+    expect(viewFor('cmo', priv, share).findings.some((f) => f.emergency)).toBe(true)
+    expect(viewFor('commander', priv, share).findings.length).toBe(0)
+    expect(viewFor('ground', priv, share).findings.length).toBe(0)
+    // chest pain is shown to both
+    expect(viewFor('commander', run(patient, ['chest_pain']), share).findings.some((f) => f.emergency)).toBe(true)
+    // a private item together with a non-private one is shown (the commander needs the non-private one)
+    expect(viewFor('commander', run(patient, ['self_harm', 'chest_pain']), share).findings.some((f) => f.emergency)).toBe(true)
+    // the medical officer as patient: the commander is the backup and sees it
+    const cmo = m.crew.find((c) => c.role === 'cmo')!.id
+    expect(viewFor('commander', run(cmo, ['self_harm']), share).findings.some((f) => f.emergency)).toBe(true)
+    // open items follow the same gate, and the ground never sees them
+    expect(visibleOpenItems('cmo', priv.openItems, share, false).length).toBeGreaterThan(0)
+    expect(visibleOpenItems('commander', priv.openItems, share, false).length).toBe(0)
+    expect(visibleOpenItems('ground', priv.openItems, { ...share, ground: { ...share.ground, symptoms: 'detail' } }, false).length).toBe(0)
+    // with emergency sharing off nothing is shown to anyone
+    expect(visibleOpenItems('cmo', priv.openItems, { ...share, emergency: false }, false).length).toBe(0)
+  })
+  it('medication classes and photos are shown only when Symptoms is shared in detail', () => {
+    const share = defaultSharing()
+    share.cmo.symptoms = 'trend'
+    expect(visibleExtras('cmo', share, ['Sleep aid'], [{ ts: 1, label: 'Skin', data: 'x' }])).toEqual({ meds: [], photos: [] })
+    share.cmo.symptoms = 'detail'
+    expect(visibleExtras('cmo', share, ['Sleep aid'], []).meds).toEqual(['Sleep aid'])
+    share.ground.symptoms = 'detail'
+    expect(visibleExtras('ground', share, ['Sleep aid'], []).meds).toEqual([])
   })
 })

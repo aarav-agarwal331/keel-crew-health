@@ -30,8 +30,7 @@ Outside your range
 Resting heart rate (bpm)
 50
 60
-Keel flags
-Symptoms begin
+Symptoms begin, Keel flags
 Day 104
 Day 112
 Day 121
@@ -40,31 +39,59 @@ Heart rate variability (ms)
 20
 40
 60
-Keel flags
-Symptoms begin
+Symptoms begin, Keel flags
 Day 104
 Day 112
 Day 121
 Day 129
 Skin temperature (overnight) (°C)
 34
-Keel flags
-Symptoms begin
+Symptoms begin, Keel flags
 Day 104
 Day 112
 Day 121
 Day 129
 What Keel did
-DAY 121
-More serious now: Your body looks like it is under strain
+DAY 128
+Act today: Several readings have drifted from your normal
 
-Take your temperature now. No exercise until you have. Tell the medical officer. (today; medical officer)
+The notice open since Day 115 now looks like this. Do a full check-in today and repeat any reading that looks wrong. (at the next routine opportunity; self-managed)
+
+DAY 127
+Act today: Your mood has been lower than usual
+
+The notice open since Day 115 now looks like this. Book a private conversation with the medical officer. You can also record a message for the support team at home; it goes when a link is available. (at the next routine opportunity; self-managed)
+
+DAY 126
+Act today: Several readings have drifted from your normal
+
+The notice open since Day 115 now looks like this. Do a full check-in today and repeat any reading that looks wrong. (at the next routine opportunity; self-managed)
+
+DAY 125
+Act today: Your mood has been lower than usual
+
+The notice open since Day 115 now looks like this. Book a private conversation with the medical officer. You can also record a message for the support team at home; it goes when a link is available. (at the next routine opportunity; self-managed)
+
+DAY 124
+Act today: Blood oxygen is below your normal
+
+The notice open since Day 115 now looks like this. Take a fingertip reading now, sitting still with a warm hand. (today; medical officer)
+
+DAY 122
+Act today: The same symptom three days running
+
+Tell the medical officer today. (today; medical officer)
+
+DAY 121
+Act today: Your body looks like it is under strain
+
+The notice open since Day 115 now looks like this. Take your temperature now. No exercise until you have. Tell the medical officer. (today; medical officer)
 
 DAY 120
 SCRIPTED EVENT
 What was scripted: illness (infection-like strain)
 
-This is the day the simulated crew member first feels symptoms and ticks them at check-in. Scripted at 2.15 times the average real response: a peak resting heart rate rise of about 7 bpm, the published median among detected cases and near the upper quartile of real episodes. About three real episodes in ten show no heart-rate rise at all.
+This is the day the scripted illness symptoms begin and the simulated crew member ticks them at check-in. An odd tired or congested day before this is ordinary simulated background, not the script. Scripted at 2.15 times the average real response: a peak resting heart rate rise of about 7 bpm. That is above the upper quartile of the real episodes (5.3 bpm) and matches the published median among cases a detector caught, so this is an easy case. The simulated rise starts up to 4 days before the symptom day. About three real episodes in ten show no heart-rate rise at all.
 
 DAY 120
 Act today: Throat or cough symptoms, and your readings are drifting
@@ -74,7 +101,7 @@ Take your temperature now. No exercise until you have. Tell the medical officer.
 DAY 119
 More serious now: Your mood has been lower than usual
 
-Book a private conversation: with the medical officer, or a recorded message to the support team at home. (at the next routine opportunity; self-managed)
+Book a private conversation with the medical officer. You can also record a message for the support team at home; it goes when a link is available. (at the next routine opportunity; self-managed)
 
 DAY 119
 LINK
@@ -82,25 +109,47 @@ Earth link lost
 
 Scripted two-week blackout (antenna fault), modelled on the two-week command pause at solar conjunction. Keel keeps working on board.
 
+DAY 116
+Worth a look: Your mood has been lower than usual
+
+The notice open since Day 115 now looks like this. Book a private conversation with the medical officer. You can also record a message for the support team at home; it goes when a link is available. (at the next routine opportunity; self-managed)
+
 DAY 115
-Worth a look: You are running short on sleep
+Worth a look: Your sleep is short or has shifted
 
 Protect a full 8.5-hour sleep period tonight. (at the next routine opportunity; self-managed)
+
+DAY 110
+Worth a look: Your reactions are slower than usual
+
+The notice open since Day 107 now looks like this. Repeat the test after a ten-minute break; if it is still slow, ask for a buddy check on critical tasks today. (at the next routine opportunity; self-managed)
+
+DAY 108
+Worth a look: Several readings have drifted from your normal
+
+The notice open since Day 107 now looks like this. Do a full check-in today and repeat any reading that looks wrong. (at the next routine opportunity; self-managed)
 
 DAY 107
 Worth a look: Exercise has dropped below your plan
 
 Do today's session, even a shortened one, and plan the next three. (at the next routine opportunity; self-managed)
 
+DAY 104
+Worth a look: Exercise has dropped below your plan
+
+Do today's session, even a shortened one, and plan the next three. (at the next routine opportunity; self-managed)
+
 RESULT OF THIS REPLAY
 
-Keel flagged this 1 day before the first symptoms, with a specific action and no link to Earth.
+In this scripted case Keel flagged it on the day symptoms began, with a specific action and no link to Earth.
 
-Sensors alone, with no symptom report: the detector showed its illness pattern or alert tier on Day 119, 1 day before symptoms began. The earlier flag came from her check-in combined with drifting readings. Keel is a backstop and a record, not an early-warning system.
+Sensors alone, or with her check-in? The flag on Day 120 came from the symptoms she ticked at check-in, combined with drifting readings. The sensors alone showed the illness pattern on Day 121, 1 day after symptoms began.
 
-Earlier in this replay Keel also raised 2 notices that the scripted event did not cause. Some reflect ordinary lapses in the simulated routine, such as a missed exercise session; some are false alerts. That is part of the picture: notices are budgeted at about one false one per person-month.
+On Day 119 the detector had already moved, but the readings then looked like something else ("Your mood has been lower than usual") and the advice was for that. It is not counted as flagging this event.
 
-Across all the real data, not this one script: Keel flagged 66% of 107 real illness episodes at one false alert per person-month, 30 points more than luck. It did not give early warning. Everything except illness is tested in simulation only.
+Keel's log for this replay also has 7 entries that are not about the scripted event. Some are one open notice being read differently as the days pass; some reflect ordinary lapses in the simulated routine, such as a missed exercise session; some are false alerts. That is part of the picture: notices are budgeted at about one false one per person-month.
+
+Across all the real data, not this one script: run as the app runs it, Keel flagged 72% of 107 real illness episodes, 32 points more than luck, at 1.4 false alerts per person-month. It did not give early warning. Everything except illness is tested in simulation only.
 
 One scripted event proves nothing by itself.
 

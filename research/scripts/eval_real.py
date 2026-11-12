@@ -21,7 +21,8 @@ import pandas as pd
 from keel import realdata
 from keel.core import Params
 from keel.evaluate import (METHOD_LABELS, METHODS, Person, Windows, aggregate, bootstrap, calibrate, chance_rows, cv_run, fit_model,
-                           net_stats, person_outcome, quiet_mask, score_people)
+                           net_stats, person_outcome, score_people)
+from keel.mission import SPEC2, ground_people
 from keel.export import APP_PUBLIC, code_version, git_commit, write_json
 
 INTERIM = ROOT / "data" / "interim"
@@ -43,6 +44,9 @@ MIN_DAYS = 28   # a person needs at least this many days with resting heart rate
 DEPLOYED = json.loads((APP_PUBLIC / "data" / "model_mission.json").read_text())["deployed"]
 # in-flight rate of upper-respiratory symptoms on the ISS: 0.97 per flight-year (Crucian et al. 2016, DOMAIN ref 52b)
 URI_PER_PERSON_MONTH = 0.97 / 12
+# pid -> device group.  Pretend events are weighted to the device mix of the real episodes (83% Fitbit),
+# because devices differ in how often they alert.  Filled in main().
+STRATA: dict[str, str] = {}
 
 
 def rolling_mean(v: np.ndarray, n: int = 7, min_valid: int = 4) -> np.ndarray:
@@ -112,17 +116,22 @@ def run(spec_key: str, people: list[Person], w: Windows, p: Params, adjust=None,
     return cv_run(people, SPECS[spec_key], p, w, budgets, k=5, seed=seed, methods=methods, adjust_spec=adjust, strat=strat)
 
 
-def chance_for(res: dict, people: list[Person], m: str, b: float, w: Windows, p: Params) -> list[dict]:
-    return chance_rows(people, res["scores"][m], res["thr_person"][m][b], w, p.merge_gap, per_person=5, seed=SEED)
+def chance_for(res: dict, people: list[Person], m: str, b: float, w: Windows, p: Params, **kw) -> list[dict]:
+    return chance_rows(people, res["scores"][m], res["thr_person"][m][b], w, p.merge_gap, per_person=5, seed=SEED, **{"scored_only": False, **kw})
 
 
-def with_net(rows, ch, other=None, n_boot=2000):
+def with_net(rows, ch, other=None, n_boot=2000, strata="default"):
+    """Detection, its chance level (device-weighted to the real episodes) and detection above luck."""
     st = bootstrap(rows, n_boot, SEED)
     c = aggregate(ch)
-    st["chance_detection_rate"] = c["detection_rate"]
-    st["chance_by_onset_rate"] = c["by_onset_rate"]
+    ns = net_stats(rows, ch, n_boot, SEED, other, STRATA if strata == "default" else strata)
+    st["chance_pooled"] = c["detection_rate"]
+    st["chance_detection_rate"] = ns.pop("chance_used")
+    st["chance_by_onset_rate"] = ns.pop("chance_by_onset_used")
     st["n_pseudo_events"] = c["n_events"]
-    st.update(net_stats(rows, ch, n_boot, SEED, other))
+    st.update(ns)
+    # the same gain as a share of what luck leaves to be found
+    st["net_rescaled"] = st["net_detection"] / (1 - st["chance_detection_rate"]) if st["chance_detection_rate"] < 1 else float("nan")
     return st
 
 
@@ -133,6 +142,9 @@ def summarise(res: dict, people: list[Person], w: Windows, p: Params, methods=ME
         for m in methods:
             other = (res["outcomes"]["fixed"][b], ch["fixed"]) if m != "fixed" and "fixed" in methods else None
             out[m][str(b)] = with_net(res["outcomes"][m][b], ch[m], other)
+            if m == DEPLOYED and "zscore" in methods and m != "zscore":
+                d = net_stats(res["outcomes"][m][b], ch[m], 2000, SEED, (res["outcomes"]["zscore"][b], ch["zscore"]), STRATA)
+                out[m][str(b)]["net_diff_vs_zscore"], out[m][str(b)]["net_diff_vs_zscore_ci"] = d["net_diff"], d["net_diff_ci"]
     return out
 
 
@@ -145,7 +157,7 @@ def train_test(train: list[Person], test: list[Person], spec_key: str, w: Window
     for b in budgets:
         thr = calibrate(tr, [q.onsets for q in train], b, w, p.merge_gap)
         rows = [{**person_outcome(s, thr, q.onsets, w, p.merge_gap), "pid": q.pid} for s, q in zip(te, test)]
-        ch = chance_rows(test, te, [thr] * len(test), w, p.merge_gap, 5, SEED)
+        ch = chance_rows(test, te, [thr] * len(test), w, p.merge_gap, 5, SEED, scored_only=False)
         out[str(b)] = with_net(rows, ch, None, 1000)
     return out
 
@@ -156,6 +168,7 @@ def main():
     flow: dict = {}
     people = load_people(["rhr", "steps"], flow)
     n_ev = sum(len(q.onsets) for q in people)
+    STRATA.update({q.pid: ("Fitbit" if q.meta["device"] == "Fitbit" else "other") for q in people})
     quiet_groups = {}
     for q in people:
         if not q.onsets:
@@ -173,6 +186,10 @@ def main():
         "by_kind": {k: sum(1 for q in people for e in q.events_meta if e["kind"] == k) for k in ["covid_symptom", "covid_test_only", "other_illness"]},
         "by_device": {d: sum(1 for q in people if q.meta["device"] == d) for d in sorted({q.meta["device"] for q in people})},
         "events_by_mode": {m: sum(len(q.onsets) for q in people if q.meta["dataset"] == "phase2" and q.meta["mode"] == m) for m in ["retrospective", "prospective"]},
+        "excluded_with_illness": int(sum(v for k, v in flow.get("excluded_under_28_nights", {}).items() if k.split(":")[1] not in ("no_reported_illness", "non_positive"))),
+        "excluded_with_illness_by_device": {d: int(sum(v for k, v in flow.get("excluded_under_28_nights", {}).items() if k.split(":")[1] not in ("no_reported_illness", "non_positive") and k.split(":")[2] == d))
+                                            for d in sorted({k.split(":")[2] for k in flow.get("excluded_under_28_nights", {})})},
+        "events_by_device": {d: sum(len(q.onsets) for q in people if STRATA[q.pid] == d) for d in ["Fitbit", "other"]},
         "quiet_people": quiet_groups, "median_days_per_person": float(np.median([len(q.x) for q in people])),
         "sampling_note": "Phase 1: 120 recordings from 118 people (one person has three short recordings, all excluded for length). Phase 2 is a subset of the release: all 84 positives, plus the first 60 Fitbit and first 60 other-device participant IDs in sorted order (not a random draw). Dates are shifted per person by the data owners, so pretend events cannot be matched to the calendar: lockdowns and isolation after a positive test are tangled up with onset.",
     }
@@ -188,6 +205,33 @@ def main():
         print(f"{m:8s} @1 det {s['detection_rate']:.2f} chance {s['chance_detection_rate']:.2f} net {s['net_detection']:.2f} [{s['net_detection_ci'][0]:.2f},{s['net_detection_ci'][1]:.2f}]"
               f" FA {s['fa_per_person_month']:.2f} | @0.25 det {s2['detection_rate']:.2f} net {s2['net_detection']:.2f} [{s2['net_detection_ci'][0]:.2f},{s2['net_detection_ci'][1]:.2f}]"
               + (f" | net diff vs fixed @1 {s['net_diff']:.2f} [{s['net_diff_ci'][0]:.2f},{s['net_diff_ci'][1]:.2f}]" if "net_diff" in s else ""))
+
+    # ---------------- how sensitive is "luck" to the way pretend events are drawn? ----------------
+    chance_sens = {}
+    ill_idx = [i for i, q in enumerate(people) if q.onsets]
+    for b in [0.25, 1.0]:
+        rows = res["outcomes"][DEPLOYED][b]
+        ch = chance_for(res, people, DEPLOYED, b, w, p)
+        ch_by = {r["pid"]: r for r in ch}
+        old = chance_for(res, people, DEPLOYED, b, w, p, scored_only=True)
+        pick = lambda st: {k: st[k] for k in ("chance_detection_rate", "net_detection", "net_detection_ci")}  # noqa: E731
+        chance_sens[str(b)] = {
+            "device_weighted": pick(with_net(rows, ch, None, 1000)),
+            "pooled_over_all_people": pick(with_net(rows, ch, None, 1000, strata=None)),
+            "only_people_who_had_an_episode": pick(with_net([rows[i] for i in ill_idx], [ch_by[people[i].pid] for i in ill_idx if people[i].pid in ch_by], None, 1000, strata=None)),
+            "windows_with_a_score_every_day": pick(with_net(rows, old, None, 1000, strata=None)),
+        }
+    print("chance sensitivity @1", {k: (round(v["chance_detection_rate"], 3), round(v["net_detection"], 3)) for k, v in chance_sens["1.0"].items()})
+
+    # ---------------- sensitivity: an alert already open in the window also counts ----------------
+    open_alert = {}
+    for b in [0.25, 1.0]:
+        rr, cc = {}, {}
+        for m in ["fixed", "zscore", DEPLOYED]:
+            rr[m] = [{**person_outcome(res["scores"][m][i], res["thr_person"][m][b][i], q.onsets, w, p.merge_gap, count_open=True), "pid": q.pid} for i, q in enumerate(people)]
+            cc[m] = chance_for(res, people, m, b, w, p, count_open=True)
+        open_alert[str(b)] = {m: with_net(rr[m], cc[m], (rr["fixed"], cc["fixed"]) if m != "fixed" else None, 1000) for m in rr}
+    print("open-alert @1", {m: (round(v["detection_rate"], 2), round(v["chance_detection_rate"], 2), round(v["net_detection"], 2), [round(x, 2) for x in v.get("net_diff_ci", [])]) for m, v in open_alert["1.0"].items()})
 
     # ---------------- breakdowns for the deployed detector ----------------
     breakdown = {}
@@ -265,7 +309,8 @@ def main():
         pe = load_people(SPECS[key]["indicators"])
         r = res if key == "rhr_steps" else run(key, pe, w, p, methods=["fixed", DEPLOYED], budgets=[0.25, 1.0])
         abl[key] = {"label": SPEC_LABELS[key], "n_people": len(pe), "n_events": sum(len(q.onsets) for q in pe),
-                    **{m: {str(b): with_net(r["outcomes"][m][b], chance_for(r, pe, m, b, w, p), None, 1000) for b in [0.25, 1.0]} for m in ["fixed", DEPLOYED]}}
+                    **{m: {str(b): with_net(r["outcomes"][m][b], chance_for(r, pe, m, b, w, p),
+                                            (r["outcomes"]["fixed"][b], chance_for(r, pe, "fixed", b, w, p)) if m != "fixed" else None, 2000) for b in [0.25, 1.0]} for m in ["fixed", DEPLOYED]}}
         abl[key]["both_tiers"] = True
         if key == "rhr_act7":
             # this is the activity feature the app itself uses (a 7-day average), so its predictive value is reported too
@@ -298,20 +343,52 @@ def main():
     win = {}
     for pre, post in [(14, 7), (10, 4), (7, 0), (3, 0)]:
         w2 = Windows(det_pre=pre, det_post=post)
-        rows = [{**person_outcome(res["scores"][DEPLOYED][i], res["thr_person"][DEPLOYED][1.0][i], q.onsets, w2, p.merge_gap), "pid": q.pid} for i, q in enumerate(people)]
-        ch = chance_rows(people, res["scores"][DEPLOYED], res["thr_person"][DEPLOYED][1.0], w2, p.merge_gap, 5, SEED)
-        a, c = aggregate(rows), aggregate(ch)
-        win[f"-{pre}..+{post}"] = {"detection_rate": a["detection_rate"], "chance": c["detection_rate"], "net": a["detection_rate"] - c["detection_rate"]}
+        rr, cc = {}, {}
+        for m in ["fixed", DEPLOYED]:
+            rr[m] = [{**person_outcome(res["scores"][m][i], res["thr_person"][m][1.0][i], q.onsets, w2, p.merge_gap), "pid": q.pid} for i, q in enumerate(people)]
+            cc[m] = chance_rows(people, res["scores"][m], res["thr_person"][m][1.0], w2, p.merge_gap, 5, SEED, scored_only=False)
+        st = with_net(rr[DEPLOYED], cc[DEPLOYED], (rr["fixed"], cc["fixed"]), 1000)
+        win[f"-{pre}..+{post}"] = {"detection_rate": st["detection_rate"], "chance": st["chance_detection_rate"], "net": st["net_detection"], "net_ci": st["net_detection_ci"],
+                                   "net_diff_vs_fixed": st["net_diff"], "net_diff_vs_fixed_ci": st["net_diff_ci"]}
     p1 = [q for q in people if q.meta["dataset"] == "phase1"]
     p2 = [q for q in people if q.meta["dataset"] == "phase2"]
     cross = {"train_phase1_test_phase2": train_test(p1, p2, "rhr_steps", w, p), "train_phase2_test_phase1": train_test(p2, p1, "rhr_steps", w, p)}
     seeds = {}
     for sd in [1, 2, 3, 4, 5]:
         r = run("rhr_steps", people, w, p, methods=[DEPLOYED], seed=sd, budgets=[0.25, 1.0])
-        seeds[str(sd)] = {str(b): {k: v for k, v in with_net(r["outcomes"][DEPLOYED][b], chance_rows(people, r["scores"][DEPLOYED], r["thr_person"][DEPLOYED][b], w, p.merge_gap, 5, sd), None, 200).items()
+        seeds[str(sd)] = {str(b): {k: v for k, v in with_net(r["outcomes"][DEPLOYED][b], chance_rows(people, r["scores"][DEPLOYED], r["thr_person"][DEPLOYED][b], w, p.merge_gap, 5, sd, scored_only=False), None, 200).items()
                                    if k in ("detection_rate", "net_detection", "fa_per_person_month", "chance_detection_rate")} for b in [0.25, 1.0]}
     print("cross-phase", {k: {b: (round(v[b]["detection_rate"], 2), round(v[b]["net_detection"], 2), round(v[b]["fa_per_person_month"], 2)) for b in v} for k, v in cross.items()})
     print("fold seeds net@1", [round(v["1.0"]["net_detection"], 2) for v in seeds.values()], "det@1", [round(v["1.0"]["detection_rate"], 2) for v in seeds.values()])
+
+    # ---------------- the app's own configuration on real people ----------------
+    # The app cannot calibrate on real people in flight: its model and thresholds come from the
+    # simulator.  So score real people with a model fitted on simulated ground people (heart rate +
+    # 7-day activity, the two channels both sides have) at the simulator-calibrated thresholds.
+    # "Held out" = people neither the simulator's noise fit nor its illness fit ever saw.
+    pe7 = load_people(SPECS["rhr_act7"]["indicators"])
+    g_tr = ground_people(40, 70000)
+    g_model = fit_model(g_tr, SPEC2, p, w)
+    g_sc = [x[DEPLOYED] for x in score_people(g_tr, g_model, p)]
+    r_sc = [x[DEPLOYED] for x in score_people(pe7, g_model, p)]
+    daily_all, events_all, ppl = realdata.stanford()
+    qg = ppl[ppl.group.isin(["no_reported_illness", "non_positive"])]
+    stq = daily_all.merge(qg[["dataset", "pid"]], on=["dataset", "pid"])
+    _, val_s = realdata.split_half(sorted((stq.dataset + ":" + stq.pid).unique()))
+    _, val_e2 = realdata.split_half(realdata.event_pids(events_all), seed=11)
+    held = [i for i, q in enumerate(pe7) if q.pid in val_s or q.pid in val_e2]
+    deployed_cfg = {"label": "Model and thresholds from the simulator, heart rate + 7-day activity, applied unchanged to real people",
+                    "n_people_all": len(pe7), "n_events_all": sum(len(q.onsets) for q in pe7),
+                    "n_people_held_out": len(held), "n_events_held_out": sum(len(pe7[i].onsets) for i in held), "all": {}, "held_out": {}}
+    for b in [0.25, 1.0]:
+        thr = calibrate(g_sc, [q.onsets for q in g_tr], b, w, p.merge_gap)
+        rows = [{**person_outcome(sc_, thr, q.onsets, w, p.merge_gap), "pid": q.pid} for sc_, q in zip(r_sc, pe7)]
+        ch = chance_rows(pe7, r_sc, [thr] * len(pe7), w, p.merge_gap, 5, SEED, scored_only=False)
+        ch_by = {r["pid"]: r for r in ch}
+        deployed_cfg["all"][str(b)] = with_net(rows, ch, None, 1000)
+        deployed_cfg["held_out"][str(b)] = with_net([rows[i] for i in held], [ch_by[pe7[i].pid] for i in held if pe7[i].pid in ch_by], None, 1000)
+    print("deployed config (sim thresholds on real people)", {k: {b: (round(v["detection_rate"], 2), round(v["chance_detection_rate"], 2), round(v["net_detection"], 2), [round(x, 2) for x in v["net_detection_ci"]], round(v["fa_per_person_month"], 2))
+                                                                   for b, v in deployed_cfg[k].items()} for k in ["all", "held_out"]})
 
     # ---------------- event-aligned resting heart rate ----------------
     rel = np.arange(-21, 15)
@@ -336,7 +413,8 @@ def main():
         "indicators": SPEC_LABELS["rhr_steps"], "windows": {"det_pre": w.det_pre, "det_post": w.det_post, "excl_pre": w.excl_pre, "excl_post": w.excl_post},
         "budgets": BUDGETS, "deployed": DEPLOYED, "methods": METHODS, "method_labels": METHOD_LABELS, "cohort": cohort, "main": main_tbl, "breakdown": breakdown,
         "leads": leads, "false_alerts_quiet": fa_dist, "false_alerts_by_group": fa_by_group, "ppv": ppv, "steps_drop": steps_drop, "ablation": abl,
-        "window_sensitivity": win, "cross_phase": cross, "fold_seeds": seeds, "event_aligned_rhr": aligned,
+        "window_sensitivity": win, "chance_sensitivity": chance_sens, "open_alert_sensitivity": open_alert, "deployed_config": deployed_cfg,
+        "chance_note": "Pretend events are placed on label-quiet days with the same missing data as real windows, and weighted to the device mix of the real episodes. They cannot be matched to the calendar (dates are shifted per person), so exposure, travel, testing and isolation near a real onset are not reproduced; detection above luck is therefore an upper bound on what physiology alone explains.", "cross_phase": cross, "fold_seeds": seeds, "event_aligned_rhr": aligned,
         "published": {"source": "Mishra et al. 2020 (DOMAIN.md ref 58), phase 1 only, their own online CuSum on hourly data",
                       "presymptomatic_detection": 0.63, "false_alarms_per_month_healthy": 0.66,
                       "note": "Different features, protocol and people subset; shown for orientation, not as a like-for-like comparison."},

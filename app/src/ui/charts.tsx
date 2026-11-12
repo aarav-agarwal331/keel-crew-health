@@ -125,11 +125,10 @@ export function TrendChart(p: TrendProps) {
         {ticksY.map((v) => <g key={v}><line x1={padL} x2={W - padR} y1={y(v)} y2={y(v)} stroke="var(--grid)" /><text className="axis" x={padL - 6} y={y(v) + 4} textAnchor="end">{Number(v.toFixed(2))}</text></g>)}
         {bands.map((d, i) => <path key={i} d={d} fill="var(--band)" />)}
         {p.expected && !p.compact && <path d={linePath(days.map((t) => (ok(p.expected![t]) ? [x(t), y(p.expected![t])] : null)))} fill="none" stroke="var(--text-3)" strokeWidth="1" strokeDasharray="4 4" />}
-        {(p.refLines ?? []).map((r, i) => <g key={r.label}><line x1={padL} x2={W - padR} y1={y(r.y)} y2={y(r.y)} stroke="var(--text-2)" strokeDasharray="2 4" />{!p.compact && <text className="axis halo" x={padL + 4} y={y(r.y) + (i % 2 ? 13 : -5)} textAnchor="start">{r.label}</text>}</g>)}
+        {(p.refLines ?? []).map((r) => <g key={r.label}><line x1={padL} x2={W - padR} y1={y(r.y)} y2={y(r.y)} stroke="var(--text-2)" strokeDasharray="2 4" /></g>)}
         {(p.markers ?? []).filter((m) => m.day >= from && m.day <= p.to).map((m, i) => (
           <g key={i}>
             <line x1={x(m.day)} x2={x(m.day)} y1={padT} y2={H - padB} stroke={m.kind === 'alert' ? 'var(--serious)' : m.kind === 'truth' ? 'var(--text)' : 'var(--text-3)'} strokeWidth={m.kind === 'alert' ? 2 : 1.5} strokeDasharray={m.kind === 'phase' ? '6 4' : m.kind === 'truth' ? '2 3' : undefined} />
-            {!p.compact && <text className="axis halo" x={x(m.day) > W - padR - 90 ? x(m.day) - 5 : x(m.day) + 5} textAnchor={x(m.day) > W - padR - 90 ? 'end' : 'start'} y={padT + 10 + (i % 3) * 14}>{m.label}</text>}
           </g>
         ))}
         <path d={linePath(days.map((t) => (ok(p.values[t]) ? [x(t), y(p.values[t])] : null)))} fill="none" stroke="var(--series)" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
@@ -139,6 +138,17 @@ export function TrendChart(p: TrendProps) {
           if (out) return <rect key={t} x={x(t) - 4.5} y={y(p.values[t]) - 4.5} width="9" height="9" transform={`rotate(45 ${x(t)} ${y(p.values[t])})`} fill="var(--serious)" stroke="var(--surface)" strokeWidth="1.5" />
           return showDots ? <circle key={t} cx={x(t)} cy={y(p.values[t])} r="2.6" fill="var(--series)" /> : null
         })}
+        {/* labels are drawn last, over the data line, so nothing strikes through them */}
+        {!p.compact && (p.refLines ?? []).map((r, i) => <text key={r.label} className="axis halo" x={W - padR - 4} y={y(r.y) + (i % 2 ? 13 : -5)} textAnchor="end">{r.label}</text>)}
+        {!p.compact && (() => {
+          const ms = (p.markers ?? []).filter((m) => m.day >= from && m.day <= p.to).slice().sort((a, b) => a.day - b.day)
+          return ms.map((m, i) => {
+            // two markers close together: the earlier label goes to the left of its line, the later to the right
+            const crowded = i < ms.length - 1 && x(ms[i + 1].day) - x(m.day) < 110
+            const left = (crowded && x(m.day) > padL + 90) || x(m.day) > W - padR - 100
+            return <text key={`${m.day}-${i}`} className="axis halo" x={left ? x(m.day) - 5 : x(m.day) + 5} textAnchor={left ? 'end' : 'start'} y={padT + 10 + (i % 3) * 14}>{m.label}</text>
+          })
+        })()}
         {ticksX.map((t, i) => <text key={i} className="axis" x={x(t)} y={H - 6} textAnchor={i === 0 ? 'start' : i === ticksX.length - 1 ? 'end' : 'middle'}>{p.labelFor(t)}</text>)}
         {hover !== null && <line x1={x(hover)} x2={x(hover)} y1={padT} y2={H - padB} stroke="var(--text-2)" strokeWidth="1" />}
         {hover !== null && ok(hv) && <circle cx={x(hover)} cy={y(hv)} r="5" fill="var(--series)" stroke="var(--surface)" strokeWidth="2" />}

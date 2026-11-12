@@ -34,7 +34,7 @@ export function Sharing() {
             <button aria-pressed={s.emergency !== false} onClick={() => setEmergency(me, true)}>On</button>
             <button aria-pressed={s.emergency === false} onClick={() => setEmergency(me, false)}>Off</button>
           </div>
-          <span className="small muted">When on, a red-flag symptom or an "act now" safety reading is shown at once to the medical officer and to the commander as backup. If you switch it off, both can see that it is off.</span>
+          <span className="small muted">When on, a symptom you mark as serious or an "act now" safety reading is shown at once to the medical officer, and stays on their list until they close it with a note. The commander is shown it too, as backup, except the items marked "medical officer only" at check-in (thoughts of harming yourself, an injury, tooth pain, one-sided swelling). Nothing goes to the ground automatically. If you switch this off, both can see that it is off.</span>
         </div>
       </Card>
 
@@ -42,11 +42,12 @@ export function Sharing() {
         <Seg label="Role" value={role} onChange={setRole} options={ROLES.map((x) => ({ id: x.id, label: x.label }))} />
         <p className="small muted">{ROLES.find((x) => x.id === role)!.blurb}</p>
         <ul className="list tiny muted">{LEVELS.map((l) => <li key={l.id}><strong>{l.label}:</strong> {l.reveals}</li>)}</ul>
+        <p className="tiny muted">Sharing areas group the readings a medical officer would look at together, so they are not the same as the body areas on Today. Each area below lists exactly what it contains.</p>
         <div className="col">
           {SHARE_CATEGORIES.map((c) => (
             <div key={c} className="col" style={{ gap: 6, borderTop: '1px solid var(--border)', paddingTop: 10 }}>
               <span className="lab">{catLabel(c)}</span>
-              <span className="tiny muted">{c === 'symptoms' ? 'What you tick at check-in' : INDICATORS.filter((i) => i.category === c && i.source !== 'env' && i.source !== 'dosimeter').map((i) => i.label.toLowerCase()).join(', ')}</span>
+              <span className="tiny muted">{c === 'symptoms' ? 'What you tick at check-in, medication classes you log, and photos you add' : INDICATORS.filter((i) => i.category === c && i.source !== 'env' && i.source !== 'dosimeter').map((i) => i.label.toLowerCase()).join(', ')}</span>
               <div className="seg" role="group" aria-label={`${catLabel(c)} shared with ${role}`}>
                 {LEVELS.map((l) => <button key={l.id} aria-pressed={s[role][c] === l.id} onClick={() => setShare(me, role, c, l.id as Level)} data-testid={`share-${role}-${c}-${l.id}`}>{l.label}</button>)}
               </div>

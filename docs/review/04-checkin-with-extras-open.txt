@@ -4,7 +4,7 @@ BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
 Check-in
 
-Flight day 121. Four quick answers take about a minute. Everything stays on this tablet unless you share it.
+Flight day 121. Four quick answers take about a minute. Your answers stay on this tablet. Other roles see only what Sharing allows: by default the commander sees a readiness tier without the reason, and a symptom marked serious goes to the medical officer at once.
 
 1. How are you feeling?
 1
@@ -32,7 +32,7 @@ Vision change
 Rash or itchy skin
 Something else
 Something serious? Chest pain, fainting, trouble breathing, bleeding, vision loss, thoughts of harming yourself…
-Tell the medical officer now if you have any of these. Ticking one and saving shows it to the medical officer and the commander at once (emergency sharing).
+Tell the medical officer now if you have any of these. Ticking one and saving shows it to the medical officer at once (emergency sharing). The commander is shown it too, except the items marked "medical officer only".
 Chest pain or pressure
 Short of breath at rest
 Fainted, blacked out or had a seizure
@@ -46,10 +46,16 @@ Severe side or back pain
 Vomited more than twice, or cannot keep fluids down
 Coughing or vomiting blood, or bleeding that will not stop
 Cannot pass urine, or blood in urine
-Injury, something in the eye, or smoke or chemical exposure
+Injury, or something in the eye
+(medical officer only)
+Smoke or chemical exposure
 Joint pain or numbness after a spacewalk
+New swelling or pain in one leg, or on one side of the neck
+(medical officer only)
 Severe tooth or jaw pain
+(medical officer only)
 Thoughts of harming yourself
+(medical officer only)
 3. Fluids today
 −
 0.00 L
@@ -64,7 +70,7 @@ All of it
 Most
 About half
 Little
-Save check-in
+None
 Hide the optional extras
 Reaction self-test (1 minute)
 Tap to start (1 minute)
@@ -77,6 +83,26 @@ Exercise today
 +
 
 Only needed if the exercise devices did not log your session.
+
+Medication taken today (optional)
+Sleep aid
+Pain or fever medicine
+Decongestant or antihistamine
+Anti-nausea medicine
+Other medicine
+
+Classes only, no doses. These can move heart rate, reaction time and sleep, so Keel shows them next to any alert. The medical officer sees them only if you share Symptoms in detail. Keel never recommends medication.
+
+Photo for the medical officer (optional)
+What is it of?
+Skin
+Eye
+Mouth or throat
+Wound
+Other
+Take or choose a photo
+
+A rash, an eye, a wound. Up to three a day, shrunk and stored on this tablet when you save. Keel does not analyse photos. The medical officer sees them only if you share Symptoms in detail.
 
 Measurements (only what you took today)
 Body temperature (thermometer) (°C)
@@ -95,4 +121,7 @@ Sleep duration (h)
 How to measure
 Resting heart rate (bpm)
 How to measure
+
+Taking a reading again? Type the new value and save: the earlier one is kept with its time, and both are shown to whoever you share them with.
+
 Save check-in

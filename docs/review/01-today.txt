@@ -4,7 +4,7 @@ BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
 Keel is a crew health monitor that works with no link to Earth. It learns each person's own normal and gives one action with its source. Demo: Lucía's tablet, simulated Mars transit.
 
-Watch it catch an event (40 s)
+Demo: replay a scripted event (40 s)
 The evidence
 Hide
 Act today
@@ -24,9 +24,9 @@ Possible illness in a closed cabin affects the whole crew, and early rest is che
 Thermometer reading (°C)
 Save reading
 Why, and what next
-Share this alert with the medical officer (heart and circulation)
+Show the medical officer the readings behind this alert
 
-Opens only that area to the medical officer, until you change it in Sharing. Everything else stays as you set it. You still need to tell them.
+This changes one setting: Heart, oxygen and temperature goes from "Status" to "Full detail" for the medical officer, until you change it back in Sharing. Nothing else changes. You still need to tell them.
 
 No link to Earth right now. Everything on this screen was worked out on this device.
 
@@ -34,16 +34,12 @@ What changed
 All trends
 Resting heart rate 66 bpm
 Higher than your usual 53. Your most unusual reading in 53 days.
-Tested on real data
 Heart rate variability 21 ms
 Lower than your usual 43. More unusual than 50 of your last 53 days.
-Tested in simulation only
 Reaction time 297 ms
 Higher than your usual 261. Your most unusual reading in 52 days. Out of your range for 5 days.
-Tested in simulation only
 Skin temperature (overnight) 35.1 °C
 Higher than your usual 34.1. More unusual than 48 of your last 53 days. Out of your range for 2 days. Wrist skin temperature, not a fever reading.
-Tested in simulation only
 Your body at a glance
 Brain, sleep and mood
 Heart and circulation
@@ -73,19 +69,21 @@ Exercise this week
 Crew goal this week: 86% of planned exercise done together. Individual numbers stay private.
 
 Report a symptom now
-Check-in done (simulated entry; you can redo it)
+Check-in done (simulated)
 Sensor worn last night
 Exercise: on hold until you take your temperature
+Weekly measurement due: body temperature (thermometer)
+ Enter
 Sleep last night 4.5 h. The scheduled sleep period is 8.5 h.
 Cabin
 Deep-space transit vehicle
 Carbon dioxide
 1.9 mmHg
-Headaches become more likely above 2.5
+Advisory line 2.5, alert at 3.0
 Radiation dose
 216 mSv this mission (dosimeter estimate)
-Today 1.88 mSv. The 600 mSv career limit also counts earlier flights.
+Today 1.88 mSv. At this rate about 320 mSv by the end of this mission. The 600 mSv career limit also counts earlier flights.
 
-Keel raised 2 notices for you in the last 30 days. The budget allows about one false one per person-month, so some of these are false.
+Keel opened 3 notices from your readings in the last 30 days. Keel can be wrong: expect one or two false notices a month. How often it is right
 
 Keel is decision support, not a medical device. It does not diagnose. It shows how your readings compare with your own normal and points to documented countermeasures.

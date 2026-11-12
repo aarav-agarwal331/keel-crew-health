@@ -3,21 +3,28 @@ import { CM, STATUS_LABEL, URGENCY_LABEL } from '../core/analysis'
 import { CATEGORIES, IND, shortDay } from '../core/mission'
 import { readiness, READY_LABEL } from '../core/readiness'
 import { allows, defaultSharing, SHARE_CATEGORIES, type Role } from '../core/sharing'
-import { categoryStatus, viewFor } from '../core/visibility'
+import { categoryStatus, viewFor, visibleExtras, visibleOpenItems } from '../core/visibility'
 import { useApp } from '../state'
-import { Card, Glyph, href, Seg, StatusTag } from '../ui/kit'
+import { Card, Glyph, href, ReadingLog, Seg, StatusTag } from '../ui/kit'
 
 const catLabel = (id: string) => CATEGORIES.find((c) => c.id === id)?.label ?? id
 
 export function Crew() {
-  const { mission, day, today, sharing, logAccess, me } = useApp()
+  const { mission, day, today, sharing, logAccess, me, entries, actions, logAction } = useApp()
+  const [notes, setNotes] = useState<Record<string, string>>({})
+  const closed = new Set(actions.filter((x) => x.did.startsWith('Closed')).map((x) => x.alertKey))
   const meRole = mission.crew.find((c) => c.id === me)?.role
   const [role, setRole] = useState<Role>(meRole === 'cmo' ? 'cmo' : 'commander')
   const rows = useMemo(() => mission.crew.map((c) => {
     const a = today(c.id)
     const s = sharing[c.id] ?? defaultSharing()
-    return { c, a, s, r: a ? readiness(a) : null, v: a ? viewFor(role, a, s) : null }
-  }), [mission, today, sharing, role])
+    const e = entries.find((x) => x.mission === mission.id && x.crew === c.id && x.day === day)
+    return {
+      c, a, s, r: a ? readiness(a) : null, v: a ? viewFor(role, a, s) : null,
+      open: a ? visibleOpenItems(role, a.openItems, s, c.role === 'cmo') : [],
+      extras: visibleExtras(role, s, e?.meds, e?.photos),
+    }
+  }), [mission, today, sharing, role, entries, day])
 
   // every look at someone's data is written to that person's access log
   useEffect(() => {
@@ -59,7 +66,7 @@ export function Crew() {
       )}
 
       <div className="grid2">
-        {rows.map(({ c, a, r, v, s }) => (
+        {rows.map(({ c, a, r, v, s, open, extras }) => (
           <section className="card" key={c.id} data-testid={`crew-${c.id}`}>
             <div className="card-h"><div className="col" style={{ gap: 0 }}><h2>{c.name}</h2><span className="small muted">{c.role_label}</span></div></div>
             {!a || !r || !v ? <p className="muted">No data.</p> : <>
@@ -69,6 +76,7 @@ export function Crew() {
                 const shown = r.reasons.filter((x) => allows((s.commander as Record<string, 'none' | 'status' | 'trend' | 'detail'>)[x.category] ?? 'none', 'trend'))
                 return shown.length
                   ? <ul className="list small">{shown.map((x, i) => <li key={i}>{x.text}</li>)}</ul>
+                  : c.role === 'commander' ? <p className="small muted">This is the commander's own card. The reasons are on their own Today screen.</p>
                   : <p className="small muted"><StatusTag status="private" label="" size={16} /> Reason not shared. Ask {c.name.split(' ')[0]}{c.role === 'cmo' ? '' : ' or the medical officer'}.</p>
               })()}
               {v.findings.filter((x) => x.emergency).map((x) => <p key={x.key} className="banner strong"><strong>{x.title}.</strong> {x.action} <span className="small">(shared automatically: emergency sharing)</span></p>)}
@@ -89,6 +97,7 @@ export function Crew() {
                           <div className="col small" style={{ paddingLeft: 30 }}>
                             <p><strong>Advised ({URGENCY_LABEL[(f.urgency ?? 'routine') as 'now']}):</strong> {f.action}</p>
                             <ol className="list steps">{(f.steps ?? []).map((x) => <li key={x}><span>{x}</span></li>)}</ol>
+                            <ReadingLog readings={f.readings ?? []} title="Entered readings, in order" />
                             {(f.changes ?? []).length > 0 && <p><strong>Readings shared with you:</strong> {f.changes!.map((ch) => `${IND[ch.ind].label} ${Number.isNaN(ch.value) ? '–' : ch.value.toFixed(IND[ch.ind].decimals)} ${IND[ch.ind].unit} (usual ${ch.expected.toFixed(IND[ch.ind].decimals)})`).join('; ')}.</p>}
                             {(f.countermeasures ?? []).map((id) => CM[id]).filter(Boolean).map((cm) => <p key={cm.id} className="muted"><strong>{cm.title}.</strong> {cm.text} [{cm.refs.join(', ')}]</p>)}
                             <p className="muted">Keel does not recommend medication or treatment. Those decisions are yours, with the onboard medical checklist and the flight surgeon when a link is available. If readings from other areas would help, ask the crew member to share them.</p>
@@ -99,6 +108,26 @@ export function Crew() {
                   ))}
                   {SHARE_CATEGORIES.every((cat) => v.categories[cat].status === undefined) && <li className="muted">This crew member keeps their data private. They can share from their own Sharing screen.</li>}
                 </ul>
+              )}
+              {role === 'cmo' && extras.meds.length > 0 && <p className="small"><strong>Medication logged today:</strong> {extras.meds.join(', ').toLowerCase()}.</p>}
+              {role === 'cmo' && extras.photos.length > 0 && <div className="row wrap">{extras.photos.map((ph) => <figure key={ph.ts} style={{ margin: 0 }}><img src={ph.data} alt={`${ph.label} photo from ${c.name}`} style={{ width: 140, height: 140, objectFit: 'cover', borderRadius: 10 }} /><figcaption className="tiny">{ph.label}</figcaption></figure>)}</div>}
+              {/* the worklist: 'now' and 'today' findings from this person's own entries stay here until closed with a note */}
+              {(role === 'cmo' || c.role === 'cmo') && open.filter((x) => !closed.has(x.key)).length > 0 && (
+                <div className="col" data-testid={`worklist-${c.id}`}>
+                  <span className="lab">{role === 'cmo' && c.role === 'cmo' ? 'The medical officer\'s own open items: the commander, as backup, closes these' : 'Open items for you to close'}</span>
+                  {open.filter((x) => !closed.has(x.key)).map((x) => (
+                    <div key={x.key} className="col" style={{ gap: 6, borderTop: '1px solid var(--border)', paddingTop: 8 }}>
+                      <span className="small"><strong>{x.title}</strong> <span className="muted">({shortDay(mission, x.day)}, {x.urgency === 'now' ? 'needed attention at once' : 'needed attention the same day'})</span></span>
+                      {!(role === 'cmo' && c.role === 'cmo') && (
+                        <div className="row wrap">
+                          <input type="text" aria-label={`Closing note for ${x.title}`} value={notes[x.key] ?? ''} onChange={(e) => setNotes((p) => ({ ...p, [x.key]: e.target.value }))} placeholder="Note: what you found and did" style={{ flex: 1, minWidth: 180 }} />
+                          <button className="btn sm" disabled={!(notes[x.key] ?? '').trim()} onClick={() => void logAction({ crew: c.id, alertKey: x.key, day, did: `Closed by the ${role === 'cmo' ? 'medical officer' : 'commander (backup)'}`, feel: null, note: (notes[x.key] ?? '').trim() })} data-testid="close-item">Close</button>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                  <p className="tiny muted">A later normal reading does not close an item. Only a note from you does.</p>
+                </div>
               )}
             </>}
           </section>

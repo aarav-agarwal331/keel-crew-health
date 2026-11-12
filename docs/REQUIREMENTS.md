@@ -12,7 +12,7 @@ visible feature in the README traceability table. Status as of 2026-11-12 (where
 | A2 | "Enables astronauts to **evaluate** … the status of their health" (self-assessment, no ground needed) | [x] |
 | A3 | "Enables astronauts to … **act on** the status of their health"; "provides guidance on treatments and health improvements" | [x] |
 | A4 | "Create a **visual tool**" | [x] |
-| A5 | Gather data through any input: "keyboard text, mouse clicks, or camera images" | [~] taps, numbers, file import and a live sensor are supported; camera images are not |
+| A5 | Gather data through any input: "keyboard text, mouse clicks, or camera images" | [x] taps, numbers, file import, a live sensor, and a photo taken or chosen at check-in for the medical officer (stored, not analysed) |
 | A6 | Data must "represent a health indicator" (units stated, e.g. "blood sugar levels in mg/dL") | [x] |
 | A7 | Indicators the statement names as useful: **blood pressure, heart rate, blood sugar, body temperature, daily sleep hours, mood** | [x] |
 | A8 | Address the health problems named: immune changes, bone density loss, cardiovascular events, inadequate nutrition, behavioral health conditions | [x] |

@@ -1,15 +1,15 @@
 {
  "script": "research/scripts/calibrate_sim.py",
- "commit": "db7ddc8",
- "code_version": "e72f14c4f290",
+ "commit": "bc3a633",
+ "code_version": "4094da0150f3",
  "targets": {
   "rhr": {
    "source": "Stanford wearables, people with no reported illness (calibration half)",
    "n_people": 74,
    "real_within_sd": 3.507658994266655,
    "real_ar1": 0.15777894948705853,
-   "sim_within_sd": 3.5057835116241347,
-   "sim_ar1": 0.15666981951381537,
+   "sim_within_sd": 3.495634036394496,
+   "sim_ar1": 0.13578575520232394,
    "log_scale": false
   },
   "hrv": {
@@ -17,8 +17,8 @@
    "n_people": 21,
    "real_within_sd": 0.23511242223760015,
    "real_ar1": 0.1997841732378805,
-   "sim_within_sd": 0.23511242223802623,
-   "sim_ar1": 0.17502838912195287,
+   "sim_within_sd": 0.23511242223799342,
+   "sim_ar1": 0.17502814985129178,
    "log_scale": true
   },
   "spo2": {
@@ -26,8 +26,8 @@
    "n_people": 13,
    "real_within_sd": 0.9543469291743389,
    "real_ar1": 0.011778163204814373,
-   "sim_within_sd": 0.9543469291980571,
-   "sim_ar1": -0.01678261705150638,
+   "sim_within_sd": 0.9543469291723523,
+   "sim_ar1": -0.016782617051879622,
    "log_scale": false
   },
   "temp": {
@@ -35,7 +35,7 @@
    "n_people": 29,
    "real_within_sd": 0.47551535312166854,
    "real_ar1": 0.10706313326405874,
-   "sim_within_sd": 0.4755153531216681,
+   "sim_within_sd": 0.47551535312166826,
    "sim_ar1": 0.26971272328161244,
    "log_scale": false
   },

@@ -10,17 +10,12 @@ Day 121. What each crew member has chosen to share with you. Nothing is shown th
 
 Demo view. On a mission each role has its own device; here you can switch roles. Every look is written to the crew member's access log.
 
-Crew-wide pattern
-3 of 4 crew show a change in symptoms over the last three days.
-
-When several people drift together, look for a shared cause: an infection spreading, water or food, cabin air, schedule, workload. Tell the medical officer. Counts only, no names, and only when three or more people are affected.
-
 Amara Okafor
 Commander
 
-Worth a look
+Steady
 
-Heart and circulation
+Heart, oxygen and temperature
 Sleep and body clock
 Exercise
 Food and fluids
@@ -28,9 +23,9 @@ Symptoms
 Kenji Sato
 Crew medical officer
 
-Worth a look
+Steady
 
-Heart and circulation
+Heart, oxygen and temperature
 Sleep and body clock
 Exercise
 Food and fluids
@@ -40,18 +35,18 @@ Flight engineer
 
 Act today
 
-Heart and circulation
+Heart, oxygen and temperature
 Sleep and body clock
 Exercise
 Food and fluids
 Symptoms
-Alert in heart and circulation (act today for 1 d)
+Alert in heart, oxygen and temperature (act today for 1 d)
 Tomás Novák
 Mission specialist
 
 Worth a look
 
-Heart and circulation
+Heart, oxygen and temperature
 Sleep and body clock
 Exercise
 Food and fluids

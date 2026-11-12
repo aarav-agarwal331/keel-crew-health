@@ -8,7 +8,7 @@ Your body looks like it is under strain
 
 Resting heart rate is up together with other readings. This combination is often seen during an infection, usually once symptoms have started, but Keel cannot tell you the cause.
 
-Act today since Day 121 (1 day). Keel first raised a notice on Day 115 for a different reason: "You are running short on sleep".
+Act today since Day 121 (1 day). Keel first raised a notice on Day 115 for a different reason: "Your sleep is short or has shifted".
 
 RECOMMENDED ACTION
 
@@ -21,7 +21,7 @@ Keep some distance at meals and wipe shared surfaces until this clears.
 Thermometer reading (°C)
 Save reading
 Also showing in your readings
-Your mood has been lower than usual. Book a private conversation: with the medical officer, or a recorded message to the support team at home.
+Your mood has been lower than usual. Book a private conversation with the medical officer. You can also record a message for the support team at home; it goes when a link is available.
 Your reactions are slower than usual. Repeat the test after a ten-minute break; if it is still slow, ask for a buddy check on critical tasks today.
 What changed
 Resting heart rate: 66 bpm, higher than your usual 53.
@@ -86,9 +86,9 @@ Today. The crew medical officer.
 
 Possible illness in a closed cabin affects the whole crew, and early rest is cheap.
 
-Share this alert with the medical officer (heart and circulation)
+Show the medical officer the readings behind this alert
 
-Opens only that area to the medical officer, until you change it in Sharing. Everything else stays as you set it.
+This changes one setting: Heart, oxygen and temperature becomes "Full detail" for the medical officer, until you change it back in Sharing. Nothing else changes.
 
 What did you do?
 Did it

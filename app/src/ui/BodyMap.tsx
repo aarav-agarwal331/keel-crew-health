@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { STATUS_LABEL } from '../core/analysis'
 import { INDICATORS } from '../core/mission'
 import type { Status } from '../core/types'
-import { href, StatusTag } from './kit'
+import { href, StatusTag, Glyph } from './kit'
 
 export const SYSTEMS: { id: string; label: string; what: string; hazard: string }[] = [
   { id: 'head', label: 'Brain, sleep and mood', what: 'Sleep, body clock, reaction time and mood.', hazard: 'Isolation and confinement, plus a lost day-night cycle, disturb sleep and wear on mood and attention.' },
@@ -13,6 +13,9 @@ export const SYSTEMS: { id: string; label: string; what: string; hazard: string 
   { id: 'core', label: 'Whole body', what: 'Body temperature and body mass.', hazard: 'Immune changes in flight make infections and reactivated viruses more likely; temperature is an early sign.' },
   { id: 'environment', label: 'Cabin and radiation', what: 'Cabin carbon dioxide and your radiation dose.', hazard: 'Beyond Earth\'s magnetic shield, cosmic rays give a steady dose and solar storms an occasional burst.' },
 ]
+
+/** where the status shape sits for each region of the figure */
+const MARK: Record<string, [number, number]> = { environment: [122, 10], muscle: [14, 128], core: [90, 160], head: [92, 14], lungs: [38, 100], heart: [66, 104], gut: [66, 147] }
 
 export function BodyMap({ systems }: { systems: Record<string, Status> }) {
   const [sel, setSel] = useState<string>(() => {
@@ -40,6 +43,13 @@ export function BodyMap({ systems }: { systems: Record<string, Status> }) {
           <path className={cls('lungs')} d="M56 94 Q62 90 70 94 L70 126 Q60 130 54 122 Z M94 94 Q88 90 80 94 L80 126 Q90 130 96 122 Z" {...pick('lungs')} />
           <path className={cls('heart')} d="M75 112 c-5 -8 -16 -3 -13 5 c2 6 9 9 13 13 c4 -4 11 -7 13 -13 c3 -8 -8 -13 -13 -5 Z" {...pick('heart')} />
           <rect className={cls('gut')} x="60" y="140" width="30" height="32" rx="10" {...pick('gut')} />
+          {/* a shape on every flagged region, so status on the figure is never colour alone */}
+          {SYSTEMS.filter((x) => ['watch', 'act', 'urgent'].includes(st(x.id))).map((x) => (
+            <g key={x.id} transform={`translate(${MARK[x.id][0]},${MARK[x.id][1]})`} className={`st-${st(x.id)}`} style={{ pointerEvents: 'none' }} aria-hidden="true">
+              <circle cx="9" cy="9" r="10" fill="var(--surface)" />
+              <Glyph status={st(x.id)} size={18} />
+            </g>
+          ))}
         </svg>
         <div className="syslist">
           {SYSTEMS.map((s) => (

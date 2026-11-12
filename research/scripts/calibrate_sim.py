@@ -102,6 +102,16 @@ def main():
     sig = [float(np.log(st_["sd"].quantile(0.75) / st_["sd"].quantile(0.25)) / 1.349) for st_, _, _, _ in targets.values()]
     P["within_sd_person_sigma"] = float(np.mean(sig))
     set_param(J, "within_sd_person_sigma", P["within_sd_person_sigma"], "Mean over five indicators of ln(Q3/Q1)/1.349 of the within-person SD across people (calibration halves)")
+    # Start every fit from the same place (the target itself) and make one coarse sweep first, so
+    # the result does not depend on what the parameter file held before: running this script
+    # twice gives the same file.
+    for col, (stats, key, log, src) in targets.items():
+        P[key] = float(stats["sd"].median())
+    P["rhr_ar1"] = float(np.clip(targets["rhr"][0]["ar1"].median(), 0.05, 0.9))
+    for col, (stats, key, log, src) in targets.items():
+        for _ in range(3):
+            sd_sim, _ = sim_within(P, col, log)
+            P[key] = P[key] * float(stats["sd"].median()) / sd_sim
     for col, (stats, key, log, src) in targets.items():
         tgt_sd, tgt_ar, n = float(stats["sd"].median()), float(stats["ar1"].median()), int(len(stats))
         # the simulator's total day-to-day SD also contains sleep-debt and exercise effects, so

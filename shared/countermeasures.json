@@ -180,5 +180,14 @@
    "22"
   ],
   "text": "ISS crews have typically been 2.8 to 4.4% below pre-flight body mass, mostly within the first month. NASA's standard is to provide 100% of energy needs. The 5% trigger Keel uses is a placeholder for a clinician to set."
+ },
+ {
+  "id": "CM-TEMPBASE",
+  "title": "Body temperature runs higher in flight",
+  "type": "literature",
+  "refs": [
+   "68"
+  ],
+  "text": "Resting core temperature rose by about 1 °C over the first two and a half months on the ISS, so a fever line set on Earth should be read against the person's own in-flight readings."
  }
 ]

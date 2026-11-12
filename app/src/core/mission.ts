@@ -3,7 +3,8 @@ import type { Entry, IndicatorDef, Mission } from './types'
 
 export const INDICATORS = indicatorsJson.indicators as unknown as IndicatorDef[]
 export const IND: Record<string, IndicatorDef> = Object.fromEntries(INDICATORS.map((i) => [i.id, i]))
-export const CATEGORIES = indicatorsJson.categories as { id: string; label: string }[]
+// the first sharing area also holds blood oxygen, temperature and blood pressure, so its label says so
+export const CATEGORIES = (indicatorsJson.categories as { id: string; label: string }[]).map((c) => (c.id === 'cardio' ? { ...c, label: 'Heart, oxygen and temperature' } : c))
 export const SYMPTOMS = indicatorsJson.symptoms as { id: string; label: string; red_flag?: boolean }[]
 export const SYM: Record<string, { id: string; label: string; red_flag?: boolean }> = Object.fromEntries(SYMPTOMS.map((s) => [s.id, s]))
 

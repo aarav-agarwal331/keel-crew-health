@@ -9,15 +9,16 @@
 Try it in 60 seconds:
 
 1. Open the live demo. You are on a crew member's tablet during a simulated Mars transit, in a link blackout.
-2. Tap **Watch it catch an event** and press Play.
+2. Tap **Demo: replay a scripted event** and press Play.
 3. Tap **The evidence** to see how well it works on real data, and what it cannot do.
 
-On the International Space Station a flight surgeon on Earth watches crew health in near real time.
-On the way to Mars the signal takes up to about 24 minutes each way and sometimes there is no link at
-all. Keel runs entirely on the crew member's own device: it learns each person's own normal, notices
-drift, says what changed in plain language, and recommends one action tied to a documented
-countermeasure. The crew member owns the data and decides what the medical officer, the commander and
-the ground can see.
+On the International Space Station a flight surgeon is seconds away by voice and talks privately with
+each crew member about once a week; routine vital signs are not streamed to the ground. On the way to
+Mars the signal takes up to about 24 minutes each way and sometimes there is no link at all, so
+medical decisions have to move on board. Keel runs entirely on the crew member's own device: it learns
+each person's own normal, notices drift, says what changed in plain language, and recommends one
+action tied to a documented countermeasure. The crew member owns the data and decides what the
+medical officer, the commander and the ground can see.
 
 Built for the 2026 NASA Space Apps Challenge, *Create Health Monitoring Software for Astronauts on
 Space Missions*. Keel is an independent project. It is not a NASA product, is not endorsed by NASA, and
@@ -31,48 +32,72 @@ is decision support, not a medical device.
   (251 people, 107 episodes), with false-alert rates, intervals, a chance level and held-out people.
   The app shows the results, including where a simple method does as well and what is *not* shown.
 - **Safety rules that do not wait for a trend.** Red-flag symptoms and single readings beyond a
-  sourced threshold are acted on at once.
+  sourced threshold are acted on at once. Every reading is kept with its time, the worst one counts,
+  and anything urgent stays on the medical officer's list until they close it with a note.
 - **Alarm fatigue treated as a hazard.** Thresholds come from an explicit false-alert budget.
-- **Auditable advice.** A fixed table of 32 rules maps patterns, entered readings and reported
+- **Auditable advice.** A fixed table of 38 rules maps patterns, entered readings and reported
   symptoms to cited countermeasures, each with how soon and who. No language model writes medical text.
 - **Crew-owned data.** Per-role, per-area sharing with an access log; the commander sees readiness,
-  not reasons.
+  not reasons, and some symptoms go to the medical officer only.
 
 ## Headline results
 
 Detection is reported **above luck**: at one false alert per person-month an alert falls inside a
 two-week window by chance about a third of the time, so that share is measured and subtracted.
 
-| Real wearable data: 251 people, 107 dated illness episodes, held-out people | Keel | One threshold for everyone |
+Real wearable data: 251 people, 107 dated illness episodes (Stanford COVID-19 wearables), two sensors
+(overnight heart rate and activity).
+
+| Configuration, notice tier | Flagged | By luck | **Above luck** (95% interval) | False alerts per person-month |
+|---|---|---|---|---|
+| **Keel as the app runs it**: model and thresholds from the simulator, heart rate + 7-day activity | 72% | 40% | **+32 points** (22 to 41) | 1.40 (budget 1.00) |
+| … on the 113 people nothing was fitted on (41 episodes) | 80% | 42% | +38 (23 to 50) | 1.37 |
+| Thresholds from other real people (5-fold over people), same sensors | 62% | 31% | +31 (21 to 41) | 1.00 |
+| … heart rate alone | 50% | 28% | +22 (12 to 32) | 0.99 |
+| … heart rate + daily steps | 66% | 33% | +34 (24 to 44) | 0.99 |
+| One fixed threshold for everyone, heart rate + daily steps | 41% | 23% | +18 (8 to 27) | 1.01 |
+| One fixed threshold for everyone, heart rate + 7-day activity | 26% | 19% | +7 (−1 to 15) | 1.01 |
+
+| Stricter tier (the one that brings in the medical officer), budget 0.25 | Above luck | False alerts per person-month |
 |---|---|---|
-| Episodes flagged at 1 false alert per person-month | 66% (luck 36%) | 41% (luck 25%) |
-| **Above luck** (95% interval) | **+30 points** (20 to 40) | +17 points (7 to 27) |
-| Keel's advantage, above luck | +14 points (0 to 28) | |
-| At the stricter tier, 0.25 false alerts per person-month | +32 (22 to 42) with daily steps; +12 (3 to 20) with the 7-day activity average the app itself uses | +9 (3 to 17) |
-| Measured false alerts per person-month (budget 1.00) | 0.99 with thresholds from other real people; 1.38 with thresholds from simulation only | |
+| Keel as the app runs it | +19 (9 to 28) | 0.39 |
+| Thresholds from other real people, heart rate + 7-day activity | +13 (4 to 21) | 0.25 |
+| … heart rate + daily steps | +33 (23 to 43) | 0.25 |
 
 | Other evidence | Result |
 |---|---|
-| Simulated missions, full sensor set, 1 false alert per person-month | 67% flagged (luck 40%): +26 above luck (20 to 33) |
-| Gravity transitions, real NASA bed-rest data, 14 volunteers | false flags after getting up: 9 with a plain personal baseline, 4 with Keel (p = 0.06) |
+| Simulated missions, full sensor set, 1 false alert per person-month | 67% flagged (luck 41%): +26 above luck (19 to 33). By event type: sleep restriction +55, exercise outage +54, low fluids +26 (10 to 40), cabin CO2 +11 (1 to 21), illness +11 (−9 to 30), low mood +13 (−5 to 32) |
+| Gravity transitions, real NASA bed-rest pulse data, 14 volunteers | flags after getting up: 9 with a plain personal baseline, 4 with Keel. Not significant (exact paired p = 0.06), there is no ground truth that those flags are false, and the gain comes from widening the band, not from the learned shift |
 
 Honest reading:
 
 - **No early warning.** On real data the alert usually starts on or just after the day symptoms begin
-  (39% had an alert start in the ten days up to onset; luck gives 29%).
-- **Most alerts are false.** At in-flight illness rates, between one alert in 11 and one in 28 at the
+  (39% had an alert start in the ten days up to onset; luck gives 24%).
+- **Most alerts are false.** At in-flight illness rates, between one alert in 11 and one in 25 at the
   strict tier would be a real respiratory illness.
-- **Much of the signal is behavioural.** Heart rate alone is +17 above luck; steps add the rest,
-  because people move less once they feel ill.
-- **The four personal-baseline detectors perform alike.** A simple two-of-three-days rule is +27. The
-  rule that picked the deployed detector was written during review and the choice flipped once.
+- **The app's thresholds run over budget on real people** (1.40 against 1.00; 0.39 against 0.25), and
+  with five sensors two to four times over. A flight system would need recalibrating on crew data.
+- **Much of the signal is behavioural.** Heart rate alone is +22 above luck; activity adds the rest,
+  because people move less once they feel ill, and that cannot be separated from isolating at home.
+- **Above luck is an upper bound.** Pretend illness dates cannot be matched to the calendar, so travel,
+  testing and isolation around a real onset are not reproduced.
+- **Keel's detector is not shown to beat a simple personal rule** (+5 points, −2 to 12). Its lead over
+  one fixed threshold is +16 (3 to 29) in the detection window we use and +10 (−3 to 23) in the wider
+  window we started with; four detectors, two tiers and several windows were compared without
+  correction. The detector was picked on simulated training missions by a rule written during review.
 - **Handling gravity changes halves false alerts after launch but hides real problems** in the first
-  weeks (+20 against +35 above luck in simulation).
-- **Simulation is not reality.** Thresholds calibrated in simulation ran 38% over budget on real people
-  with two indicators and up to nearly four times over with five. The simulator fails three of its own
-  pass marks (HRV variability, sleep carry-over, size of the illness heart-rate rise).
-- The real data is from people on Earth with two indicators. Everything beyond illness is tested in
-  simulation only.
+  weeks (+19 against +34 above luck in simulation).
+- **Simulation is not reality.** The simulator passes its checks only on quantities fitted to the other
+  half of the same data. Its independent checks fail or are off: the illness heart-rate rise (2.1
+  against 4.6 bpm), HRV variability (37% too high), sleep carry-over, all four threshold transfers,
+  and nights under six hours (50% against a published 44%). In simulation, illness and low mood are
+  not detected reliably above luck.
+- The real data is from people on Earth, mostly with COVID-19, with two sensors. Everything beyond
+  illness is tested in simulation only. Nothing here was pre-registered.
+
+Beyond spaceflight, the same design (on-device, personal baselines, crew-owned sharing) would fit
+other isolated teams with delayed medical support, such as Antarctic winter stations or ships at sea.
+We have not tested it there.
 
 Details: the app's Validation screen, [docs/METHOD.md](docs/METHOD.md) and [docs/REVIEW.md](docs/REVIEW.md).
 
@@ -149,20 +174,20 @@ statement saved in [docs/CHALLENGE.md](docs/CHALLENGE.md).
 
 | ID | Requirement | Where to see it |
 |---|---|---|
-| A1 | Gathers health indicators | 17 indicators; wearable import, Bluetooth strap, check-in, cabin sensors (Data sources, Check-in) |
+| A1 | Gathers health indicators | 18 indicators; wearable import, Bluetooth strap, check-in, cabin sensors (Data sources, Check-in) |
 | A2 | Astronauts evaluate their own health | Today status against a personal baseline; Trends; body map |
-| A3 | Act on it; guidance on treatments and improvements | One recommended action on Today; Alert detail with steps and cited countermeasures; Guide → "Everything Keel can recommend" (all 32 rules) |
+| A3 | Act on it; guidance on treatments and improvements | One recommended action on Today; Alert detail with steps and cited countermeasures; Guide → "Everything Keel can recommend" (all 38 rules). Keel deliberately gives no medication or treatment advice: that is left to the medical officer |
 | A4 | A visual tool | Charts with personal bands, clickable body map, replay |
-| A5 | Any input: keyboard, clicks, files | Check-in taps and number entry; file import; live sensor. Camera input is not done |
+| A5 | Any input: keyboard, clicks, files, camera | Check-in taps and number entry; file import; live sensor; a photo taken or chosen at check-in for the medical officer (stored on the device, not analysed) |
 | A6 | Data represents a health indicator, with units | Units on every reading and entry field (for example blood sugar in mg/dL) |
 | A7 | Blood pressure, heart rate, blood sugar, temperature, sleep hours, mood | All six are indicators; blood pressure, blood sugar and thermometer readings have fixed safety rules with sourced reference values |
 | A8 | Immune changes, bone loss, cardiovascular events, nutrition, behavioral health | Illness-pattern rule; exercise adherence for bone and muscle; heart indicators; food and fluid logs; mood and reaction test |
 | A9 | Grounded in the five hazards | Guide → five hazards table; body map "why space matters here" |
-| A10 | Uses NASA HRP and other agencies' resources | docs/DOMAIN.md (62 opened sources); Method → Sources |
+| A10 | Uses NASA HRP and other agencies' resources | docs/DOMAIN.md (69 opened sources); Method → Sources |
 | B1 | Which measurements can be performed in space? | Guide; DOMAIN.md section 3 |
 | B2 | Why is an exam needed? | "Why it matters" on every indicator (Trends, Guide) |
 | B3 | How do hazards affect indicators? | Guide; body map; simulator adaptation model |
-| B4 | When does a result warrant crew or flight-surgeon attention? | "How soon" and "who" on every alert; red-flag symptoms and safety thresholds that bypass the detector; Guide → "When to involve someone else" |
+| B4 | When does a result warrant crew or flight-surgeon attention? | "How soon" and "who" on every alert; red-flag symptoms and safety thresholds that bypass the detector; Guide → "When to involve someone else" (generated from the rule table); the medical officer's list of open items on Crew |
 | B5 | Actions that prevent a critical condition | Rule table mapped to countermeasures (Method → From alert to action) |
 | B6 | Clear UI with animation and interactivity | Replay, hover readouts on every chart, status by colour, shape and words |
 | B7 | Clickable human figure | Today → "Your body at a glance" |

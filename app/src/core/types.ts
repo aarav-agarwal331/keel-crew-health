@@ -55,6 +55,8 @@ export interface IndicatorDef {
   floor: number
   decimals: number
   range: [number, number]
+  /** hard limits for typed entries (outside = a typing slip); between range and limits the value is accepted after a confirmation */
+  limits?: [number, number]
   source: string
   detect: boolean
   plain: string
@@ -71,7 +73,20 @@ export interface Entry {
   symptoms: string[]
   note?: string
   ts: number
+  /** every spot reading entered that day, in order, never overwritten (values holds the latest of each) */
+  readings?: Reading[]
+  /** medication classes the crew member logged that day (free of doses: for the medical officer's context) */
+  meds?: string[]
+  /** photos taken for the medical officer (downscaled, stored on this device only) */
+  photos?: Photo[]
 }
+
+export interface Photo { ts: number; label: string; data: string }
+
+export interface Reading { ind: string; v: number; ts: number }
+
+/** A 'now' or 'today' finding raised from the crew member's own entry; stays listed until the medical officer closes it. */
+export interface OpenItem { key: string; ruleId: string; title: string; day: number; urgency: Urgency; category: string }
 
 export interface ActionLog {
   id?: number
@@ -153,4 +168,12 @@ export interface Finding {
   /** other pattern rules that also hold right now */
   also?: { title: string; action: string }[]
   categories: string[]
+  /** the entered readings this fixed rule is looking at (every one from the most recent day with a reading) */
+  readings?: Reading[]
+  /** red-flag symptoms that go to the medical officer only (the commander is told only when the patient is the medical officer) */
+  cmoOnly?: boolean
+  /** the patient is the crew medical officer, so the commander is the backup */
+  patientIsCmo?: boolean
+  /** who leads, when it is not the tier's default (cabin issues) */
+  who?: string
 }

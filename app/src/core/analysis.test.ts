@@ -119,6 +119,50 @@ describe('end to end on the demo mission', () => {
       for (const f2 of a.findings.filter((x) => !x.crewWide && x.changes.length)) expect(worst).toBeGreaterThanOrEqual({ learning: 0, steady: 1, watch: 2, act: 3, urgent: 4 }[f2.status])
     }
   })
+  it('a repeat reading never erases an abnormal one: the worst reading of the day counts, and both are kept', () => {
+    const e: Entry = { key: 'k', mission: m.id, crew: 'c0', day: 100, values: { glucose: 85 }, symptoms: [], ts: 2, readings: [{ ind: 'glucose', v: 50, ts: 1 }, { ind: 'glucose', v: 85, ts: 2 }] }
+    const a = run('c0', 100, [e])
+    const f1 = a.findings.find((x) => x.ruleId === 'R-V-GLU-LO2')!
+    expect(f1).toBeDefined()
+    expect(a.status).toBe('urgent')
+    expect(f1.readings!.map((r) => r.v)).toEqual([50, 85])
+    // the next day, with no new reading, it is still open and dated from the reading
+    const b = run('c0', 101, [e]).findings.find((x) => x.ruleId === 'R-V-GLU-LO2')!
+    expect(b.start).toBe(100)
+    expect(b.days).toBe(2)
+    // a new day's normal reading replaces the readings in force, but the item stays on the medical officer's list
+    const next: Entry = { key: 'k2', mission: m.id, crew: 'c0', day: 101, values: { glucose: 90 }, symptoms: [], ts: 3 }
+    const c = run('c0', 101, [e, next])
+    expect(c.findings.some((x) => x.ruleId === 'R-V-GLU-LO2')).toBe(false)
+    expect(c.openItems.some((x) => x.ruleId === 'R-V-GLU-LO2' && x.day === 100)).toBe(true)
+  })
+  it('extreme readings and the added fixed rules fire', () => {
+    const mk = (values: Record<string, number>, symptoms: string[] = []): Entry => ({ key: 'k', mission: m.id, crew: 'c0', day: 100, values, symptoms, ts: 0 })
+    const rule = (e: Entry) => run('c0', 100, [e]).findings.map((x) => x.ruleId)
+    expect(rule(mk({ rhr: 170 }))).toContain('R-V-HR2')
+    expect(run('c0', 100, [mk({ rhr: 170 })]).status).toBe('urgent')
+    expect(rule(mk({ rhr: 128 }))).toContain('R-V-HR1')
+    expect(rule(mk({ sbp: 150, dbp: 125 }))).toContain('R-V-BP-HI2')
+    expect(rule(mk({ sbp: 128, dbp: 94 }))).toContain('R-V-BP-HI')
+    expect(rule(mk({ sbp: 45 }))).toContain('R-V-BP-LO2')
+    expect(rule(mk({ glucose: 20 }))).toContain('R-V-GLU-LO2')
+    expect(rule(mk({ spo2: 62 }))).toContain('R-V-SPO2')
+  })
+  it('the medical officer as patient is sent to the commander, never to themself', () => {
+    const cmo = m.crew.find((c) => c.role === 'cmo')!
+    const e: Entry = { key: 'k', mission: m.id, crew: cmo.id, day: 100, values: { temp_oral: 38.6 }, symptoms: [], ts: 0 }
+    const f1 = run(cmo.id, 100, [e]).findings.find((x) => x.ruleId === 'R-V-TEMP')!
+    expect(f1.action).toMatch(/commander/)
+    expect(`${f1.action} ${f1.steps.join(' ')}`).not.toMatch(/[Tt]ell the medical officer|see the medical officer/)
+  })
+  it('exercise is never advised beside an open fever or illness finding', () => {
+    for (const c of m.crew) for (let d = m.pre_days; d < m.days; d++) {
+      const a = run(c.id, d, [{ key: 'k', mission: m.id, crew: c.id, day: d, values: { temp_oral: 38.5 }, symptoms: [], ts: 0 }])
+      const texts = a.findings.flatMap((x) => [x.ruleId, ...(x.also ?? []).map((q) => q.title)])
+      expect(texts.includes('R-EX') || texts.includes('Exercise has dropped below your plan')).toBe(false)
+      if (d > m.pre_days + 40) break
+    }
+  })
   it('a red-flag symptom entered at check-in is urgent immediately', () => {
     const e: Entry = { key: 'k', mission: m.id, crew: 'c0', day: 100, values: {}, symptoms: ['chest_pain'], ts: 0 }
     const a = run('c0', 100, [e])

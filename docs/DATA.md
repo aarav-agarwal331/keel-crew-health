@@ -8,6 +8,13 @@ Access date for everything below: **2026-11-12**. Machine-readable companion: `d
 > NASA Life Sciences Data Archive bed-rest daily vitals for gravity-transition handling. `make data`
 > fetches exactly these (`research/scripts/fetch_data.py`). PMData, the stress datasets and the other
 > entries below were surveyed and downloaded as samples but are not used.
+>
+> **Counts.** The table below gives people as described by the papers. Our reduced files count
+> *recordings*: phase 1 has 120 recordings from 118 people, labelled 32 covid, 76 no reported illness, 11 other illness, 1 other illness (influenza b); phase 2
+> (the subset we downloaded) has 84 covid, 120 non positive. The exact cohort that
+> enters the evaluation, after exclusions, is in `app/public/results/real_eval.json` under `cohort`.
+> The simulator's heart-rate noise is fitted on recordings with no dated illness, which includes
+> phase 2 participants who are simply absent from the positives table and were never confirmed healthy.
 
 ## 1. What this survey is for
 

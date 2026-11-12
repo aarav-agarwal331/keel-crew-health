@@ -12,10 +12,10 @@
 import type { DayAnalysis } from './analysis'
 import { IND } from './mission'
 import { allows, SHARE_CATEGORIES, type Level, type Role, type SharingSettings } from './sharing'
-import type { Finding, Status } from './types'
+import type { Finding, OpenItem, Photo, Reading, Status } from './types'
 
 export interface VisibleIndicator { ind: string; inRange: boolean; value?: number; expected?: number }
-export interface VisibleFinding { emergency?: boolean; steps?: string[]; countermeasures?: string[]; urgency?: string; key: string; category: string; status: Status; days: number; title?: string; tier?: string; action?: string; summary?: string; changes?: Finding['changes']; factors?: Finding['factors'] }
+export interface VisibleFinding { readings?: Reading[]; emergency?: boolean; steps?: string[]; countermeasures?: string[]; urgency?: string; key: string; category: string; status: Status; days: number; title?: string; tier?: string; action?: string; summary?: string; changes?: Finding['changes']; factors?: Finding['factors'] }
 export interface RoleView {
   overall: Status | 'private'
   categories: Record<string, { level: Level; status?: Status; indicators?: VisibleIndicator[] }>
@@ -57,7 +57,9 @@ export function viewFor(role: Role, a: DayAnalysis, share: SharingSettings, valu
     if (f.kind === 'environment') continue
     const cat = f.categories[0]
     // emergency consent: urgent findings go to the medical officer and the commander (the backup) with their title and action
-    if (f.status === 'urgent' && share.emergency !== false && role !== 'ground') {
+    // Symptoms marked "medical officer only" (thoughts of self-harm, an injury, tooth pain) are held back from the
+    // commander unless the patient is the medical officer, whose backup the commander is.
+    if (f.status === 'urgent' && share.emergency !== false && role !== 'ground' && !(role === 'commander' && f.cmoOnly && !f.patientIsCmo)) {
       findings.push({ key: f.key, category: cat, status: f.status, days: f.days, title: f.title, tier: f.tier, action: f.action, emergency: true })
       if (overall === 'private' || rank[f.status] > rank[overall]) overall = f.status
       continue
@@ -72,6 +74,7 @@ export function viewFor(role: Role, a: DayAnalysis, share: SharingSettings, valu
       v.steps = f.steps
       v.countermeasures = f.countermeasures
       v.urgency = f.urgency
+      v.readings = f.readings
       // only the changes and factors that belong to categories shared in full
       v.changes = f.changes.filter((c) => allows((s as Record<string, Level>)[IND[c.ind]?.category] ?? 'none', 'detail'))
       v.factors = f.factors.filter((x) => allows((s as Record<string, Level>)[FACTOR_CATEGORY[x.id]] ?? 'none', 'detail') || FACTOR_CATEGORY[x.id] === 'environment')
@@ -81,8 +84,25 @@ export function viewFor(role: Role, a: DayAnalysis, share: SharingSettings, valu
   return { overall, categories, findings, environment: a.findings.filter((f) => f.kind === 'environment') }
 }
 
+/** Open items (unclosed 'now' and 'today' findings from the crew member's own entries) another role may see:
+ *  'now' items under emergency sharing (medical officer; the commander only when the patient is the medical
+ *  officer), anything else only where its area is shared at 'trend' or more.  The ground sees none. */
+export function visibleOpenItems(role: Role, items: OpenItem[], share: SharingSettings, patientIsCmo: boolean): OpenItem[] {
+  if (role === 'ground') return []
+  return items.filter((it) => {
+    if (it.urgency === 'now' && share.emergency !== false && (role === 'cmo' || patientIsCmo)) return true
+    return allows((share[role] as Record<string, Level>)[it.category] ?? 'none', 'trend')
+  })
+}
+
+/** Medication classes and photos are part of Symptoms, and are shown only when that area is shared in detail. */
+export function visibleExtras(role: Role, share: SharingSettings, meds: string[] | undefined, photos: Photo[] | undefined): { meds: string[]; photos: Photo[] } {
+  const ok = role !== 'ground' && allows((share[role] as Record<string, Level>).symptoms ?? 'none', 'detail')
+  return ok ? { meds: meds ?? [], photos: photos ?? [] } : { meds: [], photos: [] }
+}
+
 const FACTOR_CATEGORY: Record<string, string> = {
-  sleep: 'sleep', timing: 'sleep', fluid: 'nutrition', food: 'nutrition', exercise: 'exercise', load: 'exercise', mood: 'cognition',
+  meds: 'symptoms', sleep: 'sleep', timing: 'sleep', fluid: 'nutrition', food: 'nutrition', exercise: 'exercise', load: 'exercise', mood: 'cognition',
   symptoms: 'symptoms', co2: 'environment', phase: 'environment',
 }
 

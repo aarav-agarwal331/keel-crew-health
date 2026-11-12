@@ -1,7 +1,8 @@
 """make validate (part 3): is the simulator realistic?  Side by side with REAL data that the
 calibration never saw (the validation half of each dataset), plus published in-flight values.
 
-Acceptance criteria, written down before this script was last run:
+Acceptance criteria.  They were set during review, after earlier versions of these checks had
+been seen, so they are not pre-specified:
   variability   simulated median within-person SD within 25% of the real median
   carry-over    simulated lag-1 autocorrelation within 0.15 of the real one
   correlation   simulated between-indicator correlation within 0.15 of the real one
@@ -161,7 +162,7 @@ def main():
     model5 = fit_model(sim5, spec5, p_, w_)
     s5 = [x[deployed] for x in score_people(sim5, model5, p_)]
     real5 = []
-    for pid, g in ls.groupby("pid"):
+    for pid, g in ls_val.groupby("pid"):   # validation half only: the simulator's noise was fitted on the other half
         g = g.set_index("date").sort_index()
         g = g.reindex(pd.date_range(g.index.min(), g.index.max(), freq="D"))
         if g["rhr"].notna().sum() >= 28:
@@ -220,7 +221,7 @@ def main():
         {"what": "Crew with space motion sickness", "unit": "%", "published": 70.0, "simulated": float(100 * np.mean(fl["sms"])), "ref": "52a", "input": True, "note": "Published range 60% to 80%. An input to the simulator."},
         {"what": "Headache odds ratio, CO2 at or above 2.8 mmHg versus below 2.3", "unit": "ratio", "published": None,
          "simulated": float((np.nanmean(fl["head_hi"]) / (1 - np.nanmean(fl["head_hi"]))) / (np.nanmean(fl["head_lo"]) / (1 - np.nanmean(fl["head_lo"])))),
-         "ref": "37", "input": False, "note": "Not a direct input: an independent check, and the simulator undershoots. Published: odds double per 1 mmHg (expect about 1.9 between these bands). The simulated ratio is lower because simulated headaches also come from dehydration, illness and motion sickness."},
+         "ref": "37", "input": False, "note": "Not a direct input: an independent check. Published: odds double per 1 mmHg, so about 1.9 is expected between these bands; the simulated ratio differs from that (see the value), partly because simulated headaches also come from dehydration, illness and motion sickness."},
     ]
     for a in anchors:
         print("anchor", a["what"], a["published"], round(a["simulated"], 2))
@@ -230,7 +231,7 @@ def main():
         "transfer": transfer, "transfer_wide": transfer_wide, "illness": illness, "anchors": anchors,
         "criteria": {"variability": "simulated median within 25% of the real median", "carry_over": "lag-1 autocorrelation within 0.15", "correlation": "within 0.15",
                      "illness": "simulated mean rise over the four days from onset within 25% of the real one", "transfer": "real false-alert rate within 25% of the budget"},
-        "note": "Real values come from the validation half of each dataset; the calibration script only saw the other half.",
+        "note": "Real values come from the validation half of each dataset; the calibration script only saw the other half. The pass marks were set during review, not in advance. Quantities that pass are ones fitted on the other half of the same datasets; the independent checks (illness rise, threshold transfer, nights under six hours) fail or are off.",
     }, indent=1)
 
 

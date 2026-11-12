@@ -128,6 +128,82 @@ Not done from round 2: a richer anatomical figure; a CO2 "now" tier; respiratory
 post-transition band; recalibrating full-set thresholds on real multi-sensor data (the LifeSnaps test
 shows it is needed).
 
-## Round 3
+## Round 3 (2026-11-12, fresh reviewers, redeployed build)
 
-See the end of this file once the third round has run.
+Judge's scores: impact 7, creativity 8, validity 7, relevance 8, presentation 7 (37 of 50), "nominate:
+yes, conditional on fixing the replay claim". Six high-severity issues across the four reviewers.
+
+| # | Reviewer | High-severity finding | Fix |
+|---|---|---|---|
+| 1 | Judge (also flight surgeon, astronaut, statistician) | The replay's result card said "flagged it 1 day before symptoms began" and "the sensors alone showed the pattern on Day 119", but the only Day 119 entry was a low-mood notice with a different action. The illness advice came on Day 120 with her own symptom tick. | Only a notice whose rule matches the scripted event now counts as flagging it. The card reads: flagged on the day symptoms began, from her check-in combined with drifting readings; sensors alone one day after; the Day 119 mood notice is named and not counted. The log shows when one open notice changes its reading. The scripted-event note says the case is an easy one (a 7 bpm rise, above the upper quartile of real episodes) with a four-day simulated run-up. |
+| 2 | Judge | The README said a flight surgeon "watches crew health in near real time" on the ISS, contradicting the app. | Replaced with the app's wording: seconds away by voice, weekly private conference, routine vitals not streamed. |
+| 3 | Astronaut | Check-in said "Everything stays on this tablet unless you share it", while the commander always sees a readiness tier and a serious symptom is shown to others at once. | The line now says what other roles see by default and links to Sharing. |
+| 4 | Flight surgeon | The thermometer box answered any reading under 38.0 °C with "a light session is reasonable", against the rule's own conditions. | The box reports what the rule table now says. A normal reading "does not clear you for exercise", and the highest reading of the day still counts. End-to-end tested. |
+| 5 | Flight surgeon | Extreme readings (heart rate 170, glucose under 30) were refused, and the refusal aborted the whole save, including ticked red-flag symptoms. | Symptoms and every valid value are always saved. A value far outside the usual range is saved after one confirmation tap; only a physically impossible number is rejected, and only that field. New rules treat an extreme heart rate as "now". Unit and end-to-end tested. |
+| 6 | Flight surgeon | A repeat reading overwrote the first: glucose 50 then 85 erased the 50, closed the alert and left no record. | Readings are kept in an append-only log with times; a fixed rule looks at every reading of the most recent day; "now" and "today" findings from the crew member's own entries stay on the medical officer's list until closed with a note. Unit and end-to-end tested. |
+
+Medium-severity findings fixed in the same pass:
+
+- **Headline was not the deployed configuration** (statistician, judge, flight surgeon). New analysis:
+  the simulator-fitted model and thresholds applied unchanged to real people. That is now the
+  headline (+32 above luck, 22 to 41, at 1.40 false alerts per person-month), with the result on
+  never-fitted people beside it. The cross-validated daily-steps figure is a supporting row.
+- **Chance correction** (statistician). Pretend events now carry real missing data and are weighted
+  to the device mix of the episodes; three other estimates are tabulated (the earlier method gives
+  +30 where the new one gives +34); the limit that dates cannot be calendar-matched is stated as
+  making the figure an upper bound; heart rate alone gets equal prominence.
+- **Superiority claims** (statistician). Paired intervals added for Keel against the simple rule
+  (+5, −2 to 12: not distinguishable), for the app's activity feature, for the original window (+10,
+  −3 to 23 over a fixed threshold) and for "an open alert also counts". The text now says a personal
+  baseline is probably, not provably, better, with no correction for multiple looks.
+- **Stale and mismatched numbers** (statistician, judge): calibration text in METHOD, three figures
+  on the Method screen, README counts. Calibration is now idempotent, so all five result files share
+  one code version.
+- **Simulator realism reported too kindly** (statistician). The text now says the pass marks were set
+  during review, that what passes was fitted on the other half of the same data, and that every
+  independent check fails or is off. The five-sensor transfer test uses the validation half only.
+- **Simulated results depend on the event mix** (statistician). Detection above luck is now given by
+  event type with intervals; for illness and low mood they include zero.
+- **Bed rest** (statistician): README now says "flags", "not significant", "from widening the band".
+- **Detector selection** (statistician): described as arbitrary among equals; the dependence of the
+  simulator on 38 of the evaluated episodes is disclosed.
+- **Rules** (flight surgeon): cough and a fever reading corroborate a sensor notice; merging two
+  illness findings keeps the more serious urgency; exercise advice is suppressed beside an illness or
+  fever finding; the medical officer as patient is sent to the commander in every rule; wording that
+  assumed gravity was changed; new fixed rules for a single fast heart rate, diastolic pressure,
+  cabin CO2 at 4 mmHg, a sleep floor, a symptom lasting three days and vomiting after a high dose;
+  the Guide's "when to involve someone else" list is generated from the rule table; the red-flag
+  rule no longer promises a ground summary that is not sent; some red flags go to the medical officer
+  only; one-sided swelling added as a red flag [69]; body temperature in flight cited [68]; a weekly
+  thermometer baseline is prompted.
+- **Medical officer's needs** (flight surgeon): a worklist with closure notes, the reading log,
+  medication classes, photos.
+- **Everyone flagged** (judge, astronaut): a single tick of tiredness or stuffiness no longer turns an
+  area amber. Crew members with no flag rose from 12% to 48% of simulated person-days; on the demo
+  day two of four are clear.
+- **Today** (astronaut): "Steady" is shown only when no area is amber; statistics moved off the main
+  screen; the share button says exactly which setting changes; the body figure carries a shape on
+  each flagged area; link-aware wording for the message home.
+- **Earth link** (judge, astronaut): cutting the link explains why nothing is queued yet and offers
+  the next day; a blackout shows which day of how many and when the link is expected back.
+- **Inputs** (judge): a photo for the medical officer can be taken at check-in.
+- **Check-in** (astronaut): one Save bar with an opaque background; a "None" answer for food; a tick
+  on selected answers.
+
+Not done from round 3: one list of body areas shared by Today and Sharing (the first sharing area
+was renamed "Heart, oxygen and temperature" instead); a separate tick for a blistering rash;
+respiratory rate; allergies and pre-flight baselines; entering vitals for an incapacitated crew
+member; default sharing still hides symptom names from the medical officer; a demo mode that hides
+script names and code versions on the Validation and Data sources screens (the brief requires every
+figure to link to its script); the body figure is still schematic; treatment or medication guidance
+(excluded on purpose); a calendar-matched chance level (impossible with shifted dates); correction
+for multiple comparisons.
+
+Where we did not follow a reviewer: the flight surgeon asked for tiredness to corroborate a sensor
+notice outright. In the simulated crew that made flags nearly universal, so tiredness counts only
+when reported on two of the last three days. The sleep floor was set at five hours, not five and a
+half, for the same reason.
+
+## Round 4
+
+See the end of this file once the fourth round has run.

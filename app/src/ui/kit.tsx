@@ -147,3 +147,16 @@ export class ScreenBoundary extends Component<{ children: ReactNode; name: strin
     )
   }
 }
+
+/** The spot readings entered today, oldest first, with the time each was saved.  Nothing is overwritten. */
+export function ReadingLog({ readings, title = 'Readings today' }: { readings: { ind: string; v: number; ts: number }[]; title?: string }) {
+  if (!readings.length) return null
+  const time = (ts: number) => new Date(ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+  return (
+    <p className="small muted" data-testid="reading-log"><strong>{title}:</strong>{' '}
+      {readings.map((r, i) => <span key={`${r.ind}-${r.ts}-${i}`} className="num">{i > 0 ? ' · ' : ''}{READING_LABEL[r.ind] ?? r.ind} {r.v} at {time(r.ts)}</span>)}
+      . Every reading is kept; the most abnormal one counts until a new day's reading or the medical officer closes it.
+    </p>
+  )
+}
+const READING_LABEL: Record<string, string> = { temp_oral: '°C', spo2: 'oxygen %', sbp: 'upper BP', dbp: 'lower BP', glucose: 'sugar mg/dL', rhr: 'heart rate', mass: 'kg' }

@@ -57,7 +57,19 @@ def quiet_mask(T: int, onsets: list[int], w: Windows) -> np.ndarray:
 REALERT = 7   # an alert still open after a week counts as another alert (Params.realert_days)
 
 
-def person_outcome(score: np.ndarray, thr: float, onsets: list[int], w: Windows, merge_gap: int) -> dict:
+def _lead(score: np.ndarray, starts: list[int], thr: float, o: int, w: Windows, count_open: bool) -> float | None:
+    """Days from the first alert to the event (positive = before).  Normally an alert must START
+    inside the detection window; with count_open an alert that is already open there counts too
+    (a sensitivity analysis: a method whose alerts stay open for long is not penalised)."""
+    if count_open:
+        T = len(score)
+        days = [t for t in range(max(0, o - w.det_pre), min(T, o + w.det_post + 1)) if score[t] >= thr]
+        return float(o - days[0]) if days else None
+    hit = [a for a in starts if o - w.det_pre <= a <= o + w.det_post]
+    return float(o - min(hit)) if hit else None
+
+
+def person_outcome(score: np.ndarray, thr: float, onsets: list[int], w: Windows, merge_gap: int, count_open: bool = False) -> dict:
     T = len(score)
     q = quiet_mask(T, onsets, w)
     eps = episodes(score, thr, merge_gap)
@@ -73,10 +85,7 @@ def person_outcome(score: np.ndarray, thr: float, onsets: list[int], w: Windows,
             fa += max(1, -(-qd // REALERT))
         elif qd > REALERT:
             fa += (qd - 1) // REALERT
-    leads: list[float | None] = []
-    for o in onsets:
-        hit = [a for a in starts if o - w.det_pre <= a <= o + w.det_post]
-        leads.append(float(o - min(hit)) if hit else None)
+    leads: list[float | None] = [_lead(score, starts, thr, o, w, count_open) for o in onsets]
     # an event is scorable only if there was a score on at least one day in its detection window
     scor = [bool(np.any(~np.isnan(score[max(0, o - w.det_pre):min(T, o + w.det_post + 1)]))) for o in onsets]
     return {"fa": fa, "quiet_days": int(np.sum(q & ~np.isnan(score))), "leads": leads, "scorable": scor,
@@ -243,26 +252,54 @@ def cv_run(people: list[Person], spec: dict, p: Params, w: Windows, budgets: lis
 
 
 def chance_rows(people: list[Person], scores: list[np.ndarray], thrs: list[float], w: Windows, merge_gap: int,
-                per_person: int = 5, seed: int = 0) -> list[dict]:
+                per_person: int = 5, seed: int = 0, scored_only: bool = True, count_open: bool = False) -> list[dict]:
     """How often would an alert fall inside a detection window by luck?  Place pseudo-events on
-    random quiet days (whole window inside quiet, scored time) and score them exactly like
-    real events.  Returns one row per person in the same shape as person_outcome."""
+    random quiet days and score them exactly like real events.  Returns one row per person in
+    the same shape as person_outcome.
+
+    scored_only=True needs a score on every day of the pseudo-window (used in simulation, where
+    missing data is unrelated to events).  scored_only=False needs only that the window lies in
+    label-quiet time, so pseudo-windows carry the same missing data as real windows and a window
+    with no score at all is a miss, as it is for a real event (used on real data)."""
     rng = np.random.default_rng(seed)
     rows = []
     for q, s, thr in zip(people, scores, thrs):
         T = len(s)
-        quiet = quiet_mask(T, q.onsets, w) & ~np.isnan(s)
+        quiet = quiet_mask(T, q.onsets, w)
+        if scored_only:
+            quiet = quiet & ~np.isnan(s)
         ok = [t for t in range(w.det_pre, T - w.det_post) if quiet[t - w.det_pre:t + w.det_post + 1].all()]
         if not ok:
             continue
         picks = rng.choice(ok, size=min(per_person, len(ok)), replace=False)
         starts = [a for a, _ in episodes(s, thr, merge_gap)]
-        leads = []
-        for o in picks:
-            hit = [a for a in starts if o - w.det_pre <= a <= o + w.det_post]
-            leads.append(float(o - min(hit)) if hit else None)
+        leads = [_lead(s, starts, thr, int(o), w, count_open) for o in picks]
         rows.append({"fa": 0, "quiet_days": 0, "leads": leads, "scorable": [True] * len(leads), "alert_days": 0, "pid": q.pid})
     return rows
+
+
+def chance_rate(rows: list[dict], ch_rows: list[dict], strata: dict | None = None) -> tuple[float, float]:
+    """Chance detection rate (any time in the window, and by onset) for these people.  With
+    strata (pid -> label) the rate is computed within each stratum and weighted by that stratum's
+    share of the REAL events, so the pseudo-events have the same mix (device, for example) as
+    the episodes they are compared with."""
+    if not strata:
+        c = aggregate(ch_rows)
+        return c["detection_rate"], c["by_onset_rate"]
+    pooled = aggregate(ch_rows)
+    tot = 0
+    acc = [0.0, 0.0]
+    for lab in set(strata.values()):
+        n = sum(len(r["leads"]) for r in rows if strata.get(r.get("pid")) == lab)
+        if n == 0:
+            continue
+        c = aggregate([r for r in ch_rows if strata.get(r.get("pid")) == lab])
+        if c["n_events"] == 0:
+            c = pooled
+        acc[0] += n * c["detection_rate"]
+        acc[1] += n * c["by_onset_rate"]
+        tot += n
+    return (acc[0] / tot, acc[1] / tot) if tot else (pooled["detection_rate"], pooled["by_onset_rate"])
 
 
 def aggregate(rows: list[dict]) -> dict:
@@ -285,23 +322,28 @@ def aggregate(rows: list[dict]) -> dict:
     }
 
 
-def net_stats(rows: list[dict], chance: list[dict], n_boot: int = 2000, seed: int = 0, other: tuple | None = None) -> dict:
+def net_stats(rows: list[dict], chance: list[dict], n_boot: int = 2000, seed: int = 0, other: tuple | None = None,
+              strata: dict | None = None) -> dict:
     """Detection net of luck: detection rate minus the chance rate from pseudo-events, with a
     bootstrap interval that resamples people (their real events and their pseudo-events move
     together).  `other` = (rows, chance) of a second method gives the paired difference in net
-    detection (this method minus the other)."""
+    detection (this method minus the other).  `strata`: see chance_rate."""
     by_pid = {r["pid"]: r for r in chance}
-    empty = {"leads": [], "scorable": [], "fa": 0, "quiet_days": 0}
+
+    def blank(r):
+        return {"leads": [], "scorable": [], "fa": 0, "quiet_days": 0, "pid": r.get("pid")}
 
     def net(rs, ch):
-        a, c = aggregate(rs), aggregate(ch)
-        return a["detection_rate"] - c["detection_rate"], a["by_onset_rate"] - c["by_onset_rate"]
-    ch_rows = [by_pid.get(r["pid"], empty) for r in rows]
+        a = aggregate(rs)
+        c = chance_rate(rs, ch, strata)
+        return a["detection_rate"] - c[0], a["by_onset_rate"] - c[1]
+    ch_rows = [by_pid.get(r["pid"]) or blank(r) for r in rows]
     point = net(rows, ch_rows)
-    out = {"net_detection": point[0], "net_by_onset": point[1]}
+    c0 = chance_rate(rows, ch_rows, strata)
+    out = {"net_detection": point[0], "net_by_onset": point[1], "chance_used": c0[0], "chance_by_onset_used": c0[1]}
     if other is not None:
         o_by = {r["pid"]: r for r in other[1]}
-        o_ch = [o_by.get(r["pid"], empty) for r in other[0]]
+        o_ch = [o_by.get(r["pid"]) or blank(r) for r in other[0]]
         out["net_diff"] = point[0] - net(other[0], o_ch)[0]
     rng = np.random.default_rng(seed)
     n = len(rows)

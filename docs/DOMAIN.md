@@ -283,4 +283,16 @@ All URLs opened 2026-11-12. NCBI E-utilities URLs return the PubMed abstract or 
 66. MedlinePlus Medical Encyclopedia. "Blood sugar test." U.S. National Library of Medicine, reviewed 2025. https://medlineplus.gov/ency/article/003482.htm
 67. MedlinePlus Medical Encyclopedia. "High blood pressure in adults - hypertension." U.S. National Library of Medicine, reviewed 2025. https://medlineplus.gov/ency/article/000468.htm
 
+68. Stahn AC, Werner A, Opatz O, et al. "Increased core body temperature in astronauts during long-duration space missions." Scientific Reports 2017;7:16180. https://pubmed.ncbi.nlm.nih.gov/29170507/ (abstract read on PubMed)
+69. Marshall-Goebel K, Laurie SS, Alferova IV, et al. "Assessment of Jugular Venous Blood Flow Stasis and Thrombosis During Spaceflight." JAMA Network Open 2019;2(11):e1915011. https://pubmed.ncbi.nlm.nih.gov/31722025/ (abstract read on PubMed)
+
 References 63 to 67 were added on 2026-11-12 after the clinical review round, for the fixed safety thresholds in `shared/rules.json`: an adult probably has a fever above 37.2 to 37.5 °C by mouth and should seek care if it stays at or above 39.4 °C or lasts more than 48 to 72 hours [63]; blood sugar below 70 mg/dL is low and below 54 mg/dL can cause unclear thinking or seizure [64]; fasting 70 to 99 mg/dL is normal and a random value of 200 mg/dL or more often means diabetes [66]; normal adult blood pressure is between 90/60 and 120/80 mmHg [65], and 140/90 or higher is stage 2 high blood pressure territory in the staging described in [67]. These are terrestrial public guidance, not flight rules.
+
+References 68 and 69 were added on 2026-11-12 after the third review round. Only their PubMed
+abstracts were read. [68]: resting core body temperature rose by about 1 °C, gradually over the
+first 2.5 months of ISS missions, and rose higher and faster during exercise than on Earth; Keel
+uses this to say that a thermometer reading should be judged against the person's own in-flight
+readings (rule R-V-TEMP), not to change any threshold. [69]: in 11 ISS crew members, stagnant or
+reverse flow in the internal jugular vein was seen in 6 around flight day 50, with an occlusive
+thrombus in one and a possible partial thrombus in another; Keel uses this only as the reason for
+listing new one-sided neck or leg swelling or pain among the red-flag symptoms.

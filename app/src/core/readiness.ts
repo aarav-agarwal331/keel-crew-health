@@ -38,7 +38,7 @@ export function readiness(a: DayAnalysis): Readiness {
   for (const [cat, st] of Object.entries(a.categories)) {
     if (cat === 'environment') continue
     if (st === 'act' || st === 'urgent') bump('hold')
-    else if (st === 'watch') { bump('caution'); if (!reasons.some((r) => r.category === cat)) reasons.push({ category: cat, text: 'A reading outside the usual range' }) }
+    else if (st === 'watch') { bump('caution'); if (!reasons.some((r) => r.category === cat)) reasons.push({ category: cat, text: cat === 'symptoms' ? 'Symptoms reported on more than one day' : 'A reading outside the usual range' }) }
   }
   // nausea or vomiting before suited work, and clearly slowed reactions, always need a conversation
   if ((a.features.sym.nausea ?? 0) > 0 || (a.features.sym.vomiting ?? 0) > 0) { bump('hold'); reasons.push({ category: 'symptoms', text: 'Nausea or vomiting reported' }) }

@@ -4,7 +4,7 @@ BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
 Check-in
 
-Flight day 121. Four quick answers take about a minute. Everything stays on this tablet unless you share it.
+Flight day 121. Four quick answers take about a minute. Your answers stay on this tablet. Other roles see only what Sharing allows: by default the commander sees a readiness tier without the reason, and a symptom marked serious goes to the medical officer at once.
 
 1. How are you feeling?
 1
@@ -46,5 +46,6 @@ All of it
 Most
 About half
 Little
+None
 Save check-in
 Add more: reaction test, exercise, measurements (optional)

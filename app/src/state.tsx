@@ -3,7 +3,7 @@ import { analyzeDay, type DayAnalysis } from './core/analysis'
 import type { ModelJson } from './core/detect'
 import { linkState, type LinkState, type OutboxItem } from './core/link'
 import { defaultSharing, type AccessEntry, type Level, type Role, type SharingSettings } from './core/sharing'
-import type { ActionLog, CrewAnalysis, Entry, Mission } from './core/types'
+import type { ActionLog, CrewAnalysis, Entry, Mission, Reading } from './core/types'
 import { groundSummary } from './core/visibility'
 import { store } from './db'
 import type { WorkerResponse } from './worker/detect.worker'
@@ -33,7 +33,8 @@ interface Ctx {
   setMe: (id: string) => void
   today: (crewId?: string, day?: number) => DayAnalysis | null
   entries: Entry[]
-  saveEntry: (e: Omit<Entry, 'key' | 'ts' | 'mission'>) => Promise<void>
+  /** `repeat` names spot readings taken again on purpose, so they are logged even when the value is the same */
+  saveEntry: (e: Omit<Entry, 'key' | 'ts' | 'mission' | 'readings'>, repeat?: string[]) => Promise<void>
   actions: ActionLog[]
   logAction: (a: Omit<ActionLog, 'id' | 'ts' | 'mission'>) => Promise<void>
   sharing: Record<string, SharingSettings>
@@ -63,6 +64,9 @@ const getJson = async <T,>(path: string): Promise<T> => {
   if (!r.ok) throw new Error(`Could not load ${path}`)
   return (await r.json()) as T
 }
+
+/** spot readings that are logged with their time each time they are entered */
+const LOGGED = ['temp_oral', 'spo2', 'sbp', 'dbp', 'glucose', 'rhr', 'mass']
 
 export function AppProvider({ children }: { children: ReactNode }) {
   const [mission, setMission] = useState<Mission | null>(null)
@@ -246,10 +250,22 @@ export function AppProvider({ children }: { children: ReactNode }) {
     lastOutDay.current = -1
     if (mission) void store.putKv(`me:${mission.id}`, id)
   }, [mission])
-  const saveEntry = useCallback(async (e: Omit<Entry, 'key' | 'ts' | 'mission'>) => {
+  const saveEntry = useCallback(async (e: Omit<Entry, 'key' | 'ts' | 'mission' | 'readings'>, repeat: string[] = []) => {
     if (!mission) return
-    const full: Entry = { ...e, mission: mission.id, key: `${mission.id}|${e.crew}|${e.day}`, ts: Date.now() }
+    const key = `${mission.id}|${e.crew}|${e.day}`
+    const ts = Date.now()
+    const old = entriesRef.current.find((x) => x.key === key)
+    // Spot readings are kept in an append-only log with their times: a repeat reading never erases
+    // the first one.  `repeat` names readings that were deliberately taken again (logged even if equal).
+    const log: Reading[] = old?.readings ? [...old.readings] : old ? LOGGED.filter((k) => k in old.values).map((k) => ({ ind: k, v: old.values[k], ts: old.ts })) : []
+    for (const k of LOGGED) {
+      if (!(k in e.values)) continue
+      const last = [...log].reverse().find((r) => r.ind === k)
+      if (!last || last.v !== e.values[k] || repeat.includes(k)) log.push({ ind: k, v: e.values[k], ts })
+    }
+    const full: Entry = { ...e, meds: e.meds ?? old?.meds, photos: e.photos ?? old?.photos, mission: mission.id, key, ts, readings: log }
     // state first, storage second: a screen opened straight after saving must already see the entry
+    entriesRef.current = [...entriesRef.current.filter((x) => x.key !== key), full]
     setEntries((prev) => [...prev.filter((x) => x.key !== full.key), full])
     await store.putEntry(full)
   }, [mission])

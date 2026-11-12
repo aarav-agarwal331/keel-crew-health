@@ -20,7 +20,11 @@
    "plain": "How fast your heart beats when you are fully at rest, usually measured during sleep.",
    "how": "Wear the wrist or chest sensor while you sleep. Keel takes the typical heart rate over still minutes in your sleep period, so exercise and coffee do not distort it.",
    "why": "A resting heart rate that climbs above your own normal is a whole-body sign of infection, dehydration, poor recovery or loss of fitness. In our tests it usually showed once symptoms had started, not before.",
-   "evidence": "real"
+   "evidence": "real",
+   "limits": [
+    20,
+    250
+   ]
   },
   {
    "id": "hrv",
@@ -63,8 +67,12 @@
    "detect": true,
    "plain": "The share of the haemoglobin in your blood that is carrying oxygen.",
    "how": "Overnight from the wearable, or a 30-second fingertip reading: warm hand, hold still, wait for a steady number.",
-   "why": "A sustained drop can point to a breathing or lung problem or a cabin atmosphere issue.",
-   "evidence": "simulation"
+   "why": "A sustained drop can point to a breathing or lung problem or a cabin atmosphere issue. The fixed 92% line assumes a cabin near sea-level pressure; a lower-pressure exploration cabin would need its own line.",
+   "evidence": "simulation",
+   "limits": [
+    40,
+    100
+   ]
   },
   {
    "id": "temp",
@@ -112,7 +120,11 @@
     "value": 8.5,
     "label": "Scheduled sleep period 8.5 h"
    },
-   "evidence": "simulation"
+   "evidence": "simulation",
+   "limits": [
+    0,
+    24
+   ]
   },
   {
    "id": "sleep_mid",
@@ -274,7 +286,11 @@
    "plain": "Your body temperature taken with the thermometer.",
    "how": "Take it before exercise and before eating or drinking, mouth closed, and wait for the beep.",
    "why": "A thermometer reading of 38.0 °C or more is a fever by general guidance and should go to the medical officer the same day. Body temperature may run higher on long flights, so compare with your own earlier readings too.",
-   "evidence": "reference"
+   "evidence": "reference",
+   "limits": [
+    30,
+    45
+   ]
   },
   {
    "id": "mass",
@@ -296,7 +312,11 @@
    "plain": "Your body mass, measured on the mass-measurement device (a normal scale does not work without gravity).",
    "how": "Weekly, same time of day, before eating.",
    "why": "Steady loss of body mass signals under-eating or dehydration.",
-   "evidence": "reference"
+   "evidence": "reference",
+   "limits": [
+    30,
+    200
+   ]
   },
   {
    "id": "sbp",
@@ -318,7 +338,11 @@
    "plain": "The upper (systolic) number of your blood pressure.",
    "how": "Rest quietly and restrained for five minutes, cuff on the upper arm, do not talk during the reading.",
    "why": "Blood pressure regulation changes without gravity. Readings well outside your normal deserve a repeat and a word with the medical officer.",
-   "evidence": "reference"
+   "evidence": "reference",
+   "limits": [
+    30,
+    300
+   ]
   },
   {
    "id": "dbp",
@@ -340,7 +364,11 @@
    "plain": "The lower (diastolic) number of your blood pressure.",
    "how": "Taken in the same reading as the upper number.",
    "why": "Recorded with the upper number so the medical officer sees the whole reading. Normal for adults is between 60 and 80.",
-   "evidence": "reference"
+   "evidence": "reference",
+   "limits": [
+    15,
+    200
+   ]
   },
   {
    "id": "glucose",
@@ -361,8 +389,12 @@
    "detect": false,
    "plain": "The sugar level in a fingertip drop of blood.",
    "how": "Clean fingertip, first drop wiped away, measure before breakfast for a comparable number.",
-   "why": "A fingertip check is quick and the challenge names it as a useful indicator. Keel compares it with general reference values, not with a personal range.",
-   "evidence": "reference"
+   "why": "A fingertip check is quick, and very low or very high values need action the same day. Keel compares it with general reference values, not with a personal range.",
+   "evidence": "reference",
+   "limits": [
+    10,
+    1000
+   ]
   },
   {
    "id": "co2",
@@ -555,7 +587,13 @@
   },
   {
    "id": "injury",
-   "label": "Injury, something in the eye, or smoke or chemical exposure",
+   "label": "Injury, or something in the eye",
+   "red_flag": true,
+   "commander": false
+  },
+  {
+   "id": "exposure",
+   "label": "Smoke or chemical exposure",
    "red_flag": true
   },
   {
@@ -564,14 +602,22 @@
    "red_flag": true
   },
   {
+   "id": "swelling",
+   "label": "New swelling or pain in one leg, or on one side of the neck",
+   "red_flag": true,
+   "commander": false
+  },
+  {
    "id": "tooth",
    "label": "Severe tooth or jaw pain",
-   "red_flag": true
+   "red_flag": true,
+   "commander": false
   },
   {
    "id": "self_harm",
    "label": "Thoughts of harming yourself",
-   "red_flag": true
+   "red_flag": true,
+   "commander": false
   }
  ]
 }

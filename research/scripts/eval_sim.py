@@ -133,7 +133,12 @@ def main():
             leads = [l for r, q in zip(rows, test) for l, s, e in zip(r["leads"], r["scorable"], q.events_meta) if s and e["type"] == ty]
             det = [l for l in leads if l is not None]
             after = [-l for l in det if l <= 0]
+            # detection above luck for this type alone, interval over missions (every event counts)
+            sub = [{**r, "leads": [l for l, e in zip(r["leads"], q.events_meta) if e["type"] == ty],
+                    "scorable": [s for s, e in zip(r["scorable"], q.events_meta) if e["type"] == ty]} for r, q in zip(rows, test)]
+            nt = net_m(sub, chance[(DEPLOYED, b)], 400)
             bt[ty] = {"label": TYPE_LABELS[ty], "n": len(leads), "detection_rate": len(det) / max(1, len(leads)),
+                      "net_detection": nt["net_detection"], "net_detection_ci": nt["net_detection_ci"],
                       "share_alert_before_onset": sum(1 for l in det if l > 0) / max(1, len(leads)),
                       "median_delay_days": float(np.median(after)) if after else None}
         by_type[str(b)] = bt
