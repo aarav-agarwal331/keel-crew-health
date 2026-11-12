@@ -205,7 +205,7 @@ export function XYChart({ series, xLabel, yLabel, ariaLabel, yPct, xDecimals = 1
 }) {
   const [ref, W] = useWidth<HTMLDivElement>()
   const [hover, setHover] = useState<{ s: number; i: number } | null>(null)
-  const padL = 46, padR = 14, padT = 12, padB = 38
+  const padL = 46, padR = 14, padT = 26, padB = 38
   const xs = series.flatMap((s) => s.x).filter(ok)
   const ys = series.flatMap((s) => [...s.y, ...(s.lo ?? []), ...(s.hi ?? [])]).filter(ok)
   const x0 = Math.min(...xs), x1 = Math.max(...xs)
@@ -243,10 +243,10 @@ export function XYChart({ series, xLabel, yLabel, ariaLabel, yPct, xDecimals = 1
       <div className="chart" ref={ref}>
         <svg height={height} role="img" aria-label={ariaLabel} onPointerMove={onMove} onPointerDown={onMove} onPointerLeave={() => setHover(null)}>
           {niceTicks(y0, y1, 4).map((v) => <g key={v}><line x1={padL} x2={W - padR} y1={Y(v)} y2={Y(v)} stroke="var(--grid)" /><text className="axis" x={padL - 6} y={Y(v) + 4} textAnchor="end">{fy(v)}</text></g>)}
-          {niceTicks(x0, x1, Math.max(2, Math.floor(W / 110))).map((v) => <text key={v} className="axis" x={X(v)} y={height - padB + 16} textAnchor="middle">{Number(v.toFixed(xDecimals))}</text>)}
+          {niceTicks(x0, x1, Math.max(3, Math.floor(W / 70))).map((v) => <text key={v} className="axis" x={X(v)} y={height - padB + 16} textAnchor="middle">{Number(v.toFixed(xDecimals))}</text>)}
           <text className="axis" x={(padL + W - padR) / 2} y={height - 4} textAnchor="middle">{xLabel}</text>
-          <text className="axis" x={12} y={padT + 2} textAnchor="start">{yLabel}</text>
-          {vline && <g><line x1={X(vline.x)} x2={X(vline.x)} y1={padT} y2={height - padB} stroke="var(--text-3)" strokeDasharray="5 4" /><text className="axis" x={X(vline.x) + 4} y={padT + 22}>{vline.label}</text></g>}
+          <text className="axis" x={4} y={11} textAnchor="start">{yLabel}</text>
+          {vline && <g><line x1={X(vline.x)} x2={X(vline.x)} y1={padT} y2={height - padB} stroke="var(--text-3)" strokeDasharray="5 4" /><text className="axis" x={X(vline.x) + 4} y={padT + 10}>{vline.label}</text></g>}
           {series.map((s, si) => s.lo && s.hi ? <path key={'b' + si} d={s.x.map((xv, i) => `${i ? 'L' : 'M'}${X(xv).toFixed(1)} ${Y(s.hi![i]).toFixed(1)}`).join('') + s.x.slice().reverse().map((xv, k) => `L${X(xv).toFixed(1)} ${Y(s.lo![s.x.length - 1 - k]).toFixed(1)}`).join('') + 'Z'} fill={SERIES[si % 4]} opacity="0.14" /> : null)}
           {series.map((s, si) => <path key={si} d={path(s)} fill="none" stroke={SERIES[si % 4]} strokeWidth="2" strokeDasharray={s.dashed ? '6 4' : undefined} strokeLinejoin="round" />)}
           {!step && series.map((s, si) => s.x.length <= 12 ? s.x.map((xv, i) => ok(s.y[i]) ? <circle key={`${si}-${i}`} cx={X(xv)} cy={Y(s.y[i])} r="4" fill={SERIES[si % 4]} stroke="var(--surface)" strokeWidth="2" /> : null) : null)}
@@ -258,6 +258,8 @@ export function XYChart({ series, xLabel, yLabel, ariaLabel, yPct, xDecimals = 1
   )
 }
 
+const REPO = (import.meta.env.VITE_REPO_URL as string | undefined) ?? ''
+
 export function Figure({ title, children, caption, method, script, table }: { title: string; children: ReactNode; caption?: ReactNode; method?: string; script?: string; table?: ReactNode }) {
   return (
     <figure className="fig card">
@@ -267,7 +269,7 @@ export function Figure({ title, children, caption, method, script, table }: { ti
         {caption}
         <span className="row wrap" style={{ marginTop: 6, gap: 14 }}>
           {method && <a href={`#/method/${method}`}>How this was measured</a>}
-          {script && <span className="tiny">Made by <code>{script}</code></span>}
+          {script && <span className="tiny">Made by {REPO ? <a href={`${REPO}/blob/main/${script}`} target="_blank" rel="noreferrer"><code>{script}</code></a> : <code>{script}</code>}</span>}
         </span>
       </figcaption>
       {table && <details><summary>Show the numbers as a table</summary><div className="tablewrap">{table}</div></details>}

@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from 'react'
+import { Component, useEffect, useState, type ReactNode } from 'react'
 import type { Status } from '../core/types'
 
 // ---- tiny hash router -------------------------------------------------------------------
@@ -124,4 +124,26 @@ export function Sources({ ids, refs }: { ids: string[]; refs: Record<string, { t
       ))}
     </ul>
   )
+}
+
+/** A fault on one screen must never blank the whole app: show a plain message and a way back. */
+export class ScreenBoundary extends Component<{ children: ReactNode; name: string }, { error: string | null }> {
+  state = { error: null as string | null }
+  static getDerivedStateFromError(e: unknown) {
+    return { error: e instanceof Error ? e.message : String(e) }
+  }
+  componentDidUpdate(prev: { name: string }) {
+    if (prev.name !== this.props.name && this.state.error) this.setState({ error: null })
+  }
+  render() {
+    if (!this.state.error) return this.props.children
+    return (
+      <section className="card" role="alert">
+        <h2>This screen hit a problem</h2>
+        <p className="muted">The rest of Keel is still working and your data is safe on this device.</p>
+        <p className="small muted">{this.state.error}</p>
+        <a className="btn" href="#/today">Back to Today</a>
+      </section>
+    )
+  }
 }

@@ -13,6 +13,9 @@ const SHOW: Record<string, string[]> = {
   dehydration: ['fluid', 'rhr', 'mass'], low_mood: ['mood', 'sleep_h', 'ex7'], spe: ['rad', 'rhr', 'sleep_h'],
 }
 
+const RANK: Record<string, number> = { learning: 0, steady: 1, watch: 2, act: 3, urgent: 4 }
+const TIER_RANK: Record<string, number> = { self: 0, cmo: 1, ground: 2 }
+
 interface FeedItem { day: number; kind: 'alert' | 'truth' | 'link' | 'info'; title: string; body: string; status?: 'watch' | 'act' | 'urgent' | 'steady' }
 
 export function Replay() {
@@ -38,7 +41,7 @@ export function Replay() {
 
   const feed = useMemo(() => {
     const out: FeedItem[] = []
-    const seen = new Map<string, string>()
+    const seen = new Map<string, number>()
     let linkUp = true
     for (let d = start; d <= t; d++) {
       const ls = linkState(mission, d, false)
@@ -48,11 +51,12 @@ export function Replay() {
       }
       const a = today(crew.id, d)
       if (a) for (const f of a.findings) {
-        const sig = `${f.status}|${f.tier}|${f.ruleId}`
+        // one entry when an alert opens, and another only if it gets more serious
+        const rank = RANK[f.status] * 10 + TIER_RANK[f.tier]
         const prev = seen.get(f.key)
         if (prev === undefined) out.push({ day: d, kind: 'alert', status: f.status as FeedItem['status'], title: `${STATUS_LABEL[f.status]}: ${f.title}`, body: `${f.action} ${TIER_LABEL[f.tier]}.` })
-        else if (prev !== sig && (prev.split('|')[0] !== f.status || prev.split('|')[1] !== f.tier)) out.push({ day: d, kind: 'alert', status: f.status as FeedItem['status'], title: `Updated: ${f.title}`, body: `${f.action} ${TIER_LABEL[f.tier]}.` })
-        seen.set(f.key, sig)
+        else if (rank > prev) out.push({ day: d, kind: 'alert', status: f.status as FeedItem['status'], title: `Escalated: ${f.title}`, body: `${f.action} ${TIER_LABEL[f.tier]}.` })
+        seen.set(f.key, Math.max(prev ?? 0, rank))
       }
       for (const e of events) if (e.onset === d && (e.crew === crewIdx || e.crew < 0)) out.push({ day: d, kind: 'truth', title: `Ground truth: ${e.label}`, body: e.type === 'illness' ? 'This is the day the simulated crew member would first feel symptoms.' : 'This is the day the scripted event starts.' })
     }
@@ -90,7 +94,7 @@ export function Replay() {
           {feed.filter((f) => f.kind === 'truth').map((f, i) => <div key={i} className="mark truth" style={{ left: `${((f.day - start) / Math.max(1, end - start)) * 100}%` }} />)}
         </div>
         <div className="card-h">
-          <span className="num"><strong data-testid="replay-day">{shortDay(mission, t)}</strong> · {crew.name}</span>
+          <span className="num">Replay clock: <strong data-testid="replay-day">{shortDay(mission, t)}</strong> · {crew.name}</span>
           {cur && <StatusTag status={cur.status} label={STATUS_LABEL[cur.status]} />}
           <span className={`chip ${linkState(mission, t, false).available ? '' : 'down'}`}><span className="dot" />{linkState(mission, t, false).available ? 'Earth link up' : 'No Earth link'}</span>
         </div>

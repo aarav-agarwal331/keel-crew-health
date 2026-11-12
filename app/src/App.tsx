@@ -14,7 +14,7 @@ import { Today } from './screens/Today'
 import { Trends } from './screens/Trends'
 import { Validation } from './screens/Validation'
 import { useApp } from './state'
-import { href, Icon, KeelMark, Simulated, useRoute } from './ui/kit'
+import { href, Icon, KeelMark, ScreenBoundary, Simulated, useRoute } from './ui/kit'
 
 const NAV = [
   { id: 'today', label: 'Today', icon: 'today' },
@@ -62,7 +62,7 @@ export default function App() {
           <Simulated real={!mission.simulated} source={mission.source?.name} />
         </div>
       </header>
-      <main id="main" data-screen={page}>{screen}</main>
+      <main id="main" data-screen={page}><ScreenBoundary name={route.join('/')}>{screen}</ScreenBoundary></main>
       <nav className="nav" aria-label="Main">
         <div className="nav-in">
           {NAV.map((n) => (

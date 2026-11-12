@@ -85,43 +85,63 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const lastOutDay = useRef(-1)
 
   // --- worker ------------------------------------------------------------------------------
+  const waiting = useRef(new Map<number, (r: WorkerResponse) => void>())
   useEffect(() => {
     const w = new Worker(new URL('./worker/detect.worker.ts', import.meta.url), { type: 'module' })
-    w.onmessage = (e: MessageEvent<WorkerResponse & { missionId?: string }>) => {
-      if (e.data.id !== reqId.current) return
-      setAnalyses(e.data.analyses)
-      setComputeMs(e.data.ms)
-      setAnalysedFor(String(e.data.id))
+    w.onmessage = (e: MessageEvent<WorkerResponse>) => {
+      const done = waiting.current.get(e.data.id)
+      waiting.current.delete(e.data.id)
+      done?.(e.data)
     }
     worker.current = w
     return () => w.terminate()
   }, [])
+  const compute = useCallback((m: Mission, mdl: ModelJson, ent: Entry[]) => new Promise<WorkerResponse>((resolve) => {
+    const id = ++reqId.current
+    waiting.current.set(id, resolve)
+    worker.current!.postMessage({ id, mission: m, model: mdl, entries: ent.filter((x) => x.mission === m.id) })
+  }), [])
 
+  // re-run the analysis whenever the crew member's own entries change
+  const entriesRef = useRef<Entry[]>([])
   useEffect(() => {
+    entriesRef.current = entries
     if (!mission || !model || !worker.current) return
-    reqId.current += 1
-    worker.current.postMessage({ id: reqId.current, mission, model, entries: entries.filter((x) => x.mission === mission.id) })
-  }, [mission, model, entries])
+    let live = true
+    const id = reqId.current + 1
+    void compute(mission, model, entries).then((r) => {
+      if (!live || r.id !== id) return
+      setAnalyses(r.analyses)
+      setComputeMs(r.ms)
+      setAnalysedFor(`${mission.id}:${r.id}`)
+    })
+    return () => { live = false }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [entries])
 
   // --- load ----------------------------------------------------------------------------------
   const applyMission = useCallback(async (m: Mission, modelName: string) => {
     const mdl = await getJson<ModelJson>(`data/${modelName}.json`)
-    setAnalyses({})
-    setAnalysedFor('')
-    setModel(mdl)
-    setMission(m)
     const savedDay = await store.kv<number>(`day:${m.id}`)
     const savedMe = await store.kv<string>(`me:${m.id}`)
-    setDayRaw(Math.min(m.days - 1, savedDay ?? m.default_day ?? m.days - 1))
-    setMeRaw(savedMe && m.crew.some((c) => c.id === savedMe) ? savedMe : m.default_crew ?? m.crew[0].id)
     const sh: Record<string, SharingSettings> = {}
     for (const c of m.crew) sh[c.id] = (await store.sharing(`${m.id}|${c.id}`)) ?? defaultSharing()
+    // analyse first, then swap everything in one render, so no screen ever sees a mission
+    // without its analysis (and the screen the user is on stays mounted)
+    const r = await compute(m, mdl, entriesRef.current)
+    setAnalyses(r.analyses)
+    setComputeMs(r.ms)
+    setAnalysedFor(`${m.id}:${r.id}`)
+    setModel(mdl)
+    setMission(m)
+    setDayRaw(Math.min(m.days - 1, savedDay ?? m.default_day ?? m.days - 1))
+    setMeRaw(savedMe && m.crew.some((c) => c.id === savedMe) ? savedMe : m.default_crew ?? m.crew[0].id)
     setSharing(sh)
     setOutbox([])
     lastOutDay.current = -1
     setLinkCut(false)
     void store.putKv('mission', m.id)
-  }, [])
+  }, [compute])
 
   const loadMission = useCallback(async (id: string) => {
     try {
@@ -144,6 +164,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     void (async () => {
       try {
         const [e, a, acc, th, last, customs] = await Promise.all([store.entries(), store.actions(), store.access(), store.kv<'dark' | 'light'>('theme'), store.kv<string>('mission'), store.missions()])
+        entriesRef.current = e
         setEntries(e)
         setActions(a)
         setAccess(acc)

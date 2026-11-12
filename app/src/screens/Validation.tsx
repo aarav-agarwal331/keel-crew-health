@@ -19,8 +19,10 @@ function useResults() {
 
 const pct = (v: number | null | undefined) => (v === null || v === undefined || Number.isNaN(v) ? '–' : `${Math.round(v * 100)}%`)
 const ci = (v: number[] | undefined) => (v ? `${Math.round(v[0] * 100)} to ${Math.round(v[1] * 100)}%` : '')
+const bk = (b: number) => (Number.isInteger(b) ? b.toFixed(1) : String(b)) // result files key budgets as '1.0', '0.25'
 const f2 = (v: number | null | undefined, d = 2) => (v === null || v === undefined || Number.isNaN(v) ? '–' : v.toFixed(d))
-const SHORT: Record<string, string> = { fixed: 'Fixed threshold, same for everyone', zscore: 'Personal baseline, simple rule', cusum: 'Personal baseline + CUSUM', mewma: 'Personal baseline + multivariate EWMA', fusion: 'CUSUM and multivariate, fused' }
+const SHORT: Record<string, string> = { fixed: 'One threshold for all', zscore: 'Personal, simple rule', cusum: 'Personal + CUSUM', mewma: 'Personal + multivariate', fusion: 'Personal, fused' }
+const LONG: Record<string, string> = { fixed: 'Fixed threshold, the same for everyone', zscore: 'Personal baseline with a simple 2-of-3-days rule', cusum: 'Personal baseline + CUSUM change detection', mewma: 'Personal baseline + multivariate EWMA', fusion: 'Personal baseline, CUSUM and multivariate fused' }
 
 function Stat({ big, label, sub }: { big: string; label: string; sub?: ReactNode }) {
   return <div className="col" style={{ gap: 2 }}><span className="num" style={{ fontSize: '2rem', fontWeight: 750, lineHeight: 1.1 }}>{big}</span><strong>{label}</strong>{sub && <span className="small muted">{sub}</span>}</div>
@@ -31,18 +33,18 @@ function MethodTable({ main, methods, deployed, budget }: { main: J; methods: st
     <table>
       <thead><tr><th>Method</th><th className="n">Detected</th><th className="n">95% interval</th><th className="n">By luck</th><th className="n">Alert open by onset day</th><th className="n">False alerts per person-month</th></tr></thead>
       <tbody>{methods.map((m) => { const s = main[m][budget]; return (
-        <tr key={m}><td>{m === deployed ? <strong>{SHORT[m]} (Keel)</strong> : SHORT[m]}</td><td className="n">{pct(s.detection_rate)}</td><td className="n">{ci(s.detection_rate_ci)}</td><td className="n">{pct(s.chance_detection_rate)}</td><td className="n">{pct(s.by_onset_rate)}</td><td className="n">{f2(s.fa_per_person_month)}{s.fa_per_person_month_ci ? ` (${f2(s.fa_per_person_month_ci[0])} to ${f2(s.fa_per_person_month_ci[1])})` : ''}</td></tr>
+        <tr key={m}><td>{m === deployed ? <strong>{LONG[m]} (Keel)</strong> : LONG[m]}</td><td className="n">{pct(s.detection_rate)}</td><td className="n">{ci(s.detection_rate_ci)}</td><td className="n">{pct(s.chance_detection_rate)}</td><td className="n">{pct(s.by_onset_rate)}</td><td className="n">{f2(s.fa_per_person_month)}{s.fa_per_person_month_ci ? ` (${f2(s.fa_per_person_month_ci[0])} to ${f2(s.fa_per_person_month_ci[1])})` : ''}</td></tr>
       ) })}</tbody>
     </table>
   )
 }
 
 function bars(main: J, methods: string[], deployed: string, budget: string): BarRow[] {
-  return methods.map((m) => ({ label: m === deployed ? `${SHORT[m]} (Keel)` : SHORT[m], value: main[m][budget].detection_rate, lo: main[m][budget].detection_rate_ci[0], hi: main[m][budget].detection_rate_ci[1], highlight: m === deployed, note: `by luck ${pct(main[m][budget].chance_detection_rate)}` }))
+  return methods.map((m) => ({ label: m === deployed ? `Keel: ${SHORT[m].toLowerCase()}` : SHORT[m], value: main[m][budget].detection_rate, lo: main[m][budget].detection_rate_ci[0], hi: main[m][budget].detection_rate_ci[1], highlight: m === deployed, note: `by luck ${pct(main[m][budget].chance_detection_rate)}` }))
 }
 
 function curves(main: J, budgets: number[], deployed: string) {
-  const s = (m: string, label: string, key = 'detection_rate') => ({ label, x: budgets.map((b) => main[m][String(b)].fa_per_person_month), y: budgets.map((b) => main[m][String(b)][key]) })
+  const s = (m: string, label: string, key = 'detection_rate') => ({ label, x: budgets.map((b) => main[m][bk(b)].fa_per_person_month), y: budgets.map((b) => main[m][bk(b)][key]) })
   return [s(deployed, 'Keel'), s('fixed', 'Fixed threshold'), { ...s(deployed, 'By luck (Keel thresholds)', 'chance_detection_rate'), dashed: true }]
 }
 
@@ -94,7 +96,7 @@ export function Validation() {
           <XYChart series={curves(R.main, R.budgets, dep)} xLabel="False alerts per person-month (measured)" yLabel="Episodes detected" yPct yMin={0} yMax={1} ariaLabel="Detection rate against false alert rate on real data" />
         </Figure>
         <Figure title="When the alert came, relative to symptom onset" method="evaluation" script={R.script}
-          caption={<>Keel at one false alert per person-month. Positive = days before symptoms. {missed} of {leads.length} episodes had no alert in the window. The cluster after onset is the real response; alerts a week or more before onset are mostly coincidence.</>}>
+          caption={<>Keel at one false alert per person-month. Left of the line, the alert came before symptoms; right of it, after. {missed} of {leads.length} episodes had no alert in the window. The cluster just after onset is the real response; alerts a week or more before onset are mostly coincidence.</>}>
           <XYChart series={[{ label: 'Episodes', x: leadDays.map((k) => -k), y: leadCounts }]} xLabel="Days from symptom onset to alert (negative = alert came first)" yLabel="Episodes" ariaLabel="Histogram of alert timing relative to symptom onset" xDecimals={0} yDecimals={0} yMin={0} step vline={{ x: 0, label: 'Onset' }} />
         </Figure>
         <Figure title="What real illness looks like in resting heart rate" method="simulator" script={R.script}
