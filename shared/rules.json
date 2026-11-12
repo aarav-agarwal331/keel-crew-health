@@ -1,0 +1,577 @@
+{
+ "version": "1.0",
+ "note": "Auditable alert-to-action rules. Personal rules are only evaluated while the detector has an open alert, so the false-alert budget is set by the detector, not by these rules. u = mean deviation over the last three measured days, in robust standard deviations, in the direction of concern.",
+ "rules": [
+  {
+   "id": "R-RED",
+   "scope": "symptom",
+   "priority": 1,
+   "title": "Symptom that needs the medical officer now",
+   "when": {
+    "any": [
+     {
+      "sym": "chest_pain",
+      "min": 1
+     },
+     {
+      "sym": "breathless",
+      "min": 1
+     },
+     {
+      "sym": "flank_pain",
+      "min": 1
+     }
+    ]
+   },
+   "summary": "You reported a symptom that should never wait for a trend. Keel does not interpret it.",
+   "action": "Tell the crew medical officer now.",
+   "steps": [
+    "Stop exercise and any demanding task.",
+    "Stay with another crew member.",
+    "The medical officer runs the onboard medical checklist; Keel queues a summary for the ground for when a link is available."
+   ],
+   "tier": "ground",
+   "tier_reason": "Red-flag symptom: medical officer now, ground as soon as a link exists.",
+   "cm": [
+    "CM-PMC"
+   ],
+   "categories": [
+    "symptoms"
+   ]
+  },
+  {
+   "id": "R-SPE",
+   "scope": "environment",
+   "priority": 2,
+   "title": "Radiation dose rate is far above normal",
+   "when": {
+    "env": "rad_ratio",
+    "min": 3
+   },
+   "summary": "Today's dose rate is several times the mission's usual level, which is what a solar particle event looks like.",
+   "action": "Follow the solar storm shelter procedure with the whole crew.",
+   "steps": [
+    "End or delay any spacewalk.",
+    "Move to the most shielded area; build the shelter from stowage if the vehicle uses one.",
+    "Keep personal dosimeters on. Keel keeps tracking the mission total against the career limit."
+   ],
+   "tier": "cmo",
+   "tier_reason": "Crew-wide environmental exposure: commander and medical officer are informed automatically.",
+   "cm": [
+    "CM-SHELTER"
+   ],
+   "categories": [
+    "environment"
+   ]
+  },
+  {
+   "id": "R-CO2",
+   "scope": "environment",
+   "priority": 3,
+   "title": "Cabin carbon dioxide is elevated",
+   "when": {
+    "env": "co2_3d",
+    "min": 3.0
+   },
+   "summary": "The three-day average is above 3.0 mmHg, the level ISS operations adopted as a limit after crews reported headaches and slips at higher levels.",
+   "action": "Check the air revitalization system and move work and sleep to a better ventilated spot.",
+   "steps": [
+    "Commander or engineer: check scrubber status and fan airflow.",
+    "Avoid enclosed corners where air pools; raise local ventilation in sleep stations.",
+    "Log any headache at check-in so the link to air quality is visible.",
+    "Use buddy checks on procedures until the level is back down."
+   ],
+   "tier": "cmo",
+   "tier_reason": "Crew-wide environmental issue: commander and medical officer are informed automatically.",
+   "cm": [
+    "CM-CO2"
+   ],
+   "categories": [
+    "environment"
+   ]
+  },
+  {
+   "id": "R-SMS",
+   "scope": "adaptation",
+   "priority": 4,
+   "title": "Expected adaptation to the new gravity level",
+   "when": {
+    "all": [
+     {
+      "phase_days_max": 5
+     },
+     {
+      "any": [
+       {
+        "sym": "nausea",
+        "min": 1
+       },
+       {
+        "sym": "dizziness",
+        "min": 1
+       }
+      ]
+     }
+    ]
+   },
+   "summary": "Nausea and dizziness in the first days after a gravity change are expected in most crew and usually pass within two to three days. Keel has widened your normal ranges for this period.",
+   "action": "Take it easy today: slow head movements, light duty, small sips and snacks.",
+   "steps": [
+    "Tell the medical officer if you cannot keep fluids down or if it lasts beyond day 4."
+   ],
+   "tier": "self",
+   "tier_reason": "Expected, self-limiting adaptation.",
+   "cm": [
+    "CM-SMS"
+   ],
+   "categories": [
+    "symptoms"
+   ],
+   "escalate": [
+    {
+     "when": {
+      "phase_days_min": 4
+     },
+     "tier": "cmo",
+     "reason": "Lasting longer than the usual two to three days."
+    }
+   ]
+  },
+  {
+   "id": "R-ILL",
+   "scope": "personal",
+   "priority": 10,
+   "title": "Your body looks like it is under strain",
+   "when": {
+    "all": [
+     {
+      "u": "rhr",
+      "min": 1.2
+     },
+     {
+      "any": [
+       {
+        "u": "temp",
+        "min": 1.2
+       },
+       {
+        "u": "hrv",
+        "min": 1.2
+       },
+       {
+        "u": "spo2",
+        "min": 1.5
+       },
+       {
+        "sym": "sore_throat",
+        "min": 1
+       },
+       {
+        "all": [
+         {
+          "sym": "fatigue",
+          "min": 1
+         },
+         {
+          "sym": "congestion",
+          "min": 1
+         }
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   "summary": "Resting heart rate is up together with other recovery signals. This combination is often seen in the days before or during an infection, but Keel cannot tell you the cause.",
+   "action": "Take your temperature now, swap today's hard exercise for a light session, and tell the medical officer.",
+   "steps": [
+    "Repeat temperature in four hours and log symptoms at check-in.",
+    "Drink to your fluid target and protect tonight's sleep period.",
+    "Keep some distance at meals and wipe shared surfaces until this clears.",
+    "If temperature is 38.0 °C or higher, or you feel worse, the medical officer should see you today."
+   ],
+   "tier": "cmo",
+   "tier_reason": "Possible illness in a closed cabin affects the whole crew, and early rest is cheap.",
+   "cm": [
+    "CM-INFECT",
+    "CM-PMC"
+   ],
+   "categories": [
+    "cardio",
+    "symptoms"
+   ],
+   "escalate": [
+    {
+     "when": {
+      "any": [
+       {
+        "u": "temp",
+        "min": 3.0
+       },
+       {
+        "alert_days_min": 4
+       }
+      ]
+     },
+     "tier": "ground",
+     "reason": "High temperature deviation or no improvement after four days: queue for the flight surgeon."
+    }
+   ]
+  },
+  {
+   "id": "R-SPO2",
+   "scope": "personal",
+   "priority": 11,
+   "title": "Blood oxygen is below your normal",
+   "when": {
+    "u": "spo2",
+    "min": 2.0
+   },
+   "summary": "Your overnight blood oxygen has been lower than your own range.",
+   "action": "Take a fingertip reading now, sitting still with a warm hand.",
+   "steps": [
+    "If the resting reading is 92% or lower, or you are short of breath, tell the medical officer now.",
+    "Check the cabin carbon dioxide and oxygen readings.",
+    "If the reading is normal, wear the sensor snugly tonight and compare tomorrow."
+   ],
+   "tier": "cmo",
+   "tier_reason": "Low oxygen readings need a second person to confirm.",
+   "cm": [
+    "CM-SPO2",
+    "CM-PMC"
+   ],
+   "categories": [
+    "cardio"
+   ]
+  },
+  {
+   "id": "R-MOOD",
+   "scope": "personal",
+   "priority": 19,
+   "title": "Your mood has been lower than usual",
+   "when": {
+    "all": [
+     {
+      "u": "mood",
+      "min": 1.5
+     },
+     {
+      "u": "sleep_h",
+      "max": 1.3
+     },
+     {
+      "alert_days_min": 2
+     }
+    ]
+   },
+   "summary": "Your check-ins have been lower than your own normal for a while. That is common on long, isolated missions and easier to turn around early.",
+   "action": "Book a private conversation: with the medical officer, or a recorded message to the support team at home.",
+   "steps": [
+    "Put one thing you enjoy and one contact with home on today's plan.",
+    "Keep exercise and the sleep period fixed; both lift mood.",
+    "You control who sees this. Sharing it with the medical officer is one tap in Sharing."
+   ],
+   "tier": "self",
+   "tier_reason": "Private by default; you decide whether to involve anyone.",
+   "cm": [
+    "CM-PPC"
+   ],
+   "categories": [
+    "cognition"
+   ],
+   "escalate": [
+    {
+     "when": {
+      "alert_days_min": 10
+     },
+     "tier": "cmo",
+     "reason": "Lasting ten days or more: Keel recommends sharing it with the medical officer."
+    }
+   ]
+  },
+  {
+   "id": "R-SLEEP",
+   "scope": "personal",
+   "priority": 20,
+   "title": "You are running short on sleep",
+   "when": {
+    "any": [
+     {
+      "u": "sleep_h",
+      "min": 1.3
+     },
+     {
+      "u": "sleep_mid",
+      "min": 2.0
+     }
+    ]
+   },
+   "summary": "Your sleep has been shorter or later than your own normal for several days. Sleep debt builds quietly and shows up first as slower reactions.",
+   "action": "Protect a full 8.5-hour sleep period tonight.",
+   "steps": [
+    "Switch your quarters to the warm pre-sleep light setting two hours before bed.",
+    "Last caffeine at least six hours before sleep.",
+    "If the schedule moved, use bright light after waking to bring your body clock along.",
+    "Keep safety-critical tasks out of your 1 to 7 AM low, or ask for a buddy check."
+   ],
+   "tier": "self",
+   "tier_reason": "Usually fixed by protecting sleep for a few nights.",
+   "cm": [
+    "CM-SLEEP",
+    "CM-LIGHT"
+   ],
+   "categories": [
+    "sleep"
+   ],
+   "escalate": [
+    {
+     "when": {
+      "any": [
+       {
+        "u": "pvt_rt",
+        "min": 2.0
+       },
+       {
+        "alert_days_min": 6
+       }
+      ]
+     },
+     "tier": "cmo",
+     "reason": "Reaction time is now affected or the pattern has lasted six days: the medical officer can adjust the schedule or discuss sleep aids."
+    }
+   ]
+  },
+  {
+   "id": "R-HYDR",
+   "scope": "personal",
+   "priority": 22,
+   "title": "You are drinking less than usual",
+   "when": {
+    "all": [
+     {
+      "u": "fluid",
+      "min": 1.2
+     },
+     {
+      "any": [
+       {
+        "u": "rhr",
+        "min": 0.8
+       },
+       {
+        "sym": "headache",
+        "min": 1
+       },
+       {
+        "sym": "dizziness",
+        "min": 1
+       },
+       {
+        "u": "fluid",
+        "min": 2.0
+       }
+      ]
+     }
+    ]
+   },
+   "summary": "Fluid intake is below your own normal, and your body is starting to show it. In space this also raises kidney-stone risk.",
+   "action": "Drink one extra litre before the end of the day, spread over the next few hours.",
+   "steps": [
+    "Aim for 2.0 to 2.5 litres a day and pale urine.",
+    "Log each drink bag at check-in so the trend is visible.",
+    "Tell the medical officer about any sharp side or back pain."
+   ],
+   "tier": "self",
+   "tier_reason": "Simple to correct yourself.",
+   "cm": [
+    "CM-FLUID"
+   ],
+   "categories": [
+    "nutrition"
+   ],
+   "escalate": [
+    {
+     "when": {
+      "alert_days_min": 5
+     },
+     "tier": "cmo",
+     "reason": "No improvement after five days."
+    }
+   ]
+  },
+  {
+   "id": "R-EX",
+   "scope": "personal",
+   "priority": 23,
+   "title": "Exercise has dropped below your plan",
+   "when": {
+    "u": "ex7",
+    "min": 1.5
+   },
+   "summary": "Your weekly exercise is well under your own normal. Without gravity, fitness, muscle and bone are only held by daily loading, and the loss is silent.",
+   "action": "Do today's session, even a shortened one, and plan the next three.",
+   "steps": [
+    "If a device is down, use the substitute session: elastic bands and bodyweight circuits.",
+    "If you are skipping because you feel unwell or low, say so at check-in so Keel can connect it.",
+    "Resting heart rate creeping up over the next weeks is the first sign of lost fitness."
+   ],
+   "tier": "self",
+   "tier_reason": "Getting back on plan is the countermeasure.",
+   "cm": [
+    "CM-EXERCISE"
+   ],
+   "categories": [
+    "exercise"
+   ],
+   "escalate": [
+    {
+     "when": {
+      "alert_days_min": 10
+     },
+     "tier": "cmo",
+     "reason": "Ten days below plan: the medical officer should adjust the prescription."
+    }
+   ]
+  },
+  {
+   "id": "R-FOOD",
+   "scope": "personal",
+   "priority": 24,
+   "title": "You are eating less than planned",
+   "when": {
+    "u": "energy",
+    "min": 1.5
+   },
+   "summary": "Food intake has been below your own normal. Under-eating in space speeds up loss of body mass, muscle and bone.",
+   "action": "Add one planned snack today and finish the main meals.",
+   "steps": [
+    "Check body mass at the next scheduled measurement.",
+    "If food has lost its appeal or you feel nauseous, note it at check-in."
+   ],
+   "tier": "self",
+   "tier_reason": "Simple to correct yourself.",
+   "cm": [
+    "CM-FOOD"
+   ],
+   "categories": [
+    "nutrition"
+   ],
+   "escalate": [
+    {
+     "when": {
+      "alert_days_min": 7
+     },
+     "tier": "cmo",
+     "reason": "A week below plan."
+    }
+   ]
+  },
+  {
+   "id": "R-COG",
+   "scope": "personal",
+   "priority": 25,
+   "title": "Your reactions are slower than usual",
+   "when": {
+    "u": "pvt_rt",
+    "min": 1.5
+   },
+   "summary": "Your reaction self-test is slower than your own normal without a clear sleep change.",
+   "action": "Repeat the test after a ten-minute break; if it is still slow, ask for a buddy check on critical tasks today.",
+   "steps": [
+    "Check the cabin carbon dioxide reading on the Today screen.",
+    "Think about last night's sleep and today's workload."
+   ],
+   "tier": "self",
+   "tier_reason": "One slow test is common; a pattern matters.",
+   "cm": [
+    "CM-RETEST"
+   ],
+   "categories": [
+    "cognition"
+   ],
+   "escalate": [
+    {
+     "when": {
+      "alert_days_min": 4
+     },
+     "tier": "cmo",
+     "reason": "Slower for four days."
+    }
+   ]
+  },
+  {
+   "id": "R-CARD",
+   "scope": "personal",
+   "priority": 26,
+   "title": "Your heart is working harder at rest",
+   "when": {
+    "any": [
+     {
+      "u": "rhr",
+      "min": 1.5
+     },
+     {
+      "u": "hrv",
+      "min": 1.5
+     }
+    ]
+   },
+   "summary": "Resting heart rate or heart rate variability has moved away from your own normal without another clear signal.",
+   "action": "Ease today's exercise intensity and check the basics: fluids, sleep, workload.",
+   "steps": [
+    "Take a two-minute still reading with the chest strap tomorrow after waking.",
+    "If it has not returned to your range in three days, Keel will suggest involving the medical officer."
+   ],
+   "tier": "self",
+   "tier_reason": "Often explained by sleep, fluids or training load.",
+   "cm": [
+    "CM-FLUID",
+    "CM-SLEEP"
+   ],
+   "categories": [
+    "cardio"
+   ],
+   "escalate": [
+    {
+     "when": {
+      "alert_days_min": 4
+     },
+     "tier": "cmo",
+     "reason": "Not back in range after four days."
+    }
+   ]
+  },
+  {
+   "id": "R-GEN",
+   "scope": "personal",
+   "priority": 99,
+   "title": "Several readings have drifted from your normal",
+   "when": {
+    "always": true
+   },
+   "summary": "No single reading stands out, but taken together your numbers are unusual for you.",
+   "action": "Do a full check-in today and repeat any reading that looks wrong.",
+   "steps": [
+    "Check that the wearable is snug and charged.",
+    "If you feel fine and it clears in two days, no action is needed."
+   ],
+   "tier": "self",
+   "tier_reason": "A combined drift without a clear pattern.",
+   "cm": [
+    "CM-PMC"
+   ],
+   "categories": [
+    "cardio"
+   ],
+   "escalate": [
+    {
+     "when": {
+      "alert_days_min": 5
+     },
+     "tier": "cmo",
+     "reason": "Persisting for five days without explanation."
+    }
+   ]
+  }
+ ]
+}

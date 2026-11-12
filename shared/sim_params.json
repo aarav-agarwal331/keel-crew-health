@@ -1,0 +1,383 @@
+{
+ "_note": "Simulator parameters. basis: 'published' = taken from a source opened for docs/DOMAIN.md (ref = its reference number there); 'calibrated' = fitted to a real open dataset by research/scripts/calibrate_sim.py (never the dataset used to validate realism); 'assumption' = chosen by us (a ref then only supports the direction of the effect).",
+ "params": {
+  "rhr_mean": {
+   "value": 54.0,
+   "unit": "bpm",
+   "basis": "published",
+   "ref": "55a",
+   "note": "Sleeping heart rate before flight 53.3 ± 7.3 bpm in 7 astronauts"
+  },
+  "rhr_between_sd": {
+   "value": 7.3,
+   "unit": "bpm",
+   "basis": "published",
+   "ref": "55a",
+   "note": "Between-astronaut SD of sleeping heart rate"
+  },
+  "rhr_within_sd": {
+   "value": 2.0,
+   "unit": "bpm",
+   "basis": "calibrated",
+   "ref": null,
+   "note": "Fitted by research/scripts/calibrate_sim.py to the calibration dataset"
+  },
+  "rhr_ar1": {
+   "value": 0.55,
+   "unit": "",
+   "basis": "calibrated",
+   "ref": null,
+   "note": "Fitted by research/scripts/calibrate_sim.py to the calibration dataset"
+  },
+  "hrv_median": {
+   "value": 45.0,
+   "unit": "ms RMSSD",
+   "basis": "assumption",
+   "ref": null
+  },
+  "lnhrv_between_sd": {
+   "value": 0.3,
+   "unit": "ln ms",
+   "basis": "assumption",
+   "ref": null
+  },
+  "lnhrv_within_sd": {
+   "value": 0.13,
+   "unit": "ln ms",
+   "basis": "assumption",
+   "ref": null
+  },
+  "spo2_mean": {
+   "value": 97.5,
+   "unit": "%",
+   "basis": "published",
+   "ref": "57",
+   "note": "Normal range 95-100% (terrestrial)"
+  },
+  "spo2_within_sd": {
+   "value": 0.5,
+   "unit": "%",
+   "basis": "assumption",
+   "ref": null
+  },
+  "temp_mean": {
+   "value": 36.7,
+   "unit": "degC",
+   "basis": "assumption",
+   "ref": null
+  },
+  "temp_within_sd": {
+   "value": 0.12,
+   "unit": "degC",
+   "basis": "assumption",
+   "ref": null
+  },
+  "sleep_ground_mean": {
+   "value": 6.95,
+   "unit": "h",
+   "basis": "published",
+   "ref": "31",
+   "note": "Post-flight actigraphy sleep 6.95 h on ISS missions, used as the ground value"
+  },
+  "sleep_within_sd": {
+   "value": 0.8,
+   "unit": "h",
+   "basis": "calibrated",
+   "ref": null,
+   "note": "Fitted by research/scripts/calibrate_sim.py to the calibration dataset"
+  },
+  "pvt_mean": {
+   "value": 250.0,
+   "unit": "ms",
+   "basis": "assumption",
+   "ref": null
+  },
+  "pvt_between_sd": {
+   "value": 22.0,
+   "unit": "ms",
+   "basis": "assumption",
+   "ref": null
+  },
+  "pvt_within_sd": {
+   "value": 14.0,
+   "unit": "ms",
+   "basis": "assumption",
+   "ref": null
+  },
+  "fluid_mean": {
+   "value": 2.25,
+   "unit": "L/day",
+   "basis": "published",
+   "ref": "53",
+   "note": "2.0-2.5 L/day prescribed in flight"
+  },
+  "ex_ground_min": {
+   "value": 60.0,
+   "unit": "min/day",
+   "basis": "assumption",
+   "ref": null
+  },
+  "ex_flight_min": {
+   "value": 120.0,
+   "unit": "min/day",
+   "basis": "published",
+   "ref": "9,49",
+   "note": "NASA pages give two hours of exercise per day (2.5 h scheduled including setup), six days a week"
+  },
+  "energy_flight_pct": {
+   "value": 82.0,
+   "unit": "% of requirement",
+   "basis": "published",
+   "ref": "52d",
+   "note": "In-flight intake about 80% of requirement"
+  },
+  "mass_early_loss_frac": {
+   "value": 0.035,
+   "unit": "fraction",
+   "basis": "published",
+   "ref": "52d",
+   "note": "Body mass 2.8% to 4.4% below pre-flight, mostly within the first 30 days"
+  },
+  "adapt_tau_days": {
+   "value": 6.0,
+   "unit": "days",
+   "basis": "assumption",
+   "ref": null
+  },
+  "flight_rhr_shift": {
+   "value": 0.0,
+   "unit": "bpm",
+   "basis": "published",
+   "ref": "55a,55d",
+   "note": "Sleeping and daytime heart rate reported unchanged in flight; no bpm delta published"
+  },
+  "flight_rhr_shift_sd": {
+   "value": 2.5,
+   "unit": "bpm",
+   "basis": "assumption",
+   "ref": null,
+   "note": "Individual variation around the population shift"
+  },
+  "flight_lnhrv_shift": {
+   "value": -0.1,
+   "unit": "ln ms",
+   "basis": "assumption",
+   "ref": "55a",
+   "note": "Direction (reduced HRV during sleep in flight) is published; the size is our assumption and a second study disagrees on direction"
+  },
+  "flight_sleep_shift": {
+   "value": -0.86,
+   "unit": "h",
+   "basis": "published",
+   "ref": "31",
+   "note": "In-flight ISS sleep 6.09 ± 0.67 h (6.95 - 0.86 = 6.09)"
+  },
+  "flight_sbp_shift": {
+   "value": -4.0,
+   "unit": "mmHg",
+   "basis": "assumption",
+   "ref": null
+  },
+  "lunar_recovery_fraction": {
+   "value": 0.5,
+   "unit": "fraction",
+   "basis": "assumption",
+   "ref": null
+  },
+  "sms_incidence": {
+   "value": 0.7,
+   "unit": "fraction",
+   "basis": "published",
+   "ref": "52a",
+   "note": "Space motion sickness in 60-80% of travellers"
+  },
+  "sms_duration_days": {
+   "value": 3.0,
+   "unit": "days",
+   "basis": "published",
+   "ref": "52a",
+   "note": "First 2-3 days of weightlessness"
+  },
+  "mood_isolation_drift": {
+   "value": 0.25,
+   "unit": "points",
+   "basis": "assumption",
+   "ref": null
+  },
+  "co2_ground_mean": {
+   "value": 0.5,
+   "unit": "mmHg",
+   "basis": "assumption",
+   "ref": null
+  },
+  "co2_flight_mean": {
+   "value": 2.3,
+   "unit": "mmHg",
+   "basis": "assumption",
+   "ref": "37",
+   "note": "Typical mean ISS level not verified; published range is 1-9 mmHg"
+  },
+  "co2_sd": {
+   "value": 0.3,
+   "unit": "mmHg",
+   "basis": "assumption",
+   "ref": null
+  },
+  "co2_effect_threshold": {
+   "value": 2.5,
+   "unit": "mmHg",
+   "basis": "published",
+   "ref": "37",
+   "note": "7-day average below 2.5 mmHg keeps headache risk under 1%"
+  },
+  "co2_event_peak_add": {
+   "value": 2.5,
+   "unit": "mmHg",
+   "basis": "assumption",
+   "ref": null
+  },
+  "headache_base": {
+   "value": 0.01,
+   "unit": "probability/day",
+   "basis": "published",
+   "ref": "37",
+   "note": "Headache probability at the 2.5 mmHg reference level (under 1% risk)"
+  },
+  "pvt_per_co2_mmhg": {
+   "value": 6.0,
+   "unit": "ms per mmHg above threshold",
+   "basis": "assumption",
+   "ref": null
+  },
+  "rad_ground": {
+   "value": 0.008,
+   "unit": "mSv/day",
+   "basis": "assumption",
+   "ref": null,
+   "note": "About 3 mSv per year natural background; not from an opened source"
+  },
+  "rad_transit": {
+   "value": 1.8,
+   "unit": "mSv/day",
+   "basis": "published",
+   "ref": "44",
+   "note": "Measured inside the Mars Science Laboratory cruise vehicle"
+  },
+  "rad_lunar_surface": {
+   "value": 1.369,
+   "unit": "mSv/day",
+   "basis": "published",
+   "ref": "45",
+   "note": "Chang'E-4 lander measurement, 1,369 microsievert per day"
+  },
+  "rad_rel_sd": {
+   "value": 0.06,
+   "unit": "fraction",
+   "basis": "assumption",
+   "ref": null
+  },
+  "spe_peak_dose": {
+   "value": 8.0,
+   "unit": "mSv/day",
+   "basis": "assumption",
+   "ref": "44",
+   "note": "Solar particles were about 3% of the cruise dose; the peak daily value is our choice, well under the 250 mSv event design limit"
+  },
+  "rhr_per_debt_h": {
+   "value": 0.9,
+   "unit": "bpm per hour of sleep debt",
+   "basis": "assumption",
+   "ref": null
+  },
+  "rhr_per_ex_hour": {
+   "value": 0.8,
+   "unit": "bpm per extra hour exercised the day before",
+   "basis": "assumption",
+   "ref": null
+  },
+  "pvt_per_debt_h": {
+   "value": 9.0,
+   "unit": "ms per hour of sleep debt",
+   "basis": "assumption",
+   "ref": "32",
+   "note": "Direction (under 6 h sleep slows reaction) is published; slope is our assumption"
+  },
+  "sleep_loss_cut_h": {
+   "value": 1.6,
+   "unit": "h",
+   "basis": "assumption",
+   "ref": null
+  },
+  "illness_prodrome_days": {
+   "value": 4.0,
+   "unit": "days",
+   "basis": "published",
+   "ref": "58",
+   "note": "Signal a median of 4 days before symptom onset"
+  },
+  "illness_duration_days": {
+   "value": 8.0,
+   "unit": "days",
+   "basis": "assumption",
+   "ref": null
+  },
+  "illness_rhr_peak": {
+   "value": 7.0,
+   "unit": "bpm",
+   "basis": "published",
+   "ref": "58",
+   "note": "Median resting heart rate rise of 7 bpm in 32 COVID-19 cases"
+  },
+  "illness_lnhrv_drop": {
+   "value": 0.22,
+   "unit": "ln ms",
+   "basis": "assumption",
+   "ref": "60",
+   "note": "Direction (RMSSD down) is published; size is our assumption"
+  },
+  "illness_spo2_drop": {
+   "value": 0.8,
+   "unit": "%",
+   "basis": "assumption",
+   "ref": null
+  },
+  "illness_temp_peak": {
+   "value": 0.8,
+   "unit": "degC",
+   "basis": "assumption",
+   "ref": "60",
+   "note": "7 bpm divided by a second-hand 8.5 bpm per degree C"
+  },
+  "decond_rate": {
+   "value": 0.12,
+   "unit": "per day of deficit",
+   "basis": "assumption",
+   "ref": null
+  },
+  "decond_rhr_max": {
+   "value": 5.0,
+   "unit": "bpm",
+   "basis": "assumption",
+   "ref": null
+  },
+  "dehyd_rhr": {
+   "value": 5.0,
+   "unit": "bpm",
+   "basis": "assumption",
+   "ref": null
+  },
+  "low_mood_drop": {
+   "value": 1.4,
+   "unit": "points",
+   "basis": "assumption",
+   "ref": null
+  },
+  "headache_odds_per_mmhg": {
+   "value": 2.0,
+   "unit": "odds ratio per mmHg",
+   "basis": "published",
+   "ref": "37",
+   "note": "Each +1 mmHg doubles the odds of a headache report"
+  }
+ }
+}

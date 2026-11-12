@@ -1,0 +1,78 @@
+import { useState } from 'react'
+import { STATUS_LABEL } from '../core/analysis'
+import { CATEGORIES, IND, shortDay } from '../core/mission'
+import { readiness, READY_LABEL } from '../core/readiness'
+import { defaultSharing, LEVELS, ROLES, SHARE_CATEGORIES, type Level, type Role } from '../core/sharing'
+import { viewFor } from '../core/visibility'
+import { useApp } from '../state'
+import { Card, Seg, StatusTag } from '../ui/kit'
+
+const catLabel = (id: string) => CATEGORIES.find((c) => c.id === id)?.label ?? id
+
+export function Sharing() {
+  const { mission, me, sharing, setShare, access, today } = useApp()
+  const [role, setRole] = useState<Role>('cmo')
+  const s = sharing[me] ?? defaultSharing()
+  const a = today()
+  const crew = mission.crew.find((c) => c.id === me)!
+  const log = access.filter((x) => x.mission === mission.id && x.crew === me).sort((x, y) => y.ts - x.ts).slice(0, 30)
+  const v = a ? viewFor(role, a, s) : null
+  const r = a ? readiness(a) : null
+  return (
+    <>
+      <h1>Sharing and privacy</h1>
+      <p className="muted">{crew.name}, your health data is yours. Nothing personal leaves this device unless you allow it here. Cabin readings (air, radiation) are not personal and are visible to the whole crew.</p>
+
+      <Card title="Who are you setting this for?">
+        <Seg label="Role" value={role} onChange={setRole} options={ROLES.map((x) => ({ id: x.id, label: x.label }))} />
+        <p className="small muted">{ROLES.find((x) => x.id === role)!.blurb}</p>
+        <div className="col">
+          {SHARE_CATEGORIES.map((c) => (
+            <div key={c} className="col" style={{ gap: 6, borderTop: '1px solid var(--border)', paddingTop: 10 }}>
+              <span className="lab">{catLabel(c)}</span>
+              <div className="seg" role="group" aria-label={`${catLabel(c)} shared with ${role}`}>
+                {LEVELS.map((l) => <button key={l.id} aria-pressed={s[role][c] === l.id} onClick={() => setShare(me, role, c, l.id as Level)} data-testid={`share-${role}-${c}-${l.id}`}>{l.label}</button>)}
+              </div>
+              <span className="tiny muted">{LEVELS.find((l) => l.id === s[role][c])!.reveals}</span>
+            </div>
+          ))}
+        </div>
+        <div className="row wrap">
+          <button className="btn sm" onClick={() => SHARE_CATEGORIES.forEach((c) => setShare(me, role, c, 'none'))}>Make everything private</button>
+          <button className="btn sm" onClick={() => SHARE_CATEGORIES.forEach((c) => setShare(me, role, c, 'detail'))}>Share everything</button>
+        </div>
+      </Card>
+
+      {v && (
+        <Card title={`Exactly what the ${ROLES.find((x) => x.id === role)!.label.toLowerCase()} sees about you right now`}>
+          {role === 'commander' && r && <p><StatusTag status={r.tier} label={`Readiness: ${READY_LABEL[r.tier]}`} /> <span className="small muted">(always visible to the commander, without reasons)</span></p>}
+          <p>{v.overall === 'private' ? <StatusTag status="private" label="Nothing personal is shared" /> : <StatusTag status={v.overall} label={`Overall: ${STATUS_LABEL[v.overall]}`} />}</p>
+          <div className="tablewrap"><table data-testid="role-preview">
+            <thead><tr><th>Area</th><th>Level</th><th>They see</th></tr></thead>
+            <tbody>
+              {SHARE_CATEGORIES.map((c) => {
+                const x = v.categories[c]
+                return (
+                  <tr key={c}><td>{catLabel(c)}</td><td>{LEVELS.find((l) => l.id === x.level)!.label}</td>
+                    <td>{x.status === undefined ? <span className="muted">Nothing</span> : <>
+                      {STATUS_LABEL[x.status]}
+                      {x.indicators && <span className="muted">{x.indicators.length ? ': ' : ''}{x.indicators.map((i) => `${IND[i.ind].short} ${i.value !== undefined && !Number.isNaN(i.value) ? i.value.toFixed(IND[i.ind].decimals) + ' ' + IND[i.ind].unit : i.inRange ? 'in range' : 'out of range'}`).join(', ')}</span>}
+                    </>}</td></tr>
+                )
+              })}
+            </tbody>
+          </table></div>
+          {v.findings.length > 0 && <ul className="list small">{v.findings.map((f) => <li key={f.key}>Alert in {catLabel(f.category).toLowerCase()}: {f.title ?? 'title hidden'}{f.action ? `. Recommended: ${f.action}` : ''}</li>)}</ul>}
+        </Card>
+      )}
+
+      <Card title="Access log" right={<span className="small muted">Stored on your device</span>}>
+        {log.length === 0 && <p className="muted">Nobody has looked at your shared data yet. Open the Crew screen as the commander or the medical officer and it will appear here.</p>}
+        {log.length > 0 && <div className="tablewrap"><table data-testid="access-log">
+          <thead><tr><th>When</th><th>Who</th><th>What</th><th>Level</th></tr></thead>
+          <tbody>{log.map((x, i) => <tr key={i}><td>{shortDay(mission, x.day)}, {new Date(x.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</td><td>{ROLES.find((r2) => r2.id === x.role)?.label}</td><td>{x.what}</td><td>{LEVELS.find((l) => l.id === x.level)?.label}</td></tr>)}</tbody>
+        </table></div>}
+      </Card>
+    </>
+  )
+}

@@ -1,0 +1,419 @@
+{
+ "indicators": [
+  {
+   "id": "rhr",
+   "label": "Resting heart rate",
+   "short": "Resting HR",
+   "unit": "bpm",
+   "category": "cardio",
+   "system": "heart",
+   "transform": "none",
+   "concern": 1,
+   "floor": 1.5,
+   "decimals": 0,
+   "range": [
+    30,
+    140
+   ],
+   "source": "wearable",
+   "detect": true,
+   "plain": "How fast your heart beats when you are fully at rest, usually measured during sleep.",
+   "how": "Wear the wrist or chest sensor overnight. Keel takes the lowest stable stretch while you sleep, so exercise and coffee do not distort it.",
+   "why": "A resting heart rate that climbs above your own normal is one of the earliest whole-body signs of infection, dehydration, poor recovery or loss of fitness."
+  },
+  {
+   "id": "hrv",
+   "label": "Heart rate variability",
+   "short": "HRV",
+   "unit": "ms",
+   "category": "cardio",
+   "system": "heart",
+   "transform": "log",
+   "concern": -1,
+   "floor": 0.08,
+   "decimals": 0,
+   "range": [
+    5,
+    250
+   ],
+   "source": "wearable",
+   "detect": true,
+   "plain": "The small beat-to-beat changes in your heart rhythm (RMSSD). Higher usually means your body is recovering well.",
+   "how": "Measured automatically overnight by the wearable, or in a two-minute still reading with the chest strap.",
+   "why": "HRV drops when the body is under strain: illness, short sleep, heavy training or stress. It often moves before you feel anything."
+  },
+  {
+   "id": "spo2",
+   "label": "Blood oxygen",
+   "short": "SpO2",
+   "unit": "%",
+   "category": "cardio",
+   "system": "lungs",
+   "transform": "none",
+   "concern": -1,
+   "floor": 0.5,
+   "decimals": 1,
+   "range": [
+    70,
+    100
+   ],
+   "source": "wearable",
+   "detect": true,
+   "plain": "The share of your red blood cells carrying oxygen.",
+   "how": "Overnight from the wearable, or a 30-second fingertip reading: warm hand, hold still, wait for a steady number.",
+   "why": "A sustained drop can point to a breathing or lung problem or a cabin atmosphere issue."
+  },
+  {
+   "id": "temp",
+   "label": "Body temperature",
+   "short": "Temp",
+   "unit": "°C",
+   "category": "cardio",
+   "system": "core",
+   "transform": "none",
+   "concern": 1,
+   "floor": 0.15,
+   "decimals": 1,
+   "range": [
+    34,
+    42
+   ],
+   "source": "wearable",
+   "detect": true,
+   "plain": "Your body temperature, from the wearable skin sensor overnight or a thermometer reading.",
+   "how": "For a spot check use the thermometer at the same time each day, before exercise and before eating or drinking.",
+   "why": "A rise above your own normal supports the picture of infection or inflammation; body temperature also runs differently in space."
+  },
+  {
+   "id": "sleep_h",
+   "label": "Sleep duration",
+   "short": "Sleep",
+   "unit": "h",
+   "category": "sleep",
+   "system": "head",
+   "transform": "none",
+   "concern": -1,
+   "floor": 0.5,
+   "decimals": 1,
+   "range": [
+    0,
+    16
+   ],
+   "source": "wearable",
+   "detect": true,
+   "plain": "Hours actually asleep in the last sleep period.",
+   "how": "Measured by the wearable. If you did not wear it, enter your best estimate at check-in.",
+   "why": "Crews sleep less in space than on Earth. Short sleep builds up as a debt that slows reactions and raises error risk."
+  },
+  {
+   "id": "sleep_mid",
+   "label": "Sleep timing shift",
+   "short": "Timing",
+   "unit": "h",
+   "category": "sleep",
+   "system": "head",
+   "transform": "none",
+   "concern": 0,
+   "floor": 0.4,
+   "decimals": 1,
+   "range": [
+    -12,
+    12
+   ],
+   "source": "wearable",
+   "detect": true,
+   "plain": "How far the middle of your sleep moved from your scheduled sleep period. Zero means you slept when planned.",
+   "how": "Calculated from when you fell asleep and woke up.",
+   "why": "When sleep slides away from the schedule, your body clock and the mission clock disagree, which hurts sleep quality and alertness."
+  },
+  {
+   "id": "ex7",
+   "label": "Exercise, 7-day average",
+   "short": "Exercise",
+   "unit": "min/day",
+   "category": "exercise",
+   "system": "muscle",
+   "transform": "none",
+   "concern": -1,
+   "floor": 6,
+   "decimals": 0,
+   "range": [
+    0,
+    300
+   ],
+   "source": "wearable",
+   "detect": true,
+   "plain": "Average minutes of exercise per day over the last week.",
+   "how": "Logged by the exercise devices or entered at check-in.",
+   "why": "Daily exercise is the main protection against losing bone, muscle and heart fitness without gravity. Missed sessions add up quietly."
+  },
+  {
+   "id": "pvt_rt",
+   "label": "Reaction time",
+   "short": "Reaction",
+   "unit": "ms",
+   "category": "cognition",
+   "system": "head",
+   "transform": "none",
+   "concern": 1,
+   "floor": 10,
+   "decimals": 0,
+   "range": [
+    150,
+    900
+   ],
+   "source": "checkin",
+   "detect": true,
+   "plain": "Your average response time in the reaction self-test.",
+   "how": "Tap as soon as the target appears. Do it at about the same time each day, sitting still, before caffeine if you can.",
+   "why": "Reaction time is a sensitive, objective sign of fatigue. It slows with sleep loss and may slow with high cabin carbon dioxide."
+  },
+  {
+   "id": "mood",
+   "label": "Mood",
+   "short": "Mood",
+   "unit": "/5",
+   "category": "cognition",
+   "system": "head",
+   "transform": "none",
+   "concern": -1,
+   "floor": 0.6,
+   "decimals": 0,
+   "range": [
+    1,
+    5
+   ],
+   "source": "checkin",
+   "detect": true,
+   "plain": "Your own rating of how you feel today, from 1 (very low) to 5 (very good).",
+   "how": "Answer quickly and honestly at check-in. There is no right answer, and you decide who can see it.",
+   "why": "Isolation, confinement and distance from home wear on everyone. A slow slide is easier to turn around when it is noticed early."
+  },
+  {
+   "id": "fluid",
+   "label": "Fluid intake",
+   "short": "Fluids",
+   "unit": "L",
+   "category": "nutrition",
+   "system": "gut",
+   "transform": "none",
+   "concern": -1,
+   "floor": 0.25,
+   "decimals": 1,
+   "range": [
+    0,
+    8
+   ],
+   "source": "checkin",
+   "detect": true,
+   "plain": "How much you drank today.",
+   "how": "Tap once per drink bag at check-in, or enter litres.",
+   "why": "Crews tend to drink too little in space. Low intake raises the risk of kidney stones and makes the heart work harder."
+  },
+  {
+   "id": "energy",
+   "label": "Food intake",
+   "short": "Food",
+   "unit": "% of plan",
+   "category": "nutrition",
+   "system": "gut",
+   "transform": "none",
+   "concern": -1,
+   "floor": 6,
+   "decimals": 0,
+   "range": [
+    0,
+    200
+   ],
+   "source": "checkin",
+   "detect": true,
+   "plain": "How much of your planned food you ate today.",
+   "how": "Estimate at check-in: all, most, about half, little.",
+   "why": "Under-eating is common in space and speeds up loss of body mass, muscle and bone."
+  },
+  {
+   "id": "mass",
+   "label": "Body mass",
+   "short": "Mass",
+   "unit": "kg",
+   "category": "nutrition",
+   "system": "core",
+   "transform": "none",
+   "concern": -1,
+   "floor": 0.3,
+   "decimals": 1,
+   "range": [
+    35,
+    160
+   ],
+   "source": "spot",
+   "detect": false,
+   "plain": "Your body mass, measured on the mass-measurement device (a normal scale does not work without gravity).",
+   "how": "Weekly, same time of day, before eating.",
+   "why": "Steady loss of body mass signals under-eating or dehydration."
+  },
+  {
+   "id": "sbp",
+   "label": "Blood pressure (upper)",
+   "short": "BP",
+   "unit": "mmHg",
+   "category": "cardio",
+   "system": "heart",
+   "transform": "none",
+   "concern": 0,
+   "floor": 4,
+   "decimals": 0,
+   "range": [
+    60,
+    240
+   ],
+   "source": "spot",
+   "detect": false,
+   "plain": "The upper (systolic) number of your blood pressure.",
+   "how": "Sit still for five minutes, cuff on the upper arm at heart level, do not talk during the reading.",
+   "why": "Blood pressure regulation changes without gravity. Readings well outside your normal deserve a repeat and a word with the medical officer."
+  },
+  {
+   "id": "glucose",
+   "label": "Blood sugar",
+   "short": "Glucose",
+   "unit": "mg/dL",
+   "category": "nutrition",
+   "system": "gut",
+   "transform": "none",
+   "concern": 0,
+   "floor": 5,
+   "decimals": 0,
+   "range": [
+    30,
+    500
+   ],
+   "source": "spot",
+   "detect": false,
+   "plain": "The sugar level in a fingertip drop of blood.",
+   "how": "Clean fingertip, first drop wiped away, measure before breakfast for a comparable number.",
+   "why": "Named in the challenge as a useful indicator. Keel shows it against your own previous readings and a general reference range."
+  },
+  {
+   "id": "co2",
+   "label": "Cabin carbon dioxide",
+   "short": "CO2",
+   "unit": "mmHg",
+   "category": "environment",
+   "system": "environment",
+   "transform": "none",
+   "concern": 1,
+   "floor": 0.3,
+   "decimals": 1,
+   "range": [
+    0,
+    20
+   ],
+   "source": "env",
+   "detect": false,
+   "plain": "The average carbon dioxide level in the cabin air over the last day.",
+   "how": "Read automatically from the cabin air monitor.",
+   "why": "In a closed cabin, exhaled carbon dioxide builds up. Higher levels are linked to headaches and may dull thinking."
+  },
+  {
+   "id": "rad",
+   "label": "Radiation dose",
+   "short": "Radiation",
+   "unit": "mSv/day",
+   "category": "environment",
+   "system": "environment",
+   "transform": "none",
+   "concern": 1,
+   "floor": 0.1,
+   "decimals": 2,
+   "range": [
+    0,
+    1000
+   ],
+   "source": "env",
+   "detect": false,
+   "plain": "The radiation dose your personal dosimeter recorded today, and your running mission total.",
+   "how": "Read automatically from your personal dosimeter. Keep it on you.",
+   "why": "Beyond Earth's magnetic shield the crew receives a steady dose from cosmic rays and occasional bursts from solar storms. The total is tracked against a career limit."
+  }
+ ],
+ "categories": [
+  {
+   "id": "cardio",
+   "label": "Heart and circulation"
+  },
+  {
+   "id": "sleep",
+   "label": "Sleep and body clock"
+  },
+  {
+   "id": "exercise",
+   "label": "Exercise"
+  },
+  {
+   "id": "cognition",
+   "label": "Mind and mood"
+  },
+  {
+   "id": "nutrition",
+   "label": "Food and fluids"
+  },
+  {
+   "id": "symptoms",
+   "label": "Symptoms"
+  },
+  {
+   "id": "environment",
+   "label": "Cabin environment"
+  }
+ ],
+ "symptoms": [
+  {
+   "id": "headache",
+   "label": "Headache"
+  },
+  {
+   "id": "nausea",
+   "label": "Nausea"
+  },
+  {
+   "id": "congestion",
+   "label": "Stuffy head or nose"
+  },
+  {
+   "id": "sore_throat",
+   "label": "Sore throat or cough"
+  },
+  {
+   "id": "fatigue",
+   "label": "Unusual tiredness"
+  },
+  {
+   "id": "back_pain",
+   "label": "Back pain"
+  },
+  {
+   "id": "dizziness",
+   "label": "Dizziness"
+  },
+  {
+   "id": "vision",
+   "label": "Vision change"
+  },
+  {
+   "id": "chest_pain",
+   "label": "Chest pain or pressure",
+   "red_flag": true
+  },
+  {
+   "id": "breathless",
+   "label": "Short of breath at rest",
+   "red_flag": true
+  },
+  {
+   "id": "flank_pain",
+   "label": "Severe side or back pain",
+   "red_flag": true
+  }
+ ]
+}

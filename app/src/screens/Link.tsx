@@ -1,0 +1,63 @@
+import { useMemo } from 'react'
+import { REFS } from '../core/analysis'
+import { delayFor, fmtDelay, scheduledBlackout } from '../core/link'
+import { shortDay } from '../core/mission'
+import { useApp } from '../state'
+import { XYChart } from '../ui/charts'
+import { Card, Sources, StatusTag } from '../ui/kit'
+
+export function LinkScreen() {
+  const { mission, day, link, linkCut, setLinkCut, outbox, computeMs } = useApp()
+  const curve = useMemo(() => {
+    const x: number[] = [], y: number[] = []
+    for (let t = mission.pre_days; t < mission.days; t++) { x.push(t - mission.pre_days + 1); y.push(delayFor(mission, t).delayS / 60) }
+    return { x, y }
+  }, [mission])
+  const queued = outbox.filter((o) => o.state === 'queued')
+  const sent = outbox.filter((o) => o.state === 'sent').slice(-5).reverse()
+  const hasLink = mission.kind !== 'personal' && mission.kind !== 'real'
+  const upcoming = [...Array(mission.days - day).keys()].map((k) => day + k).find((t) => scheduledBlackout(mission, t))
+  return (
+    <>
+      <h1>Earth link</h1>
+      <section className="card" data-testid="link-status">
+        <div className={`hero ${link.available ? 'st-steady' : 'st-act'}`}>
+          <div className="glyph"><StatusTag status={link.available ? 'steady' : 'act'} label="" size={40} /></div>
+          <div className="col" style={{ gap: 4, color: 'var(--text)' }}>
+            <h1>{link.available ? (day < mission.pre_days ? 'Direct contact' : `${fmtDelay(link.delayS)} each way`) : 'No link to Earth'}</h1>
+            <p className="muted">{link.reason}{link.available && day >= mission.pre_days && !Number.isNaN(link.delayS) ? `. A question and its answer take at least ${fmtDelay(link.delayS * 2)}.` : ''}</p>
+          </div>
+        </div>
+        <p><strong>Keel does not use the link to work.</strong> Detection, explanations and recommended actions all run on this device (last full analysis: {computeMs.toFixed(0)} ms). The link only carries a summary for the flight surgeon when one is available.</p>
+        {hasLink && (
+          <div className="row wrap">
+            <button className={`btn ${linkCut ? 'primary' : 'danger'}`} onClick={() => setLinkCut(!linkCut)} data-testid="cut-link" aria-pressed={linkCut}>{linkCut ? 'Restore the link' : 'Cut the link now'}</button>
+            <span className="small muted">Demo control. Cut it, then use any screen: nothing stops working.</span>
+          </div>
+        )}
+      </section>
+
+      {hasLink && (
+        <Card title="Queued for the ground" right={<span className="chip num" data-testid="queue-count">{queued.length} waiting</span>}>
+          <p className="small muted">One compact summary per mission day, containing only what {`you`} share with the flight surgeon. While there is no link, summaries wait here and go out together when it returns.</p>
+          {queued.length > 0 && <ul className="list small num">{queued.slice(-6).map((o) => <li key={o.day}>{shortDay(mission, o.day)} · {o.bytes} bytes · waiting</li>)}</ul>}
+          {sent.length > 0 && <><span className="lab small">Recently sent</span><ul className="list small num">{sent.map((o) => <li key={o.day}>{shortDay(mission, o.day)} · {o.bytes} bytes · sent {o.sentDay !== undefined && o.sentDay !== o.day ? `on ${shortDay(mission, o.sentDay)} (was queued)` : 'same day'}{o.delayS ? `, arrived ${fmtDelay(o.delayS)} later` : ''}</li>)}</ul></>}
+          {outbox.length > 0 && <details><summary>See exactly what the latest summary contains</summary><pre className="eq" data-testid="summary-payload">{JSON.stringify(JSON.parse(outbox[outbox.length - 1].payload), null, 1)}</pre></details>}
+        </Card>
+      )}
+
+      {mission.link?.profile === 'mars_transit' && (
+        <Card title="Signal delay over this transit">
+          <XYChart series={[{ label: 'One-way delay', x: curve.x, y: curve.y }]} xLabel="Flight day" yLabel="Minutes, one way" ariaLabel="One-way signal delay in minutes over the transit" xDecimals={0} yDecimals={1} yMin={0} vline={day >= mission.pre_days ? { x: day - mission.pre_days + 1, label: 'Today' } : undefined} height={200} />
+          <p className="small muted">Simulated with simplified geometry (circular, coplanar orbits). On this outbound leg the delay grows from seconds to about {Math.max(...curve.y).toFixed(0)} minutes. After arrival it keeps growing: Earth to Mars is about 4 minutes at closest approach and about 24 minutes at the greatest distance.{upcoming !== undefined && upcoming > day ? ` Next scripted blackout: ${shortDay(mission, upcoming)}.` : ''}</p>
+        </Card>
+      )}
+      {mission.link?.profile === 'lunar' && <Card title="Lunar link"><p className="small">Light takes about 1.3 seconds each way between Earth and the Moon; NASA expects 3 to 14 seconds of operational latency on lunar missions. Short outages still happen when a rover drives out of line of sight of its relay, which is what this mission's scripted blackout shows.</p></Card>}
+
+      <Card title="Why this matters">
+        <p className="small">On the International Space Station, flight surgeons in Mission Control watch crew health and cabin air in real time and talk to each crew member privately every week. NASA's own planning documents say that on a Mars mission delays and blackouts will end reliable real-time telemedicine, and that medical decisions must move on board.</p>
+        <Sources ids={['1', '2', '4', '8', '12', '13']} refs={REFS} />
+      </Card>
+    </>
+  )
+}

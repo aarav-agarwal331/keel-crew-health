@@ -1,0 +1,159 @@
+[
+ {
+  "id": "CM-SLEEP",
+  "title": "Protect the sleep period",
+  "type": "official",
+  "refs": [
+   "30",
+   "35",
+   "31"
+  ],
+  "text": "NASA's standard schedules an 8.5-hour sleep period and keeps critical tasks out of the 1 to 7 AM body-clock low. NASA sleep guidance lists sleep hygiene, light, naps and, only after other options, medication. ISS crews average about 6.1 hours of sleep per night."
+ },
+ {
+  "id": "CM-LIGHT",
+  "title": "Use the lighting schedule",
+  "type": "official",
+  "refs": [
+   "36"
+  ],
+  "text": "The ISS lighting system has three settings: general (4500 K), pre-sleep (2700 K, warm) and phase-shift (6500 K, bright blue-white) to help move the body clock."
+ },
+ {
+  "id": "CM-RETEST",
+  "title": "Re-test and rest before critical work",
+  "type": "official",
+  "refs": [
+   "33",
+   "32"
+  ],
+  "text": "The Reaction Self-Test was flown so crews could check their own alertness. In ISS data, nights under 6 hours were linked to slower responses."
+ },
+ {
+  "id": "CM-EXERCISE",
+  "title": "Return to the exercise prescription",
+  "type": "official",
+  "refs": [
+   "10",
+   "9",
+   "50",
+   "29"
+  ],
+  "text": "ISS crews are scheduled 2.5 hours a day, six days a week, on resistive and aerobic devices. Resistive exercise with good nutrition kept hip and pelvis bone density at pre-flight levels on 4 to 6 month flights. NASA's standard is to keep aerobic capacity and strength at or above 80% of baseline."
+ },
+ {
+  "id": "CM-FLUID",
+  "title": "Drink toward the fluid target",
+  "type": "literature",
+  "refs": [
+   "53",
+   "54",
+   "6"
+  ],
+  "text": "In-flight prescriptions are 2.0 to 2.5 litres a day; modelling suggests more lowers kidney-stone risk further. Low urine volume is the main modifiable stone risk in space."
+ },
+ {
+  "id": "CM-FOOD",
+  "title": "Eat the planned menu",
+  "type": "official",
+  "refs": [
+   "29",
+   "52d",
+   "22"
+  ],
+  "text": "NASA's standard is to provide 100% of calculated energy needs, yet crews have eaten about 80% and lost 3 to 4% of body mass, mostly in the first month."
+ },
+ {
+  "id": "CM-CO2",
+  "title": "Check air revitalization and move to better airflow",
+  "type": "official",
+  "refs": [
+   "38",
+   "37",
+   "39",
+   "9"
+  ],
+  "text": "ISS operations lowered the cabin limit from 4.0 to 3.0 mmHg (24-hour average) after crews reported headaches and missed procedure steps. Each extra 1 mmHg doubled the odds of a headache report. Carbon dioxide can pool in poorly ventilated spots. Moving and raising local ventilation is our inference from that finding, not a quoted procedure."
+ },
+ {
+  "id": "CM-SHELTER",
+  "title": "Solar storm: shelter",
+  "type": "official",
+  "refs": [
+   "48",
+   "47",
+   "29"
+  ],
+  "text": "The Orion plan is to build a shelter from stowage bags within an hour and stay up to 24 hours. Spacewalks are ended or delayed and the crew moves to the most shielded area. Career limit: under 600 mSv."
+ },
+ {
+  "id": "CM-INFECT",
+  "title": "Symptom check, rest, limit spread, consult",
+  "type": "literature",
+  "refs": [
+   "58",
+   "60",
+   "6",
+   "52e"
+  ],
+  "text": "On Earth, wearables showed resting heart rate rising a median of 7 bpm about 4 days before infection symptoms. Immune function changes in space and latent viruses reactivate in most ISS crew. NASA lists hygiene, quarantine and monitoring as countermeasures."
+ },
+ {
+  "id": "CM-PMC",
+  "title": "Private medical conference",
+  "type": "official",
+  "refs": [
+   "30",
+   "8"
+  ],
+  "text": "NASA's medical operations standard gives every crew member private medical conferences: real time when possible, store-and-forward when communication is delayed."
+ },
+ {
+  "id": "CM-PPC",
+  "title": "Private psychological conference and family contact",
+  "type": "official",
+  "refs": [
+   "30",
+   "10",
+   "6"
+  ],
+  "text": "The same standard provides private psychological conferences. NASA also names family contact, journaling and meaningful activities as behavioral health countermeasures."
+ },
+ {
+  "id": "CM-SMS",
+  "title": "Expect space motion sickness early",
+  "type": "literature",
+  "refs": [
+   "52a"
+  ],
+  "text": "60 to 80% of space travellers have motion sickness in the first 2 to 3 days of weightlessness, and a similar share after returning to gravity."
+ },
+ {
+  "id": "CM-SPO2",
+  "title": "Repeat the oxygen reading at rest",
+  "type": "literature",
+  "refs": [
+   "57"
+  ],
+  "text": "Clinical guidance on Earth: normal is 95 to 100%; contact a clinician at 92% or below; 88% or below is urgent. In-flight norms were not verified."
+ },
+ {
+  "id": "CM-VISION",
+  "title": "Vision self-check and report",
+  "type": "official",
+  "refs": [
+   "19"
+  ],
+  "text": "About 70% of long-duration crew show early signs of spaceflight-associated neuro-ocular syndrome. There is no proven countermeasure yet, so changes should be recorded and reported."
+ },
+ {
+  "id": "CM-EVA",
+  "title": "Medical clearance before a spacewalk",
+  "type": "official",
+  "refs": [
+   "30",
+   "29"
+  ],
+  "text": "NASA's standard requires medical clearance before every spacewalk."
+ }
+]

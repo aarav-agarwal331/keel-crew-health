@@ -1,0 +1,322 @@
+{
+ "1": {
+  "text": "NASA. \"Space Communications: 7 Things You Need to Know.\" nasa.gov (year not shown on fetch).",
+  "url": "https://www.nasa.gov/missions/tech-demonstration/space-communications-7-things-you-need-to-know"
+ },
+ "2": {
+  "text": "Karasinski JA, Landon LB, Parisi ME, et al. \"Assessment of the State of Communication Delay Research in Preparation for Missions Beyond Low Earth Orbit.\" NASA Technical Reports Server, 2025.",
+  "url": "https://ntrs.nasa.gov/citations/20250000703"
+ },
+ "3": {
+  "text": "European Space Agency. \"Ten things you didn't know about the Moon – Moon calling Earth.\" ESA, 2021.",
+  "url": "https://www.esa.int/ESA_Multimedia/Images/2021/09/Ten_things_you_didn_t_know_about_the_Moon_-_Moon_calling_Earth"
+ },
+ "4": {
+  "text": "NASA Jet Propulsion Laboratory. \"NASA's Mars Fleet Will Still Conduct Science While Lying Low.\" JPL, 2023.",
+  "url": "https://www.jpl.nasa.gov/news/nasas-mars-fleet-will-still-conduct-science-while-lying-low/"
+ },
+ "5": {
+  "text": "NASA Jet Propulsion Laboratory. \"What's Mars Solar Conjunction, and Why Does It Matter?\" JPL, 2019.",
+  "url": "https://www.jpl.nasa.gov/news/whats-mars-solar-conjunction-and-why-does-it-matter/"
+ },
+ "6": {
+  "text": "NASA Human Research Program. \"The Human Body in Space.\" nasa.gov, 2021 (updated 2026).",
+  "url": "https://www.nasa.gov/hrp/bodyinspace/"
+ },
+ "7": {
+  "text": "NASA Human Research Program. \"5 Hazards of Human Spaceflight.\" nasa.gov (updated 2026).",
+  "url": "https://www.nasa.gov/hrp/hazards/"
+ },
+ "8": {
+  "text": "Jones JA. \"International Space Station Medical Operations.\" NASA Technical Reports Server, 2008.",
+  "url": "https://ntrs.nasa.gov/citations/20080010877"
+ },
+ "9": {
+  "text": "NASA. \"Mission Control: Crew Health Consoles.\" Houston We Have a Podcast, Ep. 377, 2025.",
+  "url": "https://www.nasa.gov/podcasts/houston-we-have-a-podcast/mission-control-crew-health-consoles"
+ },
+ "10": {
+  "text": "NASA. \"FAQ: The Real Story About Astronaut Health Care in Space.\" nasa.gov, 2024.",
+  "url": "https://www.nasa.gov/missions/station/faq-the-real-story-about-astronaut-health-care-in-space/"
+ },
+ "11": {
+  "text": "NASA Ames Research Center. \"A Clinical Decision Support System for Earth-independent Medical Operations.\" nasa.gov, 2024.",
+  "url": "https://www.nasa.gov/centers-and-facilities/ames/ames-science/ames-space-biosciences/a-clinical-decision-support-system-for-earth-independent-medical-operations/"
+ },
+ "12": {
+  "text": "Parker M, Krihak M, Laing C, et al. \"Earth-Independent Medical Operations (EIMO) Concept of Operations.\" NASA Technical Reports Server, 2025.",
+  "url": "https://ntrs.nasa.gov/citations/20250000009"
+ },
+ "13": {
+  "text": "Urbina M, Rubin D, Hailey M, Reyes D, Antonsen E. \"Medical System Concept of Operations for Mars Exploration Missions.\" NASA Technical Reports Server, 2017. (abstract record also opened:.",
+  "url": "https://ntrs.nasa.gov/citations/20170000500"
+ },
+ "14": {
+  "text": "NASA Human Research Roadmap. \"Risk of Adverse Mission Outcomes Due to Earth Independent Human-Systems Operations.\" 2025.",
+  "url": "https://humanresearchroadmap.nasa.gov/Risks/risk.aspx?i=175"
+ },
+ "15": {
+  "text": "NASA Human Research Roadmap. \"Risks\" (index). 2025.",
+  "url": "https://humanresearchroadmap.nasa.gov/Risks/"
+ },
+ "16": {
+  "text": "NASA Human Research Roadmap. \"Risk of Adverse Health Outcomes and Decrements in Performance Due to Medical Conditions that occur in Mission.\" 2025.",
+  "url": "https://humanresearchroadmap.nasa.gov/Risks/risk.aspx?i=95"
+ },
+ "17": {
+  "text": "NASA Human Research Roadmap. \"Risk of Performance Decrements and Adverse Health Outcomes Resulting from Sleep Loss, Circadian Desynchronization, and Work Overload.\" 2025.",
+  "url": "https://humanresearchroadmap.nasa.gov/Risks/risk.aspx?i=100"
+ },
+ "18": {
+  "text": "NASA Human Research Roadmap. \"Risk of Radiation Carcinogenesis.\" 2026.",
+  "url": "https://humanresearchroadmap.nasa.gov/Risks/risk.aspx?i=96"
+ },
+ "19": {
+  "text": "NASA Human Research Roadmap. \"Risk of Spaceflight Associated Neuro-ocular Syndrome (SANS).\" 2025.",
+  "url": "https://humanresearchroadmap.nasa.gov/Risks/risk.aspx?i=105"
+ },
+ "20": {
+  "text": "NASA Human Research Roadmap. \"Risk of Renal Stone Formation.\" 2025.",
+  "url": "https://humanresearchroadmap.nasa.gov/Risks/risk.aspx?i=81"
+ },
+ "21": {
+  "text": "NASA Human Research Roadmap. \"Risk of Cardiovascular Adaptations Contributing to Adverse Mission Performance and Health Outcomes.\" 2025.",
+  "url": "https://humanresearchroadmap.nasa.gov/Risks/risk.aspx?i=179"
+ },
+ "22": {
+  "text": "NASA Human Research Roadmap. \"Risk of Performance Decrement and Crew Illness Due to Inadequate Food and Nutrition.\" 2025.",
+  "url": "https://humanresearchroadmap.nasa.gov/Risks/risk.aspx?i=176"
+ },
+ "23": {
+  "text": "NASA Human Research Roadmap. \"Risk of In Mission Impacts, Adverse Health Events or Long-Term Health Impacts due to Altered Immune Response.\" 2025.",
+  "url": "https://humanresearchroadmap.nasa.gov/Risks/risk.aspx?i=85"
+ },
+ "24": {
+  "text": "NASA Human Research Roadmap. \"Risk of Mission Impacts and Long-Term Health Issues due to Decompression Sickness.\" 2025.",
+  "url": "https://humanresearchroadmap.nasa.gov/Risks/risk.aspx?i=168"
+ },
+ "25": {
+  "text": "NASA Human Research Roadmap. \"Risk of Bone Fracture due to Spaceflight-induced Changes to Bone.\" 2025.",
+  "url": "https://humanresearchroadmap.nasa.gov/Risks/risk.aspx?i=77"
+ },
+ "26": {
+  "text": "NASA Human Research Roadmap. \"Risk of Mission Performance Decrements and Adverse Health Outcomes Resulting from Reduced Cardiorespiratory and Musculoskeletal Fitness.\" 2025.",
+  "url": "https://humanresearchroadmap.nasa.gov/Risks/risk.aspx?i=180"
+ },
+ "27": {
+  "text": "NASA Human Research Roadmap. \"Risk of Altered Sensorimotor/Vestibular Function Impacting Critical Mission Tasks.\" 2025.",
+  "url": "https://humanresearchroadmap.nasa.gov/Risks/risk.aspx?i=88"
+ },
+ "28": {
+  "text": "Patel ZS, Brunstetter TJ, Tarver WJ, et al. \"Red risks for a journey to the red planet: The highest priority human health risks for a mission to Mars.\" npj Microgravity 6:33, 2020.",
+  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7645687/"
+ },
+ "29": {
+  "text": "NASA. \"NASA-STD-3001 Volume 1, Section 4.0 Human Performance.\" nasa.gov (updated 2026).",
+  "url": "https://www.nasa.gov/reference/4-0-human-performance/"
+ },
+ "30": {
+  "text": "NASA. \"NASA-STD-3001 Volume 1, Section 6.0 Medical Operations.\" nasa.gov (updated 2026).",
+  "url": "https://www.nasa.gov/reference/6-0-medical-operations/"
+ },
+ "31": {
+  "text": "Barger LK, Flynn-Evans EE, Kubey A, et al. \"Prevalence of Sleep Deficiency and Hypnotic Use Among Astronauts Before, During and After Spaceflight: An Observational Study.\" Lancet Neurology 13(9):904–912, 2014.",
+  "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pmc&id=4188436"
+ },
+ "32": {
+  "text": "Jones CW, Basner M, Mollicone DJ, et al. \"Sleep deficiency in spaceflight is associated with degraded neurobehavioral functions and elevated stress in astronauts on six-month missions aboard the International Space Station.\" Sleep 45(3), 2022.",
+  "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pmc&id=8919197"
+ },
+ "33": {
+  "text": "Dinges DF, Mollicone D, Ecker A. \"Psychomotor Vigilance Self Test on ISS (Reaction Self Test on Expeditions 21 and 22).\" NASA Technical Reports Server, 2009.",
+  "url": "https://ntrs.nasa.gov/citations/20090029851"
+ },
+ "34": {
+  "text": "Basner M, Savitt A, Moore TM, et al. \"Development and Validation of the Cognition Test Battery for Spaceflight.\" Aerosp Med Hum Perform 86(11):942–952, 2015; and Moore TM, Basner M, Nasrini J, et al. \"Validation of the Cognition Test Battery for Spaceflight in a Sample of Highly Educated Adults.\" Aerosp Med Hum Perform 88(10):937–946, 2017.",
+  "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=26564759,28923143&rettype=abstract&retmode=text"
+ },
+ "35": {
+  "text": "NASA. \"Seven Ways Astronauts Improve Sleep May Help You Snooze Better on Earth.\" nasa.gov, 2016 (updated 2023).",
+  "url": "https://www.nasa.gov/missions/station/seven-ways-astronauts-improve-sleep-may-help-you-snooze-better-on-earth/"
+ },
+ "36": {
+  "text": "Maida JC. \"Introduction to the Solid State Based Interior Lighting System for ISS.\" NASA Technical Reports Server, 2014.",
+  "url": "https://ntrs.nasa.gov/citations/20160005080"
+ },
+ "37": {
+  "text": "Law J, Van Baalen M, Foy M, et al. \"Relationship between carbon dioxide levels and reported headaches on the International Space Station.\" J Occup Environ Med 56(5):477–483, 2014.",
+  "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=24806559&rettype=abstract&retmode=text"
+ },
+ "38": {
+  "text": "Law J, Alexander D. \"CO2 on the International Space Station: An Operations Update.\" NASA Technical Reports Server, 2016.",
+  "url": "https://ntrs.nasa.gov/citations/20150019624"
+ },
+ "39": {
+  "text": "NASA. \"ISS Daily Summary Report – 10/04/2016\" (Personal CO2 Monitor). nasa.gov, 2016.",
+  "url": "https://www.nasa.gov/blogs/stationreport/2016/10/04/iss-daily-summary-report-10-04-2016/"
+ },
+ "40": {
+  "text": "NASA. \"Wearable Tech for Space Station Research.\" nasa.gov, 2024.",
+  "url": "https://www.nasa.gov/missions/station/iss-research/wearable-tech-for-space-station-research/"
+ },
+ "41": {
+  "text": "Zeitlin C, Hassler DM, Cucinotta FA, et al. \"Measurements of energetic particle radiation in transit to Mars on the Mars Science Laboratory.\" Science 340(6136):1080–1084, 2013.",
+  "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=23723233,24324275,24806559&rettype=abstract&retmode=text"
+ },
+ "42": {
+  "text": "Hassler DM, Zeitlin C, Wimmer-Schweingruber RF, et al. \"Mars' surface radiation environment measured with the Mars Science Laboratory's Curiosity rover.\" Science 343(6169):1244797, 2014. Same URL as [41] (abstract contains no dose values).",
+  "url": null
+ },
+ "43": {
+  "text": "Southwest Research Institute. \"SwRI scientists publish first radiation measurements from the surface of Mars.\" SwRI press release, 2013.",
+  "url": "https://www.swri.org/press-release/swri-scientists-publish-first-radiation-measurements-surface-mars"
+ },
+ "44": {
+  "text": "NASA Jet Propulsion Laboratory. \"Data From NASA Rover's Voyage to Mars Aids Planning.\" JPL, 2013.",
+  "url": "https://www.jpl.nasa.gov/news/data-from-nasa-rovers-voyage-to-mars-aids-planning/"
+ },
+ "45": {
+  "text": "Zhang S, Wimmer-Schweingruber RF, Yu J, et al. \"First measurements of the radiation dose on the lunar surface.\" Science Advances 6(39):eaaz1334, 2020.",
+  "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pmc&id=7518862"
+ },
+ "46": {
+  "text": "National Academies of Sciences, Engineering, and Medicine. \"NASA Should Update Astronaut Radiation Exposure Limits, Improve Communication of Cancer Risks.\" News release, 2021.",
+  "url": "https://www.nationalacademies.org/news/nasa-should-update-astronaut-radiation-exposure-limits-improve-communication-of-cancer-risks"
+ },
+ "47": {
+  "text": "NASA Space Radiation Analysis Group. \"How do we protect the astronauts from space radiation?\" NASA Johnson Space Center, 2025.",
+  "url": "https://srag.jsc.nasa.gov/SpaceRadiation/How/How.cfm"
+ },
+ "48": {
+  "text": "NASA. \"Scientists and Engineers Evaluate Orion Radiation Protection Plan.\" nasa.gov, 2016 (updated 2023).",
+  "url": "https://www.nasa.gov/missions/artemis/orion/scientists-and-engineers-evaluate-orion-radiation-protection-plan/"
+ },
+ "49": {
+  "text": "NASA. \"Counteracting Bone and Muscle Loss in Microgravity.\" nasa.gov, 2023.",
+  "url": "https://www.nasa.gov/missions/station/iss-research/counteracting-bone-and-muscle-loss-in-microgravity/"
+ },
+ "50": {
+  "text": "Smith SM, Heer MA, Shackelford LC, et al. \"Benefits for bone from resistance exercise and nutrition in long-duration spaceflight: Evidence from biochemistry and densitometry.\" J Bone Miner Res 27(9):1896–1906, 2012.",
+  "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=22549960&rettype=abstract&retmode=text"
+ },
+ "51": {
+  "text": "Multi-record PubMed abstract page:.",
+  "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=33299095,24970852,26630198,28153941,28985128,24337701,23713210,20824997&rettype=abstract&retmode=text"
+ },
+ "51b": {
+  "text": "Moore AD Jr, Downs ME, Lee SM, et al. \"Peak exercise oxygen uptake during and following long-duration spaceflight.\" J Appl Physiol 117(3):231–238, 2014.",
+  "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=33299095,24970852,26630198,28153941,28985128,24337701,23713210,20824997&rettype=abstract&retmode=text"
+ },
+ "51c": {
+  "text": "Stenger MB, Lee SM, Ribeiro LC, et al. \"Gradient compression garments protect against orthostatic intolerance during recovery from bed rest.\" Eur J Appl Physiol 114(3):597–608, 2014.",
+  "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=33299095,24970852,26630198,28153941,28985128,24337701,23713210,20824997&rettype=abstract&retmode=text"
+ },
+ "51d": {
+  "text": "Stenger MB, Brown AK, Lee SM, Locke JP, Platts SH. \"Gradient compression garments as a countermeasure to post-spaceflight orthostatic intolerance.\" Aviat Space Environ Med 81(9):883–887, 2010.",
+  "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=33299095,24970852,26630198,28153941,28985128,24337701,23713210,20824997&rettype=abstract&retmode=text"
+ },
+ "52": {
+  "text": "Multi-record PubMed abstract page:.",
+  "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=16935570,27843335,25197887,30792698,26630196,19765769&rettype=abstract&retmode=text"
+ },
+ "52a": {
+  "text": "Heer M, Paloski WH. \"Space motion sickness: incidence, etiology, and countermeasures.\" Auton Neurosci 129:77–79, 2006.",
+  "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=16935570,27843335,25197887,30792698,26630196,19765769&rettype=abstract&retmode=text"
+ },
+ "52b": {
+  "text": "Crucian B, Babiak-Vazquez A, Johnston S, et al. \"Incidence of clinical symptoms during long-duration orbital spaceflight.\" Int J Gen Med 9:383–391, 2016.",
+  "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=16935570,27843335,25197887,30792698,26630196,19765769&rettype=abstract&retmode=text"
+ },
+ "52c": {
+  "text": "Lee SMC, Feiveson AH, Stein S, et al. \"Orthostatic Intolerance After ISS and Space Shuttle Missions.\" Aerosp Med Hum Perform 86(12 Suppl):A54–A67, 2015.",
+  "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=16935570,27843335,25197887,30792698,26630196,19765769&rettype=abstract&retmode=text"
+ },
+ "52d": {
+  "text": "Zwart SR, Launius RD, Coen GK, et al. \"Body mass changes during long-duration spaceflight.\" Aviat Space Environ Med 85:897–904, 2014.",
+  "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=16935570,27843335,25197887,30792698,26630196,19765769&rettype=abstract&retmode=text"
+ },
+ "52e": {
+  "text": "Rooney BV, Crucian BE, Pierson DL, et al. \"Herpes Virus Reactivation in Astronauts During Spaceflight and Its Application on Earth.\" Front Microbiol 10:16, 2019.",
+  "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=16935570,27843335,25197887,30792698,26630196,19765769&rettype=abstract&retmode=text"
+ },
+ "52f": {
+  "text": "Whitson PA, Pietrzyk RA, Jones JA, et al. \"Effect of potassium citrate therapy on the risk of renal stone formation during spaceflight.\" J Urol 182:2490–2496, 2009.",
+  "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=16935570,27843335,25197887,30792698,26630196,19765769&rettype=abstract&retmode=text"
+ },
+ "53": {
+  "text": "Goodenow-Messman DA, Gokoglu SA, Kassemi M, et al. \"Numerical characterization of astronaut CaOx renal stone incidence rates to quantify in-flight and post-flight relative risk.\" npj Microgravity 8, 2022.",
+  "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pmc&id=8799707"
+ },
+ "54": {
+  "text": "Whitson PA, Pietrzyk RA, Sams CF, Pak CYC, Jones JA. \"Renal Stone Risk During Space Flight.\" NASA Technical Reports Server, 1999.",
+  "url": "https://ntrs.nasa.gov/citations/20000020539"
+ },
+ "55": {
+  "text": "Multi-record PubMed abstract pages: and.",
+  "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=28050606,23637139,23291736,22764612,19833299,29991811,26137491,25392280,15113425&rettype=abstract&retmode=text"
+ },
+ "55a": {
+  "text": "Xu D, Shoemaker JK, Blaber AP, et al. \"Reduced heart rate variability during sleep in long-duration spaceflight.\" Am J Physiol Regul Integr Comp Physiol 305(2):R164–170, 2013.",
+  "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=28050606,23637139,23291736,22764612,19833299,29991811,26137491,25392280,15113425&rettype=abstract&retmode=text"
+ },
+ "55b": {
+  "text": "Khine HW, Steding-Ehrenborg K, Hastings JL, et al. \"Effects of Prolonged Spaceflight on Atrial Size, Atrial Electrophysiology, and Risk of Atrial Fibrillation.\" Circ Arrhythm Electrophysiol 11(5):e005959, 2018.",
+  "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=28050606,23637139,23291736,22764612,19833299,29991811,26137491,25392280,15113425&rettype=abstract&retmode=text"
+ },
+ "55c": {
+  "text": "Mastrandrea CJ, Rabineau J, Greaves D, et al. \"Bio-Monitor Detects Reduced Obstructive Sleep Apnea and Susceptibility to Arrhythmia in Spaceflight.\" Aerosp Med Hum Perform 96(12):1084–1089, 2025.",
+  "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=28050606,23637139,23291736,22764612,19833299,29991811,26137491,25392280,15113425&rettype=abstract&retmode=text"
+ },
+ "55d": {
+  "text": "Fraser KS, Greaves DK, Shoemaker JK, et al. \"Heart rate and daily physical activity with long-duration habitation of the International Space Station.\" Aviat Space Environ Med 83(6):577–584, 2012.",
+  "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=28050606,23637139,23291736,22764612,19833299,29991811,26137491,25392280,15113425&rettype=abstract&retmode=text"
+ },
+ "55e": {
+  "text": "Verheyden B, Liu J, Beckers F, et al. \"Adaptation of heart rate and blood pressure to short and long duration space missions.\" Respir Physiol Neurobiol 169 Suppl 1:S13–16, 2009.",
+  "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=28050606,23637139,23291736,22764612,19833299,29991811,26137491,25392280,15113425&rettype=abstract&retmode=text"
+ },
+ "55f": {
+  "text": "Otsuka K, Cornelissen G, Furukawa S, et al. \"Long-term exposure to space's microgravity alters the time structure of heart rate variability of astronauts.\" Heliyon 2(12):e00211, 2016.",
+  "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=28050606,23637139,23291736,22764612,19833299,29991811,26137491,25392280,15113425&rettype=abstract&retmode=text"
+ },
+ "56": {
+  "text": "Miyagi R, Sasawaki Y, Shiotani H. \"The influence of short-term sedentary behavior on circadian rhythm of heart rate and heart rate variability.\" Chronobiol Int 36(3):374–380, 2019.",
+  "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=40286232,38942206,30501447,30165244,26915140,23685233,16799244,15944873,8443845,2346954&rettype=abstract&retmode=text"
+ },
+ "57": {
+  "text": "MedlinePlus. \"Pulse Oximetry.\" U.S. National Library of Medicine, 2024.",
+  "url": "https://medlineplus.gov/lab-tests/pulse-oximetry/"
+ },
+ "58": {
+  "text": "Mishra T, Wang M, Metwally AA, et al. \"Pre-symptomatic detection of COVID-19 from smartwatch data.\" Nat Biomed Eng 4(12):1208–1220, 2020.",
+  "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pmc&id=9020268"
+ },
+ "59": {
+  "text": "Multi-record PubMed abstract page:.",
+  "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=33208926,33334565,33122860,34586364&rettype=abstract&retmode=text"
+ },
+ "59a": {
+  "text": "Radin JM, Wineinger NE, Topol EJ, et al. \"Harnessing wearable device data to improve state-level real-time surveillance of influenza-like illness in the USA: a population-based study.\" Lancet Digit Health 2(2):e85–e93, 2020.",
+  "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=33208926,33334565,33122860,34586364&rettype=abstract&retmode=text"
+ },
+ "59b": {
+  "text": "Quer G, Radin JM, Gadaleta M, et al. \"Wearable sensor data and self-reported symptoms for COVID-19 detection.\" Nat Med 27(1):73–77, 2021.",
+  "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=33208926,33334565,33122860,34586364&rettype=abstract&retmode=text"
+ },
+ "59c": {
+  "text": "Grzesiak E, Bent B, McClain MT, et al. \"Assessment of the Feasibility of Using Noninvasive Wearable Biometric Monitoring Sensors to Detect Influenza and the Common Cold Before Symptom Onset.\" JAMA Netw Open 4(9):e2128534, 2021.",
+  "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=33208926,33334565,33122860,34586364&rettype=abstract&retmode=text"
+ },
+ "60": {
+  "text": "Natarajan A, Su HW, Heneghan C. \"Assessment of physiological signs associated with COVID-19 measured using wearable devices.\" NPJ Digit Med 3(1):156, 2020.",
+  "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pmc&id=7705652"
+ },
+ "61": {
+  "text": "Chromik J, Klopfenstein SAI, Pfitzner B, et al. \"Computational approaches to alleviate alarm fatigue in intensive care medicine: A systematic literature review.\" Frontiers in Digital Health 4, 2022.",
+  "url": "https://www.frontiersin.org/journals/digital-health/articles/10.3389/fdgth.2022.843747/full"
+ },
+ "62": {
+  "text": "NASA. \"ISS Daily Summary Report – 3/24/2021.\" nasa.gov, 2021.",
+  "url": "https://www.nasa.gov/blogs/stationreport/2021/03/24/iss-daily-summary-report-3-24-2021"
+ }
+}
