@@ -159,9 +159,15 @@ export function Replay() {
         <section className="card action" data-testid="replay-result">
           <span className="tag">Result of this replay</span>
           {lead === null ? <p className="do">Keel did not flag this event inside the replay window.</p>
-            : lead > 0 ? <p className="do">Keel flagged this {lead} day{lead === 1 ? '' : 's'} before {ev.type === 'illness' ? 'the first symptoms' : 'the scripted start'}, with a specific action and no link to Earth.</p>
-              : <p className="do">Keel flagged this {lead === 0 ? (ev.type === 'illness' ? 'on the day symptoms began' : 'on the day it started') : `${-lead} day${lead === -1 ? '' : 's'} after ${ev.type === 'illness' ? 'symptoms began' : 'it started'}`}, with a specific action and no link to Earth.</p>}
-          {ev.type === 'illness' && <p className="small"><strong>Sensors alone, with no symptom report:</strong> {sensorDay === null ? 'the detector did not reach its illness pattern or alert tier inside this window.' : `the detector showed its illness pattern or alert tier on ${shortDay(mission, sensorDay)}, ${sensorDay - ev.onset > 0 ? `${sensorDay - ev.onset} day${sensorDay - ev.onset === 1 ? '' : 's'} after` : sensorDay === ev.onset ? 'the same day as' : `${ev.onset - sensorDay} day${ev.onset - sensorDay === 1 ? '' : 's'} before`} symptoms began.`} The earlier flag came from her check-in combined with drifting readings. Keel is a backstop and a record, not an early-warning system.</p>}
+            : <p className="do">In this scripted case Keel flagged it {lead > 0 ? `${lead} day${lead === 1 ? '' : 's'} before` : lead === 0 ? 'on the day' : `${-lead} day${lead === -1 ? '' : 's'} after`} {ev.type === 'illness' ? 'symptoms began' : 'it started'}, with a specific action and no link to Earth.</p>}
+          {ev.type === 'illness' && lead !== null && lead > 0 && <p className="small"><strong>Do not read this as early warning.</strong> On real data the alert usually starts on or after the day symptoms begin, and an alert a day or two ahead is about as likely to be luck.</p>}
+          {ev.type === 'illness' && firstAlert && (
+            <p className="small"><strong>Sensors alone, or with her check-in?</strong> {sensorDay === null
+              ? 'The detector alone did not reach its illness pattern or alert tier in this window. The flag came from her check-in combined with drifting readings.'
+              : sensorDay <= firstAlert.day
+                ? `The sensors alone showed the pattern on ${shortDay(mission, sensorDay)}; no symptom report was needed for this flag.`
+                : `The flag on ${shortDay(mission, firstAlert.day)} came from her check-in combined with drifting readings. The sensors alone showed the illness pattern on ${shortDay(mission, sensorDay)}, ${sensorDay - ev.onset} day${sensorDay - ev.onset === 1 ? '' : 's'} after symptoms began.`}</p>
+          )}
           {unrelated.length > 0 && <p className="small">Earlier in this replay Keel also raised {unrelated.length} notice{unrelated.length === 1 ? '' : 's'} that the scripted event did not cause. Some reflect ordinary lapses in the simulated routine, such as a missed exercise session; some are false alerts. That is part of the picture: notices are budgeted at about one false one per person-month.</p>}
           {val && <p className="small"><strong>Across all the real data, not this one script:</strong> Keel flagged {Math.round(val.det * 100)}% of {val.n} real illness episodes at one false alert per person-month, {Math.round(val.net * 100)} points more than luck. It did not give early warning. Everything except illness is tested in simulation only.</p>}
           <p className="small muted">One scripted event proves nothing by itself.</p>

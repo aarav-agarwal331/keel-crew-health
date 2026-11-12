@@ -7,7 +7,7 @@ No link to Earth
 
 Scripted two-week blackout (antenna fault), modelled on the two-week command pause at solar conjunction
 
-Keel does not use the link to work. Detection, explanations and recommended actions all run on this tablet: it last re-checked the whole crew's readings in 41 milliseconds. The link only carries a summary for the flight surgeon when one is available.
+Keel does not use the link to work. Detection, explanations and recommended actions all run on this tablet: it last re-checked the whole crew's readings in 44 milliseconds. The link only carries a summary for the flight surgeon when one is available.
 
 The link is already down today (a scripted blackout), so there is nothing to cut. Every screen you have used so far was running without it.
 

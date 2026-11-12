@@ -21,8 +21,9 @@ End card (last second, over shot 6): **Keel — a crew health monitor that keeps
 Notes for whoever records it:
 
 - Shot 2 must land before 0:10. Do not trim shot 1 below three seconds; the problem statement needs it.
-- The replay result in shot 3 reads "Keel flagged this on the day symptoms began" (or a day after).
-  Do not describe it as early warning; the validation does not support that claim.
+- The replay result in shot 3 says when Keel flagged the scripted event relative to the scripted
+  symptom day (around that day; the card itself warns against reading it as early warning). Do not
+  describe it as early warning; the validation does not support that claim.
 - Before recording, dismiss nothing on Today: the strip at the top ("Keel is a crew health monitor
   that works with no link to Earth") is a good opening frame if you prefer to start there.
 - Every screen that shows mission data carries the "Simulated data" chip. Keep it in frame.
