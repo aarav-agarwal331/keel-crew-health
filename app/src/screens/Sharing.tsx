@@ -24,7 +24,7 @@ export function Sharing() {
       <p className="muted">{crew.name}, your health data is yours. You decide below what each role can see.</p>
       <Card title="Always visible, whatever you choose below">
         <ul className="list small">
-          <li><strong>To the commander: your readiness tier</strong> (no Keel flags / minor flags / talk to the medical officer first), without the reason. A commander has to be able to plan a spacewalk safely.</li>
+          <li><strong>To the commander: your readiness tier</strong> (no Keel flags / minor flags / talk to the medical officer first), without the reason. A commander has to be able to plan a spacewalk safely. The tier is worked out from all your readings, including ones you keep private.</li>
           <li><strong>To the crew: counts.</strong> When three or more crew members show a change in the same area, the Crew screen shows the count, not the names. In a crew of four that is not fully anonymous.</li>
           <li><strong>To everyone: cabin readings</strong> (air, radiation). They are not personal.</li>
         </ul>
@@ -34,7 +34,7 @@ export function Sharing() {
             <button aria-pressed={s.emergency !== false} onClick={() => setEmergency(me, true)}>On</button>
             <button aria-pressed={s.emergency === false} onClick={() => setEmergency(me, false)}>Off</button>
           </div>
-          <span className="small muted">When on, a symptom you mark as serious or an "act now" safety reading is shown at once to the medical officer, and stays on their list until they close it with a note. The commander is shown it too, as backup, except the items marked "medical officer only" at check-in (thoughts of harming yourself, an injury, tooth pain, one-sided swelling). Emergency sharing never sends anything to the ground; the daily ground summary carries only what you set for the flight surgeon below. If you switch this off, both can see that it is off.</span>
+          <span className="small muted">When on, a symptom you mark as serious or an "act now" safety reading is shown at once to the medical officer, and stays on their list until they close it with a note. The commander is shown it too, as backup, except the items marked "medical officer only" at check-in (thoughts of harming yourself, an injury, tooth pain, one-sided swelling). Emergency sharing sends no details to the ground: the daily ground summary carries only what you set for the flight surgeon below, plus a count of urgent items still open, so the flight surgeon knows to call. Everything that needs attention now or today goes on the medical officer's list; for an area you have not shared, they see only that there is an item, not what it is. If you switch this off, both can see that it is off.</span>
         </div>
       </Card>
 

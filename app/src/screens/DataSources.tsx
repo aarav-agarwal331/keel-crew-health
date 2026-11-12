@@ -25,7 +25,8 @@ export function DataSources() {
       const text = await file.text()
       const res = parseAny(file.name, text)
       const m = toMission(res, 'My data')
-      await addMission(m, 'model_mission')
+      // imported watch data runs on the heart-rate-only model calibrated on real people, not the full-sensor mission model
+      await addMission(m, 'model_import')
       setMsg(`Imported ${res.rows.length} days from ${res.format}. ${res.notes.join(' ')}`)
     } catch (e) {
       setErr(e instanceof Error ? e.message : String(e))
@@ -71,7 +72,7 @@ export function DataSources() {
       </Card>
 
       <Card title="Import your own wearable data">
-        <p className="banner"><strong>Expect few alerts from an import.</strong> Keel's thresholds are set for the full on-board sensor set. Tested on real watch data with only overnight heart rate (and sleep where recorded), the shipped model flagged about one illness in eight and rarely alerted at all. A version for watch data alone would need its own thresholds.</p>
+        <p className="banner"><strong>Imported data uses its own detector settings.</strong> The on-board model is set for the full sensor set and, given only a watch's overnight heart rate, would almost never alert. So an import runs on a heart-rate-only model whose thresholds were calibrated on 251 real people; its expected performance is the "heart rate alone" row on the Validation screen (about one false notice a month). Activity, sleep and the other readings in the file are shown but not used for alerts.</p>
         <p className="small muted">Read in this browser only; the file is never uploaded. Keel then learns your baseline from it and shows the same Today and Trends screens for you. Supported: a CSV with a <code>date</code> column and any of <code>rhr, hrv, spo2, temp, sleep_h, ex_min, mood, fluid, mass, sbp, glucose</code>; Fitbit export JSON (resting heart rate, sleep); Apple Health <code>export.xml</code>.</p>
         <div className="row wrap">
           <label className="btn primary" htmlFor="file">Choose a file</label>

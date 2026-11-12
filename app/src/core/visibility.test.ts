@@ -122,6 +122,13 @@ describe('emergency consent', () => {
     expect(visibleOpenItems('ground', priv.openItems, { ...share, ground: { ...share.ground, symptoms: 'detail' } }, false).length).toBe(0)
     // with emergency sharing off nothing is shown to anyone
     expect(visibleOpenItems('cmo', priv.openItems, { ...share, emergency: false }, false).length).toBe(0)
+    // a "today" item in a private area still reaches the medical officer under emergency sharing, without its title
+    const fever = run(patient, [])
+    const xx = features(m, patient, model.indicators, [])
+    const fe = analyzeDay(m, patient, { crewId: patient, x: xx, scored: scorePerson(xx, model, m.phases) }, model, 100, [{ key: 'k', mission: m.id, crew: patient, day: 100, values: { temp_oral: 38.5 }, symptoms: [], ts: 0, readings: [{ ind: 'temp_oral', v: 38.5, ts: 1 }] }])
+    const vi = visibleOpenItems('cmo', fe.openItems, share, false)
+    expect(vi.some((x) => x.ruleId === 'R-V-TEMP' && x.redacted)).toBe(true)
+    expect(fever.openItems.length).toBe(0)
   })
   it('medication classes and photos are shown only when Symptoms is shared in detail', () => {
     const share = defaultSharing()

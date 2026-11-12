@@ -9,7 +9,7 @@ there may be no link at all. NASA's own planning says medical decisions have to 
 Keel is a crew health monitor that needs no connection to Earth. It runs entirely on the crew member's
 tablet. It learns that person's own normal, notices when their readings drift, says what changed in
 plain words, and gives one action from a fixed table of rules with cited sources. Red-flag symptoms
-and dangerous readings are acted on at once. No diagnosis, no treatment advice, no chatbot. The crew
+and dangerous readings are acted on at once. No diagnosis, no medication advice, no chatbot. The crew
 member owns the data and decides what the medical officer, the commander and the ground can see.
 
 Watch: I cut the link. Everything still works.
@@ -68,8 +68,8 @@ is not statistically significant.
 brings in the medical officer, alerts start before symptoms no more often than luck. Most alerts are
 false: at the alert tier between one in eleven and one in twenty-seven would be a real illness. The
 model file the app ships is tuned for eleven on-board channels; on a watch import, with overnight
-heart rate and sometimes sleep, it is only 9 points above luck, because thresholds have to be set per sensor set and that is
-not built. Much of the signal is people moving less when ill. Everything
+heart rate and sometimes sleep, it was only 9 points above luck, because thresholds have to match the sensors. So imports now run
+on a heart-rate-only model calibrated on the 251 real people, 22 points above luck. Much of the signal is people moving less when ill. Everything
 beyond illness is tested only in simulation, no clinician has reviewed anything, and no open
 astronaut wearable data exists. The next step is to ask NASA for the in-flight data that is available
 on request and repeat the test. Keel: it keeps working when Earth cannot answer.

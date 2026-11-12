@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { CM, describeChange, evidenceTag, REFS, RULE, STATUS_LABEL, unusualness, URGENCY_LABEL, WHO_LABEL, condAll } from '../core/analysis'
+import { CM, describeChange, REFS, RULE, STATUS_LABEL, unusualness, URGENCY_LABEL, WHO_LABEL, condAll } from '../core/analysis'
 import { IND, shortDay } from '../core/mission'
 import type { ShareCategory } from '../core/sharing'
 import { SHARE_CATEGORIES } from '../core/sharing'
@@ -62,7 +62,7 @@ export function Alert({ alertKey }: { alertKey?: string }) {
         <p className="do">{f.action}</p>
         <ol className="list steps">{f.steps.map((s) => <li key={s}><span>{s}</span></li>)}</ol>
         {['R-ILL', 'R-SYM-ILL', 'R-V-TEMP', 'R-V-TEMP-HI'].includes(f.ruleId) ? <TempEntry /> : <ReadingLog readings={f.readings ?? []} title="Readings this is based on" />}
-        {(f.kind === 'vital' || f.kind === 'symptom') && f.urgency !== 'routine' && <p className="small muted">This stays on the medical officer's list until they close it with a note. A later normal reading does not close it.</p>}
+        {(f.kind === 'vital' || f.kind === 'symptom') && f.urgency !== 'routine' && <p className="small muted">{sharing[me]?.emergency === false ? 'Emergency sharing is off, so the medical officer has not been told about this. Tell them yourself.' : f.status === 'urgent' || (sharing[me]?.cmo[f.categories[0] as ShareCategory] ?? 'none') !== 'none' && (sharing[me]?.cmo[f.categories[0] as ShareCategory] ?? 'none') !== 'status' ? 'This is on the medical officer\'s list until they close it with a note. A later normal reading does not close it.' : 'The medical officer\'s list shows that you have an open item in this area, but not what it is, because you have not shared the area. Tell them, or share it.'}</p>}
       </section>
       {(f.also ?? []).length > 0 && (
         <Card title="Also showing in your readings">
@@ -78,7 +78,7 @@ export function Alert({ alertKey }: { alertKey?: string }) {
             return (
               <div key={c.ind} className="col" style={{ gap: 4, borderTop: '1px solid var(--border)', paddingTop: 10 }}>
                 <strong>{describeChange(c)}</strong>
-                <span className="small muted">{unusualness(c)} <span className="tag">{evidenceTag(c.ind)}</span></span>
+                <span className="small muted">{unusualness(c)}</span>
                 <TrendChart values={b.values} expected={b.hasBand ? b.expected : undefined} lo={b.hasBand ? b.lo : undefined} hi={b.hasBand ? b.hi : undefined} from={day - 27} to={day} labelFor={(t) => shortDay(mission, t)} unit={def.unit} decimals={def.decimals} concern={def.concern} height={150}
                   markers={[{ day: f.patternStart ?? f.start, label: 'This pattern began', kind: 'alert' }]} refLines={c.ind === 'co2' ? [{ y: 3.0, label: 'Level ISS operations manage to: 3.0' }] : undefined} ariaLabel={`${def.label}, last four weeks`} />
               </div>

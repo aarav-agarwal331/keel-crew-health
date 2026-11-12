@@ -43,7 +43,7 @@ export function LinkScreen() {
         ) : (
           <div className="row wrap">
             <button className={`btn ${linkCut ? 'primary' : 'danger'}`} onClick={() => setLinkCut(!linkCut)} data-testid="cut-link" aria-pressed={linkCut}>{linkCut ? 'Restore the link' : 'Cut the link now'}</button>
-            <span className="small muted">Demo control. Cut it, then use any screen: nothing stops working.</span>
+            <span className="small muted">{linkCut ? 'Link cut. Use any screen: nothing stops working. Restore it when you are done.' : 'Demo control. Cut it, then use any screen: nothing stops working.'}</span>
             {linkCut && queued.length === 0 && <p className="banner info">Today's summary had already gone out before you cut the link, so nothing is waiting yet. The next one is made tomorrow and will wait here until the link is back. <button className="btn sm" onClick={() => setDay(day + 1)} data-testid="link-next-day">Go to tomorrow and see it wait</button></p>}
           </div>
         ))}

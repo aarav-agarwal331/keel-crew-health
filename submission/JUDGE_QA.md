@@ -33,7 +33,8 @@ officer, +19 (9 to 28) at 0.39 against 0.25. On the 113 people the simulator's c
 +38 (23 to 50). It is not what the shipped app would do with a watch import: the model file it ships
 is calibrated for all eleven on-board channels, and given only a watch's channels it flagged 12% of
 episodes (+9, 4 to 16) at 0.08 false alerts per person-month, with the stricter tier never firing.
-Thresholds have to be set per sensor set; that is not built, and the app says so on its import card.
+Thresholds have to match the sensors, so imports now run on a separate heart-rate-only model
+calibrated on the 251 real people, whose cross-validated result is +22 above luck (12 to 32).
 
 **4. How do you know "above luck" is not just people staying home?**
 We do not. Much of the signal is behavioural: people move less when ill (median daily steps fall
@@ -82,9 +83,9 @@ includes zero.
 
 **9. Why not use an AI model to explain alerts or answer questions?**
 Because the crew cannot check it and nobody on Earth can catch its mistakes. Advice comes from a table
-of 39 rules that a flight surgeon can read in one sitting, each tied to a NASA document, a published
+of 40 rules that a flight surgeon can read in one sitting, each tied to a NASA document, a published
 study or public clinical guidance, with an audit trail on every alert. A unit test fails the build if
-rule text reads like a diagnosis. By design Keel gives no medication or treatment advice.
+rule text reads like a diagnosis. By design Keel gives no medication advice; its actions are first steps such as rest, fluids, a repeat reading or sugar for a low blood sugar.
 
 **10. Has a doctor reviewed the advice?**
 No clinician has reviewed anything. We ran four rounds of role-played review with an AI reviewer (a
@@ -131,8 +132,8 @@ cutting the link, running the replay and importing a file. They fail on any cons
 request.
 
 **15. What would you do with another six months?**
-Get real spaceflight or analog data and repeat the evaluation. Set thresholds per sensor set, so a
-watch import is not judged by thresholds made for eleven channels. Move from daily to hourly features
+Get real spaceflight or analog data and repeat the evaluation. Set thresholds for every sensor subset a
+crew member might have, not only the full set and heart rate alone. Move from daily to hourly features
 and add overnight respiration and temperature, where the early illness signal is strongest in
 published work. Put the rule table in front of flight surgeons. Test the interface with tired users.
 Add tablet-to-tablet sync so the medical officer's view updates without a server.

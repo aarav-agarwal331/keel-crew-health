@@ -124,7 +124,10 @@ describe('end to end on the demo mission', () => {
     const a = run('c0', 100, [e])
     const f1 = a.findings.find((x) => x.ruleId === 'R-V-GLU-LO2')!
     expect(f1).toBeDefined()
-    expect(a.status).toBe('urgent')
+    // the repeat is back on the safe side: no longer "eat something now", but still open for the medical officer
+    expect(a.status).toBe('act')
+    expect(f1.action).toMatch(/back on the safe side/)
+    expect(a.openItems.some((x) => x.ruleId === 'R-V-GLU-LO2')).toBe(true)
     expect(f1.readings!.map((r) => r.v)).toEqual([50, 85])
     // the next day, with no new reading, it is still open and dated from the reading
     const b = run('c0', 101, [e]).findings.find((x) => x.ruleId === 'R-V-GLU-LO2')!
@@ -172,10 +175,16 @@ describe('end to end on the demo mission', () => {
     expect(a.exerciseHold).toBe(true)
     expect(a.findings.filter((x) => x.ruleId.startsWith('R-V-HR')).length).toBe(1)
     const x = features(m, 'c0', model.indicators, [e])
-    const closed = new Set([`open|${m.id}|c0|R-V-GLU-LO2|100`])
+    const closed = new Map([[`open|${m.id}|c0|R-V-GLU-LO2|100`, 10]])
     const b = analyzeDay(m, 'c0', { crewId: 'c0', x, scored: scorePerson(x, model, m.phases) }, model, 100, [e], closed)
     expect(b.findings.some((q) => q.ruleId === 'R-V-GLU-LO2')).toBe(false)
     expect(b.findings.some((q) => q.ruleId === 'R-V-HR2')).toBe(true)
+    // a new abnormal reading written after the closure note reopens it
+    const e2: Entry = { ...e, readings: [{ ind: 'glucose', v: 50, ts: 5 }, { ind: 'glucose', v: 45, ts: 20 }] }
+    const x2 = features(m, 'c0', model.indicators, [e2])
+    const c2 = analyzeDay(m, 'c0', { crewId: 'c0', x: x2, scored: scorePerson(x2, model, m.phases) }, model, 100, [e2], closed)
+    expect(c2.findings.some((q) => q.ruleId === 'R-V-GLU-LO2')).toBe(true)
+    expect(c2.openItems.some((q) => q.ruleId === 'R-V-GLU-LO2')).toBe(true)
     // a reading withdrawn as a typing mistake is not used
     const w: Entry = { ...e, values: {}, readings: [{ ind: 'glucose', v: 50, ts: 1, void: true }] }
     expect(run('c0', 100, [w]).findings.some((q) => q.ruleId === 'R-V-GLU-LO2')).toBe(false)

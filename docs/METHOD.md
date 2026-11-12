@@ -238,7 +238,7 @@ radiation alarm [47][48]. After two days without any reading the status is "no r
   alerts all cluster near real onsets and are not reproduced. Detection above luck is therefore an
   upper bound on what physiology alone explains; heart rate alone is the more transferable figure.
   The subtraction is not rescaled by 1 − chance; the rescaled value is in the result file.
-- **Sensitivity analyses** (`eval_real.py`): three other ways of estimating luck; an alert that is
+- **Sensitivity analyses** (`eval_real.py`): four other ways of estimating luck; an alert that is
   already open in the window also counting as detection; the original wider window; five other fold
   seeds; train on one cohort, test on the other.
 - **Thresholds from the simulator.** The app cannot calibrate on real people, so its model and
@@ -300,7 +300,7 @@ baseline, with the baseline restarted, with the band also widened, and with the 
 
 Keel computes, for each indicator, the mean `u` over the last three measured days; symptom counts
 over three days; the latest entered spot readings; the cabin readings; days since the last phase
-change; and days the detector's alert has been open. A fixed, ordered table of 39 rules is evaluated.
+change; and days the detector's alert has been open. A fixed, ordered table of 40 rules is evaluated.
 Rules have a scope:
 
 - **personal**: evaluated only while the detector has an alert open; the first one whose condition
@@ -341,8 +341,19 @@ the same code version). Real data: 251 people, 107 illness episodes, two sensors
   calibration did not use (41 episodes): +38 (23 to 50), 1.37. Alert tier: 32%, luck 13%, +19
   (9 to 28), at 0.39 against a budget of 0.25; on those 113 people, +23 (8 to 38).
 - **The model file the app ships**, given only the channels a real import has: 12% flagged, luck 3%,
-  +9 (4 to 16), at 0.08 false alerts per person-month; the alert tier never fired. Its thresholds are
+  +9 (4 to 16), at 0.08 false alerts per person-month; at the alert tier it flagged no episodes (three
+  false alerts in all). Its thresholds are
   set for eleven channels, so with one or two it rarely alerts. The app says so on its import card.
+- **Caveats on the two-sensor result.** "7-day activity" is a 7-day mean of steps in the real data
+  and of exercise minutes in the simulator, which may explain part of the false-alert overrun. The
+  113 held-out people include no test-date-only episodes (the hardest), so +38 is not directly
+  comparable with +32.
+- **Imported data.** The app runs imports on a heart-rate-only model fitted and calibrated on all 251
+  real people (`model_import.json`, written by `eval_real.py`); its expected performance is the
+  cross-validated heart-rate-alone result below.
+- **Alerts counted nowhere.** Alerts starting 11 to 21 days before an onset or 5 to 28 days after fall
+  in neither the detection window nor quiet time: 56 at the notice tier (0.5 per episode) and 34 at
+  the alert tier. False-alert rates therefore understate the burden for people who were ill.
 - **Thresholds calibrated on other real people** (5-fold over people, false alerts 0.99 to 1.00 by
   construction). Heart rate alone: +22 (12 to 32). Heart rate and 7-day activity: +31 (21 to 41), and
   +13 (4 to 21) at the alert tier. Heart rate and daily steps: 66%, luck 33%, +34 (24 to 44), and +33

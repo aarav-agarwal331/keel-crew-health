@@ -12,6 +12,9 @@ const MEDS = ['Sleep aid', 'Pain or fever medicine', 'Decongestant or antihistam
 const PHOTO_LABELS = ['Skin', 'Eye', 'Mouth or throat', 'Wound', 'Other']
 // thermometer first: it is the reading Keel's advice most often asks for
 const SPOT = ['temp_oral', 'spo2', 'sbp', 'dbp', 'glucose', 'mass', 'sleep_h', 'rhr'] as const
+// a typed heart rate or oxygen is a spot check, not the wearable's overnight value
+const LABEL: Record<string, string> = { rhr: 'Heart rate now, sitting at rest (spot check)', spo2: 'Fingertip oxygen now (spot check)' }
+const lab = (k: string) => LABEL[k] ?? IND[k].label
 
 export function CheckIn({ open }: { open?: string }) {
   const { mission, day, me, entries, saveEntry, voidReading } = useApp()
@@ -56,7 +59,7 @@ export function CheckIn({ open }: { open?: string }) {
       const v = Number(String(raw).replace(',', '.'))
       const [lo, hi] = IND[k].range
       const [hardLo, hardHi] = IND[k].limits ?? IND[k].range
-      if (Number.isNaN(v) || v < hardLo || v > hardHi) { bad.push(`${IND[k].label}: ${raw} was not saved. Enter a value between ${hardLo} and ${hardHi} ${IND[k].unit}.`); continue }
+      if (Number.isNaN(v) || v < hardLo || v > hardHi) { bad.push(`${lab(k)}: ${raw} was not saved. Enter a value between ${hardLo} and ${hardHi} ${IND[k].unit}.`); continue }
       values[sk(k)] = v
       if (dirty.includes(k) && (v < lo || v > hi || NOW_LINE[k]?.(v))) check.push(k)
     }
@@ -64,8 +67,11 @@ export function CheckIn({ open }: { open?: string }) {
     await saveEntry({ crew: me, day, values, symptoms: sym, meds, photos }, dirty.map(sk))
     setErr(bad.join(' '))
     const ts = Date.now()
-    setPending(check.map((k) => ({ k, v: values[sk(k)], ts })))
+    // earlier unanswered checks stay until answered
+    setPending((prev) => [...prev.filter((x) => !check.includes(x.k)), ...check.map((k) => ({ k, v: values[sk(k)], ts }))])
     setDirty([])
+    // clear the typed readings so pressing Save again cannot log them twice; they are in the log below
+    setSpot({})
     setSaved(true)
   }
   const withdraw = async (k: string) => {
@@ -90,7 +96,7 @@ export function CheckIn({ open }: { open?: string }) {
       {err && <p className="banner strong" role="alert">{err}</p>}
       {pending.map((q) => (
         <div className="banner strong" role="alert" key={q.k}>
-          <p><strong>{IND[q.k].label}: {q.v} {IND[q.k].unit}</strong> is far outside the usual range, so Keel saved it and is acting on it. Is that what the device showed?</p>
+          <p><strong>{lab(q.k)}: {q.v} {IND[q.k].unit}</strong> is far outside the usual range, so Keel saved it and is acting on it; if it is past a safety line, the medical officer and the commander have already been shown it. Is that what the device showed?</p>
           <div className="row wrap"><button className="btn primary" onClick={() => setPending((p) => p.filter((x) => x.k !== q.k))} data-testid={`confirm-${q.k}`}>Yes, that is right</button><button className="btn" onClick={() => void withdraw(q.k)} data-testid={`withdraw-${q.k}`}>No, a typing mistake: withdraw it</button></div>
           <p className="small">If you withdraw it, it stays in the log, struck through, and the medical officer still sees that it was entered.</p>
         </div>
@@ -101,7 +107,7 @@ export function CheckIn({ open }: { open?: string }) {
   return (
     <>
       <h1>Check-in</h1>
-      <p className="muted">{dayLabel(mission, day)}. Four quick answers take about a minute. Your answers are stored on your own tablet. Other crew members see only what <a href={href('sharing')}>Sharing</a> allows: by default the commander sees a readiness tier without the reason, a symptom marked serious goes to the medical officer at once, and the daily summary for the ground carries only what you set for the flight surgeon.</p>
+      <p className="muted">{dayLabel(mission, day)}. Four quick answers take about a minute. Your answers are stored on your own tablet. Other crew members see only what <a href={href('sharing')}>Sharing</a> allows: by default the commander sees a readiness tier without the reason, a serious symptom or a reading past a safety line (marked "act now") is shown at once to the medical officer and, as backup, the commander, and the daily summary for the ground carries only what you set for the flight surgeon.</p>
       {!existing && !Number.isNaN(rawSeries(mission, me, 'mood', [])[day]) && <p className="small muted">Today's check-in in this demo came from the simulation. Anything you save here is added to it.</p>}
 
       <Card title="1. How are you feeling?">
@@ -181,7 +187,7 @@ export function CheckIn({ open }: { open?: string }) {
             <div className="grid3 fields">
               {SPOT.map((k) => (
                 <div className="field" key={k}>
-                  <label htmlFor={`f-${k}`}>{IND[k].label} <span className="muted small">({IND[k].unit})</span></label>
+                  <label htmlFor={`f-${k}`}>{lab(k)} <span className="muted small">({IND[k].unit})</span></label>
                   <input id={`f-${k}`} type="number" inputMode="decimal" step="any" value={spot[k] ?? ''} onChange={(e) => { const v = e.target.value; setSpot((p) => ({ ...p, [k]: v })); setDirty((p) => (p.includes(k) ? p : [...p, k])) }} />
                   <details><summary className="small">How to measure</summary><p className="small muted">{IND[k].how}</p></details>
                 </div>

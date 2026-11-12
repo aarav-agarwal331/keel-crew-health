@@ -35,7 +35,7 @@ is decision support, not a medical device.
   sourced threshold are acted on at once. Every reading is kept with its time, the worst one counts,
   and anything urgent stays on the medical officer's list until they close it with a note.
 - **Alarm fatigue treated as a hazard.** Thresholds come from an explicit false-alert budget.
-- **Auditable advice.** A fixed table of 39 rules maps patterns, entered readings and reported
+- **Auditable advice.** A fixed table of 40 rules maps patterns, entered readings and reported
   symptoms to cited countermeasures, each with how soon and who. No language model writes medical text.
 - **Crew-owned data.** Per-role, per-area sharing with an access log; the commander sees readiness,
   not reasons, and some symptoms go to the medical officer only.
@@ -64,7 +64,7 @@ Real wearable data: 251 people, 107 dated illness episodes (Stanford COVID-19 we
 | Keel's method, two sensors, simulator thresholds | +19 (9 to 28) | 0.39 |
 | Thresholds from other real people, heart rate + 7-day activity | +13 (4 to 21) | 0.25 |
 | … heart rate + daily steps | +33 (23 to 43) | 0.25 |
-| The shipped model file, real-import channels only | never fired | 0.00 |
+| The shipped model file, real-import channels only | no episodes flagged (3 false alerts in all) | 0.00 |
 
 | Other evidence | Result |
 |---|---|
@@ -80,6 +80,8 @@ Honest reading:
   claim early warning.
 - **Most alerts are false.** At in-flight illness rates, between one alert in 11 and one in 27 at the
   strict tier would be a real respiratory illness.
+- **Imported watch data uses its own model.** Because of the next point, the app runs imports on a
+  heart-rate-only model calibrated on the 251 real people (expected: the "heart rate alone" row).
 - **The thresholds must match the sensors.** With simulator thresholds Keel's two-sensor method runs
   over budget on real people (1.40 against 1.00; 0.39 against 0.25); with five sensors two to four
   times over. The opposite happens to the shipped 11-channel model when it only gets heart rate: it
@@ -182,7 +184,7 @@ statement saved in [docs/CHALLENGE.md](docs/CHALLENGE.md).
 |---|---|---|
 | A1 | Gathers health indicators | 18 indicators; wearable import, Bluetooth strap, check-in, cabin sensors (Data sources, Check-in) |
 | A2 | Astronauts evaluate their own health | Today status against a personal baseline; Trends; body map |
-| A3 | Act on it; guidance on treatments and improvements | One recommended action on Today; Alert detail with steps and cited countermeasures; Guide → "Everything Keel can recommend" (all 39 rules). Keel deliberately gives no medication or treatment advice: that is left to the medical officer |
+| A3 | Act on it; guidance on treatments and improvements | One recommended action on Today; Alert detail with steps and cited countermeasures; Guide → "Everything Keel can recommend" (all 40 rules). Keel gives first steps (rest, fluids, a repeat reading, sugar for a low blood sugar) but deliberately no medication advice: that is left to the medical officer |
 | A4 | A visual tool | Charts with personal bands, clickable body map, replay |
 | A5 | Any input: keyboard, clicks, files, camera | Check-in taps and number entry; file import; live sensor; a photo taken or chosen at check-in for the medical officer (stored on the device, not analysed) |
 | A6 | Data represents a health indicator, with units | Units on every reading and entry field (for example blood sugar in mg/dL) |

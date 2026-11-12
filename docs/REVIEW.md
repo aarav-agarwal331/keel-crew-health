@@ -260,6 +260,54 @@ demo mode; an overnight oxygen floor; a free-text field for "something else"; re
 fluid intake; difference intervals for device and feature contrasts; a base rate for the bed-rest
 flags outside transitions; treatment guidance (excluded on purpose).
 
-## Round 5
+## Round 5 (2026-11-12, fresh reviewers, redeployed build)
 
-See the end of this file once the fifth round has run.
+Judge's scores: impact 7, creativity 8, validity 7, relevance 8, presentation 7 (37 of 50), "nominate:
+yes". The statistician found no high-severity issue; the other three found some.
+
+| # | Reviewer | High-severity finding | Fix |
+|---|---|---|---|
+| 1 | Flight surgeon | A closure note was keyed by rule and day, so a new dangerous reading of the same kind later that day (or a newly ticked red flag) was hidden: no alert, no emergency share, nothing on the list. | A closure applies only to readings and check-ins older than the note; anything entered after it reopens the item. Unit-tested. |
+| 2 | Flight surgeon, astronaut, judge | After glucose 50 then a normal repeat of 85, Today still said "eat or drink something sugary now". | When the latest reading of the day is back on the safe side, the advice says so, the status drops to "act today", and the item stays on the medical officer's list. Later days say "still open, tell them today". Unit- and end-to-end tested. |
+| 3 | Flight surgeon | "Stays on the medical officer's list" was false under default sharing for "today" items (fever 38.0 to 39.3 °C, glucose 54 to 69, a change in vision, and more). | Under emergency sharing the medical officer is told of every "now" and "today" item; where its area is not shared, only that an item exists in that area. With emergency sharing off, the alert says the medical officer has not been told. Unit-tested. |
+| 4 | Astronaut | The check-in header promised the commander sees only a tier, while an "act now" reading is shown to the commander at once. | The header now says that a serious symptom or a reading past a safety line goes at once to the medical officer and, as backup, the commander. |
+| 5 | Judge (also flight surgeon, astronaut) | Two "resting heart rate" values on one screen (overnight 66, typed 170). | The wearable value is "Resting heart rate (overnight)"; the typed field is "Heart rate now, sitting at rest (spot check)". |
+| 6 | Judge | Method and Validation disagreed ("most" against "much" of the signal from activity; 1 in 25 against 1 in 27). | Aligned. |
+
+Medium-severity findings fixed in the same pass:
+
+- **Imported data** (judge, recurring since round 4): imports now run on a heart-rate-only model fitted
+  and calibrated on the 251 real people, whose cross-validated performance is the "heart rate alone"
+  row; the on-board 11-channel model is no longer used for imports. Imported data also shows a banner
+  that the advice is written for a crew with a medical officer, and to contact a doctor.
+- **A notice that softens without the medical officer** (flight surgeon): once a notice has looked like
+  illness it keeps exercise on hold and the medical officer involved until it closes.
+- **A confirmed fast heart rate** (flight surgeon): two readings of 120 or more at rest are now "act now".
+- **The ground** (flight surgeon): the daily summary carries a count of open urgent items (no details)
+  under emergency sharing, and the medical officer's list suggests consulting the flight surgeon.
+- **Withdrawing a reading** (flight surgeon) needs a second tap; earlier unanswered "is that what the
+  device showed?" questions stay until answered (astronaut); typed fields clear after saving.
+- **Radiation and vomiting** (flight surgeon): the line is now 1000 mSv in three days, and the "take
+  nothing for nausea" step became "tell the medical officer before taking anything".
+- **Wording** (flight surgeon): "no treatment advice" became "no medication advice"; the second step of
+  the 15/15 rule was added; "thoughts of harming someone else" added as a red flag; an injury is shown
+  to the commander; cough with falling oxygen prompts a fingertip reading now.
+- **Areas flagged without a reason** (judge, astronaut): an area is coloured only by readings actually
+  involved (entered values, or deviations shown as evidence), not by every indicator a rule mentions.
+- **"Act now" and "act today" look alike** (astronaut): the body list now says "Now" or "Today" in words.
+- **Private data and the commander's tier** (astronaut): Sharing says the tier uses all readings.
+- **Statistician's mediums**: remaining "the app's own configuration" labels removed; the shipped model
+  added as a bar; the "7-day activity" proxy (steps against exercise minutes) disclosed; the held-out
+  group's lack of test-date-only episodes disclosed; predictive-value caveats in both directions;
+  "never fired" corrected to "flagged no episodes (three false alerts)"; the simulator's "three in ten
+  with no rise" no longer described as a real-data fact; the demo day's selection disclosed; alerts
+  that count as neither detection nor false alert are now counted and reported; the bed-rest cost
+  (9.8% to 11.1% of ordinary days) and the pulse-only rule are stated.
+
+Not done from round 5: thresholds for other sensor subsets (for example a failed HRV sensor); a
+"typical case" replay beside the easy one; storing source documents on the tablet; a confirm-first
+delay before emergency sharing (we chose to share first and allow withdrawal); trend-chart clutter.
+
+## Round 6
+
+See the end of this file once the sixth round has run.

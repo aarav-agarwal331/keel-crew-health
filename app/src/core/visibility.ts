@@ -86,15 +86,21 @@ export function viewFor(role: Role, a: DayAnalysis, share: SharingSettings, valu
   return { overall, categories, findings, environment: a.findings.filter((f) => f.kind === 'environment') }
 }
 
-/** Open items (unclosed 'now' and 'today' findings from the crew member's own entries) another role may see:
- *  'now' items under emergency sharing (medical officer; the commander only when the patient is the medical
- *  officer), anything else only where its area is shared at 'trend' or more.  The ground sees none. */
-export function visibleOpenItems(role: Role, items: OpenItem[], share: SharingSettings, patientIsCmo: boolean): OpenItem[] {
+/** Open items (unclosed 'now' and 'today' findings from the crew member's own entries) another role may see.
+ *  Under emergency sharing the medical officer is told of every one; its title is shown for 'now' items and
+ *  where its area is shared at 'trend' or more, otherwise only its area ("details not shared").  The commander
+ *  sees them only when the patient is the medical officer.  With emergency sharing off, only shared areas
+ *  show.  The ground never sees them. */
+export function visibleOpenItems(role: Role, items: OpenItem[], share: SharingSettings, patientIsCmo: boolean): (OpenItem & { redacted?: boolean })[] {
   if (role === 'ground') return []
-  return items.filter((it) => {
-    if (it.urgency === 'now' && share.emergency !== false && (role === 'cmo' || patientIsCmo)) return true
-    return allows((share[role] as Record<string, Level>)[it.category] ?? 'none', 'trend')
-  })
+  const out: (OpenItem & { redacted?: boolean })[] = []
+  for (const it of items) {
+    const shared = allows((share[role] as Record<string, Level>)[it.category] ?? 'none', 'trend')
+    const consent = share.emergency !== false && (role === 'cmo' || patientIsCmo)
+    if (shared || (consent && it.urgency === 'now')) out.push(it)
+    else if (consent) out.push({ ...it, redacted: true })
+  }
+  return out
 }
 
 /** Medication classes and photos are part of Symptoms, and are shown only when that area is shared in detail. */
@@ -122,5 +128,7 @@ export function groundSummary(missionId: string, crew: string, flightDay: number
     v: 1, m: missionId, fd: flightDay, c: crew, st: v.overall, cats,
     f: v.findings.map((f) => ({ c: f.category, s: f.status, n: f.days, ...(f.title ? { t: f.title, tier: f.tier } : {}) })),
     env: v.environment.map((f) => ({ r: f.ruleId, n: f.days })),
+    // under emergency sharing: how many urgent items are open, nothing else (no names, areas or values)
+    ...(share.emergency !== false ? { urg: a.openItems.filter((x) => x.urgency === 'now').length } : {}),
   })
 }

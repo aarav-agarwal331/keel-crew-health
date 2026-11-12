@@ -2,7 +2,7 @@
  "indicators": [
   {
    "id": "rhr",
-   "label": "Resting heart rate",
+   "label": "Resting heart rate (overnight)",
    "short": "Resting HR",
    "unit": "bpm",
    "category": "cardio",
@@ -588,8 +588,7 @@
   {
    "id": "injury",
    "label": "Injury, or something in the eye",
-   "red_flag": true,
-   "commander": false
+   "red_flag": true
   },
   {
    "id": "exposure",
@@ -616,6 +615,12 @@
   {
    "id": "self_harm",
    "label": "Thoughts of harming yourself",
+   "red_flag": true,
+   "commander": false
+  },
+  {
+   "id": "harm_others",
+   "label": "Thoughts of harming someone else",
    "red_flag": true,
    "commander": false
   }

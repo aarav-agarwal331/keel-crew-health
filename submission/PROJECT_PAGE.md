@@ -72,8 +72,8 @@ deviations feed a multivariate detector that reacts to several small changes in 
 Alert thresholds are not chosen by feel. They are set in simulation to a budget of one mistaken notice
 per person-month and one mistaken alert per four person-months, because alarm fatigue is an
 operational hazard; on real people they ran over that budget (1.40 and 0.39 per person-month).
-Thresholds depend on which sensors are present and have to be set per sensor set; that is not built
-yet. A fixed table of 39 rules turns a pattern, an entered reading or a reported symptom into wording, one action,
+Thresholds depend on which sensors are present: imported watch data therefore runs on a separate
+heart-rate-only model calibrated on the 251 real people (+22 above luck, 12 to 32). A fixed table of 40 rules turns a pattern, an entered reading or a reported symptom into wording, one action,
 follow-up steps, how soon and who, each citing a NASA document, a published study or public clinical
 guidance. No language model writes any advice, and by design Keel gives no medication or treatment
 advice.
@@ -211,8 +211,9 @@ fitted to the other half of the same data; the independent checks fail or are of
 - **The shipped model is not set up for a watch import.** The model file the app ships is calibrated
   for all eleven on-board channels. Given only the channels a real watch import has (overnight heart
   rate, sometimes sleep), it flagged 12% of episodes, +9 above luck (4 to 16), at 0.08 false alerts
-  per person-month, and its alert tier never fired. Thresholds have to be set per sensor set; that is
-  not built. The app says so on its import card.
+  per person-month, and its alert tier flagged no episodes. Imports now run on a heart-rate-only model
+  calibrated on real people instead; other sensor subsets (a failed HRV sensor, say) still use the
+  full-set thresholds.
 - **Not shown to beat simpler methods.** The detector cannot be told apart from a simple personal
   rule, and the lead of a personal baseline over a fixed threshold is probable, not proven.
 - **Ground data stands in for spaceflight data.** No open astronaut wearable time series exists. The
@@ -249,8 +250,7 @@ fitted to the other half of the same data; the independent checks fail or are of
   published work suggests carry earlier illness signals than daily heart rate.
 - Clinical review of the rule table and thresholds with flight surgeons, and a crew usability study
   under fatigue.
-- Set thresholds per sensor set, so a watch import with only heart rate and sleep is not judged by
-  thresholds calibrated for eleven channels.
+- Set thresholds for every sensor subset a crew member might have (imports already have their own).
 - Test the gravity-change handling on real launch or analog data rather than in simulation only.
 - Device-to-device sync between crew tablets without a server, so the medical officer's view updates
   on board.

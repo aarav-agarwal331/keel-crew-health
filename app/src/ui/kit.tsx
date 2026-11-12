@@ -151,6 +151,7 @@ export class ScreenBoundary extends Component<{ children: ReactNode; name: strin
 /** The spot readings entered today, oldest first, with the time each was saved.  Nothing is overwritten;
  *  a reading withdrawn as a typing mistake stays visible, struck through. */
 export function ReadingLog({ readings, title = 'Readings today', onVoid }: { readings: { ind: string; v: number; ts: number; void?: boolean }[]; title?: string; onVoid?: (ind: string, ts: number) => void }) {
+  const [ask, setAsk] = useState<number | null>(null)
   if (!readings.length) return null
   const time = (ts: number) => new Date(ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })
   return (
@@ -159,7 +160,9 @@ export function ReadingLog({ readings, title = 'Readings today', onVoid }: { rea
         {readings.map((r, i) => (
           <li key={`${r.ind}-${r.ts}-${i}`} className="num">
             <span style={r.void ? { textDecoration: 'line-through' } : undefined}>{READING_LABEL[r.ind]?.[0] ?? r.ind} {r.v} {READING_LABEL[r.ind]?.[1] ?? ''}, at {time(r.ts)}</span>
-            {r.void ? ' (withdrawn as a typing mistake)' : onVoid ? <> <button className="btn sm" onClick={() => onVoid(r.ind, r.ts)} data-testid="void-reading">Typing mistake</button></> : null}
+            {r.void ? ' (withdrawn as a typing mistake)' : onVoid ? (ask === r.ts
+              ? <> Withdraw this reading? It stays in the log, struck through, and the medical officer sees that it was withdrawn. Type the correct value above first if you have it. <button className="btn sm" onClick={() => { onVoid(r.ind, r.ts); setAsk(null) }} data-testid="void-confirm">Yes, withdraw</button> <button className="btn sm" onClick={() => setAsk(null)}>Keep it</button></>
+              : <> <button className="btn sm" onClick={() => setAsk(r.ts)} data-testid="void-reading">Typing mistake?</button></>) : null}
           </li>
         ))}
       </ul>

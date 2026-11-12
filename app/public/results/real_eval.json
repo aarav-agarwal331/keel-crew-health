@@ -1,7 +1,7 @@
 {
  "script": "research/scripts/eval_real.py",
- "commit": "455012f",
- "code_version": "e4d2c5502c36",
+ "commit": "591f788",
+ "code_version": "cefc408fc8c3",
  "seed": 20261112,
  "data": "Stanford COVID-19 wearables phase 1 (Mishra et al. 2020) and phase 2 subset (Alavi et al. 2022)",
  "indicators": "Resting heart rate + daily steps",
@@ -4009,6 +4009,18 @@
     0.0038678029638346363,
     0.19030066200213844
    ]
+  }
+ },
+ "uncounted_alerts_near_episodes": {
+  "0.25": {
+   "alerts": 34,
+   "people_with_an_episode": 105,
+   "per_episode": 0.3177570093457944
+  },
+  "1.0": {
+   "alerts": 56,
+   "people_with_an_episode": 105,
+   "per_episode": 0.5233644859813084
   }
  },
  "chance_sensitivity": {

@@ -10,9 +10,8 @@ import { Card, Glyph, href, ReadingLog, Seg, StatusTag } from '../ui/kit'
 const catLabel = (id: string) => CATEGORIES.find((c) => c.id === id)?.label ?? id
 
 export function Crew() {
-  const { mission, day, today, sharing, logAccess, me, entries, actions, logAction } = useApp()
+  const { mission, day, today, sharing, logAccess, me, entries, logAction } = useApp()
   const [notes, setNotes] = useState<Record<string, string>>({})
-  const closed = new Set(actions.filter((x) => x.did.startsWith('Closed')).map((x) => x.alertKey))
   const meRole = mission.crew.find((c) => c.id === me)?.role
   const [role, setRole] = useState<Role>(meRole === 'cmo' ? 'cmo' : 'commander')
   const rows = useMemo(() => mission.crew.map((c) => {
@@ -118,12 +117,12 @@ export function Crew() {
               {role === 'cmo' && extras.meds.length > 0 && <p className="small"><strong>Medication logged today:</strong> {extras.meds.join(', ').toLowerCase()}.</p>}
               {role === 'cmo' && extras.photos.length > 0 && <div className="row wrap">{extras.photos.map((ph) => <figure key={ph.ts} style={{ margin: 0 }}><img src={ph.data} alt={`${ph.label} photo from ${c.name}`} style={{ width: 140, height: 140, objectFit: 'cover', borderRadius: 10 }} /><figcaption className="tiny">{ph.label}</figcaption></figure>)}</div>}
               {/* the worklist: 'now' and 'today' findings from this person's own entries stay here until closed with a note */}
-              {(role === 'cmo' || c.role === 'cmo') && open.filter((x) => !closed.has(x.key)).length > 0 && (
+              {(role === 'cmo' || c.role === 'cmo') && open.length > 0 && (
                 <div className="col" data-testid={`worklist-${c.id}`}>
                   <span className="lab">{role === 'cmo' && c.role === 'cmo' ? 'The medical officer\'s own open items: the commander, as backup, closes these' : 'Open items for you to close'}</span>
-                  {open.filter((x) => !closed.has(x.key)).map((x) => (
+                  {open.map((x) => (
                     <div key={x.key} className="col" style={{ gap: 6, borderTop: '1px solid var(--border)', paddingTop: 8 }}>
-                      <span className="small"><strong>{x.title}</strong> <span className="muted">({shortDay(mission, x.day)}, {x.urgency === 'now' ? 'needed attention at once' : 'needed attention the same day'}{x.withdrawn ? '; the crew member withdrew the reading as a typing mistake' : ''})</span></span>
+                      <span className="small"><strong>{x.redacted ? `An item in ${catLabel(x.category).toLowerCase()} (details not shared; ask ${c.name.split(' ')[0]})` : x.title}</strong> <span className="muted">({shortDay(mission, x.day)}, {x.urgency === 'now' ? 'needed attention at once' : 'needed attention the same day'}{x.withdrawn ? '; the crew member withdrew the reading as a typing mistake' : ''})</span></span>
                       {!(role === 'cmo' && c.role === 'cmo') && (
                         <div className="row wrap">
                           <input type="text" aria-label={`Closing note for ${x.title}`} value={notes[x.key] ?? ''} onChange={(e) => setNotes((p) => ({ ...p, [x.key]: e.target.value }))} placeholder="Note: what you found and did" style={{ flex: 1, minWidth: 180 }} />
@@ -132,7 +131,7 @@ export function Crew() {
                       )}
                     </div>
                   ))}
-                  <p className="tiny muted">A later normal reading does not close an item. Only a note from you does.</p>
+                  <p className="tiny muted">A later normal reading does not close an item. Only a note from you does, and a new abnormal reading after your note reopens it. Consider consulting the flight surgeon at the next link for anything marked "at once".</p>
                 </div>
               )}
             </>}

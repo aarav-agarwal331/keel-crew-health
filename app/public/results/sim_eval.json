@@ -1,7 +1,7 @@
 {
  "script": "research/scripts/eval_sim.py",
- "commit": "455012f",
- "code_version": "e4d2c5502c36",
+ "commit": "591f788",
+ "code_version": "cefc408fc8c3",
  "simulated": true,
  "deployed": "mewma",
  "design": {

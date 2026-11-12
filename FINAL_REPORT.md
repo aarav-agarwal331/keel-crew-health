@@ -15,7 +15,7 @@ source, how soon and who should know. No server, no language model.
 | Area | State |
 |---|---|
 | Screens | Today, Trends, Alert detail, Check-in (with a reaction self-test), Sharing, Crew readiness, Earth link, Mission replay, Validation, How Keel works, Guide (measurements and every rule), Data sources, More |
-| Science | Phase-aware robust personal baselines; four detectors plus a fixed-threshold comparison; thresholds from a false-alert budget; 39 auditable rules with cited countermeasures; fixed safety thresholds and red-flag symptoms that bypass the detector; an append-only reading log and a medical officer's list of open items |
+| Science | Phase-aware robust personal baselines; four detectors plus a fixed-threshold comparison; thresholds from a false-alert budget; 40 auditable rules with cited countermeasures; fixed safety thresholds and red-flag symptoms that bypass the detector; an append-only reading log and a medical officer's list of open items |
 | Data in | Simulated missions (Mars transit, lunar surface); CSV, Fitbit JSON and Apple Health import; live heart-rate strap over Web Bluetooth; manual check-in with medication classes and a photo for the medical officer |
 | Real data used | Stanford COVID-19 wearables phases 1 and 2 (detection), LifeSnaps (variability), NASA Life Sciences Data Archive bed-rest campaigns (gravity transitions) |
 | Privacy | Per-role, per-area sharing at four levels, a tested privacy gate, access log, switchable emergency sharing, some symptoms shown to the medical officer only |
@@ -72,8 +72,9 @@ source, how soon and who should know. No server, no language model.
    run over budget on real people (1.40 against 1.00, 0.39 against 0.25; two to four times over with
    five sensors), and the headline is quoted at that higher rate. The model the app ships is set for
    eleven channels: given only a watch's heart rate it flags about one illness in eight and its alert
-   tier never fires. The headline is therefore a two-sensor version of Keel's method, not the shipped
-   file; per-sensor-set thresholds are not built.
+   tier never flags an episode. The headline is therefore a two-sensor version of Keel's method, not the
+   shipped file. Imports now run on a separate heart-rate-only model calibrated on real people; other
+   sensor subsets (for example a failed HRV sensor) still use the full-set thresholds.
 4. **The evidence for illness detection is partly behavioural, and "above luck" is an upper bound.**
    Heart rate alone is +22; activity adds the rest because people move less once they feel ill, and
    that cannot be separated from isolating at home. Pretend dates cannot be matched to the calendar.

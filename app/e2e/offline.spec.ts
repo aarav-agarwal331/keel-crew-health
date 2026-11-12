@@ -62,7 +62,7 @@ test('every screen works with the network disabled', async ({ page }) => {
   await test.step('A fixed safety threshold reacts to one entered reading, offline', async () => {
     await nav(page, '#/checkin')
     await page.getByTestId('more-checkin').click()
-    await page.getByLabel(/Blood oxygen/).fill('91')
+    await page.getByLabel(/Fingertip oxygen now/).fill('91')
     await page.getByTestId('save-checkin').first().click()
     await nav(page, '#/today')
     await expect(page.getByTestId('today-status')).toContainText('Act now')
@@ -71,14 +71,15 @@ test('every screen works with the network disabled', async ({ page }) => {
     await expect(page.getByTestId('crew-c2')).toContainText(/emergency sharing/)
     await nav(page, '#/checkin')
     await page.getByTestId('more-checkin').click()
-    await page.getByLabel(/Blood oxygen/).fill('97')
+    await page.getByLabel(/Fingertip oxygen now/).fill('97')
     await page.getByTestId('save-checkin').first().click()
     await expect(page.getByText('Saved.', { exact: true })).toBeVisible()
     // a later normal reading does not erase the abnormal one: both are kept, and the worst still counts today
     await expect(page.getByTestId('reading-log').first()).toContainText('91')
     await expect(page.getByTestId('reading-log').first()).toContainText('97')
     await nav(page, '#/today')
-    await expect(page.getByTestId('today-status')).toContainText('Act now')
+    await expect(page.getByTestId('today-status')).toContainText('Act today')
+    await expect(page.getByTestId('today-action')).toContainText('back on the safe side')
   })
 
   await test.step('A thermometer reading entered at check-in or on the action card triggers the fever rules', async () => {
@@ -104,7 +105,7 @@ test('every screen works with the network disabled', async ({ page }) => {
 
   await test.step('An extreme reading is accepted after confirmation, and a mistyped one does not block the save', async () => {
     await nav(page, '#/checkin/measure')
-    await page.getByLabel(/Resting heart rate/).fill('170')
+    await page.getByLabel(/Heart rate now/).fill('170')
     await page.getByLabel(/Blood sugar/).fill('5')
     await page.getByTestId('sym-headache').click()
     await page.getByTestId('save-checkin').first().click()
@@ -228,6 +229,7 @@ test('every screen works with the network disabled', async ({ page }) => {
     await nav(page, '#/today')
     await expect(page.getByTestId('today-status')).toBeVisible()
     await expect(page.getByText(/Real data/).first()).toBeVisible()
+    await expect(page.getByText(/your own imported data/)).toBeVisible()
     await nav(page, '#/data')
     await page.getByTestId('load-mars_transit').click()
     await expect(page.getByText('Mars transit.').first()).toBeVisible()

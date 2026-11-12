@@ -57,6 +57,33 @@
    ]
   },
   {
+   "id": "R-V-HR1R",
+   "scope": "vital",
+   "priority": 1.115,
+   "urgency": "now",
+   "title": "Two heart rate readings at rest of 120 or more",
+   "when": {
+    "val": "rhr_manual",
+    "min": 120,
+    "count": 2
+   },
+   "summary": "You entered a resting heart rate of 120 or more twice. In a fit person at rest this can be an irregular or fast heart rhythm, which needs to be seen while it is happening. The value 120 is provisional and has not been reviewed by a flight surgeon.",
+   "action": "Stay at rest and tell the medical officer now, while it is still fast.",
+   "steps": [
+    "Stay with another crew member.",
+    "Do not exercise.",
+    "Note any chest pain, breathlessness, light-headedness or a racing or irregular feeling."
+   ],
+   "tier": "cmo",
+   "tier_reason": "A fixed safety threshold, not a trend.",
+   "cm": [
+    "CM-VITALS"
+   ],
+   "categories": [
+    "cardio"
+   ]
+  },
+  {
    "id": "R-V-HR2",
    "scope": "vital",
    "priority": 1.12,
@@ -113,7 +140,7 @@
    "scope": "vital",
    "priority": 1.15,
    "urgency": "now",
-   "title": "Upper blood pressure reading is very low",
+   "title": "Upper blood pressure reading is under 80, or under 90 with dizziness or fainting",
    "when": {
     "any": [
      {
@@ -259,7 +286,8 @@
    "action": "Eat or drink something sugary, repeat the reading in 15 minutes, and tell the medical officer today.",
    "steps": [
     "If you feel shaky, sweaty or confused, tell the medical officer now.",
-    "Do not exercise or do critical tasks until it is back above 70 and you feel normal."
+    "Do not exercise or do critical tasks until it is back above 70 and you feel normal.",
+    "If the repeat is still below 70, take sugar again and repeat after another 15 minutes."
    ],
    "tier": "cmo",
    "tier_reason": "A fixed safety threshold, not a trend.",
@@ -437,7 +465,7 @@
    "summary": "Your overnight resting heart rate, or one you entered at rest, was 120 or more. One such reading is enough for the medical officer to look. The value 120 is provisional and has not been reviewed by a flight surgeon.",
    "action": "Rest for ten minutes, repeat the reading, and tell the medical officer today.",
    "steps": [
-    "No exercise until the medical officer has seen it.",
+    "Rest for ten minutes and take it again: a second reading of 120 or more means telling the medical officer now.",
     "Take your temperature and drink to your fluid target.",
     "Note any chest pain, breathlessness or light-headedness: with any of them, tell the medical officer now."
    ],
@@ -549,7 +577,7 @@
     "all": [
      {
       "env": "rad_sum_3d",
-      "min": 100
+      "min": 1000
      },
      {
       "sym": "vomiting",
@@ -557,10 +585,10 @@
      }
     ]
    },
-   "summary": "You reported vomiting within three days of at least 100 mSv on your dosimeter. Keel cannot tell whether the two are linked: motion sickness and stomach bugs are far more common. How soon vomiting starts helps the medical officer judge the dose. The 100 mSv line is a provisional value chosen by us.",
+   "summary": "You reported vomiting within three days of at least 1000 mSv on your dosimeter, a dose at which radiation sickness becomes possible. Keel cannot tell whether the two are linked; motion sickness and stomach bugs are far more common. How soon vomiting starts helps the medical officer judge the dose. The 1000 mSv line is a provisional value chosen by us.",
    "action": "Tell the medical officer now, and note the time the vomiting started.",
    "steps": [
-    "Sip fluids; do not take anything for nausea until the medical officer says so.",
+    "Sip fluids, and tell the medical officer before taking anything.",
     "Tell the commander your personal dosimeter reading."
    ],
    "tier": "cmo",
@@ -674,8 +702,8 @@
        }
       ]
      },
-     "tier": "cmo",
-     "reason": "Cough with falling oxygen: the medical officer should see you today, and now if you are short of breath."
+     "tier": "ground",
+     "reason": "Cough with falling oxygen: take a fingertip oxygen reading now, and tell the medical officer now if it is 92% or lower or you are short of breath. The medical officer may consult the flight surgeon at the next link."
     }
    ]
   },

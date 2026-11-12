@@ -269,6 +269,22 @@ def main():
             bd[key] = with_net([rows[i] for i in idx], [ch_by[people[i].pid] for i in idx if people[i].pid in ch_by], None, 1000)
         breakdown[str(b)] = bd
 
+    # ---------------- alerts that count as neither a detection nor a false alert ----------------
+    # Alerts starting 11 to 21 days before an onset or 5 to 28 days after it fall outside the detection
+    # window and inside the exclusion zone, so they are not counted anywhere above.
+    from keel.core import episodes as _episodes
+    limbo = {}
+    for b in [0.25, 1.0]:
+        n_l = n_ill = 0
+        for i, q in enumerate(people):
+            if not q.onsets:
+                continue
+            n_ill += 1
+            starts = [a for a, _ in _episodes(res["scores"][DEPLOYED][i], res["thr_person"][DEPLOYED][b][i], p.merge_gap)]
+            n_l += sum(1 for a in starts if any(o - w.excl_pre <= a < o - w.det_pre or o + w.det_post < a <= o + w.excl_post for o in q.onsets))
+        limbo[str(b)] = {"alerts": n_l, "people_with_an_episode": n_ill, "per_episode": n_l / max(1, n_ev)}
+    print("uncounted alerts near episodes", limbo)
+
     # ---------------- lead times ----------------
     leads = {str(b): [l if s else None for r in res["outcomes"][DEPLOYED][b] for l, s in zip(r["leads"], r["scorable"])] for b in [0.25, 1.0]}
 
@@ -444,6 +460,24 @@ def main():
     print("deployed config (sim thresholds on real people)", {k: {b: (round(v["detection_rate"], 2), round(v["chance_detection_rate"], 2), round(v["net_detection"], 2), [round(x, 2) for x in v["net_detection_ci"]], round(v["fa_per_person_month"], 2))
                                                                    for b, v in deployed_cfg[k].items()} for k in ["all", "held_out"]})
 
+    # ---------------- the model the app uses for imported watch data ----------------
+    # Imports carry overnight heart rate (activity is not read by the importers), so the app runs a
+    # heart-rate-only model for them, fitted and calibrated on all real people here.  Its expected
+    # performance is the cross-validated "heart rate alone" row of the ablation table.
+    pe_hr = load_people(SPECS["rhr"]["indicators"])
+    imp = fit_model(pe_hr, SPECS["rhr"], p, w)
+    imp_sc = [x[DEPLOYED] for x in score_people(pe_hr, imp, p)]
+    imp_thr = {"notice": calibrate(imp_sc, [q.onsets for q in pe_hr], 1.0, w, p.merge_gap),
+               "alert": calibrate(imp_sc, [q.onsets for q in pe_hr], 0.25, w, p.merge_gap)}
+    from keel.export import model_json
+    from keel.mission import adaptation_prior
+    imp_meta = {"deployed": DEPLOYED, "id": "import", "calibrated_on": f"{len(pe_hr)} real people (Stanford COVID-19 wearables), overnight resting heart rate only",
+                "simulated_calibration": False, "budgets": {"notice": 1.0, "alert": 0.25}, "script": "research/scripts/eval_real.py", "commit": git_commit(),
+                "adaptation_prior": adaptation_prior(["rhr"]),
+                "expected": {b: {k: abl["rhr"][DEPLOYED][b][k] for k in ("detection_rate", "chance_detection_rate", "net_detection", "net_detection_ci", "fa_per_person_month")} for b in ("1.0", "0.25")}}
+    write_json(APP_PUBLIC / "data" / "model_import.json", model_json(imp, p, imp_thr, imp_meta), indent=1)
+    print("import model thresholds", imp_thr)
+
     # ---------------- event-aligned resting heart rate ----------------
     rel = np.arange(-21, 15)
     curves = []
@@ -467,7 +501,7 @@ def main():
         "indicators": SPEC_LABELS["rhr_steps"], "windows": {"det_pre": w.det_pre, "det_post": w.det_post, "excl_pre": w.excl_pre, "excl_post": w.excl_post},
         "budgets": BUDGETS, "deployed": DEPLOYED, "methods": METHODS, "method_labels": METHOD_LABELS, "cohort": cohort, "main": main_tbl, "breakdown": breakdown,
         "leads": leads, "false_alerts_quiet": fa_dist, "false_alerts_by_group": fa_by_group, "ppv": ppv, "steps_drop": steps_drop, "ablation": abl,
-        "window_sensitivity": win, "chance_sensitivity": chance_sens, "open_alert_sensitivity": open_alert, "deployed_config": deployed_cfg, "shipped_model": shipped_cfg,
+        "window_sensitivity": win, "uncounted_alerts_near_episodes": limbo, "chance_sensitivity": chance_sens, "open_alert_sensitivity": open_alert, "deployed_config": deployed_cfg, "shipped_model": shipped_cfg,
         "chance_note": "Pretend events are placed on label-quiet days with the same missing data as real windows, and weighted to the device mix of the real episodes. They cannot be matched to the calendar (dates are shifted per person), so exposure, travel, testing and isolation near a real onset are not reproduced; detection above luck is therefore an upper bound on what physiology alone explains.", "cross_phase": cross, "fold_seeds": seeds, "event_aligned_rhr": aligned,
         "published": {"source": "Mishra et al. 2020 (DOMAIN.md ref 58), phase 1 only, their own online CuSum on hourly data",
                       "presymptomatic_detection": 0.63, "false_alarms_per_month_healthy": 0.66,

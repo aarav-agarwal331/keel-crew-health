@@ -89,7 +89,7 @@ export interface Photo { ts: number; label: string; data: string }
 export interface Reading { ind: string; v: number; ts: number; void?: boolean }
 
 /** A 'now' or 'today' finding raised from the crew member's own entry; stays listed until the medical officer closes it. */
-export interface OpenItem { key: string; ruleId: string; title: string; day: number; urgency: Urgency; category: string; /** the reading behind it was withdrawn by the crew member; the medical officer still closes it */ withdrawn?: boolean }
+export interface OpenItem { key: string; ruleId: string; title: string; day: number; urgency: Urgency; category: string; /** the reading behind it was withdrawn by the crew member; the medical officer still closes it */ withdrawn?: boolean; /** time of the latest reading or check-in behind it: a closure note written before this does not close it */ ts: number }
 
 export interface ActionLog {
   id?: number
@@ -183,4 +183,6 @@ export interface Finding {
   who?: string
   /** every indicator this finding rests on (rule condition and evidence); decides which body and sharing areas it colours */
   inds?: string[]
+  /** this notice earlier looked like illness: it keeps exercise on hold */
+  holdsExercise?: boolean
 }

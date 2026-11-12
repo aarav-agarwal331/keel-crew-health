@@ -55,7 +55,7 @@ export function BodyMap({ systems }: { systems: Record<string, Status> }) {
           {SYSTEMS.map((s) => (
             <button key={s.id} type="button" aria-pressed={sel === s.id} onClick={() => setSel(s.id)}>
               <span>{s.label}</span>
-              <StatusTag status={st(s.id)} label="" size={18} />
+              <StatusTag status={st(s.id)} label={st(s.id) === 'urgent' ? 'Now' : st(s.id) === 'act' ? 'Today' : ''} size={18} />
             </button>
           ))}
         </div>

@@ -23,7 +23,7 @@ const HEADLINE: Record<string, string> = {
 }
 
 export function Today() {
-  const { mission, model, day, me, today, analyses, entries, link, sharing, setShare, actions } = useApp()
+  const { mission, model, day, me, today, analyses, entries, link, sharing, setShare } = useApp()
   const [intro, setIntro] = useState(false)
   useEffect(() => { void store.kv<boolean>('intro-dismissed').then((v) => setIntro(!v)) }, [])
   const a = today()
@@ -41,9 +41,8 @@ export function Today() {
   // "Steady" is shown only when nothing at all is amber: an area worth a look, or cabin CO2 above the advisory line, changes the headline
   const softAreas = [...SYSTEMS.filter((x) => a.systems[x.id] === 'watch' && x.id !== 'environment').map((x) => x.label.toLowerCase()), ...(a.co2Advisory !== null ? ['cabin air'] : [])]
   const shown: typeof a.status = a.status === 'steady' && softAreas.length ? 'watch' : a.status
-  const closed = new Set(actions.filter((x) => x.did.startsWith('Closed')).map((x) => x.alertKey))
   const liveRules = new Set(a.findings.map((x) => x.ruleId))
-  const waiting = a.openItems.filter((x) => !closed.has(x.key) && !(x.day === day && liveRules.has(x.ruleId)))
+  const waiting = a.openItems.filter((x) => !(x.day === day && liveRules.has(x.ruleId)))
 
   // routine: what the mission day asks of this person
   const checkedByMe = mine.some((e) => e.day === day)
@@ -125,6 +124,7 @@ export function Today() {
           <p className="small muted">These came from your own entries. A later normal reading does not close them: the medical officer does, with a note{crew?.role === 'cmo' ? ' (for you, the commander)' : ''}.</p>
         </Card>
       )}
+      {mission.kind === 'personal' && <p className="banner strong">This is your own imported data. Keel's advice is written for a space crew with a medical officer on board. If a reading or symptom worries you, contact a doctor; in an emergency call your local emergency number.</p>}
       {!link.available && mission.simulated && <p className="banner" data-testid="offline-banner">No link to Earth right now. Everything on this screen was worked out on this device.</p>}
       {others.map((f) => (
         <LinkRow key={f.key} to={href('alert', f.key)} left={<span className={`st-${f.status}`}><Glyph status={f.status} /></span>} title={f.title} sub={f.action} />

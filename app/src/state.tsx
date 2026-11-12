@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
-import { analyzeDay, type DayAnalysis } from './core/analysis'
+import { analyzeDay, closuresFrom, type DayAnalysis } from './core/analysis'
 import type { ModelJson } from './core/detect'
 import { linkState, type LinkState, type OutboxItem } from './core/link'
 import { defaultSharing, type AccessEntry, type Level, type Role, type SharingSettings } from './core/sharing'
@@ -199,7 +199,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   // --- derived -------------------------------------------------------------------------------
   const cache = useRef(new Map<string, DayAnalysis>())
   // items the medical officer (or, for their own items, the commander) closed with a note
-  const closed = useMemo(() => new Set(actions.filter((x) => x.did.startsWith('Closed')).map((x) => x.alertKey)), [actions])
+  const closed = useMemo(() => closuresFrom(actions), [actions])
   useEffect(() => { cache.current.clear() }, [analyses, entries, mission, model, closed])
   const today = useCallback((crewId?: string, d?: number): DayAnalysis | null => {
     if (!mission || !model) return null
