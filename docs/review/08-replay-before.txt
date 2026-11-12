@@ -1,5 +1,5 @@
 SCREEN: 08-replay-before
-TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 126 | Simulated data
+TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 121 | Simulated data
 BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
 Mission replay
@@ -7,48 +7,50 @@ Mission replay
 A scripted health event from the simulated mission, played at about 1.5 mission days per second. Keel sees each day only as it arrives, exactly as it would on board.
 
 Event to replay
-Scripted cabin CO2 rise (scrubber degradation) · whole crew · FD 39
-Scripted low fluid intake · Tomás Novák · FD 59
-Scripted sleep restriction (schedule shift) · Amara Okafor · FD 79
-Scripted exercise device outage · Kenji Sato · FD 97
-Scripted illness (infection-like strain) · Lucía Reyes · FD 125
-Scripted low-mood period · Tomás Novák · FD 151
-Scripted solar particle event · whole crew · FD 164
+Scripted cabin CO2 rise (scrubber degradation) · whole crew · Day 39
+Scripted low fluid intake · Tomás Novák · Day 59
+Scripted sleep restriction (schedule shift) · Amara Okafor · Day 79
+Scripted exercise device outage · Kenji Sato · Day 97
+Scripted illness (infection-like strain) · Lucía Reyes · Day 120
+Scripted low-mood period · Tomás Novák · Day 151
+Scripted solar particle event · whole crew · Day 164
 Play
 Restart
 Step one day
 Slow
 Normal
 Fast
-Replay clock: FD 109 · Lucía Reyes
-Steady
-Earth link up
+Replay clock: Day 104 · Lucía Reyes
+Worth a look
+In replay: link up
 Lucía's readings
 Your readings
 Your usual range
 Outside your range
 Resting heart rate (bpm)
 50
-55
-FD 109
-FD 117
-FD 126
-FD 134
+60
+Day 104
+Day 112
+Day 121
+Day 129
 Heart rate variability (ms)
 40
-60
-FD 109
-FD 117
-FD 126
-FD 134
-Body temperature (°C)
+50
+Day 104
+Day 112
+Day 121
+Day 129
+Skin temperature (overnight) (°C)
 36
-36.5
 37
-FD 109
-FD 117
-FD 126
-FD 134
+38
+Day 104
+Day 112
+Day 121
+Day 129
 What Keel did
+DAY 104
+Worth a look: Exercise has dropped below your plan
 
-Press Play. Nothing has happened yet.
+Do today's session, even a shortened one, and plan the next three. Manage it yourself.

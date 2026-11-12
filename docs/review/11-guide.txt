@@ -1,5 +1,5 @@
 SCREEN: 11-guide
-TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 126 | Simulated data
+TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 121 | Simulated data
 BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
 Guide to measurements
@@ -8,19 +8,55 @@ You do not need medical training to use Keel. This page explains each reading: w
 
 The five hazards of human spaceflight, and what Keel watches for each
 Hazard	What it does	What Keel tracks
-Space radiation	Cosmic rays and solar storms. Mostly a long-term risk; a solar storm can also matter within hours.	Daily and mission-total dose against the 600 mSv career limit; an alert with the shelter procedure when the dose rate jumps.
+Space radiation	Cosmic rays and solar storms. Mostly a long-term risk; a solar storm can also matter within hours.	Daily and mission-total dose from the dosimeter. Keel does not warn of solar storms: the vehicle alarm does. Afterwards Keel records the dose and asks about nausea.
 Isolation and confinement	Mood and sleep problems become more likely the longer a small crew is shut in together.	Private mood check-ins, sleep duration and timing, reaction self-test, each against your own normal.
 Distance from Earth	Up to about 24 minutes of signal delay each way, blackouts, no resupply and no quick return.	Everything runs on board. The link only carries a summary you approve, when a link exists.
 Gravity fields	Without weight, bone and muscle are lost, fluid shifts toward the head, and the body must re-adapt at each gravity change.	Exercise against plan, resting heart rate and HRV; normal ranges are widened and re-learned after each gravity change.
-Hostile, closed environment	Recycled air and water, shared microbes, an immune system that behaves differently.	Cabin carbon dioxide with the levels linked to headaches; early signs of infection from heart rate, HRV and temperature.
+Hostile, closed environment	Recycled air and water, shared microbes, an immune system that behaves differently.	Cabin carbon dioxide with the levels linked to headaches; signs of infection in heart rate, HRV and temperature, usually visible once symptoms have started.
 [6] NASA Human Research Program. "The Human Body in Space." nasa.gov, 2021 (updated 2026). Source
 [7] NASA Human Research Program. "5 Hazards of Human Spaceflight." nasa.gov (updated 2026). Source
 When to involve someone else
-Now, whatever Keel shows: chest pain or pressure, shortness of breath at rest, severe side or back pain, fainting, a resting oxygen reading of 92% or lower. Tell the medical officer.
-Today: when Keel shows "Act today" with the medical officer level, or a temperature of 38.0 °C or more.
+Now, whatever Keel shows: chest pain or pressure; short of breath at rest; fainted or nearly fainted; racing or irregular heartbeat; sudden loss of vision; worst headache of your life; confusion, weakness or trouble speaking; severe belly pain; severe side or back pain; vomited more than twice, or cannot keep fluids down; cannot pass urine, or blood in urine; injury, or something in the eye; joint pain or numbness after a spacewalk; a fingertip oxygen reading of 92% or lower; a thermometer reading of 39.4 °C or more; blood sugar below 70 mg/dL. Tell the medical officer. If you are the medical officer, tell the commander.
+Today: a thermometer reading of 38.0 °C or more; a change in vision; very low mood for days; or when Keel shows "Act today".
 When a link opens: anything the medical officer wants a flight surgeon to review. Keel keeps the summary queued.
+If you have thoughts of harming yourself, or cannot function: tell the medical officer or the commander now.
 
-These are general thresholds from public clinical guidance, not a flight rule.
+These are general thresholds from public clinical guidance for adults on Earth, not flight rules. "Steady" on the Today screen means no change was detected, not that you are well.
+
+Everything Keel can recommend
+
+The complete list of 28 rules. Each has one action, how soon, who should know, and where the advice comes from. Nothing else can appear on an alert.
+
+Symptom that needs the medical officer now
+Fingertip oxygen reading is 92% or lower
+Thermometer reading is 39.4 °C or higher
+Thermometer reading is 38.0 °C or higher
+Blood sugar reading is below 70 mg/dL
+Blood sugar reading is 200 mg/dL or higher
+Upper blood pressure reading is below 90 mmHg
+Upper blood pressure reading is 140 mmHg or higher
+Resting heart rate above 100 on two nights
+Your mood has been very low for days
+You reported a change in vision
+Radiation dose was far above normal over the last day
+Cold-like symptoms, and your readings are drifting
+Body mass is 5% or more below pre-flight
+You reported a rash or itchy skin
+Cabin carbon dioxide is elevated
+Your headache may be linked to cabin air
+Nausea or dizziness soon after a gravity change
+Your body looks like it is under strain
+Blood oxygen is below your normal
+Your mood has been lower than usual
+You are running short on sleep
+You are drinking less than usual
+Exercise has dropped below your plan
+You are eating less than planned
+Your reactions are slower than usual
+Your heart is working harder at rest
+Several readings have drifted from your normal
+
+Reference numbers: source list.
 
 Brain, sleep and mood
 
@@ -71,7 +107,7 @@ See my trend
 
 How fast your heart beats when you are fully at rest, usually measured during sleep.
 
-How to measure. Wear the wrist or chest sensor overnight. Keel takes the lowest stable stretch while you sleep, so exercise and coffee do not distort it.
+How to measure. Wear the wrist or chest sensor while you sleep. Keel takes the typical heart rate over still minutes in your sleep period, so exercise and coffee do not distort it.
 
 Why it matters. A resting heart rate that climbs above your own normal is one of the earliest whole-body signs of infection, dehydration, poor recovery or loss of fitness.
 
@@ -89,7 +125,7 @@ See my trend
 
 The upper (systolic) number of your blood pressure.
 
-How to measure. Sit still for five minutes, cuff on the upper arm at heart level, do not talk during the reading.
+How to measure. Rest quietly and restrained for five minutes, cuff on the upper arm, do not talk during the reading.
 
 Why it matters. Blood pressure regulation changes without gravity. Readings well outside your normal deserve a repeat and a word with the medical officer.
 
@@ -100,7 +136,7 @@ A sealed cabin recycles its own air: carbon dioxide can build up and dust does n
 Blood oxygen (%)
 See my trend
 
-The share of your red blood cells carrying oxygen.
+The share of the haemoglobin in your blood that is carrying oxygen.
 
 How to measure. Overnight from the wearable, or a 30-second fingertip reading: warm hand, hold still, wait for a steady number.
 
@@ -135,7 +171,7 @@ The sugar level in a fingertip drop of blood.
 
 How to measure. Clean fingertip, first drop wiped away, measure before breakfast for a comparable number.
 
-Why it matters. Named in the challenge as a useful indicator. Keel shows it against your own previous readings and a general reference range.
+Why it matters. A fingertip check is quick and the challenge names it as a useful indicator. Keel compares it with general reference values, not with a personal range.
 
 Muscle and bone
 
@@ -154,14 +190,23 @@ Whole body
 
 Immune changes in flight make infections and reactivated viruses more likely; temperature is an early sign.
 
-Body temperature (°C)
+Skin temperature (overnight) (°C)
 See my trend
 
-Your body temperature, from the wearable skin sensor overnight or a thermometer reading.
+Your wrist skin temperature while asleep, from the wearable. It moves with the cabin and bedding as well as with your body, so only a sustained rise means something.
 
-How to measure. For a spot check use the thermometer at the same time each day, before exercise and before eating or drinking.
+How to measure. Measured automatically overnight. For a real body temperature use the thermometer and enter it at check-in.
 
-Why it matters. A rise above your own normal supports the picture of infection or inflammation; body temperature also runs differently in space.
+Why it matters. A sustained rise above your own normal supports the picture of infection or inflammation. It is not a fever reading.
+
+Body temperature (thermometer) (°C)
+See my trend
+
+Your body temperature taken with the thermometer.
+
+How to measure. Take it before exercise and before eating or drinking, mouth closed, and wait for the beep.
+
+Why it matters. A thermometer reading of 38.0 °C or more is a fever by general guidance and should go to the medical officer the same day. Body temperature may run higher on long flights, so compare with your own earlier readings too.
 
 Body mass (kg)
 See my trend

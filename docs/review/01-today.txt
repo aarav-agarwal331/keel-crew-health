@@ -1,31 +1,44 @@
 SCREEN: 01-today
-TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 126 | Simulated data
+TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 121 | Simulated data
 BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
+Keel is a crew health monitor that works with no link to Earth. It learns each crew member's own normal, flags drift, and gives one action with its source. You are looking at Lucía Reyes's tablet on a simulated mission: Mars transit.
+
+Watch Keel catch a health event (40 s)
+Does it work? The evidence
+Hide this
 Act today
 
 Your body looks like it is under strain
 
-No link to Earth right now. Everything on this screen was worked out on this device.
+Demo crew member, simulated readings.
+
+No link to Earth right now. Everything on this screen was worked out on this tablet.
 
 RECOMMENDED ACTION
 
-Take your temperature now, swap today's hard exercise for a light session, and tell the medical officer.
+Take your temperature with the thermometer and hold exercise until you have. Tell the medical officer.
 
-Inform the crew medical officer. Possible illness in a closed cabin affects the whole crew, and early rest is cheap.
+When: today. Who: the medical officer, who consults the flight surgeon when a link is available.
+
+Strong temperature deviation or no improvement after four days: the medical officer should consult the flight surgeon when a link is available.
 
 Why, and what next
+Let the medical officer see this alert
 What changed
 All trends
-Food intake 60 % of plan
-Food intake is lower than your normal: 60 % of plan against your usual 84.
-More unusual than any of your last 60 days. It has been outside your usual range for 2 days.
-Resting heart rate 57 bpm
-Resting heart rate is higher than your normal: 57 bpm against your usual 51.
-More unusual than 96% of your last 60 days. It has been outside your usual range for 3 days.
-Heart rate variability 26 ms
-Heart rate variability is lower than your normal: 26 ms against your usual 42.
-More unusual than 98% of your last 60 days. It has been outside your usual range for 6 days.
+Resting heart rate 65 bpm
+Resting heart rate is higher than your normal: 65 bpm against your usual 53.
+Further from your normal than on 52 of your last 53 measured days. Outside your usual range today.
+Heart rate variability 25 ms
+Heart rate variability is lower than your normal: 25 ms against your usual 43.
+Further from your normal than on 49 of your last 53 measured days. Outside your usual range today.
+Mood 2 /5
+Mood is lower than your normal: 2 /5 against your usual 4.
+Further from your normal than on any of your last 52 measured days. Outside your usual range for 9 days.
+Skin temperature (overnight) 37.7 °C
+Skin temperature (overnight) is higher than your normal: 37.7 °C against your usual 36.7.
+Further from your normal than on 46 of your last 53 measured days. Outside your usual range today.
 Your body at a glance
 Brain, sleep and mood
 Heart and circulation
@@ -34,33 +47,38 @@ Food and fluids
 Muscle and bone
 Whole body
 Cabin and radiation
-Heart and circulation
-Worth a look
+Brain, sleep and mood
+Act today
 
-Resting heart rate, heart rate variability and blood pressure.
+Sleep, body clock, reaction time and mood.
 
-Why space matters here: Without gravity, blood shifts toward the head and the heart is loaded differently. Radiation and inactivity add long-term risk.
+Why space matters here: Isolation and confinement, plus a lost day-night cycle, disturb sleep and wear on mood and attention.
 
-Resting HR
-HRV
-BP
+Sleep
+Timing
+Reaction
+Mood
 How to measure
 Today's routine
-18-day streak
-89%
+13-day streak
+88%
 Exercise this week
-638 of 720 planned minutes. Every session protects bone, muscle and heart.
-Daily check-in (1 minute)
+630 of 720 planned minutes. Every session protects bone, muscle and heart.
+
+Crew goal this week: 74% of planned exercise done together. Individual numbers stay private.
+
+Report a symptom now
+Daily check-in (about a minute)
 Start
 Sensor worn last night
-Exercise: 14 of 120 min today
+Exercise: light session only today
 Cabin
 Deep-space transit vehicle
 Carbon dioxide
-1.8 mmHg
-Headache risk rises above 2.5
-Radiation, mission total
-224 of 600 mSv career limit
-Today 1.83 mSv
+1.9 mmHg
+Headaches become more likely above 2.5
+Radiation dose
+216 mSv this mission (dosimeter estimate)
+Today 1.88 mSv. The 600 mSv career limit also counts earlier flights.
 
-Keel is decision support, not a medical device. It does not diagnose. It shows how your readings compare with your own normal and points to documented countermeasures. Microgravity.
+Keel is decision support, not a medical device. It does not diagnose. It shows how your readings compare with your own normal and points to documented countermeasures.

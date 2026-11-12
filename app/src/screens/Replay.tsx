@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { STATUS_LABEL, TIER_LABEL } from '../core/analysis'
+import { STATUS_LABEL, URGENCY_LABEL } from '../core/analysis'
 import { linkState } from '../core/link'
 import { IND, shortDay } from '../core/mission'
 import type { TruthEvent } from '../core/types'
@@ -15,6 +15,7 @@ const SHOW: Record<string, string[]> = {
 
 const RANK: Record<string, number> = { learning: 0, steady: 1, watch: 2, act: 3, urgent: 4 }
 const TIER_RANK: Record<string, number> = { self: 0, cmo: 1, ground: 2 }
+const WHO: Record<string, string> = { self: 'self-managed', cmo: 'medical officer', ground: 'medical officer, flight surgeon when a link exists' }
 
 interface FeedItem { day: number; kind: 'alert' | 'truth' | 'link' | 'info'; title: string; body: string; status?: 'watch' | 'act' | 'urgent' | 'steady' }
 
@@ -51,12 +52,15 @@ export function Replay() {
       }
       const a = today(crew.id, d)
       if (a) for (const f of a.findings) {
-        // one entry when an alert opens, and another only if it gets more serious
+        // one entry when a finding opens, and another only if it gets more serious.  Findings led
+        // by a reported symptom or an entered reading are re-raised daily, so they are tracked by rule.
+        const id = f.kind === 'personal' || f.kind === 'environment' ? f.key : `${f.kind}:${f.ruleId}`
         const rank = RANK[f.status] * 10 + TIER_RANK[f.tier]
-        const prev = seen.get(f.key)
-        if (prev === undefined) out.push({ day: d, kind: 'alert', status: f.status as FeedItem['status'], title: `${STATUS_LABEL[f.status]}: ${f.title}`, body: `${f.action} ${TIER_LABEL[f.tier]}.` })
-        else if (rank > prev) out.push({ day: d, kind: 'alert', status: f.status as FeedItem['status'], title: `Escalated: ${f.title}`, body: `${f.action} ${TIER_LABEL[f.tier]}.` })
-        seen.set(f.key, Math.max(prev ?? 0, rank))
+        const prev = seen.get(id)
+        const body = `${f.action} (${URGENCY_LABEL[f.urgency].toLowerCase()}; ${WHO[f.tier]})`
+        if (prev === undefined) out.push({ day: d, kind: 'alert', status: f.status as FeedItem['status'], title: `${STATUS_LABEL[f.status]}: ${f.title}`, body })
+        else if (rank > prev) out.push({ day: d, kind: 'alert', status: f.status as FeedItem['status'], title: `More serious now: ${f.title}`, body })
+        seen.set(id, Math.max(prev ?? 0, rank))
       }
       for (const e of events) if (e.onset === d && (e.crew === crewIdx || e.crew < 0)) out.push({ day: d, kind: 'truth', title: `What was scripted: ${e.label.replace(/^Scripted /, '')}`, body: e.type === 'illness' ? `This is the day the simulated crew member first feels symptoms and ticks them at check-in. ${e.detail ?? ''}` : 'This is the day the scripted event starts.' })
     }
@@ -145,7 +149,7 @@ export function Replay() {
           {lead === null ? <p className="do">Keel did not flag this event inside the replay window.</p>
             : lead > 0 ? <p className="do">Keel flagged this {lead} day{lead === 1 ? '' : 's'} before {ev.type === 'illness' ? 'the first symptoms' : 'the scripted start'}, with a specific action and no link to Earth.</p>
               : <p className="do">Keel flagged this {lead === 0 ? (ev.type === 'illness' ? 'on the day symptoms began' : 'on the day it started') : `${-lead} day${lead === -1 ? '' : 's'} after ${ev.type === 'illness' ? 'symptoms began' : 'it started'}`}, with a specific action and no link to Earth.</p>}
-          {unrelated.length > 0 && <p className="small">Earlier in this replay Keel also raised {unrelated.length} alert{unrelated.length === 1 ? '' : 's'} that had nothing to do with the scripted event. False alerts like that are part of the picture: the budget is about one notice per person-month.</p>}
+          {unrelated.length > 0 && <p className="small">Earlier in this replay Keel also raised {unrelated.length} notice{unrelated.length === 1 ? '' : 's'} that the scripted event did not cause. Some reflect ordinary lapses in the simulated routine, such as a missed exercise session; some are false alerts. That is part of the picture: notices are budgeted at about one false one per person-month.</p>}
           {val && <p className="small"><strong>Across all the real data, not this one script:</strong> Keel flagged {Math.round(val.det * 100)}% of {val.n} real illness episodes at one false alert per person-month, {Math.round(val.net * 100)} points more than luck. It did not give early warning. Everything except illness is tested in simulation only.</p>}
           <p className="small muted">One scripted event proves nothing by itself.</p>
           <div className="row wrap">

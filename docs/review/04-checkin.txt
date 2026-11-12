@@ -1,12 +1,12 @@
 SCREEN: 04-checkin
-TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 126 | Simulated data
+TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 121 | Simulated data
 BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
 Check-in
 
-Flight day 126. About a minute. Everything stays on this device unless you share it.
+Flight day 121. Four quick answers take about a minute. Everything stays on this tablet unless you share it.
 
-How are you feeling?
+1. How are you feeling?
 1
 Very low
 2
@@ -17,55 +17,44 @@ OK
 Good
 5
 Very good
-Any symptoms today?
+2. Any symptoms today?
+No symptoms
 Headache
 Nausea
+Vomited
 Stuffy head or nose
 Sore throat or cough
 Unusual tiredness
 Back pain
 Dizziness
 Vision change
+Rash or itchy skin
+Something else
+Tell the medical officer now if you have any of these:
 Chest pain or pressure
 Short of breath at rest
+Fainted or nearly fainted
+Racing or irregular heartbeat
+Sudden loss of vision
+Worst headache of your life
+Confusion, weakness or trouble speaking
+Severe belly pain
 Severe side or back pain
-Fluids today
+Vomited more than twice, or cannot keep fluids down
+Cannot pass urine, or blood in urine
+Injury, or something in the eye
+Joint pain or numbness after a spacewalk
+3. Fluids today
 −
-0.00 L
+2.50 L
 +
 
-One tap is one 250 mL drink bag. Your recent average is 2.6 L; the in-flight target is 2.0 to 2.5 L.
+Starts at your recent average (2.5 L). One tap is one 250 mL drink bag. The in-flight target is 2.0 to 2.5 L.
 
-How much of your planned food did you eat?
+4. How much of your planned food did you eat?
 All of it
 Most
 About half
 Little
-Exercise today
-−
-0 min
-+
-
-Only needed if the exercise devices did not log your session.
-
-Reaction self-test
-Tap to start (1 minute)
-
-Tap as fast as you can each time the panel lights up. Sit still, same hand each day.
-
-Measurements (only what you took today)
-Body temperature (°C)
-How to measure
-Blood oxygen (%)
-How to measure
-Blood pressure (upper) (mmHg)
-How to measure
-Blood sugar (mg/dL)
-How to measure
-Body mass (kg)
-How to measure
-Sleep duration (h)
-How to measure
-Resting heart rate (bpm)
-How to measure
 Save check-in
+Add more: reaction test, exercise, measurements (optional)

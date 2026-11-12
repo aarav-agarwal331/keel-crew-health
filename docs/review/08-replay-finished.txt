@@ -1,5 +1,5 @@
 SCREEN: 08-replay-finished
-TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 126 | Simulated data
+TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 121 | Simulated data
 BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
 Mission replay
@@ -7,22 +7,22 @@ Mission replay
 A scripted health event from the simulated mission, played at about 4 mission days per second. Keel sees each day only as it arrives, exactly as it would on board.
 
 Event to replay
-Scripted cabin CO2 rise (scrubber degradation) · whole crew · FD 39
-Scripted low fluid intake · Tomás Novák · FD 59
-Scripted sleep restriction (schedule shift) · Amara Okafor · FD 79
-Scripted exercise device outage · Kenji Sato · FD 97
-Scripted illness (infection-like strain) · Lucía Reyes · FD 125
-Scripted low-mood period · Tomás Novák · FD 151
-Scripted solar particle event · whole crew · FD 164
+Scripted cabin CO2 rise (scrubber degradation) · whole crew · Day 39
+Scripted low fluid intake · Tomás Novák · Day 59
+Scripted sleep restriction (schedule shift) · Amara Okafor · Day 79
+Scripted exercise device outage · Kenji Sato · Day 97
+Scripted illness (infection-like strain) · Lucía Reyes · Day 120
+Scripted low-mood period · Tomás Novák · Day 151
+Scripted solar particle event · whole crew · Day 164
 Play again
 Restart
 Step one day
 Slow
 Normal
 Fast
-Replay clock: FD 134 · Lucía Reyes
+Replay clock: Day 129 · Lucía Reyes
 Act today
-Earth link up
+In replay: no Earth link
 Lucía's readings
 Your readings
 Your usual range
@@ -32,68 +32,92 @@ Resting heart rate (bpm)
 60
 Keel alert
 Symptoms begin
-FD 109
-FD 117
-FD 126
-FD 134
+Day 104
+Day 112
+Day 121
+Day 129
 Heart rate variability (ms)
-25
-50
+20
+40
+60
 Keel alert
 Symptoms begin
-FD 109
-FD 117
-FD 126
-FD 134
-Body temperature (°C)
+Day 104
+Day 112
+Day 121
+Day 129
+Skin temperature (overnight) (°C)
 36
 37
 38
 Keel alert
 Symptoms begin
-FD 109
-FD 117
-FD 126
-FD 134
+Day 104
+Day 112
+Day 121
+Day 129
 What Keel did
-FD 133
-LINK
-Earth link restored
+DAY 125
+Act today: Cold-like symptoms, and your readings are drifting
 
-Queued summaries go out now.
+Take your temperature with the thermometer and hold exercise until you have. Tell the medical officer. Inform the crew medical officer.
 
-FD 128
+DAY 124
+Act today: Cold-like symptoms, and your readings are drifting
+
+Take your temperature with the thermometer and hold exercise until you have. Tell the medical officer. Inform the crew medical officer.
+
+DAY 121
 Escalated: Your body looks like it is under strain
 
-Take your temperature now, swap today's hard exercise for a light session, and tell the medical officer. Contact the ground when a link is available.
+Take your temperature with the thermometer and hold exercise until you have. Tell the medical officer. Medical officer leads on board; flight surgeon consulted when a link is available.
 
-FD 126
-Escalated: Your body looks like it is under strain
-
-Take your temperature now, swap today's hard exercise for a light session, and tell the medical officer. Inform the crew medical officer.
-
-FD 125
+DAY 120
 SCRIPTED EVENT
-Ground truth: Scripted illness (infection-like strain)
+What was scripted: illness (infection-like strain)
 
-This is the day the simulated crew member would first feel symptoms.
+This is the day the simulated crew member first feels symptoms and ticks them at check-in. Scripted at 1.46 times the average real response: a peak resting heart rate rise of about 7 bpm, the published median among detected cases and near the upper quartile of real episodes. About three real episodes in ten show no heart-rate rise at all.
 
-FD 125
-Worth a look: Your body looks like it is under strain
+DAY 120
+Escalated: Your mood has been lower than usual
 
-Take your temperature now, swap today's hard exercise for a light session. Manage it yourself.
+Book a private conversation: with the medical officer, or a recorded message to the support team at home. Manage it yourself.
 
-FD 119
+DAY 120
+Act today: Cold-like symptoms, and your readings are drifting
+
+Take your temperature with the thermometer and hold exercise until you have. Tell the medical officer. Inform the crew medical officer.
+
+DAY 119
 LINK
 Earth link lost
 
 Scripted two-week blackout (antenna fault), modelled on the two-week command pause at solar conjunction. Keel keeps working on board.
 
+DAY 115
+Worth a look: You are running short on sleep
+
+Protect a full 8.5-hour sleep period tonight. Manage it yourself.
+
+DAY 107
+Worth a look: Exercise has dropped below your plan
+
+Do today's session, even a shortened one, and plan the next three. Manage it yourself.
+
+DAY 104
+Worth a look: Exercise has dropped below your plan
+
+Do today's session, even a shortened one, and plan the next three. Manage it yourself.
+
 RESULT OF THIS REPLAY
 
-Keel alerted on the day the scripted event started.
+Keel flagged this on the day symptoms began, with a specific action and no link to Earth.
 
-One scripted event proves nothing by itself. The measured detection rates, lead times and false-alert rates over hundreds of simulated events and real wearable data are on the Validation screen.
+Earlier in this replay Keel also raised 3 alerts that had nothing to do with the scripted event. False alerts like that are part of the picture: the budget is about one notice per person-month.
+
+Across all the real data, not this one script: Keel flagged 67% of 103 real illness episodes at one false alert per person-month, 31 points more than luck. It did not give early warning. Everything except illness is tested in simulation only.
+
+One scripted event proves nothing by itself.
 
 Open that day as Lucía
 See the validation

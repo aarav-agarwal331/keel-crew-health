@@ -1,1 +1,1 @@
-Failed to load resource: the server responded with a status of 503 ()
+No console errors during the capture.

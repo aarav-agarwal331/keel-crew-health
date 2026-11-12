@@ -1,35 +1,39 @@
 SCREEN: 06-crew-as-commander
-TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 126 | Simulated data
+TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 121 | Simulated data
 BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
 Crew readiness
 Commander
 Medical officer
 
-FD 126. Who is fit for a demanding task tomorrow, such as a spacewalk. You see a readiness tier for everyone; reasons appear only where a crew member has chosen to share them.
+Day 121. Whether Keel has any flags for each crew member before a demanding task tomorrow, such as a spacewalk. You see a tier for everyone; reasons appear only where a crew member has chosen to share them.
 
 Demo view. On a mission each role has its own device; here you can switch roles. Every look is written to the crew member's access log.
 
 Task tomorrow: spacewalk
 
-3 of 4 crew are ready without conditions.
+Keel has no flags for 0 of 4 crew. This is not a medical clearance.
 
-NASA's medical operations standard requires medical clearance before every spacewalk. Keel's tier is an input to that conversation, not the clearance.
+NASA's medical operations standard requires medical clearance before every spacewalk. Keel's tier is one input to that conversation with the medical officer.
 
 Crew-wide pattern
-2 of 4 crew show a change in heart and circulation over the last three days.
+3 of 4 crew show a change in symptoms over the last three days.
 
-When several people drift together, look for a shared cause: cabin air, schedule, workload. Counts are anonymous and only shown when two or more people are affected.
+When several people drift together, look for a shared cause: cabin air, schedule, workload. Counts only, no names, and only when three or more people are affected.
 
 Amara Okafor
 Commander
 
-Ready
+Minor flags
+
+ Reason not shared. Ask Amara or the medical officer.
 
 Kenji Sato
 Crew medical officer
 
-Ready
+Talk to the medical officer first
+
+ Reason not shared. Ask Kenji or the medical officer.
 
 Lucía Reyes
 Flight engineer
@@ -41,6 +45,8 @@ Talk to the medical officer first
 Tomás Novák
 Mission specialist
 
-Ready
+Minor flags
 
-The readiness tier is a rule-based summary of sleep, reaction time and open alerts. It is not a validated fitness-for-duty test.
+ Reason not shared. Ask Tomás or the medical officer.
+
+The tier is a rule-based summary: it is never better than the worst area on the crew member's own screen, and nausea or clearly slowed reactions always mean a conversation first. It is not a validated fitness-for-duty test and not a clearance.

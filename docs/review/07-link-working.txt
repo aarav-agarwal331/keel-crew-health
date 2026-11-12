@@ -1,0 +1,56 @@
+SCREEN: 07-link-working
+TOP BAR: Keel | Earth link: 3 min 06 s delay | Lucía · Flight day 101 | Simulated data
+BOTTOM NAV: Today | Trends | Check-in | Crew | More
+
+Earth link
+3 min 06 s each way
+
+Link nominal. A question and its answer take at least 6 min 13 s.
+
+Keel does not use the link to work. Detection, explanations and recommended actions all run on this tablet: it last re-checked the whole crew's readings in 30 milliseconds. The link only carries a summary for the flight surgeon when one is available.
+
+Cut the link now
+Demo control. Cut it, then use any screen: nothing stops working.
+Queued for the ground
+0 waiting
+
+One summary per mission day, smaller than a text message, containing only what you share with the flight surgeon. While there is no link, summaries wait here and go out together when it returns.
+
+Recently sent
+Day 101 · 85 bytes · sent same day, arrived 3 min 06 s later
+Day 100 · 84 bytes · sent same day, arrived 3 min 04 s later
+Day 99 · 84 bytes · sent same day, arrived 3 min 01 s later
+Day 98 · 84 bytes · sent same day, arrived 2 min 58 s later
+Day 97 · 84 bytes · sent same day, arrived 2 min 55 s later
+See exactly what the latest summary contains
+Signal delay over this transit
+0.0
+2.0
+4.0
+6.0
+20
+40
+60
+80
+100
+120
+140
+160
+180
+Flight day
+Minutes, one way
+Today
+
+Simulated with simplified geometry (circular, coplanar orbits). On this outbound leg the delay grows from seconds to about 6 minutes. After arrival it keeps growing: Earth to Mars is about 4 minutes at closest approach and about 24 minutes at the greatest distance. Next scripted blackout: Day 119.
+
+Why this matters
+
+On the International Space Station a flight surgeon is seconds away by voice, talks privately with each crew member about once a week, and the ground team follows exercise and cabin-air data. Routine vital signs are not streamed to the ground, so Keel proposes more self-monitoring than ISS crews have today, on purpose. NASA's own planning documents say that on a Mars mission delays and blackouts will end reliable real-time telemedicine, and that medical decisions must move on board.
+
+[1] NASA. "Space Communications: 7 Things You Need to Know." nasa.gov. Source
+[2] Karasinski JA, Landon LB, Parisi ME, et al. "Assessment of the State of Communication Delay Research in Preparation for Missions Beyond Low Earth Orbit." NASA Technical Reports Server, 2025. Source
+[4] NASA Jet Propulsion Laboratory. "NASA's Mars Fleet Will Still Conduct Science While Lying Low." JPL, 2023. Source
+[8] Jones JA. "International Space Station Medical Operations." NASA Technical Reports Server, 2008. Source
+[9] NASA. "Mission Control: Crew Health Consoles." Houston We Have a Podcast, Ep. 377, 2025. Source
+[12] Parker M, Krihak M, Laing C, et al. "Earth-Independent Medical Operations (EIMO) Concept of Operations." NASA Technical Reports Server, 2025. Source
+[13] Urbina M, Rubin D, Hailey M, Reyes D, Antonsen E. "Medical System Concept of Operations for Mars Exploration Missions." NASA Technical Reports Server, 2017. Source

@@ -1,11 +1,17 @@
 SCREEN: 05-sharing
-TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 126 | Simulated data
+TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 121 | Simulated data
 BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
 Sharing and privacy
 
-Lucía Reyes, your health data is yours. Nothing personal leaves this device unless you allow it here. Cabin readings (air, radiation) are not personal and are visible to the whole crew.
+Lucía Reyes, your health data is yours. You decide below what each role can see.
 
+Always visible, whatever you choose below
+To the commander: your readiness tier (no Keel flags / minor flags / talk to the medical officer first), without the reason. A commander has to be able to plan a spacewalk safely.
+To the crew: counts. When three or more crew members show a change in the same area, the Crew screen shows the count, not the names. In a crew of four that is not fully anonymous.
+To everyone: cabin readings (air, radiation). They are not personal.
+Emergency sharing is on
+When on, a red-flag symptom or an "act now" safety reading is shown at once to the medical officer and to the commander as backup. Agreed before flight; you can switch it off.
 Who are you setting this for?
 Crew medical officer
 Commander
@@ -13,42 +19,46 @@ Flight surgeon on the ground
 
 The crew member trained to provide care on board.
 
+Private: Nothing.
+Status: Only steady / worth a look / act today.
+Trends: Status plus whether each reading is inside your normal range.
+Full detail: Status, trends, the actual numbers and your notes.
 Heart and circulation
+resting hr, hrv, spo2, skin temp, thermometer, bp
 Private
 Status
 Trends
 Full detail
-Only steady / worth a look / act today.
 Sleep and body clock
+sleep, timing
 Private
 Status
 Trends
 Full detail
-Only steady / worth a look / act today.
 Exercise
+exercise
 Private
 Status
 Trends
 Full detail
-Only steady / worth a look / act today.
 Mind and mood
+reaction, mood
 Private
 Status
 Trends
 Full detail
-Nothing.
 Food and fluids
+fluids, food, mass, glucose
 Private
 Status
 Trends
 Full detail
-Only steady / worth a look / act today.
 Symptoms
+What you tick at check-in
 Private
 Status
 Trends
 Full detail
-Only steady / worth a look / act today.
 Make everything private
 Share everything
 Exactly what the crew medical officer sees about you right now
@@ -60,10 +70,10 @@ Heart and circulation	Status	Act today
 Sleep and body clock	Status	Steady
 Exercise	Status	Steady
 Mind and mood	Private	Nothing
-Food and fluids	Status	Worth a look
-Symptoms	Status	Learning your normal
-Alert in heart and circulation: title hidden
+Food and fluids	Status	Steady
+Symptoms	Status	Worth a look
+That an alert exists in heart and circulation, not what it says
 Access log
 Stored on your device
 
-Nobody has looked at your shared data yet. Open the Crew screen as the commander or the medical officer and it will appear here.
+Nobody has looked at your shared data yet.

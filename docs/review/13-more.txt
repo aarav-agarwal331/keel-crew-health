@@ -1,5 +1,5 @@
 SCREEN: 13-more
-TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 126 | Simulated data
+TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 121 | Simulated data
 BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
 More
@@ -13,11 +13,14 @@ Does it work? Validation
 Detection rates and false alerts measured on real wearable data and on simulated missions.
 How Keel works, and its limits
 The method in plain language, with equations and limitations.
-Guide to measurements
-What each reading means, how to take it, and why space changes it.
+Guide: measurements and everything Keel can recommend
+What each reading means, how to take it, why space changes it, and the full list of actions with sources.
 Data sources and sensors
 Switch mission, import your own wearable data, connect a heart-rate strap.
-This device
+Demo controls
+
+These exist only so you can explore the demo: switch crew member, data set and mission day.
+
 Whose device is this?
 Amara Okafor · Commander
 Kenji Sato · Crew medical officer
@@ -28,15 +31,16 @@ Data set
 Mars transit (simulated)
 Lunar surface stay (simulated)
 Four crew, 30 days of pre-flight baseline, then a 180-day outbound transit to Mars.
-Mission clock: Flight day 126
+Mission clock: Flight day 121
 − 1 day
 + 1 day
 Back to the demo day
+This tablet
 Display
 Dark (cabin night)
 Light
 
-All analysis for this crew ran on this device in 47 ms, inside a background worker. Keel has no server.
+Keel last re-checked the whole crew's readings on this tablet in 30 milliseconds. There is no server.
 
 Erase my data on this device
 

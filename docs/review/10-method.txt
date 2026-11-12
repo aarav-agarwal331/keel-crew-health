@@ -1,5 +1,5 @@
 SCREEN: 10-method
-TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 126 | Simulated data
+TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 121 | Simulated data
 BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
 How Keel works
@@ -19,195 +19,36 @@ Limitations
 Sources
 The idea
 
-On the International Space Station a flight surgeon on Earth watches crew health in near real time. On the way to Mars the signal takes minutes each way and sometimes there is no link at all, so the crew has to notice and act on health changes themselves.
+On the International Space Station a flight surgeon is seconds away by voice, speaks privately with each crew member about once a week, and the ground team follows exercise and cabin-air data. On the way to Mars the signal takes minutes each way and sometimes there is no link at all, so the crew has to notice and act on health changes themselves.
 
 Keel learns what is normal for each person, notices when their readings drift away from that, says what changed in plain words, and points to one documented action. All of it runs on the device. The crew member owns the data and chooses what the medical officer, the commander and the ground can see.
 
 Keel is decision support, not a medical device. It never states a diagnosis. It says "this is unusual for you" and "this is what the documented countermeasure is".
 
 What is measured, and why
-Indicator	Unit	Comes from	In the automatic alert?	Risk it tracks
-Resting heart rate	bpm	Wearable	Yes	A resting heart rate that climbs above your own normal is one of the earliest whole-body signs of infection, dehydration, poor recovery or loss of fitness.
-Heart rate variability	ms	Wearable	Yes	HRV drops when the body is under strain: illness, short sleep, heavy training or stress. It often moves before you feel anything.
-Blood oxygen	%	Wearable	Yes	A sustained drop can point to a breathing or lung problem or a cabin atmosphere issue.
-Body temperature	°C	Wearable	Yes	A rise above your own normal supports the picture of infection or inflammation; body temperature also runs differently in space.
-Sleep duration	h	Wearable	Yes	Crews sleep less in space than on Earth. Short sleep builds up as a debt that slows reactions and raises error risk.
-Sleep timing shift	h	Wearable	Yes	When sleep slides away from the schedule, your body clock and the mission clock disagree, which hurts sleep quality and alertness.
-Exercise, 7-day average	min/day	Wearable	Yes	Daily exercise is the main protection against losing bone, muscle and heart fitness without gravity. Missed sessions add up quietly.
-Reaction time	ms	Daily check-in	Yes	Reaction time is a sensitive, objective sign of fatigue. It slows with sleep loss and may slow with high cabin carbon dioxide.
-Mood	/5	Daily check-in	Yes	Isolation, confinement and distance from home wear on everyone. A slow slide is easier to turn around when it is noticed early.
-Fluid intake	L	Daily check-in	Yes	Crews tend to drink too little in space. Low intake raises the risk of kidney stones and makes the heart work harder.
-Food intake	% of plan	Daily check-in	Yes	Under-eating is common in space and speeds up loss of body mass, muscle and bone.
-Body mass	kg	Weekly measurement	Shown only	Steady loss of body mass signals under-eating or dehydration.
-Blood pressure (upper)	mmHg	Weekly measurement	Shown only	Blood pressure regulation changes without gravity. Readings well outside your normal deserve a repeat and a word with the medical officer.
-Blood sugar	mg/dL	Weekly measurement	Shown only	Named in the challenge as a useful indicator. Keel shows it against your own previous readings and a general reference range.
-Cabin carbon dioxide	mmHg	Cabin sensor	Own rule	In a closed cabin, exhaled carbon dioxide builds up. Higher levels are linked to headaches and may dull thinking.
-Radiation dose	mSv/day	Cabin sensor	Own rule	Beyond Earth's magnetic shield the crew receives a steady dose from cosmic rays and occasional bursts from solar storms. The total is tracked against a career limit.
-
-Bone loss and eye changes (SANS) cannot be measured daily with small hardware. Keel tracks the countermeasure instead (exercise done) and asks about vision at check-in.
-
 Data and adapters
-Real open data. Stanford COVID-19 wearables, phases 1 and 2 (heart rate, steps, dated illness): detection testing. LifeSnaps (Fitbit Sense, 71 people): day-to-day variability. NASA Life Sciences Data Archive public bed-rest campaigns (daily vitals of 29 volunteers): gravity-transition handling.
-Your own files. CSV, Fitbit export JSON, Apple Health export. Parsed in the browser, never uploaded.
-A live heart-rate strap over Web Bluetooth (standard heart-rate service), giving a resting heart rate and HRV reading.
-The simulator, for everything a real dataset does not exist for. Simulated numbers are always labelled.
-
-There is no open astronaut wearable time series. NASA's in-flight actigraphy, cognition and standard-measures data are available on request only; we did not request them.
-
-Daily features from raw wearable data: resting heart rate is the median heart rate between midnight and 07:00 over minutes with no steps in the previous 12 minutes (at least 30 such minutes); steps are the daily total on days with 10 hours of wear; sleep is hours in non-wake stages.
-
 The simulator
-
-Each simulated crew member has personal set points. Each day's reading is the set point, plus a shift for the mission phase, plus the effect of hidden drivers (sleep debt, exercise load, an illness, a cabin CO2 rise, low fluid intake, a low-mood period), plus day-to-day noise that carries over partly to the next day.
-
-x[i,t] = set_point[i] + flight_shift[i] * a(t) + SUM_k beta_k * driver_k[i,t] + noise[i,t]
-a(t)   = 1 - exp(-(t - launch) / tau)                        adaptation to weightlessness
-noise  = rho * noise[t-1] + e,   e ~ N(0, sd_i^2 (1 - rho^2))   sd_i differs between people
-
-Of 64 parameters, 17 are taken from published sources, 12 are fitted to real data (one half of the people; the other half checks the result on the Validation screen), and 35 are our assumptions. The illness response in heart rate and the day-to-day noise are fitted to real data. Effect sizes for HRV, temperature, oxygen, mood, reaction time, and every non-illness event are assumptions.
-
-Every simulator parameter and where it comes from
 Personal baselines
-
-For each person and indicator, "normal" is the median of their own last 28 days, leaving out the most recent 3 so that a change that is just starting cannot hide inside its own baseline. Spread is the median absolute deviation, which a few bad sensor readings cannot inflate. A baseline needs 7 valid days.
-
-m[t] = median( x[t-3-28 .. t-3-1] )
-s[t] = max( floor, 1.4826 * MAD( same window ) )
-z[t] = clip( (x[t] - m[t]) / s[t], -4, +4 )
-
-Time of day and activity. Daily features are built so these cancel out: resting heart rate uses only still minutes at night, HRV is overnight. Adjusting heart rate for the previous day's activity was tested on real data and did not help, so it is switched off.
-
-Mission phase. At launch or landing the body changes on purpose. The window never looks back across a phase change. Until 14 days of new data exist, the baseline is a blend of the old baseline moved along the expected adaptation curve and the person's own new data, and the band is widened:
-
-prior[t] = m_before + shift * (1 - exp(-(t - t0)/tau))
-w        = min(1, n_new / 14)
-m[t]     = (1 - w) * prior[t] + w * median(new data)
-s[t]     = (1 - w) * s_before * (1 + 1.5 * exp(-(t - t0)/tau)) + w * s_new
-
-On NASA bed-rest data this roughly halves false flags when volunteers get up after weeks in bed; in simulation it halves false alerts in the first month of flight (Validation, sections 2 and 4).
-
 Detection
-
-Four ways of turning daily z-scores into an alert were compared with a simple baseline that uses one threshold for everybody:
-
-Fixed threshold (comparison): population mean and spread, alert when 2 of 3 days exceed it.
-Personal z-score: the same 2-of-3 rule on the person's own z.
-CUSUM (change-point): adds up evidence day by day, S[t] = max(0, S[t-1] + z[t] - 0.75), and resets after 3 normal days.
-Multivariate EWMA: smooths all indicators together and asks how unusual the combination is, so several small changes in a worrying direction count.
-Fusion: whichever of the last two is closer to its threshold.
-y[t] = 0.3 * z[t] + 0.7 * y[t-1]            (a missing reading counts as 0)
-y+   = y clipped to the direction of concern (e.g. only high heart rate, only low HRV)
-T2   = y+' * inverse( 0.3/(2-0.3) * R ) * y+          R = correlation of z between indicators
-
-The app runs the multivariate EWMA. That choice was made on simulated training missions only; test missions and real data had no vote.
-
-Alarm fatigue is a hazard, so thresholds are set from a false-alert budget. A notice may fire at most 1 time per person-month by mistake; an alert, which is the only tier that can recommend involving the medical officer without a reported symptom, at most 0.25. An alert that stays open counts again every 7 days, so one endless alert cannot hide inside the budget. Runs separated by 3 days or fewer are one alert.
-
-Cabin CO2, radiation and red-flag symptoms do not go through the detector: they have their own fixed rules, because they are not about a personal baseline.
-
 How it was tested
-Held-out people. Real data: five-fold cross-validation over people. Population statistics, correlations and thresholds come from the training folds; each person is scored once by a model that never saw them. Simulation: separate training and test missions.
-Detection. An episode counts as detected if an alert starts between 10 days before and 4 days after onset. Lead time is onset minus alert start.
-False alerts. Alerts that start more than 21 days before or 28 days after any labeled onset, per person-month of such quiet time.
-Luck. At one false alert per month an alert lands in a two-week window by chance fairly often. We place pretend events on random quiet days and report that rate next to every detection rate.
-Intervals. Bootstrap over people (real) or missions (simulated), 95%.
-Leakage checks. Baselines only look backwards (unit-tested). Thresholds never see test people (unit-tested). The simulator is calibrated on one half of the real people and checked against the other. The deployed detector was picked on training missions.
-
-Results: Validation.
-
 From alert to action
-
-When the detector has an alert open, Keel looks at which indicators moved over the last three days and walks down a fixed table of 14 rules. The first rule that matches supplies the wording, the single recommended action, the follow-up steps and the escalation level. Each rule cites a countermeasure with its source. No language model writes or rephrases any of it.
-
-Escalation has three levels: manage it yourself; inform the crew medical officer; contact the ground when a link is available. A rule can raise the level when a pattern persists. Going beyond self-management needs either the stricter alert tier or a symptom the crew member reported, so a single noisy night cannot summon the medical officer.
-
-The complete rule table
 Crew readiness and privacy
-
-The commander sees one of three readiness tiers per person for a demanding task tomorrow, derived from open alerts, reaction time and recent sleep. The tier is always visible; the reasons are visible only where the crew member has shared that area. Crew-wide patterns are shown as counts, and only when at least two people are affected.
-
-Sharing is set per role and per area at four levels: private, status, trends, full detail. One function decides what any other role may see, and it is unit-tested to leak nothing that was not shared. Every view by another role is written to the crew member's access log. Cabin readings are not personal and are visible to all.
-
-The summary queued for the ground contains only what the crew member shares with the flight surgeon, and is a few hundred bytes.
-
 Limitations
 Ground data stands in for spaceflight data. The people in the real evaluation were on Earth, wore consumer watches and mostly had COVID-19. Astronauts are fitter, live on a schedule and are in a different physiological state.
-Early warning is not demonstrated. On real data the alert usually arrives on or after the day symptoms start.
+Early warning is not demonstrated. On real data the alert usually starts on or after the day symptoms begin.
+Most alerts are false. At in-flight illness rates only about one alert-tier alert in ten would be a real respiratory illness. Keel is a prompt to look, not a verdict.
 Small samples. About a hundred illness episodes; 29 bed-rest volunteers; 71 people for variability.
-Only illness is tested on real data. Sleep loss, CO2, deconditioning, dehydration and low mood are tested in simulation with assumed effect sizes.
-Sensors differ. Overnight heart rate from a wrist watch varies by about 3.5 bpm from night to night; flight hardware may be better or worse. Apple Watch data in the real set performed poorly.
-What is simulated: every mission in the app, the cabin CO2 and radiation readings, the link delay and blackouts, and thresholds for the full indicator set.
+Only illness is tested on real data, and most of that signal comes from people moving less once they feel ill. Sleep loss, CO2, deconditioning, dehydration and low mood are tested in simulation with assumed effect sizes.
+Sensors differ. Overnight heart rate from a wrist watch varies by about 3.5 bpm from night to night; flight hardware may be better or worse. Non-Fitbit data in the real set performed poorly. Wearable sleep detection is not validated in weightlessness.
+Thresholds for the full sensor set are calibrated in simulation. When simulated thresholds for two indicators were applied to real people, false alerts ran about 40 to 70% over budget. Expect the same or worse for the full set.
+Handling of gravity changes has a blind spot: for the first weeks after launch or landing the widened band hides real problems.
+A personal baseline can normalise a slow, harmful drift. Showing the standard next to "your usual" and comparing body mass with pre-flight only partly addresses this.
+Not modelled: sleep aids, anti-nausea and other medication; menstrual-cycle effects on temperature and heart rate; body temperature running higher on long flights, which a reviewer pointed out and which would make a fixed 38.0 °C line too low or too high.
+What is simulated: every mission in the app, the cabin CO2 and radiation readings, the link delay and blackouts.
 Assumed, not verified: the size of in-flight changes in heart rate and HRV (sources say "unchanged" or disagree), typical cabin CO2, crewed-mission blackout lengths.
-The readiness tier and the action rules have not been reviewed by a clinician. Thresholds such as 38.0 °C or 92% oxygen are general public guidance, not flight rules.
+No clinician has reviewed the rules, the fixed thresholds or the readiness tier. The thresholds are general public guidance for adults on Earth, not flight rules.
 The one-minute reaction test is shorter than the validated three-minute test and depends on the touchscreen.
 
-What a clinician would need to review before any real use: the rule table and its wording; escalation thresholds; which red-flag symptoms bypass the detector; the false-alert budgets; behaviour during medication use; and whether personal baselines might normalise a slow, harmful drift.
+What a clinician would need to review before any real use: every rule's wording, urgency and audience; each fixed threshold; the red-flag list; the false-alert budgets; what emergency sharing covers; behaviour during medication use; and how long the band stays widened after a gravity change.
 
 Sources
-
-Every source below was opened while researching. The full research notes are in docs/DOMAIN.md, the data survey in docs/DATA.md.
-
-[1] NASA. "Space Communications: 7 Things You Need to Know." nasa.gov (year not shown on fetch). Link
-[2] Karasinski JA, Landon LB, Parisi ME, et al. "Assessment of the State of Communication Delay Research in Preparation for Missions Beyond Low Earth Orbit." NASA Technical Reports Server, 2025. Link
-[3] European Space Agency. "Ten things you didn't know about the Moon – Moon calling Earth." ESA, 2021. Link
-[4] NASA Jet Propulsion Laboratory. "NASA's Mars Fleet Will Still Conduct Science While Lying Low." JPL, 2023. Link
-[5] NASA Jet Propulsion Laboratory. "What's Mars Solar Conjunction, and Why Does It Matter?" JPL, 2019. Link
-[6] NASA Human Research Program. "The Human Body in Space." nasa.gov, 2021 (updated 2026). Link
-[7] NASA Human Research Program. "5 Hazards of Human Spaceflight." nasa.gov (updated 2026). Link
-[8] Jones JA. "International Space Station Medical Operations." NASA Technical Reports Server, 2008. Link
-[9] NASA. "Mission Control: Crew Health Consoles." Houston We Have a Podcast, Ep. 377, 2025. Link
-[10] NASA. "FAQ: The Real Story About Astronaut Health Care in Space." nasa.gov, 2024. Link
-[11] NASA Ames Research Center. "A Clinical Decision Support System for Earth-independent Medical Operations." nasa.gov, 2024. Link
-[12] Parker M, Krihak M, Laing C, et al. "Earth-Independent Medical Operations (EIMO) Concept of Operations." NASA Technical Reports Server, 2025. Link
-[13] Urbina M, Rubin D, Hailey M, Reyes D, Antonsen E. "Medical System Concept of Operations for Mars Exploration Missions." NASA Technical Reports Server, 2017. (abstract record also opened:. Link
-[14] NASA Human Research Roadmap. "Risk of Adverse Mission Outcomes Due to Earth Independent Human-Systems Operations." 2025. Link
-[15] NASA Human Research Roadmap. "Risks" (index). 2025. Link
-[16] NASA Human Research Roadmap. "Risk of Adverse Health Outcomes and Decrements in Performance Due to Medical Conditions that occur in Mission." 2025. Link
-[17] NASA Human Research Roadmap. "Risk of Performance Decrements and Adverse Health Outcomes Resulting from Sleep Loss, Circadian Desynchronization, and Work Overload." 2025. Link
-[18] NASA Human Research Roadmap. "Risk of Radiation Carcinogenesis." 2026. Link
-[19] NASA Human Research Roadmap. "Risk of Spaceflight Associated Neuro-ocular Syndrome (SANS)." 2025. Link
-[20] NASA Human Research Roadmap. "Risk of Renal Stone Formation." 2025. Link
-[21] NASA Human Research Roadmap. "Risk of Cardiovascular Adaptations Contributing to Adverse Mission Performance and Health Outcomes." 2025. Link
-[22] NASA Human Research Roadmap. "Risk of Performance Decrement and Crew Illness Due to Inadequate Food and Nutrition." 2025. Link
-[23] NASA Human Research Roadmap. "Risk of In Mission Impacts, Adverse Health Events or Long-Term Health Impacts due to Altered Immune Response." 2025. Link
-[24] NASA Human Research Roadmap. "Risk of Mission Impacts and Long-Term Health Issues due to Decompression Sickness." 2025. Link
-[25] NASA Human Research Roadmap. "Risk of Bone Fracture due to Spaceflight-induced Changes to Bone." 2025. Link
-[26] NASA Human Research Roadmap. "Risk of Mission Performance Decrements and Adverse Health Outcomes Resulting from Reduced Cardiorespiratory and Musculoskeletal Fitness." 2025. Link
-[27] NASA Human Research Roadmap. "Risk of Altered Sensorimotor/Vestibular Function Impacting Critical Mission Tasks." 2025. Link
-[28] Patel ZS, Brunstetter TJ, Tarver WJ, et al. "Red risks for a journey to the red planet: The highest priority human health risks for a mission to Mars." npj Microgravity 6:33, 2020. Link
-[29] NASA. "NASA-STD-3001 Volume 1, Section 4.0 Human Performance." nasa.gov (updated 2026). Link
-[30] NASA. "NASA-STD-3001 Volume 1, Section 6.0 Medical Operations." nasa.gov (updated 2026). Link
-[31] Barger LK, Flynn-Evans EE, Kubey A, et al. "Prevalence of Sleep Deficiency and Hypnotic Use Among Astronauts Before, During and After Spaceflight: An Observational Study." Lancet Neurology 13(9):904–912, 2014. Link
-[32] Jones CW, Basner M, Mollicone DJ, et al. "Sleep deficiency in spaceflight is associated with degraded neurobehavioral functions and elevated stress in astronauts on six-month missions aboard the International Space Station." Sleep 45(3), 2022. Link
-[33] Dinges DF, Mollicone D, Ecker A. "Psychomotor Vigilance Self Test on ISS (Reaction Self Test on Expeditions 21 and 22)." NASA Technical Reports Server, 2009. Link
-[34] Basner M, Savitt A, Moore TM, et al. "Development and Validation of the Cognition Test Battery for Spaceflight." Aerosp Med Hum Perform 86(11):942–952, 2015; and Moore TM, Basner M, Nasrini J, et al. "Validation of the Cognition Test Battery for Spaceflight in a Sample of Highly Educated Adults." Aerosp Med Hum Perform 88(10):937–946, 2017. Link
-[35] NASA. "Seven Ways Astronauts Improve Sleep May Help You Snooze Better on Earth." nasa.gov, 2016 (updated 2023). Link
-[36] Maida JC. "Introduction to the Solid State Based Interior Lighting System for ISS." NASA Technical Reports Server, 2014. Link
-[37] Law J, Van Baalen M, Foy M, et al. "Relationship between carbon dioxide levels and reported headaches on the International Space Station." J Occup Environ Med 56(5):477–483, 2014. Link
-[38] Law J, Alexander D. "CO2 on the International Space Station: An Operations Update." NASA Technical Reports Server, 2016. Link
-[39] NASA. "ISS Daily Summary Report – 10/04/2016" (Personal CO2 Monitor). nasa.gov, 2016. Link
-[40] NASA. "Wearable Tech for Space Station Research." nasa.gov, 2024. Link
-[41] Zeitlin C, Hassler DM, Cucinotta FA, et al. "Measurements of energetic particle radiation in transit to Mars on the Mars Science Laboratory." Science 340(6136):1080–1084, 2013. Link
-[42] Hassler DM, Zeitlin C, Wimmer-Schweingruber RF, et al. "Mars' surface radiation environment measured with the Mars Science Laboratory's Curiosity rover." Science 343(6169):1244797, 2014. Same URL as [41] (abstract contains no dose values).
-[43] Southwest Research Institute. "SwRI scientists publish first radiation measurements from the surface of Mars." SwRI press release, 2013. Link
-[44] NASA Jet Propulsion Laboratory. "Data From NASA Rover's Voyage to Mars Aids Planning." JPL, 2013. Link
-[45] Zhang S, Wimmer-Schweingruber RF, Yu J, et al. "First measurements of the radiation dose on the lunar surface." Science Advances 6(39):eaaz1334, 2020. Link
-[46] National Academies of Sciences, Engineering, and Medicine. "NASA Should Update Astronaut Radiation Exposure Limits, Improve Communication of Cancer Risks." News release, 2021. Link
-[47] NASA Space Radiation Analysis Group. "How do we protect the astronauts from space radiation?" NASA Johnson Space Center, 2025. Link
-[48] NASA. "Scientists and Engineers Evaluate Orion Radiation Protection Plan." nasa.gov, 2016 (updated 2023). Link
-[49] NASA. "Counteracting Bone and Muscle Loss in Microgravity." nasa.gov, 2023. Link
-[50] Smith SM, Heer MA, Shackelford LC, et al. "Benefits for bone from resistance exercise and nutrition in long-duration spaceflight: Evidence from biochemistry and densitometry." J Bone Miner Res 27(9):1896–1906, 2012. Link
-[51] Multi-record PubMed abstract page:. Link
-[52] Multi-record PubMed abstract page:. Link
-[53] Goodenow-Messman DA, Gokoglu SA, Kassemi M, et al. "Numerical characterization of astronaut CaOx renal stone incidence rates to quantify in-flight and post-flight relative risk." npj Microgravity 8, 2022. Link
-[54] Whitson PA, Pietrzyk RA, Sams CF, Pak CYC, Jones JA. "Renal Stone Risk During Space Flight." NASA Technical Reports Server, 1999. Link
-[55] Multi-record PubMed abstract pages: and. Link
-[56] Miyagi R, Sasawaki Y, Shiotani H. "The influence of short-term sedentary behavior on circadian rhythm of heart rate and heart rate variability." Chronobiol Int 36(3):374–380, 2019. Link
-[57] MedlinePlus. "Pulse Oximetry." U.S. National Library of Medicine, 2024. Link
-[58] Mishra T, Wang M, Metwally AA, et al. "Pre-symptomatic detection of COVID-19 from smartwatch data." Nat Biomed Eng 4(12):1208–1220, 2020. Link
-[59] Multi-record PubMed abstract page:. Link
-[60] Natarajan A, Su HW, Heneghan C. "Assessment of physiological signs associated with COVID-19 measured using wearable devices." NPJ Digit Med 3(1):156, 2020. Link
-[61] Chromik J, Klopfenstein SAI, Pfitzner B, et al. "Computational approaches to alleviate alarm fatigue in intensive care medicine: A systematic literature review." Frontiers in Digital Health 4, 2022. Link
-[62] NASA. "ISS Daily Summary Report – 3/24/2021." nasa.gov, 2021. Link
-
-Data: Mishra et al. 2020 and Alavi et al. 2022 (Stanford COVID-19 wearables); Yfantidou et al. 2022, LifeSnaps (CC BY 4.0); NASA Life Sciences Data Archive, public bed-rest campaigns.

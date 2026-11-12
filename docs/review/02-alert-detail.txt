@@ -1,91 +1,97 @@
 SCREEN: 02-alert-detail
-TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 126 | Simulated data
+TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 121 | Simulated data
 BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
-← Today
+← Back to Today
 Act today
 Your body looks like it is under strain
 
 Resting heart rate is up together with other recovery signals. This combination is often seen in the days before or during an infection, but Keel cannot tell you the cause.
 
-Open for 2 days, since FD 125.
+Open for 7 days, since Day 115.
 
 RECOMMENDED ACTION
 
-Take your temperature now, swap today's hard exercise for a light session, and tell the medical officer.
+Take your temperature with the thermometer and hold exercise until you have. Tell the medical officer.
 
-Repeat temperature in four hours and log symptoms at check-in.
+If it is 38.0 °C or more, or 1.0 °C above your own usual thermometer reading, or you have a cough or chest symptoms: no exercise today, and the medical officer decides what you do.
+Otherwise a light session is reasonable; repeat the temperature in four hours and log symptoms at check-in.
 Drink to your fluid target and protect tonight's sleep period.
 Keep some distance at meals and wipe shared surfaces until this clears.
-If temperature is 38.0 °C or higher, or you feel worse, the medical officer should see you today.
 What changed
-Resting heart rate is higher than your normal: 57 bpm against your usual 51.
-How unusual for you: More unusual than 96% of your last 60 days. It has been outside your usual range for 3 days.
-40
+Resting heart rate is higher than your normal: 65 bpm against your usual 53.
+How unusual for you: Further from your normal than on 52 of your last 53 measured days. Outside your usual range today.
 50
 60
 Alert opened
-FD 99
-FD 104
-FD 108
-FD 113
-FD 117
-FD 122
-FD 126
-Heart rate variability is lower than your normal: 26 ms against your usual 42.
-How unusual for you: More unusual than 98% of your last 60 days. It has been outside your usual range for 6 days.
+Day 94
+Day 99
+Day 103
+Day 108
+Day 112
+Day 117
+Day 121
+Heart rate variability is lower than your normal: 25 ms against your usual 43.
+How unusual for you: Further from your normal than on 49 of your last 53 measured days. Outside your usual range today.
 20
 40
 60
 Alert opened
-FD 99
-FD 104
-FD 108
-FD 113
-FD 117
-FD 122
-FD 126
-Body temperature is higher than your normal: 37.7 °C against your usual 36.7.
-How unusual for you: More unusual than 89% of your last 60 days. It has been outside your usual range for 2 days.
+Day 94
+Day 99
+Day 103
+Day 108
+Day 112
+Day 117
+Day 121
+Skin temperature (overnight) is higher than your normal: 37.7 °C against your usual 36.7.
+How unusual for you: Further from your normal than on 46 of your last 53 measured days. Outside your usual range today.
 36
 37
+38
 Alert opened
-FD 99
-FD 104
-FD 108
-FD 113
-FD 117
-FD 122
-FD 126
-Blood oxygen is lower than your normal: 96.9 % against your usual 98.7.
-How unusual for you: More unusual than 96% of your last 60 days. It has been outside your usual range for 2 days.
-95
-100
+Day 94
+Day 99
+Day 103
+Day 108
+Day 112
+Day 117
+Day 121
+Mood is lower than your normal: 2 /5 against your usual 4.
+How unusual for you: Further from your normal than on any of your last 52 measured days. Outside your usual range for 9 days.
+0
+2.5
+5
 Alert opened
-FD 99
-FD 104
-FD 108
-FD 113
-FD 117
-FD 122
-FD 126
+Day 94
+Day 99
+Day 103
+Day 108
+Day 112
+Day 117
+Day 121
 What may be contributing
-Eating less than planned. About 71% of plan over the last three days; your normal is 84%.
-Symptoms you reported. stuffy head or nose (2 of the last 3 days), unusual tiredness (1 of the last 3 days), sore throat or cough (1 of the last 3 days).
+Less exercise than usual. Seven-day average 90 min a day against your usual 104.
+Lower mood. Mood check-ins averaged 2.3 of 5; your normal is 4.0.
+Symptoms you reported. headache (2 of the last 3 days), stuffy head or nose (1 of the last 3 days), sore throat or cough (1 of the last 3 days), unusual tiredness (2 of the last 3 days).
 
 Taken only from your own readings and check-ins, and the shared cabin sensors.
 
-Who should know
-Level 1
-Manage it yourself
-Level 2
-Inform the crew medical officer
-Level 3
-Contact the ground when a link is available
+How soon, and who should know
+How soon
+At the next routine opportunity
+Today
+Now
+Who
+You
+Medical officer
+Medical officer + flight surgeon
 
-Possible illness in a closed cabin affects the whole crew, and early rest is cheap.
+The medical officer, who consults the flight surgeon when a link is available. Strong temperature deviation or no improvement after four days: the medical officer should consult the flight surgeon when a link is available.
 
-Share this alert's details with the medical officer
+No link right now. The medical officer leads care on board. Keel keeps a summary queued for the flight surgeon and sends it when a link opens.
+
+Let the medical officer see this alert's details
 What did you do?
 Did it
 Did part of it
@@ -102,11 +108,14 @@ Same
 Better
 Note (optional)
 Save to my log
+
+Pick an answer above to save.
+
 Where this advice comes from
 Symptom check, rest, limit spread, consult
 PUBLISHED RESEARCH
 
-On Earth, wearables showed resting heart rate rising a median of 7 bpm about 4 days before infection symptoms. Immune function changes in space and latent viruses reactivate in most ISS crew. NASA lists hygiene, quarantine and monitoring as countermeasures.
+In our own test on Earth data the resting heart rate rise during illness averaged about 3 bpm and usually appeared on or after the first day of symptoms; one published study reported larger, earlier rises in the cases it detected. Immune function changes in space and latent viruses reactivate in most ISS crew. NASA lists hygiene, quarantine and monitoring as countermeasures.
 
 [58] Mishra T, Wang M, Metwally AA, et al. "Pre-symptomatic detection of COVID-19 from smartwatch data." Nat Biomed Eng 4(12):1208–1220, 2020. Source
 [60] Natarajan A, Su HW, Heneghan C. "Assessment of physiological signs associated with COVID-19 measured using wearable devices." NPJ Digit Med 3(1):156, 2020. Source

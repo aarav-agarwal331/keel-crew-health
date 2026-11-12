@@ -1,5 +1,5 @@
 SCREEN: 07-link-after-cut
-TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 126 | Simulated data
+TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 101 | Simulated data
 BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
 Earth link
@@ -7,21 +7,21 @@ No link to Earth
 
 Link cut from the demo control
 
-Keel does not use the link to work. Detection, explanations and recommended actions all run on this device (last full analysis: 47 ms). The link only carries a summary for the flight surgeon when one is available.
+Keel does not use the link to work. Detection, explanations and recommended actions all run on this tablet: it last re-checked the whole crew's readings in 30 milliseconds. The link only carries a summary for the flight surgeon when one is available.
 
 Restore the link
 Demo control. Cut it, then use any screen: nothing stops working.
 Queued for the ground
-7 waiting
+0 waiting
 
-One compact summary per mission day, containing only what you share with the flight surgeon. While there is no link, summaries wait here and go out together when it returns.
+One summary per mission day, smaller than a text message, containing only what you share with the flight surgeon. While there is no link, summaries wait here and go out together when it returns.
 
-FD 121 · 85 bytes · waiting
-FD 122 · 85 bytes · waiting
-FD 123 · 85 bytes · waiting
-FD 124 · 85 bytes · waiting
-FD 125 · 85 bytes · waiting
-FD 126 · 85 bytes · waiting
+Recently sent
+Day 101 · 85 bytes · sent same day, arrived 3 min 06 s later
+Day 100 · 84 bytes · sent same day, arrived 3 min 04 s later
+Day 99 · 84 bytes · sent same day, arrived 3 min 01 s later
+Day 98 · 84 bytes · sent same day, arrived 2 min 58 s later
+Day 97 · 84 bytes · sent same day, arrived 2 min 55 s later
 See exactly what the latest summary contains
 Signal delay over this transit
 0.0
@@ -41,15 +41,16 @@ Flight day
 Minutes, one way
 Today
 
-Simulated with simplified geometry (circular, coplanar orbits). On this outbound leg the delay grows from seconds to about 6 minutes. After arrival it keeps growing: Earth to Mars is about 4 minutes at closest approach and about 24 minutes at the greatest distance.
+Simulated with simplified geometry (circular, coplanar orbits). On this outbound leg the delay grows from seconds to about 6 minutes. After arrival it keeps growing: Earth to Mars is about 4 minutes at closest approach and about 24 minutes at the greatest distance. Next scripted blackout: Day 119.
 
 Why this matters
 
-On the International Space Station, flight surgeons in Mission Control watch crew health and cabin air in real time and talk to each crew member privately every week. NASA's own planning documents say that on a Mars mission delays and blackouts will end reliable real-time telemedicine, and that medical decisions must move on board.
+On the International Space Station a flight surgeon is seconds away by voice, talks privately with each crew member about once a week, and the ground team follows exercise and cabin-air data. Routine vital signs are not streamed to the ground, so Keel proposes more self-monitoring than ISS crews have today, on purpose. NASA's own planning documents say that on a Mars mission delays and blackouts will end reliable real-time telemedicine, and that medical decisions must move on board.
 
-[1] NASA. "Space Communications: 7 Things You Need to Know." nasa.gov (year not shown on fetch). Source
+[1] NASA. "Space Communications: 7 Things You Need to Know." nasa.gov. Source
 [2] Karasinski JA, Landon LB, Parisi ME, et al. "Assessment of the State of Communication Delay Research in Preparation for Missions Beyond Low Earth Orbit." NASA Technical Reports Server, 2025. Source
 [4] NASA Jet Propulsion Laboratory. "NASA's Mars Fleet Will Still Conduct Science While Lying Low." JPL, 2023. Source
 [8] Jones JA. "International Space Station Medical Operations." NASA Technical Reports Server, 2008. Source
+[9] NASA. "Mission Control: Crew Health Consoles." Houston We Have a Podcast, Ep. 377, 2025. Source
 [12] Parker M, Krihak M, Laing C, et al. "Earth-Independent Medical Operations (EIMO) Concept of Operations." NASA Technical Reports Server, 2025. Source
-[13] Urbina M, Rubin D, Hailey M, Reyes D, Antonsen E. "Medical System Concept of Operations for Mars Exploration Missions." NASA Technical Reports Server, 2017. (abstract record also opened:. Source
+[13] Urbina M, Rubin D, Hailey M, Reyes D, Antonsen E. "Medical System Concept of Operations for Mars Exploration Missions." NASA Technical Reports Server, 2017. Source
