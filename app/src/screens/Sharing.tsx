@@ -29,8 +29,12 @@ export function Sharing() {
           <li><strong>To everyone: cabin readings</strong> (air, radiation). They are not personal.</li>
         </ul>
         <div className="row wrap">
-          <button className={`btn sm ${s.emergency !== false ? 'on' : ''}`} aria-pressed={s.emergency !== false} onClick={() => setEmergency(me, s.emergency === false)} data-testid="emergency-toggle">{s.emergency !== false ? 'Emergency sharing is on' : 'Emergency sharing is off'}</button>
-          <span className="small muted">When on, a red-flag symptom or an "act now" safety reading is shown at once to the medical officer and to the commander as backup. Agreed before flight; you can switch it off.</span>
+          <span className="lab">Emergency sharing</span>
+          <div className="seg" role="group" aria-label="Emergency sharing" data-testid="emergency-toggle">
+            <button aria-pressed={s.emergency !== false} onClick={() => setEmergency(me, true)}>On</button>
+            <button aria-pressed={s.emergency === false} onClick={() => setEmergency(me, false)}>Off</button>
+          </div>
+          <span className="small muted">When on, a red-flag symptom or an "act now" safety reading is shown at once to the medical officer and to the commander as backup. If you switch it off, both can see that it is off.</span>
         </div>
       </Card>
 
@@ -42,7 +46,7 @@ export function Sharing() {
           {SHARE_CATEGORIES.map((c) => (
             <div key={c} className="col" style={{ gap: 6, borderTop: '1px solid var(--border)', paddingTop: 10 }}>
               <span className="lab">{catLabel(c)}</span>
-              <span className="tiny muted">{c === 'symptoms' ? 'What you tick at check-in' : INDICATORS.filter((i) => i.category === c && i.source !== 'env').map((i) => i.short.toLowerCase()).join(', ')}</span>
+              <span className="tiny muted">{c === 'symptoms' ? 'What you tick at check-in' : INDICATORS.filter((i) => i.category === c && i.source !== 'env' && i.source !== 'dosimeter').map((i) => i.label.toLowerCase()).join(', ')}</span>
               <div className="seg" role="group" aria-label={`${catLabel(c)} shared with ${role}`}>
                 {LEVELS.map((l) => <button key={l.id} aria-pressed={s[role][c] === l.id} onClick={() => setShare(me, role, c, l.id as Level)} data-testid={`share-${role}-${c}-${l.id}`}>{l.label}</button>)}
               </div>

@@ -81,6 +81,25 @@ def sc_len() -> int:
     return Scenario().flight_days
 
 
+def by_mission(rows):
+    """Merge rows (real outcomes or pseudo-event rows) of crewmates into one row per mission,
+    so bootstrap intervals resample missions.  pids look like '<scenario>-<seed>-c<i>'."""
+    out: dict[str, dict] = {}
+    for r in rows:
+        key = r["pid"].rsplit("-c", 1)[0]
+        g = out.setdefault(key, {"pid": key, "fa": 0, "quiet_days": 0, "alert_days": 0, "leads": [], "scorable": []})
+        g["fa"] += r["fa"]
+        g["quiet_days"] += r["quiet_days"]
+        g["alert_days"] += r.get("alert_days", 0)
+        g["leads"] += r["leads"]
+        g["scorable"] += r["scorable"]
+    return list(out.values())
+
+
+def net_m(rows, ch, n_boot=600, other=None):
+    return net_stats(by_mission(rows), by_mission(ch), n_boot, 1, (by_mission(other[0]), by_mission(other[1])) if other else None)
+
+
 def stat(rows, n_boot=1000):
     return bootstrap(mission_rows(rows), n_boot, 1)
 
@@ -99,7 +118,7 @@ def main():
         for b in BUDGETS:
             st = stat(out[m][b])
             st["chance_detection_rate"] = aggregate(chance[(m, b)])["detection_rate"]
-            st.update(net_stats(out[m][b], chance[(m, b)], 600, 1, (out["fixed"][b], chance[("fixed", b)]) if m != "fixed" else None))
+            st.update(net_m(out[m][b], chance[(m, b)], 600, (out["fixed"][b], chance[("fixed", b)]) if m != "fixed" else None))
             main_tbl[m][str(b)] = st
         s = main_tbl[m]["1.0"]
         print(f"{m:8s} @1.0 det {s['detection_rate']:.2f} chance {s['chance_detection_rate']:.2f} net {s['net_detection']:.2f} [{s['net_detection_ci'][0]:.2f},{s['net_detection_ci'][1]:.2f}] FA {s['fa_per_person_month']:.2f}"
@@ -192,7 +211,7 @@ def main():
         o, t_, sc_, _ = evaluate(people(early_tr + tr_m, 80000, aware=aware), people(early_te, 81000, aware=aware), spec, p, w, methods=[DEPLOYED], budgets=[1.0], keep=True)
         te_ = people(early_te, 81000, aware=aware)
         ch = chance_rows(te_, [s[DEPLOYED] for s in sc_], [t_[(DEPLOYED, 1.0)]] * len(te_), w, p.merge_gap, 3, 1)
-        early_events[label] = {**stat(o[DEPLOYED][1.0], 400), **net_stats(o[DEPLOYED][1.0], ch, 400, 1)}
+        early_events[label] = {**stat(o[DEPLOYED][1.0], 400), **net_m(o[DEPLOYED][1.0], ch, 400)}
         print("events in the first 25 flight days,", label, round(early_events[label]["detection_rate"], 2), "net", round(early_events[label]["net_detection"], 2), "FA", round(early_events[label]["fa_per_person_month"], 2))
 
     # ---- like-for-like check against real data: simulated people on the ground, illness only,
@@ -207,7 +226,7 @@ def main():
         t = calibrate(g_trs, [q.onsets for q in g_tr], b, w, p.merge_gap)
         rows = [{**person_outcome(s, t, q.onsets, w, p.merge_gap), "pid": q.pid} for s, q in zip(g_tes, g_te)]
         ch = chance_rows(g_te, g_tes, [t] * len(g_te), w, p.merge_gap, 3, 1)
-        like[str(b)] = {**bootstrap(rows, 600, 1), "chance_detection_rate": aggregate(ch)["detection_rate"], **net_stats(rows, ch, 600, 1), "threshold": t}
+        like[str(b)] = {**bootstrap(by_mission(rows), 600, 1), "chance_detection_rate": aggregate(ch)["detection_rate"], **net_m(rows, ch, 600), "threshold": t}
     print("like-for-like sim: det", round(like["1.0"]["detection_rate"], 2), "net", round(like["1.0"]["net_detection"], 2), "| @0.25", round(like["0.25"]["detection_rate"], 2), "net", round(like["0.25"]["net_detection"], 2))
 
     # ---- false alerts over long quiet periods: missions with no events at all -------------------
@@ -227,6 +246,7 @@ def main():
                    "seeds": {"train": SEED_TRAIN, "test": SEED_TEST}, "n_test_events": sum(len(q.onsets) for q in test),
                    "windows": {"det_pre": w.det_pre, "det_post": w.det_post}},
         "budgets": BUDGETS, "methods": METHODS, "method_labels": METHOD_LABELS, "main": main_tbl, "by_type": by_type, "dose": dose,
+        "luck_note": "Tables by size, missing data, sensor loss and design choice show raw flagged rates; luck at these budgets is the chance rate in the main table.",
         "missing": missing, "dropout": dropout, "ablation": ablation, "early_events": early_events, "quiet": quiet, "like_for_like": like,
     }, indent=1)
     print("wrote sim_eval.json")

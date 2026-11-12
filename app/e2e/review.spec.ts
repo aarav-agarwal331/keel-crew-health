@@ -33,6 +33,7 @@ test('capture for review', async ({ page }) => {
   await page.getByTestId('open-alert').click(); await capture(page, '02-alert-detail')
   await nav(page, '#/trends'); await capture(page, '03-trends')
   await nav(page, '#/checkin'); await capture(page, '04-checkin')
+  await nav(page, '#/checkin/measure'); await page.getByTestId('serious-toggle').click(); await capture(page, '04-checkin-with-extras-open')
   await nav(page, '#/sharing'); await capture(page, '05-sharing')
   await nav(page, '#/crew'); await capture(page, '06-crew-as-commander')
   await page.getByRole('button', { name: 'Medical officer' }).click(); await capture(page, '06-crew-as-medical-officer')

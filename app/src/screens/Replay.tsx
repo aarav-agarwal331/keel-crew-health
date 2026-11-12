@@ -71,6 +71,17 @@ export function Replay() {
   // anything earlier in the window is an unrelated (false) alert and is said to be one
   const firstAlert = feed.find((f) => f.kind === 'alert' && f.day >= (ev ? ev.onset - 3 : 0))
   const unrelated = feed.filter((f) => f.kind === 'alert' && ev && f.day < ev.onset - 3)
+  // when would the sensors alone have said so?  The first day from three days before onset on which
+  // the detector's own pattern rule for this kind of event, or its alert tier, is showing
+  const sensorDay = useMemo(() => {
+    if (!ev) return null
+    for (let d = Math.max(start, ev.onset - 3); d <= t; d++) {
+      const a = today(crew.id, d)
+      const pf = a?.findings.find((x) => x.kind === 'personal')
+      if (pf && (pf.detectorTier === 'alert' || (ev.type === 'illness' && pf.ruleId === 'R-ILL'))) return d
+    }
+    return null
+  }, [ev, start, t, today, crew.id])
   const done = t >= end
   const an = analyses[crew.id]
   const inds = ev ? SHOW[ev.type] ?? ['rhr', 'hrv', 'sleep_h'] : ['rhr', 'hrv', 'sleep_h']
@@ -123,7 +134,8 @@ export function Replay() {
                 <TrendChart values={b.values.map((v, i) => (i <= t ? v : NaN))} lo={b.hasBand ? b.lo.map((v, i) => (i <= t ? v : NaN)) : undefined} hi={b.hasBand ? b.hi.map((v, i) => (i <= t ? v : NaN)) : undefined}
                   from={start} to={end} labelFor={(d) => shortDay(mission, d)} unit={def.unit} decimals={def.decimals} concern={def.concern} height={120}
                   refLines={id === 'co2' ? [{ y: 3, label: 'ISS limit' }] : undefined}
-                  markers={[...(firstAlert && firstAlert.day <= t ? [{ day: firstAlert.day, label: 'Keel alert', kind: 'alert' as const }] : []), ...(ev && ev.onset <= t ? [{ day: ev.onset, label: ev.type === 'illness' ? 'Symptoms begin' : 'Event starts', kind: 'truth' as const }] : [])]}
+                  markers={firstAlert && ev && firstAlert.day === ev.onset && ev.onset <= t ? [{ day: ev.onset, label: ev.type === 'illness' ? 'Symptoms begin, Keel flags' : 'Event starts, Keel flags', kind: 'alert' as const }]
+                    : [...(firstAlert && firstAlert.day <= t ? [{ day: firstAlert.day, label: 'Keel flags', kind: 'alert' as const }] : []), ...(ev && ev.onset <= t ? [{ day: ev.onset, label: ev.type === 'illness' ? 'Symptoms begin' : 'Event starts', kind: 'truth' as const }] : [])]}
                   ariaLabel={`${def.label} during the replay`} />
               </div>
             )
@@ -149,6 +161,7 @@ export function Replay() {
           {lead === null ? <p className="do">Keel did not flag this event inside the replay window.</p>
             : lead > 0 ? <p className="do">Keel flagged this {lead} day{lead === 1 ? '' : 's'} before {ev.type === 'illness' ? 'the first symptoms' : 'the scripted start'}, with a specific action and no link to Earth.</p>
               : <p className="do">Keel flagged this {lead === 0 ? (ev.type === 'illness' ? 'on the day symptoms began' : 'on the day it started') : `${-lead} day${lead === -1 ? '' : 's'} after ${ev.type === 'illness' ? 'symptoms began' : 'it started'}`}, with a specific action and no link to Earth.</p>}
+          {ev.type === 'illness' && <p className="small"><strong>Sensors alone, with no symptom report:</strong> {sensorDay === null ? 'the detector did not reach its illness pattern or alert tier inside this window.' : `the detector showed its illness pattern or alert tier on ${shortDay(mission, sensorDay)}, ${sensorDay - ev.onset > 0 ? `${sensorDay - ev.onset} day${sensorDay - ev.onset === 1 ? '' : 's'} after` : sensorDay === ev.onset ? 'the same day as' : `${ev.onset - sensorDay} day${ev.onset - sensorDay === 1 ? '' : 's'} before`} symptoms began.`} The earlier flag came from her check-in combined with drifting readings. Keel is a backstop and a record, not an early-warning system.</p>}
           {unrelated.length > 0 && <p className="small">Earlier in this replay Keel also raised {unrelated.length} notice{unrelated.length === 1 ? '' : 's'} that the scripted event did not cause. Some reflect ordinary lapses in the simulated routine, such as a missed exercise session; some are false alerts. That is part of the picture: notices are budgeted at about one false one per person-month.</p>}
           {val && <p className="small"><strong>Across all the real data, not this one script:</strong> Keel flagged {Math.round(val.det * 100)}% of {val.n} real illness episodes at one false alert per person-month, {Math.round(val.net * 100)} points more than luck. It did not give early warning. Everything except illness is tested in simulation only.</p>}
           <p className="small muted">One scripted event proves nothing by itself.</p>

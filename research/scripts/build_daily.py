@@ -94,6 +94,9 @@ def phase1() -> tuple[list[pd.DataFrame], list[dict], list[dict]]:
         pid, cat = str(r[0]).strip(), str(r[1]).strip()
         group[pid] = "covid" if cat == "COVID-19" else cat.lower()
         if cat != "COVID-19":
+            # other illnesses listed in this table carry a symptom date too
+            for d in parse_dates(r[2]):
+                events.append({"dataset": "phase1", "pid": pid, "kind": "other_illness", "date": d.date()})
             continue
         for d in parse_dates(r[2]):
             events.append({"dataset": "phase1", "pid": pid, "kind": "covid_symptom", "date": d.date()})

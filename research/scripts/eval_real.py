@@ -174,7 +174,7 @@ def main():
         "by_device": {d: sum(1 for q in people if q.meta["device"] == d) for d in sorted({q.meta["device"] for q in people})},
         "events_by_mode": {m: sum(len(q.onsets) for q in people if q.meta["dataset"] == "phase2" and q.meta["mode"] == m) for m in ["retrospective", "prospective"]},
         "quiet_people": quiet_groups, "median_days_per_person": float(np.median([len(q.x) for q in people])),
-        "sampling_note": "Phase 2 is a subset of the release: all 84 positives, plus the first 60 Fitbit and first 60 other-device participant IDs in sorted order (not a random draw).",
+        "sampling_note": "Phase 1: 120 recordings from 118 people (one person has three short recordings, all excluded for length). Phase 2 is a subset of the release: all 84 positives, plus the first 60 Fitbit and first 60 other-device participant IDs in sorted order (not a random draw). Dates are shifted per person by the data owners, so pretend events cannot be matched to the calendar: lockdowns and isolation after a positive test are tangled up with onset.",
     }
 
     # ---------------- main analysis ----------------
@@ -245,6 +245,20 @@ def main():
                   "share_of_alerts_that_are_real": true_rate / (true_rate + s["fa_per_person_month"])}
     ppv["assumption"] = "Illness rate 0.97 per person-year (upper-respiratory symptoms on the ISS, DOMAIN ref 52b); sensitivity = detection net of luck on real data."
 
+    # how far do steps fall around onset?  (median over episodes of the person's median daily steps)
+    j_steps = 1
+    base, pre, post = [], [], []
+    for q in people:
+        for o in q.onsets:
+            b_ = q.x[max(0, o - 49):max(0, o - 21), j_steps]
+            if np.sum(~np.isnan(b_)) < 10:
+                continue
+            base.append(np.nanmedian(b_))
+            pre.append(np.nanmedian(q.x[max(0, o - 10):o, j_steps]) if np.any(~np.isnan(q.x[max(0, o - 10):o, j_steps])) else np.nan)
+            post.append(np.nanmedian(q.x[o:o + 5, j_steps]) if np.any(~np.isnan(q.x[o:o + 5, j_steps])) else np.nan)
+    steps_drop = {"n_episodes": len(base), "baseline_median": float(np.nanmedian(base)), "ten_days_before_median": float(np.nanmedian(pre)),
+                  "onset_to_day4_median": float(np.nanmedian(post))}
+
     # ---------------- ablations ----------------
     abl = {}
     for key in ["rhr", "rhr_steps", "rhr_act7", "rhr_rhrday_steps"]:
@@ -252,7 +266,13 @@ def main():
         r = res if key == "rhr_steps" else run(key, pe, w, p, methods=["fixed", DEPLOYED], budgets=[0.25, 1.0])
         abl[key] = {"label": SPEC_LABELS[key], "n_people": len(pe), "n_events": sum(len(q.onsets) for q in pe),
                     **{m: {str(b): with_net(r["outcomes"][m][b], chance_for(r, pe, m, b, w, p), None, 1000) for b in [0.25, 1.0]} for m in ["fixed", DEPLOYED]}}
+        abl[key]["both_tiers"] = True
         if key == "rhr_act7":
+            # this is the activity feature the app itself uses (a 7-day average), so its predictive value is reported too
+            for b in ["0.25", "1.0"]:
+                sx = abl[key][DEPLOYED][b]
+                tr_ = max(0.0, sx["net_detection"]) * URI_PER_PERSON_MONTH
+                ppv[b]["with_7_day_activity"] = tr_ / (tr_ + sx["fa_per_person_month"])
             # like-for-like with the simulator: symptom-dated episodes of people the simulator's
             # illness calibration never saw (validation half), same two channels as eval_sim.py
             _, val_e = realdata.split_half(realdata.event_pids(pd.read_csv(INTERIM / "stanford_events.csv")), seed=11)
@@ -315,7 +335,7 @@ def main():
         "data": "Stanford COVID-19 wearables phase 1 (Mishra et al. 2020) and phase 2 subset (Alavi et al. 2022)",
         "indicators": SPEC_LABELS["rhr_steps"], "windows": {"det_pre": w.det_pre, "det_post": w.det_post, "excl_pre": w.excl_pre, "excl_post": w.excl_post},
         "budgets": BUDGETS, "deployed": DEPLOYED, "methods": METHODS, "method_labels": METHOD_LABELS, "cohort": cohort, "main": main_tbl, "breakdown": breakdown,
-        "leads": leads, "false_alerts_quiet": fa_dist, "false_alerts_by_group": fa_by_group, "ppv": ppv, "ablation": abl,
+        "leads": leads, "false_alerts_quiet": fa_dist, "false_alerts_by_group": fa_by_group, "ppv": ppv, "steps_drop": steps_drop, "ablation": abl,
         "window_sensitivity": win, "cross_phase": cross, "fold_seeds": seeds, "event_aligned_rhr": aligned,
         "published": {"source": "Mishra et al. 2020 (DOMAIN.md ref 58), phase 1 only, their own online CuSum on hourly data",
                       "presymptomatic_detection": 0.63, "false_alarms_per_month_healthy": 0.66,

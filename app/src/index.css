@@ -144,6 +144,7 @@ main { flex: 1; width: 100%; max-width: 980px; margin: 0 auto; padding: 16px 16p
 .list.steps { counter-reset: s; }
 .list.steps li { counter-increment: s; display: grid; grid-template-columns: 30px 1fr; gap: 8px; align-items: start; }
 .list.steps li::before { content: counter(s); width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--border); display: grid; place-items: center; font-size: 0.8rem; font-weight: 700; color: var(--text-2); }
+.tag.plain { border: 0; padding: 0; color: var(--accent); }
 .tag { display: inline-block; padding: 2px 8px; border-radius: 6px; border: 1px solid var(--border); font-size: 0.74rem; font-weight: 650; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.04em; }
 details > summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--text-2); list-style: none; }
 details > summary::-webkit-details-marker { display: none; }

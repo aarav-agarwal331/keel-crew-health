@@ -64,6 +64,11 @@ def main():
         "temp": (realdata.within_stats(ls_cal, "temp"), "temp_within_sd", False, "LifeSnaps nightly skin temperature (calibration half)"),
         "sleep_h": (realdata.within_stats(ls_cal, "sleep_h"), "sleep_within_sd", False, "LifeSnaps (calibration half)"),
     }
+    # wrist skin temperature runs a few degrees below core: take its typical level from the same data
+    t_lvl = float(targets["temp"][0]["mean"].median())
+    P["temp_mean"] = t_lvl
+    set_param(J, "temp_mean", t_lvl, "Median overnight wrist skin temperature across people, LifeSnaps (calibration half)")
+
     # correlation between indicators' day-to-day residuals within a person (LifeSnaps calibration
     # half): one shared factor reproduces them.  rhr and HRV load equally and oppositely.
     def med_corr(a, b, la=False, lb=False):

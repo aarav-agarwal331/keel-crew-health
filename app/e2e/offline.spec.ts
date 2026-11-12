@@ -73,6 +73,22 @@ test('every screen works with the network disabled', async ({ page }) => {
     await page.getByTestId('more-checkin').click()
     await page.getByLabel(/Blood oxygen/).fill('97')
     await page.getByTestId('save-checkin').first().click()
+    await expect(page.getByText('Saved.')).toBeVisible()
+  })
+
+  await test.step('A thermometer reading entered at check-in or on the action card triggers the fever rules', async () => {
+    await nav(page, '#/checkin/measure')
+    await page.getByLabel(/Body temperature \(thermometer\)/).fill('38.4')
+    await page.getByTestId('save-checkin').first().click()
+    await nav(page, '#/today')
+    await expect(page.locator('main')).toContainText('Thermometer reading is in the fever range')
+    await page.getByTestId('temp-now').first().fill('39.6')
+    await page.getByTestId('temp-save').first().click()
+    await expect(page.getByTestId('today-status')).toContainText('Act now')
+    await expect(page.locator('main')).toContainText('39.4 °C or higher')
+    await page.getByTestId('temp-now').first().fill('36.8')
+    await page.getByTestId('temp-save').first().click()
+    await expect(page.getByTestId('today-status')).not.toContainText('Act now')
   })
 
   await test.step('Check-in: enter mood, symptom, fluids, save, re-analysis runs on device', async () => {
@@ -90,7 +106,7 @@ test('every screen works with the network disabled', async ({ page }) => {
     await nav(page, '#/sharing')
     await page.getByTestId('share-cmo-sleep-detail').click()
     await expect(page.getByTestId('role-preview')).toContainText('Full detail')
-    await expect(page.getByTestId('emergency-toggle')).toContainText('Emergency sharing is on')
+    await expect(page.getByTestId('emergency-toggle').getByRole('button', { name: 'On' })).toHaveAttribute('aria-pressed', 'true')
   })
 
   await test.step('Crew readiness: commander and medical officer views write the access log', async () => {

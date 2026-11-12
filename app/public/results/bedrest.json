@@ -1,7 +1,7 @@
 {
  "script": "research/scripts/eval_bedrest.py",
- "commit": "99ffc22",
- "code_version": "699d6ab3e831",
+ "commit": "db7ddc8",
+ "code_version": "2e00bb89b95f",
  "data": "NASA Life Sciences Data Archive, public head-down-tilt bed-rest campaigns (UTMB campaigns 1 and 3, CFT70): daily nurse-taken pulse",
  "n_subjects": 29,
  "n_calibration": 14,
@@ -33,7 +33,7 @@
    "aware_flagged": 1,
    "p_naive_vs_aware": 1.0,
    "naive_mean_u": -0.2110822719348254,
-   "aware_mean_u": -0.018977469902623553
+   "aware_mean_u": -0.01897746990262356
   },
   "IN_TEST>POST_TEST": {
    "n": 14,
@@ -42,8 +42,8 @@
    "reset_widen_flagged": 4,
    "aware_flagged": 4,
    "p_naive_vs_aware": 0.0625,
-   "naive_mean_u": 0.8099349936785194,
-   "aware_mean_u": 0.3289856062656371
+   "naive_mean_u": 0.8099349936785193,
+   "aware_mean_u": 0.32898560626563705
   }
  },
  "days_outside_transitions": {

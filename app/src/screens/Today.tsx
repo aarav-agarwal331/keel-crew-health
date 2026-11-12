@@ -1,5 +1,7 @@
-import { describeChange, STATUS_LABEL, unusualness, URGENCY_LABEL, WHO_LABEL } from '../core/analysis'
-import { IND, rawSeries, shortDay } from '../core/mission'
+import { evidenceTag, STATUS_LABEL, unusualness, URGENCY_LABEL, WHO_LABEL } from '../core/analysis'
+import { deployedScore, episodes } from '../core/detect'
+import { TempEntry } from '../ui/TempEntry'
+import { CATEGORIES, IND, rawSeries, shortDay } from '../core/mission'
 import { useEffect, useState } from 'react'
 import { SHARE_CATEGORIES, type ShareCategory } from '../core/sharing'
 import { useApp } from '../state'
@@ -8,6 +10,8 @@ import { BodyMap } from '../ui/BodyMap'
 import { TrendChart } from '../ui/charts'
 import { Card, Chev, Glyph, href, LinkRow, Ring, StatusTag } from '../ui/kit'
 import { bandFor } from '../ui/series'
+
+const CAT: Record<string, string> = Object.fromEntries(CATEGORIES.map((c) => [c.id, c.label]))
 
 const HEADLINE: Record<string, string> = {
   learning: 'Keel is still learning what is normal for you. Keep wearing the sensor and checking in.',
@@ -29,12 +33,18 @@ export function Today() {
   // the readings the recommended action rests on come first, then the largest other changes
   const evidence = primary && !primary.crewWide ? primary.changes.map((c) => c.ind) : []
   const changes = [...a.changes.filter((c) => evidence.includes(c.ind)), ...a.changes.filter((c) => !evidence.includes(c.ind) && c.notable)].slice(0, 4)
-  const shareCats = (primary?.categories ?? []).filter((c): c is ShareCategory => (SHARE_CATEGORIES as readonly string[]).includes(c))
+  // sharing an alert opens only its main area; mood and symptoms stay as the crew member set them
+  const shareCats = (primary?.categories ?? []).slice(0, 1).filter((c): c is ShareCategory => (SHARE_CATEGORIES as readonly string[]).includes(c))
   const needsCmo = !!primary && primary.kind === 'personal' && primary.tier !== 'self' && !shareCats.every((c) => sharing[me]?.cmo[c] === 'detail')
   const crew = mission.crew.find((c) => c.id === me)
 
   // routine: what the mission day asks of this person
-  const checked = mine.some((e) => e.day === day)
+  const checkedByMe = mine.some((e) => e.day === day)
+  const checked = checkedByMe || !Number.isNaN(rawSeries(mission, me, 'mood', mine)[day])
+  const tempToday = mine.find((e) => e.day === day)?.values.temp_oral
+  const an = analyses[me]
+  const notices30 = an ? episodes(deployedScore(an.scored, model), model.thresholds.notice, model.params.merge_gap, day).filter(([s0]) => s0 > day - 30).length : 0
+  const sleepLast = rawSeries(mission, me, 'sleep_h', mine)[day]
   const ex = rawSeries(mission, me, 'ex_min', mine)
   const fd = day - mission.pre_days
   const target = fd >= 0 && mission.simulated ? 120 : 60
@@ -85,18 +95,20 @@ export function Today() {
         {a.adapting && <p className="banner">Day {a.adapting.day} of {a.adapting.name.toLowerCase()}. Your body is expected to change during adaptation, so Keel has widened your normal ranges for now.</p>}
       </section>
 
-      {!link.available && mission.simulated && <p className="banner info" data-testid="offline-banner">No link to Earth right now. Everything on this screen was worked out on this tablet.</p>}
       {primary && (
         <section className="card action" data-testid="today-action">
-          <span className="tag">Recommended action</span>
+          <span className="tag plain">Recommended action</span>
           <p className="do">{primary.action}</p>
           <p className="small"><strong>When:</strong> {URGENCY_LABEL[primary.urgency].toLowerCase()}. <strong>Who:</strong> {WHO_LABEL[primary.tier].toLowerCase()}.</p>
-          <p className="small muted">{primary.tierReason}</p>
+          <p className="small">{primary.tierReason}</p>
+          {['R-ILL', 'R-SYM-ILL', 'R-V-TEMP', 'R-V-TEMP-HI'].includes(primary.ruleId) && <TempEntry />}
           <a className="btn primary block" href={href('alert', primary.key)} data-testid="open-alert">Why, and what next <Chev /></a>
-          {needsCmo && <button className="btn block" onClick={() => shareCats.forEach((c) => setShare(me, 'cmo', c, 'detail'))} data-testid="today-share-cmo">Let the medical officer see this alert</button>}
+          {needsCmo && <button className="btn block" onClick={() => shareCats.forEach((c) => setShare(me, 'cmo', c, 'detail'))} data-testid="today-share-cmo">Share this alert with the medical officer ({shareCats.map((c) => CAT[c]).join(', ').toLowerCase()})</button>}
+          {needsCmo && <p className="tiny muted">Opens only {shareCats.length === 1 ? 'that area' : 'those areas'} to the medical officer, until you change it in Sharing. Everything else stays as you set it. You still need to tell them.</p>}
           {primary.kind === 'personal' && primary.tier !== 'self' && !needsCmo && <p className="small muted">The medical officer can see this alert.</p>}
         </section>
       )}
+      {!link.available && mission.simulated && <p className="banner" data-testid="offline-banner">No link to Earth right now. Everything on this screen was worked out on this device.</p>}
       {others.map((f) => (
         <LinkRow key={f.key} to={href('alert', f.key)} left={<span className={`st-${f.status}`}><Glyph status={f.status} /></span>} title={f.title} sub={f.action} />
       ))}
@@ -109,8 +121,8 @@ export function Today() {
             <a className="change" key={c.ind} href={href('trends', c.ind)}>
               <div className="col" style={{ gap: 2 }}>
                 <span><strong>{IND[c.ind].label}</strong> <span className="num big" style={{ marginLeft: 6 }}>{Number.isNaN(c.value) ? '–' : c.value.toFixed(IND[c.ind].decimals)}</span> <span className="muted small">{IND[c.ind].unit}</span></span>
-                <span className="small">{describeChange(c)}</span>
-                <span className="small muted">{unusualness(c)}</span>
+                <span className="small">{c.ind === 'sleep_mid' ? 'Shifted from' : c.direction === 'higher' ? 'Higher than' : 'Lower than'} your usual {c.expected.toFixed(IND[c.ind].decimals)}. {unusualness(c)}{c.ind === 'temp' ? ' Wrist skin temperature, not a fever reading.' : ''}</span>
+                <span className="tiny muted">{evidenceTag(c.ind)}</span>
               </div>
               <TrendChart compact values={b.values} lo={b.lo} hi={b.hi} from={day - 20} to={day} labelFor={(t) => shortDay(mission, t)} unit={IND[c.ind].unit} decimals={IND[c.ind].decimals} concern={IND[c.ind].concern} ariaLabel={`${IND[c.ind].label}, last three weeks`} />
             </a>
@@ -134,10 +146,11 @@ export function Today() {
             {mission.crew.length > 1 && <p className="small muted">Crew goal this week: <strong className="num" style={{ color: 'var(--text)' }}>{Math.round(crewPct * 100)}%</strong> of planned exercise done together. Individual numbers stay private.</p>}
             <a className="btn sm" href={href('checkin')} data-testid="report-symptom">Report a symptom now</a>
             <ul className="list">
-              <li><StatusTag status={checked ? 'steady' : 'learning'} label={checked ? 'Check-in done' : 'Daily check-in (about a minute)'} size={18} />{!checked && <a className="btn sm" href={href('checkin')} style={{ marginLeft: 'auto', float: 'right' }}>Start</a>}</li>
+              <li><StatusTag status={checked ? 'steady' : 'learning'} label={checkedByMe ? 'Check-in done' : checked ? 'Check-in done (simulated entry; you can redo it)' : 'Daily check-in (about a minute)'} size={18} />{!checked && <a className="btn sm" href={href('checkin')} style={{ marginLeft: 'auto', float: 'right' }}>Start</a>}</li>
               <li><StatusTag status={wearOk ? 'steady' : 'learning'} label={wearOk ? 'Sensor worn last night' : 'No sensor data last night: wear it tonight'} size={18} /></li>
-              <li><StatusTag status={exDone ? 'steady' : 'learning'} label={primary?.ruleId === 'R-ILL' ? 'Exercise: light session only today' : exDone ? 'Exercise done today' : `Exercise: ${Number.isNaN(ex[day]) ? 0 : Math.round(ex[day])} of ${target} min today`} size={18} /></li>
-              {spotDue.length > 0 && <li><StatusTag status="learning" label={`Weekly measurement due: ${spotDue.map((k) => IND[k].short.toLowerCase()).join(', ')}`} size={18} /></li>}
+              <li><StatusTag status={exDone ? 'steady' : 'learning'} label={primary && ['R-ILL', 'R-SYM-ILL', 'R-V-TEMP', 'R-V-TEMP-HI'].includes(primary.ruleId) ? (tempToday === undefined ? 'Exercise: on hold until you take your temperature' : tempToday >= 38 ? 'Exercise: none today' : 'Exercise: light session only today') : exDone ? 'Exercise done today' : `Exercise: ${Number.isNaN(ex[day]) ? 0 : Math.round(ex[day])} of ${target} min today`} size={18} /></li>
+              {spotDue.length > 0 && <li><StatusTag status="learning" label={`Weekly measurement due: ${spotDue.map((k) => IND[k].label.toLowerCase()).join(', ')}`} size={18} /> <a className="btn sm" href={href('checkin', 'measure')} data-testid="enter-measurements">Enter</a></li>}
+              {!Number.isNaN(sleepLast) && sleepLast < 5.5 && <li><StatusTag status="learning" label={`Sleep last night ${sleepLast.toFixed(1)} h. The scheduled sleep period is 8.5 h.`} size={18} /></li>}
             </ul>
           </Card>
           <Card title="Cabin" right={<span className="small muted">{mission.environment}</span>}>
@@ -156,6 +169,7 @@ export function Today() {
           </Card>
         </div>
       </div>
+      <p className="small muted">Keel raised {notices30} notice{notices30 === 1 ? '' : 's'} for you in the last 30 days. The budget allows about one false one per person-month, so some of these are false.</p>
       <p className="banner">Keel is decision support, not a medical device. It does not diagnose. It shows how your readings compare with your own normal and points to documented countermeasures.</p>
     </>
   )

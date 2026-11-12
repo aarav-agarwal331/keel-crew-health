@@ -1,19 +1,18 @@
 import { useState } from 'react'
-import { CM, describeChange, REFS, RULE, STATUS_LABEL, unusualness, URGENCY_LABEL, WHO_LABEL } from '../core/analysis'
+import { CM, describeChange, evidenceTag, REFS, RULE, STATUS_LABEL, unusualness, URGENCY_LABEL, WHO_LABEL } from '../core/analysis'
 import { IND, shortDay } from '../core/mission'
 import type { ShareCategory } from '../core/sharing'
 import { SHARE_CATEGORIES } from '../core/sharing'
-import type { Tier, Urgency } from '../core/types'
 import { useApp } from '../state'
 import { TrendChart } from '../ui/charts'
 import { Card, href, Sources, StatusTag } from '../ui/kit'
 import { bandFor } from '../ui/series'
+import { TempEntry } from '../ui/TempEntry'
+import { CATEGORIES } from '../core/mission'
 
-const TIERS: Tier[] = ['self', 'cmo', 'ground']
-const URG: Urgency[] = ['routine', 'today', 'now']
-const WHO_SHORT: Record<Tier, string> = { self: 'You', cmo: 'Medical officer', ground: 'Medical officer + flight surgeon' }
 const DETECTOR_NAME: Record<string, string> = { zscore: 'personal z-score with persistence', cusum: 'CUSUM on personal z-scores', mewma: 'multivariate EWMA of personal z-scores', fusion: 'fused CUSUM and multivariate EWMA' }
-const DID = ['Did it', 'Did part of it', 'Not yet', 'Chose not to']
+const DID = ['Did it', 'Did part of it', 'Not yet', 'Chose not to', 'Reviewed with the medical officer']
+const CAT: Record<string, string> = Object.fromEntries(CATEGORIES.map((c) => [c.id, c.label]))
 
 export function Alert({ alertKey }: { alertKey?: string }) {
   const { mission, model, day, me, today, analyses, entries, actions, logAction, link, setShare, sharing } = useApp()
@@ -34,7 +33,9 @@ export function Alert({ alertKey }: { alertKey?: string }) {
   const mine = entries.filter((e) => e.mission === mission.id && e.crew === me)
   const rule = RULE[f.ruleId]
   const logs = actions.filter((x) => x.alertKey === f.key).sort((x, y) => y.ts - x.ts)
-  const shareCats = f.categories.filter((c): c is ShareCategory => (SHARE_CATEGORIES as readonly string[]).includes(c))
+  const shareCats = f.categories.slice(0, 1).filter((c): c is ShareCategory => (SHARE_CATEGORIES as readonly string[]).includes(c))
+  const iAmCmo = mission.crew.find((c) => c.id === me)?.role === 'cmo'
+  const reviewed = logs.find((l) => l.did === 'Reviewed with the medical officer')
   const sharedWithCmo = shareCats.length > 0 && shareCats.every((c) => sharing[me]?.cmo[c] === 'detail')
   const submit = async () => {
     await logAction({ crew: me, alertKey: f.key, day, did: did || 'No action recorded', feel, note })
@@ -48,14 +49,22 @@ export function Alert({ alertKey }: { alertKey?: string }) {
         <StatusTag status={f.status} label={STATUS_LABEL[f.status]} />
         <h1>{f.title}</h1>
         <p>{f.summary}</p>
-        <p className="small muted">Open for {f.days} day{f.days === 1 ? '' : 's'}, since {shortDay(mission, f.start)}.{f.crewWide ? ' This affects the whole crew.' : ''}</p>
+        <p className="small muted">{STATUS_LABEL[f.status]} since {shortDay(mission, f.patternStart ?? f.start)} ({f.days} day{f.days === 1 ? '' : 's'}).{f.firstNotice ? ` Keel first raised a notice on ${shortDay(mission, f.firstNotice.day)} for a different reason: "${f.firstNotice.title}".` : ''}{f.crewWide ? ' This affects the whole crew.' : ''}</p>
+        {reviewed && <p className="banner info">Under review with the medical officer since {shortDay(mission, reviewed.day)}. Keel keeps showing this until your readings return to your range.</p>}
+        {!reviewed && f.kind === 'personal' && f.tier !== 'self' && f.days > 5 && <p className="banner info">This has been open for {f.days} days. If the medical officer has reviewed it, record that below so it is shown as under review.</p>}
       </section>
 
       <section className="card action" data-testid="alert-action">
-        <span className="tag">Recommended action</span>
+        <span className="tag plain">Recommended action</span>
         <p className="do">{f.action}</p>
         <ol className="list steps">{f.steps.map((s) => <li key={s}><span>{s}</span></li>)}</ol>
+        {['R-ILL', 'R-SYM-ILL', 'R-V-TEMP', 'R-V-TEMP-HI'].includes(f.ruleId) && <TempEntry />}
       </section>
+      {(f.also ?? []).length > 0 && (
+        <Card title="Also showing in your readings">
+          <ul className="list">{f.also!.map((x) => <li key={x.title}><strong>{x.title}.</strong> <span className="muted">{x.action}</span></li>)}</ul>
+        </Card>
+      )}
 
       {f.changes.length > 0 && (
         <Card title="What changed">
@@ -65,9 +74,9 @@ export function Alert({ alertKey }: { alertKey?: string }) {
             return (
               <div key={c.ind} className="col" style={{ gap: 4, borderTop: '1px solid var(--border)', paddingTop: 10 }}>
                 <strong>{describeChange(c)}</strong>
-                <span className="small muted">How unusual for you: {unusualness(c)}</span>
+                <span className="small muted">{unusualness(c)} <span className="tag">{evidenceTag(c.ind)}</span></span>
                 <TrendChart values={b.values} expected={b.hasBand ? b.expected : undefined} lo={b.hasBand ? b.lo : undefined} hi={b.hasBand ? b.hi : undefined} from={day - 27} to={day} labelFor={(t) => shortDay(mission, t)} unit={def.unit} decimals={def.decimals} concern={def.concern} height={150}
-                  markers={[{ day: f.start, label: 'Alert opened', kind: 'alert' }]} refLines={c.ind === 'co2' ? [{ y: 3.0, label: 'ISS limit (3.0)' }] : undefined} ariaLabel={`${def.label}, last four weeks`} />
+                  markers={[{ day: f.patternStart ?? f.start, label: 'This pattern began', kind: 'alert' }]} refLines={c.ind === 'co2' ? [{ y: 3.0, label: 'Level ISS operations manage to: 3.0' }] : undefined} ariaLabel={`${def.label}, last four weeks`} />
               </div>
             )
           })}
@@ -81,20 +90,13 @@ export function Alert({ alertKey }: { alertKey?: string }) {
       </Card>
 
       <Card title="How soon, and who should know">
-        <span className="lab small">How soon</span>
-        <div className="tier" role="list" aria-label="How soon">
-          {URG.map((u) => <div key={u} role="listitem" className={f.urgency === u ? 'on' : ''} aria-current={f.urgency === u ? 'step' : undefined}>{URGENCY_LABEL[u]}</div>)}
-        </div>
-        <span className="lab small">Who</span>
-        <div className="tier" role="list" aria-label="Who should know">
-          {TIERS.map((t) => <div key={t} role="listitem" className={f.tier === t ? 'on' : ''} aria-current={f.tier === t ? 'step' : undefined}>{WHO_SHORT[t]}</div>)}
-        </div>
-        <p>{WHO_LABEL[f.tier]}. {f.tierReason}</p>
+        <p><strong>{URGENCY_LABEL[f.urgency]}.</strong> {iAmCmo && f.tier !== 'self' ? 'You are the medical officer. Do not manage your own case: hand it to the commander, who is your backup, and to the flight surgeon when a link is available.' : `${WHO_LABEL[f.tier]}.`}</p>
+        <p>{f.tierReason}</p>
         {f.tier === 'ground' && <p className="banner">{link.available ? 'A link is available. The medical officer leads care on board; a summary is queued for the flight surgeon and you decide what it contains in Sharing.' : 'No link right now. The medical officer leads care on board. Keel keeps a summary queued for the flight surgeon and sends it when a link opens.'}</p>}
         {f.status === 'urgent' && <p className="banner info">{sharing[me]?.emergency !== false ? 'Because you agreed to emergency sharing, the medical officer and the commander can see this alert now.' : 'Emergency sharing is off, so nobody else can see this alert. Tell the medical officer yourself.'}</p>}
         {f.status !== 'urgent' && !f.crewWide && shareCats.length > 0 && (sharedWithCmo
           ? <p className="small muted">The medical officer can see the details of this alert because you shared them.</p>
-          : <button className="btn" onClick={() => shareCats.forEach((c) => setShare(me, 'cmo', c, 'detail'))} data-testid="share-cmo">Let the medical officer see this alert's details</button>)}
+          : <><button className="btn" onClick={() => shareCats.forEach((c) => setShare(me, 'cmo', c, 'detail'))} data-testid="share-cmo">Share this alert with the medical officer ({shareCats.map((c) => CAT[c]).join(', ').toLowerCase()})</button><p className="tiny muted">Opens only that area to the medical officer, until you change it in Sharing. Everything else stays as you set it.</p></>)}
         {f.crewWide && <p className="small muted">Cabin-level readings are not personal data, so the whole crew sees this alert.</p>}
       </Card>
 

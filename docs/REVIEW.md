@@ -78,6 +78,56 @@ boundary so a fault on one screen cannot blank the app.
   when they open Keel. There is no device-to-device sync.
 - Tuning of the post-transition band, hourly features, and a rover environment.
 
-## Round 2
+## Round 2 (2026-11-12, fresh reviewers, redeployed build)
 
-See the end of this file once the second round has run.
+Judge's scores: impact 7, creativity 8, validity 8, relevance 8, presentation 7 (38 of 50), no
+high-severity issue. The other three reviewers found five high-severity issues between them.
+
+| # | Reviewer | High-severity finding | Fix |
+|---|---|---|---|
+| 1 | Flight surgeon, astronaut | The advice said "take your temperature" but a thermometer reading could not be entered: the check-in field was still bound to wrist skin temperature, so the fever rules could never fire, and "1.0 °C above your usual thermometer reading" referred to a number the app never showed. | The check-in field now writes the thermometer indicator; the action card itself has a reading field and Keel picks the next step; the personal +1.0 °C rule uses the person's own earlier readings when three exist. An end-to-end test enters 38.4, 39.6 and 36.8 and checks each result. A save-ordering race found while writing that test was also fixed. |
+| 2 | Flight surgeon | Fixed vital rules were mis-tiered at the extremes: systolic 220 was "worth a look", glucose 450 "repeat tomorrow", while an asymptomatic glucose of 68 was "now". | Severe tiers added (glucose under 54 and 300 or more, systolic under 80 or under 90 with dizziness, 180 or more); 54 to 69 moved to "today". The 180, 300 and 80 values are labelled placeholders. Unit-tested. |
+| 3 | Astronaut, flight surgeon, judge | "Open for 7 days, since Day 115" under an illness alert whose pattern began on Day 121, which also triggered the four-day escalation at once. | Persistence is counted from the day the current pattern began; the alert shows both dates and the earlier notice's reason; escalation uses the pattern's own clock. |
+| 4 | Statistician | The alert-tier headline (+31) and "1 in 11" used daily steps, while the app's detector uses a 7-day activity average, for which the alert tier is +12 and about 1 in 28. | Both are shown everywhere the figure appears: headline tile, ablation table (both tiers), predictive value as a range, README, submission texts. |
+
+Medium-severity findings fixed in the same pass:
+
+- **Cohort label error** (statistician): four other-illness episodes dated inside the recording had
+  been dropped. Fixed and everything re-run: 107 episodes; headline +30 (20 to 40), fixed threshold
+  +17, advantage +14 (0 to 28).
+- **Provenance claims** (statistician): "a rule fixed in advance" and "window fixed before the first
+  run" are not supported by the commit history. Reworded to say the selection rule was written during
+  review and flipped once, and that the original window gives +27.
+- **Simulated intervals** were over people, not missions as stated; now over missions. The
+  like-for-like and transfer checks use the validation half only; pass marks tightened to ±25%, which
+  the transfer and the simulated illness response now fail, and the screen says so. A five-indicator
+  transfer test on LifeSnaps was added (up to nearly four times over budget).
+- **Exercise advice** contradicted itself; one instruction now ("no exercise until you have taken your
+  temperature"), cough split from sore throat, and "light session" needs no fever, no cough, no
+  unusual tiredness and the medical officer's agreement.
+- **Closure**: entered readings stay in force for a week or until a newer one replaces them; red
+  flags stay for three days unless a later check-in omits them; long-open alerts can be marked
+  "reviewed with the medical officer".
+- **Medical officer as patient**: role-aware wording and a different commander label.
+- **More red flags** (allergic swelling, seizure, bleeding, painful red eye, stiff neck, smoke or
+  chemicals, tooth pain, thoughts of self-harm), now collapsed behind one tile so they do not crowd
+  the ordinary symptoms; fluids start empty.
+- **Readiness** no longer flags nearly everyone (an area needs a 3-day mean of 2 SD or a 3 SD day);
+  commander summary reworded without a double negative.
+- **For the medical officer**: each shared alert expands to what the crew member was told, the
+  shared readings, and the source.
+- **Skin temperature** now sits at wrist-skin level (fitted to LifeSnaps) and is labelled "not a
+  fever reading"; thermometer readings are a separate series.
+- **Evidence tags** on every changed reading ("tested on real data", "simulation only", "fixed
+  reference values"); a "sensors alone" line and the with/without-check-in distinction in the replay;
+  notices in the last 30 days against the budget on Today; README leads with the live link and a
+  screenshot; named indicators (blood pressure with both numbers, blood sugar, thermometer) reachable
+  from Today's routine.
+
+Not done from round 2: a richer anatomical figure; a CO2 "now" tier; respiratory rate; tuning the
+post-transition band; recalibrating full-set thresholds on real multi-sensor data (the LifeSnaps test
+shows it is needed).
+
+## Round 3
+
+See the end of this file once the third round has run.

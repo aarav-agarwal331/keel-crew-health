@@ -16,14 +16,14 @@
    "note": "Between-astronaut SD of sleeping heart rate"
   },
   "rhr_within_sd": {
-   "value": 3.5645,
+   "value": 3.5847,
    "unit": "bpm",
    "basis": "calibrated",
    "ref": null,
    "note": "Fitted so simulated within-person SD matches 3.508 from Stanford wearables, people with no reported illness (calibration half), n = 74 people"
   },
   "rhr_ar1": {
-   "value": 0.339,
+   "value": 0.3868,
    "unit": "",
    "basis": "calibrated",
    "ref": null,
@@ -42,7 +42,7 @@
    "ref": null
   },
   "lnhrv_within_sd": {
-   "value": 0.2486,
+   "value": 0.2485,
    "unit": "ln ms",
    "basis": "calibrated",
    "ref": null,
@@ -63,10 +63,11 @@
    "note": "Fitted so simulated within-person SD matches 0.954 from LifeSnaps (calibration half), n = 13 people"
   },
   "temp_mean": {
-   "value": 36.7,
+   "value": 33.9883,
    "unit": "degC",
-   "basis": "assumption",
-   "ref": null
+   "basis": "calibrated",
+   "ref": null,
+   "note": "Median overnight wrist skin temperature across people, LifeSnaps (calibration half)"
   },
   "temp_within_sd": {
    "value": 0.4669,
@@ -312,25 +313,25 @@
    "ref": null
   },
   "illness_prodrome_days": {
-   "value": 2.0,
+   "value": 4.0,
    "unit": "days",
    "basis": "calibrated",
    "ref": null,
    "note": "Fitted to the mean resting-heart-rate change around 38 dated illness onsets (calibration half, Stanford phases 1 and 2)"
   },
   "illness_duration_days": {
-   "value": 6.0,
+   "value": 4.0,
    "unit": "days",
    "basis": "calibrated",
    "ref": null,
    "note": "Fitted with the prodrome (same fit)"
   },
   "illness_rhr_peak": {
-   "value": 4.7787,
+   "value": 3.2577,
    "unit": "bpm",
    "basis": "calibrated",
    "ref": null,
-   "note": "Fitted peak of the mean resting-heart-rate change around 38 dated illness onsets (calibration half, Stanford phases 1 and 2). Observed per-episode quartiles 0.4 / 3.0 / 6.8 bpm; the published median among detected cases is 7 bpm (DOMAIN ref 58)"
+   "note": "Fitted peak of the mean resting-heart-rate change around 38 dated illness onsets (calibration half, Stanford phases 1 and 2). Observed per-episode quartiles -0.3 / 2.0 / 5.3 bpm; the published median among detected cases is 7 bpm (DOMAIN ref 58)"
   },
   "illness_lnhrv_drop": {
    "value": 0.22,
@@ -346,7 +347,7 @@
    "ref": null
   },
   "illness_temp_peak": {
-   "value": 0.56,
+   "value": 0.38,
    "unit": "degC",
    "basis": "assumption",
    "ref": "60",
@@ -427,10 +428,10 @@
   },
   "illness_magnitude_cv": {
    "unit": "ratio",
-   "value": 1.874,
+   "value": 2.0,
    "basis": "calibrated",
    "ref": null,
-   "note": "Between-episode SD of the true response over its mean: observed SD 7.8 bpm, of which 2.3 bpm is measurement noise"
+   "note": "Between-episode SD of the true response over its mean: observed SD 7.4 bpm, of which 2.3 bpm is measurement noise"
   },
   "noise_load_rhr": {
    "value": 0.8003,

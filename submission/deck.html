@@ -77,7 +77,7 @@
       <li>What changed, how unusual it is for you, what in your own data may explain it.</li>
       <li>One action, <strong>how soon and who</strong>, mapped to a cited NASA document, published study or public clinical guidance.</li>
       <li>Red-flag symptoms and dangerous single readings are acted on at once, without waiting for a trend.</li>
-      <li><strong>No diagnosis. No language model.</strong> 28 rules a flight surgeon can read in half an hour.</li>
+      <li><strong>No diagnosis. No language model.</strong> 32 rules a flight surgeon can read in half an hour.</li>
     </ul>
   </div>
   <img src="../docs/review/02-alert-detail-1.png" alt="Alert detail screen with recommended action and steps">
@@ -99,14 +99,14 @@
 <section class="solo">
   <div>
     <div class="n">6 · Does it work? Measured on real data</div>
-    <h2>251 people, 103 dated illness episodes, held-out people, a false-alert budget.</h2>
+    <h2>251 people, 107 dated illness episodes, held-out people, a false-alert budget.</h2>
     <div class="grid">
-      <div class="card"><div class="big">+31</div><p><strong>points above luck</strong> at flagging real illness, at one false alert per person-month (95% interval 21 to 41). Flagged 67%; luck alone gives 36%.</p></div>
-      <div class="card"><div class="big">+15</div><p><strong>for one threshold for everyone</strong>, at the same false-alert cost. The personal baseline doubles the real signal.</p></div>
-      <div class="card"><div class="big">1.00</div><p><strong>false alerts per person-month</strong> measured on people the model never saw. Budget: 1.00.</p></div>
+      <div class="card"><div class="big">+30</div><p><strong>points above luck</strong> at flagging real illness, at one false alert per person-month (95% interval 20 to 40). Flagged 66%; luck alone gives 36%.</p></div>
+      <div class="card"><div class="big">+17</div><p><strong>for one threshold for everyone</strong>, at the same false-alert cost. Keel adds 14 points (interval 0 to 28).</p></div>
+      <div class="card"><div class="big">0.99</div><p><strong>false alerts per person-month</strong> on people the model never saw, against a budget of 1.00. With thresholds from simulation only: 1.38.</p></div>
     </div>
     <p>NASA bed-rest data: after volunteers get up, a plain baseline flags 9 of 14; Keel's transition handling flags 4. Simulated missions, full sensor set: 67% flagged against 40% by luck.</p>
-    <p class="warn"><strong>What we cannot claim:</strong> early warning. The alert comes around the day symptoms start. Most alerts are false: about ten in eleven at the strict tier. The data is from people on Earth. Everything beyond illness is tested in simulation.</p>
+    <p class="warn"><strong>What we cannot claim:</strong> early warning. The alert comes around the day symptoms start. Most alerts are false: ten in eleven or more at the strict tier. The data is from people on Earth. Everything beyond illness is tested in simulation.</p>
   </div>
 </section>
 

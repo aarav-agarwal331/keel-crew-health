@@ -19,7 +19,8 @@
    "detect": true,
    "plain": "How fast your heart beats when you are fully at rest, usually measured during sleep.",
    "how": "Wear the wrist or chest sensor while you sleep. Keel takes the typical heart rate over still minutes in your sleep period, so exercise and coffee do not distort it.",
-   "why": "A resting heart rate that climbs above your own normal is one of the earliest whole-body signs of infection, dehydration, poor recovery or loss of fitness."
+   "why": "A resting heart rate that climbs above your own normal is a whole-body sign of infection, dehydration, poor recovery or loss of fitness. In our tests it usually showed once symptoms had started, not before.",
+   "evidence": "real"
   },
   {
    "id": "hrv",
@@ -38,9 +39,10 @@
    ],
    "source": "wearable",
    "detect": true,
-   "plain": "The small beat-to-beat changes in your heart rhythm (RMSSD). Higher usually means your body is recovering well.",
+   "plain": "The small beat-to-beat changes in your heart rhythm. Higher usually means your body is recovering well.",
    "how": "Measured automatically overnight by the wearable, or in a two-minute still reading with the chest strap.",
-   "why": "HRV drops when the body is under strain: illness, short sleep, heavy training or stress. It often moves before you feel anything."
+   "why": "HRV drops when the body is under strain: illness, short sleep, heavy training or stress.",
+   "evidence": "simulation"
   },
   {
    "id": "spo2",
@@ -61,7 +63,8 @@
    "detect": true,
    "plain": "The share of the haemoglobin in your blood that is carrying oxygen.",
    "how": "Overnight from the wearable, or a 30-second fingertip reading: warm hand, hold still, wait for a steady number.",
-   "why": "A sustained drop can point to a breathing or lung problem or a cabin atmosphere issue."
+   "why": "A sustained drop can point to a breathing or lung problem or a cabin atmosphere issue.",
+   "evidence": "simulation"
   },
   {
    "id": "temp",
@@ -80,9 +83,10 @@
    ],
    "source": "wearable",
    "detect": true,
-   "plain": "Your wrist skin temperature while asleep, from the wearable. It moves with the cabin and bedding as well as with your body, so only a sustained rise means something.",
+   "plain": "Your wrist skin temperature while asleep, from the wearable. It runs a few degrees below body temperature and is not a fever reading; only a sustained rise means something.",
    "how": "Measured automatically overnight. For a real body temperature use the thermometer and enter it at check-in.",
-   "why": "A sustained rise above your own normal supports the picture of infection or inflammation. It is not a fever reading."
+   "why": "A sustained rise above your own normal supports the picture of infection or inflammation. It is not a fever reading.",
+   "evidence": "simulation"
   },
   {
    "id": "sleep_h",
@@ -107,7 +111,8 @@
    "standard": {
     "value": 8.5,
     "label": "Scheduled sleep period 8.5 h"
-   }
+   },
+   "evidence": "simulation"
   },
   {
    "id": "sleep_mid",
@@ -128,7 +133,8 @@
    "detect": true,
    "plain": "How far the middle of your sleep moved from your scheduled sleep period. Zero means you slept when planned.",
    "how": "Calculated from when you fell asleep and woke up.",
-   "why": "When sleep slides away from the schedule, your body clock and the mission clock disagree, which hurts sleep quality and alertness."
+   "why": "When sleep slides away from the schedule, your body clock and the mission clock disagree, which hurts sleep quality and alertness.",
+   "evidence": "simulation"
   },
   {
    "id": "ex7",
@@ -149,7 +155,8 @@
    "detect": true,
    "plain": "Average minutes of exercise per day over the last week.",
    "how": "Logged by the exercise devices or entered at check-in.",
-   "why": "Daily exercise is the main protection against losing bone, muscle and heart fitness without gravity. Missed sessions add up quietly."
+   "why": "Daily exercise is the main protection against losing bone, muscle and heart fitness without gravity. Missed sessions add up quietly.",
+   "evidence": "simulation"
   },
   {
    "id": "pvt_rt",
@@ -170,7 +177,8 @@
    "detect": true,
    "plain": "Your average response time in the reaction self-test.",
    "how": "Tap as soon as the target appears. Do it at about the same time each day, sitting still, before caffeine if you can.",
-   "why": "Reaction time is a sensitive, objective sign of fatigue. It slows with sleep loss and may slow with high cabin carbon dioxide."
+   "why": "Reaction time is a sensitive, objective sign of fatigue. It slows with sleep loss and may slow with high cabin carbon dioxide.",
+   "evidence": "simulation"
   },
   {
    "id": "mood",
@@ -191,7 +199,8 @@
    "detect": true,
    "plain": "Your own rating of how you feel today, from 1 (very low) to 5 (very good).",
    "how": "Answer quickly and honestly at check-in. There is no right answer, and you decide who can see it.",
-   "why": "Isolation, confinement and distance from home wear on everyone. A slow slide is easier to turn around when it is noticed early."
+   "why": "Isolation, confinement and distance from home wear on everyone. A slow slide is easier to turn around when it is noticed early.",
+   "evidence": "simulation"
   },
   {
    "id": "fluid",
@@ -216,7 +225,8 @@
    "standard": {
     "value": 2.0,
     "label": "At least 2.0 L"
-   }
+   },
+   "evidence": "simulation"
   },
   {
    "id": "energy",
@@ -240,8 +250,9 @@
    "why": "Under-eating is common in space and speeds up loss of body mass, muscle and bone.",
    "standard": {
     "value": 100,
-    "label": "Plan: 100%"
-   }
+    "label": "Planned: 100%"
+   },
+   "evidence": "simulation"
   },
   {
    "id": "temp_oral",
@@ -262,7 +273,8 @@
    "detect": false,
    "plain": "Your body temperature taken with the thermometer.",
    "how": "Take it before exercise and before eating or drinking, mouth closed, and wait for the beep.",
-   "why": "A thermometer reading of 38.0 °C or more is a fever by general guidance and should go to the medical officer the same day. Body temperature may run higher on long flights, so compare with your own earlier readings too."
+   "why": "A thermometer reading of 38.0 °C or more is a fever by general guidance and should go to the medical officer the same day. Body temperature may run higher on long flights, so compare with your own earlier readings too.",
+   "evidence": "reference"
   },
   {
    "id": "mass",
@@ -283,7 +295,8 @@
    "detect": false,
    "plain": "Your body mass, measured on the mass-measurement device (a normal scale does not work without gravity).",
    "how": "Weekly, same time of day, before eating.",
-   "why": "Steady loss of body mass signals under-eating or dehydration."
+   "why": "Steady loss of body mass signals under-eating or dehydration.",
+   "evidence": "reference"
   },
   {
    "id": "sbp",
@@ -304,7 +317,30 @@
    "detect": false,
    "plain": "The upper (systolic) number of your blood pressure.",
    "how": "Rest quietly and restrained for five minutes, cuff on the upper arm, do not talk during the reading.",
-   "why": "Blood pressure regulation changes without gravity. Readings well outside your normal deserve a repeat and a word with the medical officer."
+   "why": "Blood pressure regulation changes without gravity. Readings well outside your normal deserve a repeat and a word with the medical officer.",
+   "evidence": "reference"
+  },
+  {
+   "id": "dbp",
+   "label": "Blood pressure (lower)",
+   "short": "BP lower",
+   "unit": "mmHg",
+   "category": "cardio",
+   "system": "heart",
+   "transform": "none",
+   "concern": 0,
+   "floor": 3,
+   "decimals": 0,
+   "range": [
+    30,
+    150
+   ],
+   "source": "spot",
+   "detect": false,
+   "plain": "The lower (diastolic) number of your blood pressure.",
+   "how": "Taken in the same reading as the upper number.",
+   "why": "Recorded with the upper number so the medical officer sees the whole reading. Normal for adults is between 60 and 80.",
+   "evidence": "reference"
   },
   {
    "id": "glucose",
@@ -325,7 +361,8 @@
    "detect": false,
    "plain": "The sugar level in a fingertip drop of blood.",
    "how": "Clean fingertip, first drop wiped away, measure before breakfast for a comparable number.",
-   "why": "A fingertip check is quick and the challenge names it as a useful indicator. Keel compares it with general reference values, not with a personal range."
+   "why": "A fingertip check is quick and the challenge names it as a useful indicator. Keel compares it with general reference values, not with a personal range.",
+   "evidence": "reference"
   },
   {
    "id": "co2",
@@ -346,7 +383,8 @@
    "detect": false,
    "plain": "The average carbon dioxide level in the cabin air over the last day.",
    "how": "Read automatically from the cabin air monitor.",
-   "why": "In a closed cabin, exhaled carbon dioxide builds up. Higher levels are linked to headaches and may dull thinking."
+   "why": "In a closed cabin, exhaled carbon dioxide builds up. Higher levels are linked to headaches and may dull thinking.",
+   "evidence": "reference"
   },
   {
    "id": "rad",
@@ -367,7 +405,8 @@
    "detect": false,
    "plain": "The radiation dose your personal dosimeter recorded today, and your running mission total.",
    "how": "Read automatically from your personal dosimeter. Keep it on you.",
-   "why": "Beyond Earth's magnetic shield the crew receives a steady dose from cosmic rays and occasional bursts from solar storms. The total is tracked against a career limit."
+   "why": "Beyond Earth's magnetic shield the crew receives a steady dose from cosmic rays and occasional bursts from solar storms. The total is tracked against a career limit.",
+   "evidence": "reference"
   }
  ],
  "categories": [
@@ -419,7 +458,11 @@
   },
   {
    "id": "sore_throat",
-   "label": "Sore throat or cough"
+   "label": "Sore throat"
+  },
+  {
+   "id": "cough",
+   "label": "Cough"
   },
   {
    "id": "fatigue",
@@ -457,7 +500,7 @@
   },
   {
    "id": "fainting",
-   "label": "Fainted or nearly fainted",
+   "label": "Fainted, blacked out or had a seizure",
    "red_flag": true
   },
   {
@@ -466,13 +509,18 @@
    "red_flag": true
   },
   {
+   "id": "allergy",
+   "label": "Swelling of lips, face or tongue, or a rash with trouble breathing",
+   "red_flag": true
+  },
+  {
    "id": "vision_sudden",
-   "label": "Sudden loss of vision",
+   "label": "Sudden loss of vision, or a painful red eye",
    "red_flag": true
   },
   {
    "id": "severe_headache",
-   "label": "Worst headache of your life",
+   "label": "Worst headache of your life, or fever with a stiff neck",
    "red_flag": true
   },
   {
@@ -496,18 +544,33 @@
    "red_flag": true
   },
   {
+   "id": "bleeding",
+   "label": "Coughing or vomiting blood, or bleeding that will not stop",
+   "red_flag": true
+  },
+  {
    "id": "urine",
    "label": "Cannot pass urine, or blood in urine",
    "red_flag": true
   },
   {
    "id": "injury",
-   "label": "Injury, or something in the eye",
+   "label": "Injury, something in the eye, or smoke or chemical exposure",
    "red_flag": true
   },
   {
    "id": "dcs",
    "label": "Joint pain or numbness after a spacewalk",
+   "red_flag": true
+  },
+  {
+   "id": "tooth",
+   "label": "Severe tooth or jaw pain",
+   "red_flag": true
+  },
+  {
+   "id": "self_harm",
+   "label": "Thoughts of harming yourself",
    "red_flag": true
   }
  ]

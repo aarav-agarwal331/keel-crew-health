@@ -59,7 +59,7 @@ published adaptation curve and widens its band until the person's own new data t
 deviations feed a multivariate detector that reacts to several small changes in a worrying direction.
 Alert thresholds are not chosen by feel. They are set so that, on people the model has never seen, a
 notice fires by mistake at most once per person-month and an alert at most once per four
-person-months, because alarm fatigue is an operational hazard. A fixed table of 28 rules
+person-months, because alarm fatigue is an operational hazard. A fixed table of 32 rules
 turns a pattern, an entered reading or a reported symptom into wording, one action, follow-up steps,
 how soon and who, each citing a NASA document, a published study or public clinical guidance. No
 language model writes any advice.
@@ -126,51 +126,58 @@ Detection is reported **above luck**: at one false alert per person-month an ale
 two-week window by chance about a third of the time, so we measure that with pretend events and
 subtract it.
 
-**Real data: 251 people, 37,234 person-days, 103 dated illness episodes, held-out people.**
+**Real data: 251 people, 37,234 person-days, 107 dated illness episodes, held-out people.**
 
-| At a budget of | Keel flags | By luck | Keel above luck (95% interval) | One threshold for everyone, above luck | Measured false alerts per person-month |
-|---|---|---|---|---|---|
-| 1 false alert per person-month | 67% | 36% | **+31 points** (21 to 41) | +15 (6 to 25) | 1.00 (0.91 to 1.08) |
-| 0.25 per person-month | 43% | 12% | **+31 points** (21 to 41) | +12 (5 to 19) | 0.24 (0.20 to 0.29) |
+| At a budget of | Keel flags | By luck | Keel above luck (95% interval) | One threshold for everyone, above luck |
+|---|---|---|---|---|
+| 1 false alert per person-month | 66% | 36% | **+30 points** (20 to 40) | +17 (7 to 27) |
+| 0.25 per person-month, with daily steps | 43% | 11% | +32 (22 to 42) | +9 (3 to 17) |
+| 0.25 per person-month, with the 7-day activity average the app uses | 23% | 11% | +12 (3 to 20) | |
 
-- Keel's advantage over a fixed threshold, above luck: +15 points (interval 2 to 30) at the first
-  budget and +19 (8 to 30) at the second.
-- A simple personal rule (two of three days outside the personal range) is nearly as good: +26
-  (16 to 36). The four personal-baseline detectors we compared cannot be told apart.
+- Keel's advantage over a fixed threshold, above luck: +14 points (interval 0 to 28) at the first
+  budget.
+- A simple personal rule (two of three days outside the personal range) is nearly as good: +27
+  (17 to 38). At the first budget the four personal-baseline detectors cannot be told apart.
 - Thresholds trained on one cohort hold on the other: trained on phase 1 and tested on phase 2,
-  +29 above luck with 0.87 false alerts per person-month; the reverse, +38 with 1.10.
-- Daily steps carry most of the signal (heart rate alone: +14), largely because people move less
-  once they feel ill.
+  +29 above luck with 0.87 false alerts per person-month; the reverse, +36 with 1.11.
+- Measured false alerts match the budget (0.99 against 1.00) when thresholds come from other real
+  people. Thresholds calibrated only in simulation ran over budget on real people (1.38).
+- Heart rate alone is +17 above luck; daily steps add the rest, largely because people move less once
+  they feel ill.
 
 **NASA bed-rest analog data (29 volunteers).** After getting up from weeks of head-down bed rest, a
 plain personal baseline flags the pulse of 9 of 14 volunteers; Keel's handling of the transition
 flags 4 (exact paired test p = 0.06).
 
 **Simulated missions (100 test missions of four crew, 284 person-events, full sensor set).** 67%
-flagged (61 to 73%) against 40% by luck: +26 points (20 to 33). Handling the launch transition halves
-false alerts in the first month of flight (0.90 against 1.98 per person-month). The simulator's noise,
+flagged (60 to 73%) against 40% by luck: +26 points (20 to 33). Handling the launch transition halves
+false alerts in the first month of flight (0.89 against 1.97 per person-month). The simulator's noise,
 its correlations between indicators and its illness response are fitted to real data on one half of
-the people and checked on the other half.
+the people and checked on the other half; it passes six of nine pass marks and we report the three it
+fails.
 
 ## Limitations
 
 - **No early warning.** On real data the alert usually starts on or just after the day symptoms
-  begin: 40% of episodes had an alert start in the ten days up to onset, and luck gives 28%.
-- **Most alerts are false.** At the in-flight rate of respiratory illness, about one alert-tier alert
-  in eleven would be a real illness. An alert is a prompt to look, not a verdict.
+  begin: 39% of episodes had an alert start in the ten days up to onset, and luck gives 29%.
+- **Most alerts are false.** At the in-flight rate of respiratory illness, between one alert in 11 and
+  one in 28 at the strict tier would be a real illness. An alert is a prompt to look, not a verdict.
 - **Ground data stands in for spaceflight data.** No open astronaut wearable time series exists. The
-  people in the real evaluation were on Earth, wore consumer watches and mostly had COVID-19.
+  people in the real evaluation were on Earth, wore consumer watches and mostly had COVID-19, and
+  much of the signal is their change in activity, which cannot be separated from isolation at home.
 - **Only illness is tested on real data,** with heart rate and steps. Sleep loss, cabin CO2,
   deconditioning, dehydration and low mood, and the contribution of HRV, oxygen, temperature and
   check-ins, are tested in simulation with assumed effect sizes.
-- **The simulation is not reality.** Thresholds calibrated in simulation and applied to real people
-  ran 40 to 70% over the false-alert budget. Simulated illness was harder to detect than real illness
-  on the channels we could compare (+13 against +28).
+- **The simulation is not reality.** Thresholds calibrated in simulation ran 38% over the false-alert
+  budget on real people with two indicators, and up to nearly four times over with five. Simulated
+  illness was harder to detect than real illness on the channels we could compare (+13 against +32).
 - **Handling gravity changes has a cost.** It halves false alerts after launch but hides real problems
-  that begin in the first weeks (+19 against +34 above luck in simulation).
+  that begin in the first weeks (+20 against +35 above luck in simulation).
 - **Small samples:** about a hundred illness episodes, 29 bed-rest volunteers.
 - **Not clinically reviewed.** The rules, the fixed thresholds and the readiness tier need review by a
   flight surgeon. Keel is decision support, not a medical device, and never states a diagnosis.
+- **Analysis choices were revised during review** (the metric, the detector selection rule, the
+  detection window). The decision log records each change and the more conservative alternatives.
 - The link delay, blackouts, cabin CO2 and radiation readings in the demo are simulated.
 
 ## Future work

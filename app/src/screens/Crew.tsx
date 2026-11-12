@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { STATUS_LABEL } from '../core/analysis'
+import { CM, STATUS_LABEL, URGENCY_LABEL } from '../core/analysis'
 import { CATEGORIES, IND, shortDay } from '../core/mission'
 import { readiness, READY_LABEL } from '../core/readiness'
 import { allows, defaultSharing, SHARE_CATEGORIES, type Role } from '../core/sharing'
@@ -32,6 +32,8 @@ export function Crew() {
   const pattern = SHARE_CATEGORIES.map((cat) => ({ cat, n: rows.filter((x) => x.a && ['watch', 'act', 'urgent'].includes(categoryStatus(x.a, cat))).length })).filter((x) => x.n >= 3)
   const env = rows[0]?.a?.findings.filter((f) => f.kind === 'environment') ?? []
   const ready = rows.filter((x) => x.r?.tier === 'go').length
+  const hold = rows.filter((x) => x.r?.tier === 'hold').length
+  const minor = rows.filter((x) => x.r?.tier === 'caution').length
 
   return (
     <>
@@ -42,7 +44,8 @@ export function Crew() {
       {role === 'commander' && (
         <section className="card" data-testid="crew-summary">
           <h2>Task tomorrow: spacewalk</h2>
-          <p><strong className="num" style={{ fontSize: '1.5rem' }}>Keel has no flags for {ready} of {rows.length}</strong> crew. This is not a medical clearance.</p>
+          <p><strong className="num" style={{ fontSize: '1.3rem' }}>{hold} of {rows.length} should talk to the medical officer first. {minor} {minor === 1 ? 'has' : 'have'} minor flags. {ready} {ready === 1 ? 'has' : 'have'} none.</strong></p>
+          <p className="small">This is not a medical clearance.</p>
           <p className="small muted">NASA's medical operations standard requires medical clearance before every spacewalk. Keel's tier is one input to that conversation with the medical officer.</p>
         </section>
       )}
@@ -51,7 +54,7 @@ export function Crew() {
       {pattern.length > 0 && (
         <Card title="Crew-wide pattern">
           <ul className="list">{pattern.map((p) => <li key={p.cat}><strong>{p.n} of {rows.length}</strong> crew show a change in {catLabel(p.cat).toLowerCase()} over the last three days.</li>)}</ul>
-          <p className="small muted">When several people drift together, look for a shared cause: cabin air, schedule, workload. Counts only, no names, and only when three or more people are affected.</p>
+          <p className="small muted">When several people drift together, look for a shared cause: an infection spreading, water or food, cabin air, schedule, workload. Tell the medical officer. Counts only, no names, and only when three or more people are affected.</p>
         </Card>
       )}
 
@@ -60,12 +63,13 @@ export function Crew() {
           <section className="card" key={c.id} data-testid={`crew-${c.id}`}>
             <div className="card-h"><div className="col" style={{ gap: 0 }}><h2>{c.name}</h2><span className="small muted">{c.role_label}</span></div></div>
             {!a || !r || !v ? <p className="muted">No data.</p> : <>
-              {role === 'commander' && <p><StatusTag status={r.tier} label={READY_LABEL[r.tier]} /></p>}
+              {role === 'commander' && <p><StatusTag status={r.tier} label={r.tier === 'hold' && c.role === 'cmo' ? 'Talk to the flight surgeon or a backup first' : READY_LABEL[r.tier]} /></p>}
+              {s.emergency === false && <p className="tiny muted">Emergency sharing is switched off for this crew member: red-flag symptoms will not appear here.</p>}
               {role === 'commander' && r.tier !== 'go' && r.tier !== 'unknown' && (() => {
                 const shown = r.reasons.filter((x) => allows((s.commander as Record<string, 'none' | 'status' | 'trend' | 'detail'>)[x.category] ?? 'none', 'trend'))
                 return shown.length
                   ? <ul className="list small">{shown.map((x, i) => <li key={i}>{x.text}</li>)}</ul>
-                  : <p className="small muted"><StatusTag status="private" label="" size={16} /> Reason not shared. Ask {c.name.split(' ')[0]} or the medical officer.</p>
+                  : <p className="small muted"><StatusTag status="private" label="" size={16} /> Reason not shared. Ask {c.name.split(' ')[0]}{c.role === 'cmo' ? '' : ' or the medical officer'}.</p>
               })()}
               {v.findings.filter((x) => x.emergency).map((x) => <p key={x.key} className="banner strong"><strong>{x.title}.</strong> {x.action} <span className="small">(shared automatically: emergency sharing)</span></p>)}
               {role === 'cmo' && <p>{v.overall === 'private' ? <StatusTag status="private" label="Nothing shared with you" /> : <StatusTag status={v.overall} label={STATUS_LABEL[v.overall]} />}</p>}
@@ -76,7 +80,23 @@ export function Crew() {
                     const outs = x.indicators?.filter((i) => !i.inRange) ?? []
                     return <li key={cat}><StatusTag status={x.status!} label={catLabel(cat)} size={16} />{outs.length > 0 && <span className="muted">: {outs.map((i) => `${IND[i.ind].short}${i.value !== undefined && !Number.isNaN(i.value) ? ` ${i.value.toFixed(IND[i.ind].decimals)} ${IND[i.ind].unit}` : ' out of range'}`).join(', ')}</span>}</li>
                   })}
-                  {v.findings.filter((x) => !x.emergency).map((f) => <li key={f.key}><strong>{f.title ?? `Alert in ${catLabel(f.category).toLowerCase()}`}</strong>{f.action ? <span className="muted"> · advised: {f.action}</span> : ''} <span className="muted">({f.days} d)</span></li>)}
+                  {v.findings.filter((x) => !x.emergency).map((f) => (
+                    <li key={f.key}>
+                      <strong>{f.title ?? `Alert in ${catLabel(f.category).toLowerCase()}`}</strong> <span className="muted">({STATUS_LABEL[f.status].toLowerCase()} for {f.days} d)</span>
+                      {f.action && (
+                        <details>
+                          <summary>For the medical officer: what the crew member was told, and the basis</summary>
+                          <div className="col small" style={{ paddingLeft: 30 }}>
+                            <p><strong>Advised ({URGENCY_LABEL[(f.urgency ?? 'routine') as 'now']}):</strong> {f.action}</p>
+                            <ol className="list steps">{(f.steps ?? []).map((x) => <li key={x}><span>{x}</span></li>)}</ol>
+                            {(f.changes ?? []).length > 0 && <p><strong>Readings shared with you:</strong> {f.changes!.map((ch) => `${IND[ch.ind].label} ${Number.isNaN(ch.value) ? '–' : ch.value.toFixed(IND[ch.ind].decimals)} ${IND[ch.ind].unit} (usual ${ch.expected.toFixed(IND[ch.ind].decimals)})`).join('; ')}.</p>}
+                            {(f.countermeasures ?? []).map((id) => CM[id]).filter(Boolean).map((cm) => <p key={cm.id} className="muted"><strong>{cm.title}.</strong> {cm.text} [{cm.refs.join(', ')}]</p>)}
+                            <p className="muted">Keel does not recommend medication or treatment. Those decisions are yours, with the onboard medical checklist and the flight surgeon when a link is available. If readings from other areas would help, ask the crew member to share them.</p>
+                          </div>
+                        </details>
+                      )}
+                    </li>
+                  ))}
                   {SHARE_CATEGORIES.every((cat) => v.categories[cat].status === undefined) && <li className="muted">This crew member keeps their data private. They can share from their own Sharing screen.</li>}
                 </ul>
               )}
@@ -84,6 +104,7 @@ export function Crew() {
           </section>
         ))}
       </div>
+      <p className="small muted">"Steady" and "no flags" mean within the person's own usual range and no rule triggered. They do not mean the values are healthy.</p>
       <p className="banner">The tier is a rule-based summary: it is never better than the worst area on the crew member's own screen, and nausea or clearly slowed reactions always mean a conversation first. It is not a validated fitness-for-duty test and not a clearance.</p>
     </>
   )

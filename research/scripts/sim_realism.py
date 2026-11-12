@@ -5,8 +5,9 @@ Acceptance criteria, written down before this script was last run:
   variability   simulated median within-person SD within 25% of the real median
   carry-over    simulated lag-1 autocorrelation within 0.15 of the real one
   correlation   simulated between-indicator correlation within 0.15 of the real one
+  illness       simulated mean rise over the four days from onset within 25% of the real one
   transfer      alert thresholds calibrated on simulated people, applied unchanged to REAL quiet
-                people, give a false-alert rate between half and double the budget
+                people, give a false-alert rate within 25% of the budget
 Anything that fails is reported as failing on the Validation screen.
 Output: app/public/results/realism.json
 """
@@ -131,7 +132,7 @@ def main():
     g_model = fit_model(g_tr, SPEC2, p_, w_)
     g_sc = [x[deployed] for x in score_people(g_tr, g_model, p_)]
     real_quiet = []
-    for pid, g in st[st.pid.isin(val_s | set(st.pid.unique()))].groupby("pid"):
+    for pid, g in st[st.pid.isin(val_s)].groupby("pid"):   # validation half only: the simulator's noise was fitted on the other half
         g = g.sort_values("date")
         if g["rhr"].notna().sum() < 28:
             continue
@@ -144,8 +145,35 @@ def main():
         t = calibrate(g_sc, [q.onsets for q in g_tr], b, w_, p_.merge_gap)
         a = aggregate([person_outcome(x, t, [], w_, p_.merge_gap) for x in r_sc])
         transfer["budgets"][str(b)] = {"threshold": t, "real_fa_per_person_month": a["fa_per_person_month"], "real_quiet_person_months": a["quiet_person_months"],
-                                       "pass": bool(0.5 * b <= a["fa_per_person_month"] <= 2 * b)}
+                                       "pass": bool(0.75 * b <= a["fa_per_person_month"] <= 1.25 * b)}
         print(f"transfer: sim-calibrated threshold at budget {b} gives {a['fa_per_person_month']:.2f} false alerts per person-month on {len(real_quiet)} real quiet people")
+
+    # ---- the same transfer for a WIDER sensor set, on LifeSnaps (no illness labels, so every alert
+    # is counted; some may be real).  Five indicators exist on both sides. ---------------------
+    from keel.mission import detect_spec, features
+    wide_ids = ["rhr", "hrv", "spo2", "temp", "sleep_h"]
+    spec5 = detect_spec(wide_ids)
+    sim5 = []
+    for q0 in range(40):
+        m5 = simulate(Scenario(pre_days=200, flight_days=1), 90000 + q0)
+        for i in range(m5.x.shape[0]):
+            sim5.append(Person(pid=f"s5-{q0}-{i}", x=features(m5.x[i, :200], wide_ids)))
+    model5 = fit_model(sim5, spec5, p_, w_)
+    s5 = [x[deployed] for x in score_people(sim5, model5, p_)]
+    real5 = []
+    for pid, g in ls.groupby("pid"):
+        g = g.set_index("date").sort_index()
+        g = g.reindex(pd.date_range(g.index.min(), g.index.max(), freq="D"))
+        if g["rhr"].notna().sum() >= 28:
+            real5.append(Person(pid=pid, x=g[wide_ids].to_numpy(float)))
+    r5 = [x[deployed] for x in score_people(real5, model5, p_)]
+    transfer_wide = {"n_real_people": len(real5), "indicators": "overnight heart rate, HRV, blood oxygen, skin temperature, sleep duration", "budgets": {}}
+    for b in [0.25, 1.0]:
+        t = calibrate(s5, [[] for _ in sim5], b, w_, p_.merge_gap)
+        a = aggregate([person_outcome(x, t, [], w_, p_.merge_gap) for x in r5])
+        transfer_wide["budgets"][str(b)] = {"real_alerts_per_person_month": a["fa_per_person_month"], "real_person_months": a["quiet_person_months"],
+                                            "pass": bool(0.75 * b <= a["fa_per_person_month"] <= 1.25 * b)}
+        print(f"wide transfer: budget {b} -> {a['fa_per_person_month']:.2f} alerts per person-month on {len(real5)} LifeSnaps people ({a['quiet_person_months']:.0f} person-months)")
 
     # ---- illness response: real validation half vs simulated episodes of realistic sizes ----------
     _, val_e = realdata.split_half(realdata.event_pids(events), seed=11)
@@ -166,6 +194,7 @@ def main():
     illness = {"rel_day": REL, "real": band(real_c), "sim": band(sim_c), "real_source": "Stanford phases 1 and 2, validation half of people with a dated illness",
                "pre_onset_bpm_days": {"real": float(np.nansum(np.nanmean(real_c, axis=0)[on - 5:on])), "sim": float(np.nansum(np.nanmean(sim_c, axis=0)[on - 5:on]))},
                "peak_window_mean": {"real": float(np.nanmean(np.nanmean(real_c, axis=0)[on:on + 4])), "sim": float(np.nanmean(np.nanmean(sim_c, axis=0)[on:on + 4]))}}
+    illness["pass"] = bool(abs(illness["peak_window_mean"]["sim"] / illness["peak_window_mean"]["real"] - 1) <= 0.25)
     print("illness real", np.round(illness["real"]["mean"][10:20], 1), "sim", np.round(illness["sim"]["mean"][10:20], 1))
 
     # ---- published in-flight anchors the simulator should reproduce ----------------------------
@@ -198,9 +227,9 @@ def main():
 
     write_json(APP_PUBLIC / "results" / "realism.json", {
         "script": "research/scripts/sim_realism.py", "commit": git_commit(), "code_version": code_version(), "variability": variability, "correlation": correlation,
-        "transfer": transfer, "illness": illness, "anchors": anchors,
+        "transfer": transfer, "transfer_wide": transfer_wide, "illness": illness, "anchors": anchors,
         "criteria": {"variability": "simulated median within 25% of the real median", "carry_over": "lag-1 autocorrelation within 0.15", "correlation": "within 0.15",
-                     "transfer": "real false-alert rate between half and double the budget"},
+                     "illness": "simulated mean rise over the four days from onset within 25% of the real one", "transfer": "real false-alert rate within 25% of the budget"},
         "note": "Real values come from the validation half of each dataset; the calibration script only saw the other half.",
     }, indent=1)
 

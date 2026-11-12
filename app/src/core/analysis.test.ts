@@ -6,7 +6,7 @@ import { features } from './mission'
 import { readiness } from './readiness'
 import type { Entry, Mission } from './types'
 
-const f = (o: Partial<RuleFeatures> = {}): RuleFeatures => ({ u: {}, sym: {}, env: {}, phaseDays: 99, hasPhase: true, alertDays: 1, val: {}, run: () => [], rel: {}, redFlag: false, ...o })
+const f = (o: Partial<RuleFeatures> = {}): RuleFeatures => ({ u: {}, sym: {}, env: {}, phaseDays: 99, hasPhase: true, alertDays: 1, patternDays: 1, val: {}, run: () => [], rel: {}, redFlag: false, ...o })
 const first = (x: RuleFeatures) => RULES.find((r) => r.scope === 'personal' && evalCond(r.when, x))!.id
 
 describe('alert-to-action rule table', () => {
@@ -37,8 +37,10 @@ describe('alert-to-action rule table', () => {
     expect(first(f({ u: { rhr: 0.5, mood: 0.9 } }))).toBe('R-GEN')
   })
   it('escalates with persistence and never de-escalates', () => {
-    expect(applyRule(RULE['R-SLEEP'], f({ u: { sleep_h: 2 }, alertDays: 2 })).tier).toBe('self')
-    expect(applyRule(RULE['R-SLEEP'], f({ u: { sleep_h: 2 }, alertDays: 7 })).tier).toBe('cmo')
+    expect(applyRule(RULE['R-SLEEP'], f({ u: { sleep_h: 2 }, patternDays: 2 })).tier).toBe('self')
+    expect(applyRule(RULE['R-SLEEP'], f({ u: { sleep_h: 2 }, patternDays: 7 })).tier).toBe('cmo')
+    // an alert that has been open for a week for another reason does not escalate a pattern that started today
+    expect(applyRule(RULE['R-ILL'], f({ u: { rhr: 2, temp: 1.5 }, alertDays: 7, patternDays: 1 })).tier).toBe('cmo')
     expect(applyRule(RULE['R-ILL'], f({ u: { rhr: 2, temp: 3.2 } })).tier).toBe('ground')
     expect(applyRule(RULE['R-ILL'], f({ u: { rhr: 2, temp: 1.5 } })).tier).toBe('cmo')
   })
@@ -74,10 +76,23 @@ describe('end to end on the demo mission', () => {
     const mk = (values: Record<string, number>, symptoms: string[] = []): Entry => ({ key: 'k', mission: m.id, crew: 'c0', day: 100, values, symptoms, ts: 0 })
     const rule = (e: Entry) => run('c0', 100, [e]).findings.map((x) => x.ruleId)
     expect(rule(mk({ temp_oral: 38.4 }))).toContain('R-V-TEMP')
+    // 1.0 degree above the person's own earlier thermometer readings also counts
+    const earlier = [70, 76, 82, 88].map((dd) => ({ ...mk({ temp_oral: 36.4 }), key: `k${dd}`, day: dd }))
+    expect(run('c0', 100, [...earlier, mk({ temp_oral: 37.5 })]).findings.map((x) => x.ruleId)).toContain('R-V-TEMP')
+    expect(run('c0', 100, [...earlier, mk({ temp_oral: 37.0 })]).findings.map((x) => x.ruleId)).not.toContain('R-V-TEMP')
     expect(rule(mk({ temp_oral: 39.6 }))).toContain('R-V-TEMP-HI')
     expect(rule(mk({ spo2: 91 }))).toContain('R-V-SPO2')
     expect(rule(mk({ glucose: 62 }))).toContain('R-V-GLU-LO')
+    expect(rule(mk({ glucose: 48 }))).toContain('R-V-GLU-LO2')
+    expect(rule(mk({ glucose: 450 }))).toContain('R-V-GLU-HI2')
     expect(rule(mk({ sbp: 84 }))).toContain('R-V-BP-LO')
+    expect(rule(mk({ sbp: 72 }))).toContain('R-V-BP-LO2')
+    expect(rule(mk({ sbp: 86 }, ['dizziness']))).toContain('R-V-BP-LO2')
+    expect(rule(mk({ sbp: 220 }))).toContain('R-V-BP-HI2')
+    // severity follows the value: a very high or very low reading is never just "worth a look"
+    expect(run('c0', 100, [mk({ sbp: 220 })]).status).not.toBe('watch')
+    expect(run('c0', 100, [mk({ glucose: 48 })]).status).toBe('urgent')
+    expect(run('c0', 100, [mk({ glucose: 66 })]).status).toBe('act')
     expect(rule(mk({ temp_oral: 36.9, glucose: 92, sbp: 118, spo2: 97 })).filter((r) => r.startsWith('R-V'))).toEqual([])
     expect(rule(mk({}, ['vision']))).toContain('R-VIS')
     const a = run('c0', 100, [mk({ spo2: 91 })])

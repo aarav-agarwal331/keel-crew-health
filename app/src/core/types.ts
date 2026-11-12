@@ -147,5 +147,10 @@ export interface Finding {
   score?: number
   threshold?: number
   detectorTier?: 'notice' | 'alert'
+  /** first day of the pattern now showing (the alert itself may have opened earlier for another reason) */
+  patternStart?: number
+  firstNotice?: { day: number; title: string }
+  /** other pattern rules that also hold right now */
+  also?: { title: string; action: string }[]
   categories: string[]
 }

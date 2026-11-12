@@ -249,8 +249,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const saveEntry = useCallback(async (e: Omit<Entry, 'key' | 'ts' | 'mission'>) => {
     if (!mission) return
     const full: Entry = { ...e, mission: mission.id, key: `${mission.id}|${e.crew}|${e.day}`, ts: Date.now() }
-    await store.putEntry(full)
+    // state first, storage second: a screen opened straight after saving must already see the entry
     setEntries((prev) => [...prev.filter((x) => x.key !== full.key), full])
+    await store.putEntry(full)
   }, [mission])
   const logAction = useCallback(async (a: Omit<ActionLog, 'id' | 'ts' | 'mission'>) => {
     if (!mission) return

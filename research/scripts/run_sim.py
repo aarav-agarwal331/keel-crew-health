@@ -62,8 +62,8 @@ def main(ill_fd: dict | None = None):
     # (DOMAIN ref 58) and near the upper quartile of the real episodes the simulator was fitted to
     ILL = round(7.0 / load_params()["illness_rhr_peak"], 2)
     mars = Scenario(name="mars_transit", title="Mars transit", pre_days=L, flight_days=180, events=[
-        Event("co2", -1, L + 38, 1.0), Event("dehydration", 3, L + 58, 1.0), Event("sleep_loss", 0, L + 78, 1.0),
-        Event("decond", 1, L + 96, 1.0), Event("illness", 2, L + ill_fd["mars_transit"], ILL), Event("low_mood", 3, L + 150, 1.0),
+        Event("co2", -1, L + 38, 1.0), Event("dehydration", 3, L + 52, 1.0), Event("sleep_loss", 0, L + 64, 1.0),
+        Event("decond", 1, L + 78, 1.0), Event("illness", 2, L + ill_fd["mars_transit"], ILL), Event("low_mood", 3, L + 150, 1.0),
         Event("spe", -1, L + 163, 1.0),
     ])
     write_json(APP_PUBLIC / "data" / "missions" / "mars_transit.json", build(mars, 2039, {

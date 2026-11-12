@@ -36,7 +36,7 @@ export default function App() {
   switch (page) {
     case 'trends': screen = <Trends focus={route[1]} />; break
     case 'alert': screen = <Alert alertKey={route[1]} />; break
-    case 'checkin': screen = <CheckIn />; break
+    case 'checkin': screen = <CheckIn open={route[1]} key={route[1] ?? 'checkin'} />; break
     case 'crew': screen = <Crew />; break
     case 'sharing': screen = <Sharing />; break
     case 'link': screen = <LinkScreen />; break

@@ -15,7 +15,7 @@ import { allows, SHARE_CATEGORIES, type Level, type Role, type SharingSettings }
 import type { Finding, Status } from './types'
 
 export interface VisibleIndicator { ind: string; inRange: boolean; value?: number; expected?: number }
-export interface VisibleFinding { emergency?: boolean; key: string; category: string; status: Status; days: number; title?: string; tier?: string; action?: string; summary?: string; changes?: Finding['changes']; factors?: Finding['factors'] }
+export interface VisibleFinding { emergency?: boolean; steps?: string[]; countermeasures?: string[]; urgency?: string; key: string; category: string; status: Status; days: number; title?: string; tier?: string; action?: string; summary?: string; changes?: Finding['changes']; factors?: Finding['factors'] }
 export interface RoleView {
   overall: Status | 'private'
   categories: Record<string, { level: Level; status?: Status; indicators?: VisibleIndicator[] }>
@@ -69,6 +69,9 @@ export function viewFor(role: Role, a: DayAnalysis, share: SharingSettings, valu
     if (allows(level, 'detail')) {
       v.action = f.action
       v.summary = f.summary
+      v.steps = f.steps
+      v.countermeasures = f.countermeasures
+      v.urgency = f.urgency
       // only the changes and factors that belong to categories shared in full
       v.changes = f.changes.filter((c) => allows((s as Record<string, Level>)[IND[c.ind]?.category] ?? 'none', 'detail'))
       v.factors = f.factors.filter((x) => allows((s as Record<string, Level>)[FACTOR_CATEGORY[x.id]] ?? 'none', 'detail') || FACTOR_CATEGORY[x.id] === 'environment')

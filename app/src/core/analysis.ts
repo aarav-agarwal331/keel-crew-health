@@ -23,6 +23,7 @@ type Cond =
   | { phase_days_max: number }
   | { phase_days_min: number }
   | { alert_days_min: number }
+  | { pattern_days_min: number }
   | { always: boolean }
   | { red_flag: boolean }
   | { val: string; min?: number; max?: number }
@@ -56,7 +57,10 @@ export interface RuleFeatures {
   env: Record<string, number>
   phaseDays: number
   hasPhase: boolean
+  /** days the detector's alert has been open */
   alertDays: number
+  /** days in a row the same pattern rule has applied (escalation counts these, not the whole alert) */
+  patternDays: number
   /** latest entered or measured value within the last two days, for fixed-threshold rules */
   val: Record<string, number>
   /** the last n measured values of an indicator (within n + 3 days), newest last; empty if fewer than n */
@@ -76,6 +80,7 @@ export function evalCond(c: Cond, f: RuleFeatures): boolean {
   if ('phase_days_max' in c) return f.hasPhase && f.phaseDays <= c.phase_days_max
   if ('phase_days_min' in c) return f.hasPhase && f.phaseDays >= c.phase_days_min
   if ('alert_days_min' in c) return f.alertDays >= c.alert_days_min
+  if ('pattern_days_min' in c) return f.patternDays >= c.pattern_days_min
   if ('always' in c) return true
   if ('red_flag' in c) return f.redFlag
   if ('val' in c) {
@@ -238,7 +243,7 @@ export function analyzeDay(
   const mineE = entries.filter((e) => e.crew === crewId && e.mission === m.id)
   const recent = (id: string, back: number) => lastValid(rawSeries(m, crewId, id, entries), day, back)
   const manual = (id: string) => {
-    for (let t = day; t > day - 2; t--) { const e = mineE.find((q) => q.day === t); if (e && id in e.values) return e.values[id] }
+    for (let t = day; t > day - 7; t--) { const e = mineE.find((q) => q.day === t); if (e && id in e.values) return e.values[id] }
     return NaN
   }
   const run = (id: string, n: number): number[] => {
@@ -251,10 +256,29 @@ export function analyzeDay(
   const pre = massS.slice(0, Math.max(1, m.pre_days)).filter((v) => !Number.isNaN(v)).sort((x, y) => x - y)
   const massNow = lastValid(massS, day, 10)
   const rel: Record<string, number> = m.pre_days > 0 && pre.length >= 2 && !Number.isNaN(massNow) && day >= m.pre_days ? { mass: massNow / pre[Math.floor(pre.length / 2)] - 1 } : {}
-  const symRecent = new Set<string>([...symptomsOn(m, crewId, day, entries), ...(day > 0 ? symptomsOn(m, crewId, day - 1, entries) : [])])
-  const redFlag = [...symRecent].some((x) => SYM[x]?.red_flag)
-  const val: Record<string, number> = { temp_oral: recent('temp_oral', 2), glucose: recent('glucose', 2), sbp: recent('sbp', 2), spo2_manual: manual('spo2') }
-  const f: RuleFeatures = { u: u3, sym, env, phaseDays: ph.since, hasPhase, alertDays: alert?.days ?? 0, val, run, rel, redFlag }
+  // a red flag stays open for three days unless a later check-in by the crew member leaves it out
+  const lastEntry = mineE.filter((q) => q.day <= day && q.day > day - 3).sort((a, b) => b.day - a.day)[0]
+  const redFlag = [...symptomsOn(m, crewId, day, entries), ...(lastEntry?.symptoms ?? [])].some((x) => SYM[x]?.red_flag)
+  const tOral = rawSeries(m, crewId, 'temp_oral', entries)
+  const tNow = recent('temp_oral', 7)
+  const tPrev = tOral.slice(0, Math.max(0, day - 6)).filter((v) => !Number.isNaN(v)).sort((x, y) => x - y)
+  const tUsual = tPrev.length >= 3 ? tPrev[Math.floor(tPrev.length / 2)] : NaN
+  const val: Record<string, number> = { temp_oral: tNow, temp_oral_rise: tNow - tUsual, glucose: recent('glucose', 7), sbp: recent('sbp', 7), spo2_manual: manual('spo2') }
+  const f: RuleFeatures = { u: u3, sym, env, phaseDays: ph.since, hasPhase, alertDays: alert?.days ?? 0, patternDays: 0, val, run, rel, redFlag }
+  // which pattern rule applied on an earlier day of the same alert (used to date the pattern)
+  const personalRuleAt = (t: number): string | null => {
+    if (!alert || t < alert.start) return null
+    const u: Record<string, number> = {}
+    for (let j = 0; j < d; j++) {
+      const v: number[] = []
+      for (let q = Math.max(0, t - 2); q <= t; q++) if (!Number.isNaN(uAt(q, j))) v.push(uAt(q, j))
+      u[ids[j]] = mean(v)
+    }
+    const sy: Record<string, number> = {}
+    for (let q = Math.max(0, t - 2); q <= t; q++) for (const x of symptomsOn(m, crewId, q, entries)) sy[x] = (sy[x] ?? 0) + 1
+    const ft: RuleFeatures = { ...f, u, sym: sy, alertDays: t - alert.start + 1, patternDays: 0 }
+    return (RULES.find((q) => q.scope === 'personal' && evalCond(q.when, ft)) ?? RULE['R-GEN']).id
+  }
   // days in a row with no fresh reading at all (rolling averages do not count as fresh)
   const fresh = ['rhr', 'hrv', 'spo2', 'temp', 'sleep_h', 'mood', 'pvt_rt', 'fluid', 'energy', 'ex_min', 'steps'].map((id) => rawSeries(m, crewId, id, entries))
   let staleDays = 0
@@ -318,6 +342,11 @@ export function analyzeDay(
   }
   if (alert && !learning) {
     const r = RULES.find((q) => q.scope === 'personal' && evalCond(q.when, f)) ?? RULE['R-GEN']
+    let patternDays = 1
+    for (let t = day - 1; t >= alert.start && patternDays < 60; t--) { if (personalRuleAt(t) === r.id) patternDays++; else break }
+    f.patternDays = patternDays
+    const firstRule = patternDays < alert.days ? RULE[personalRuleAt(alert.start) ?? 'R-GEN'] : null
+    const also = RULES.filter((q) => q.scope === 'personal' && q.id !== r.id && !['R-GEN', 'R-CARD'].includes(q.id) && evalCond(q.when, f)).map((q) => ({ title: q.title, action: q.action }))
     const t = applyRule(r, f)
     // Escalation beyond self-management needs the stricter detector tier (its own, smaller
     // false-alert budget) or a symptom the crew member reported themselves.
@@ -328,7 +357,9 @@ export function analyzeDay(
     const evidence = [...changes.filter((c) => named.includes(c.ind)), ...changes.filter((c) => !named.includes(c.ind) && c.notable)].slice(0, 4)
     const cats = new Set<string>([...r.categories, ...evidence.map((c) => IND[c.ind]?.category ?? 'cardio')])
     findings.push(mk(r, 'personal', alert.start, status, evidence, {
-      score: alert.score, threshold: model.thresholds.notice, categories: [...cats], detectorTier: alert.tier, urgency: (t.tier !== 'self' && !early ? 'today' : 'routine') as Urgency,
+      score: alert.score, threshold: model.thresholds.notice, categories: [...cats], detectorTier: alert.tier, days: patternDays, patternStart: day - patternDays + 1,
+      firstNotice: firstRule ? { day: alert.start, title: firstRule.title } : undefined, also,
+      factors: ['R-ILL'].includes(r.id) ? factors.filter((x) => x.id !== 'mood') : factors, urgency: (t.tier !== 'self' && !early ? 'today' : 'routine') as Urgency,
       ...(early ? { tier: 'self' as Tier, tierReason: 'Early signal. Keel will suggest involving the medical officer if it strengthens, lasts, or you report symptoms.', action: r.action.replace(/,? and tell the medical officer\.$/, '.').replace(/ Tell the medical officer\.$/, '') } : {}),
     }))
   }
@@ -349,7 +380,7 @@ export function analyzeDay(
       const uu = u3[id]
       if (Number.isNaN(uu)) continue
       // without an open alert an area can be at most "worth a look"; "act" always comes from a finding
-      const one: Status = uu >= 1.5 || uAt(day, j) >= 2 ? 'watch' : 'steady'
+      const one: Status = uu >= 2 || uAt(day, j) >= 3 ? 'watch' : 'steady'
       if (rank[one] > rank[st]) st = one
     }
     for (const fd of findings) {
@@ -377,13 +408,19 @@ export function describeChange(c: Change): string {
   const d = def.decimals
   const v = Number.isNaN(c.value) ? '–' : c.value.toFixed(d)
   if (Number.isNaN(c.u3)) return `${def.label} is ${v} ${def.unit}.`
-  const dir = c.ind === 'sleep_mid' ? 'shifted' : c.direction
-  return `${def.label} is ${dir === 'shifted' ? 'shifted' : dir + ' than your normal'}: ${v} ${def.unit} against your usual ${c.expected.toFixed(d)}.`
+  const dir = c.ind === 'sleep_mid' ? 'shifted from' : c.direction === 'higher' ? 'higher than' : 'lower than'
+  return `${def.label}: ${v} ${def.unit}, ${dir} your usual ${c.expected.toFixed(d)}.${c.ind === 'temp' ? ' Wrist skin temperature, not a fever reading.' : ''}`
 }
 
 export function unusualness(c: Change): string {
   if (Number.isNaN(c.percentile) || !c.nHist) return 'Not enough history yet to say how unusual this is for you.'
-  const days = c.daysOut > 1 ? ` Outside your usual range for ${c.daysOut} days.` : c.daysOut === 1 ? ' Outside your usual range today.' : ''
-  if ((c.nLess ?? 0) >= c.nHist) return `Further from your normal than on any of your last ${c.nHist} measured days.${days}`
-  return `Further from your normal than on ${c.nLess} of your last ${c.nHist} measured days.${days}`
+  const days = c.daysOut > 1 ? ` Out of your range for ${c.daysOut} days.` : ''
+  if ((c.nLess ?? 0) >= c.nHist) return `Your most unusual reading in ${c.nHist} days.${days}`
+  return `More unusual than ${c.nLess} of your last ${c.nHist} days.${days}`
+}
+
+/** Which kind of evidence stands behind using this indicator. */
+export function evidenceTag(ind: string): string {
+  const e = (IND[ind] as unknown as { evidence?: string })?.evidence
+  return e === 'real' ? 'Tested on real data' : e === 'reference' ? 'Fixed reference values' : 'Tested in simulation only'
 }

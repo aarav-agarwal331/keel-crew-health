@@ -23,7 +23,7 @@ export function Trends({ focus }: { focus?: string }) {
     if (an && j >= 0) for (const s of starts) {
       let hit = false
       for (let t = s; t <= Math.min(day, s + 3); t++) if (concernDev(an.scored.z[t][j], model.concern[j]) >= 1.5) hit = true
-      if (hit) out.push({ day: s, label: `Alert began ${shortDay(mission, s)}`, kind: 'alert' })
+      if (hit && s > day - 60) out.push({ day: s, label: 'Notice', kind: 'alert' })
     }
     for (const a of actions.filter((x) => x.mission === mission.id && x.crew === me)) out.push({ day: a.day, label: 'You logged', kind: 'log' })
     return out
@@ -45,12 +45,12 @@ export function Trends({ focus }: { focus?: string }) {
       <div className="grid2">
         {ordered.map((def) => {
           const b = bandFor(mission, model, an, me, def.id, mine)
-          const last = [...Array(4).keys()].map((k) => b.values[day - k]).find((v) => v !== undefined && !Number.isNaN(v))
+          const last = [...Array(Math.min(day + 1, 14)).keys()].map((k) => b.values[day - k]).find((v) => v !== undefined && !Number.isNaN(v))
           if (!b.values.slice(0, day + 1).some((v) => !Number.isNaN(v))) return focus === def.id ? <Card key={def.id} title={def.label}><p className="muted">No readings yet. Enter one at check-in.</p><p className="small">{def.how}</p></Card> : null
           const std = (def as unknown as { standard?: { value: number; label: string } }).standard
-          const refLines = def.id === 'co2' ? [{ y: 2.5, label: 'Headaches more likely above 2.5' }, { y: 3.0, label: 'ISS limit 3.0' }]
+          const refLines = def.id === 'co2' ? [{ y: 2.5, label: 'Headaches more likely above 2.5' }, { y: 3.0, label: 'Level ISS operations manage to: 3.0' }]
             : def.id === 'glucose' ? [{ y: 70, label: 'Low below 70' }, { y: 99, label: 'Fasting normal up to 99' }]
-            : def.id === 'sbp' ? [{ y: 90, label: 'Normal from 90' }, { y: 120, label: 'to 120' }]
+            : def.id === 'sbp' ? [{ y: 120, label: 'Normal 90 to 120' }, { y: 90, label: '' }]
             : std ? [{ y: std.value, label: std.label }] : undefined
           const band = b.hasBand && def.id !== 'glucose'
           const rows = Array.from({ length: Math.min(14, day - from + 1) }, (_, k) => day - k)
@@ -58,7 +58,7 @@ export function Trends({ focus }: { focus?: string }) {
             <Card key={def.id} id={`ind-${def.id}`} className={focus === def.id ? 'action' : ''} title={def.label} right={<span className="num"><strong style={{ fontSize: '1.25rem' }}>{last === undefined ? '–' : last.toFixed(def.decimals)}</strong> <span className="small muted">{def.unit}</span></span>}>
               <TrendChart values={b.values} expected={band ? b.expected : undefined} lo={band ? b.lo : undefined} hi={band ? b.hi : undefined} from={from} to={day}
                 labelFor={(t) => shortDay(mission, t)} unit={def.unit} decimals={def.decimals} markers={markersFor(def.id)} refLines={refLines} concern={def.concern} ariaLabel={`${def.label} over time against your usual range`} />
-              <p className="small muted">{def.plain}{std ? ` Your usual is not the standard: ${std.label.toLowerCase()}.` : ''}{def.id === 'glucose' ? ' Shown against general reference values, not a personal range.' : ''}</p>
+              <p className="small muted">{def.plain}{std ? ` Your usual is not the standard. Standard: ${std.label}.` : ''}{def.id === 'glucose' ? ' Shown against general reference values, not a personal range.' : ''}</p>
               <details>
                 <summary>Why it matters, how to measure, and the numbers</summary>
                 <div className="col small">

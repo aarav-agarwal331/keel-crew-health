@@ -175,17 +175,21 @@ training people's quiet periods produce at most *B*. Two tiers: **notice** (B = 
 inside the budget.
 
 **Which detector is deployed** is decided in `fit_mission_model.py` on simulated *training* missions
-only, by a rule fixed in advance: order the candidates from simplest to most complex (z-score rule,
-CUSUM, multivariate EWMA, fusion) and move to a more complex one only if it flags more than 3
-percentage points more events *above luck* (section 6), averaged over the two tiers. It selected the
-multivariate EWMA (31.7 against 27.5 for the z-score rule). Real data and test missions had no vote.
-On the test missions the z-score rule was in fact slightly ahead, and on real data the multivariate
-detector was; the four personal detectors cannot be told apart with the data we have.
+only: order the candidates from simplest to most complex (z-score rule, CUSUM, multivariate EWMA,
+fusion) and move to a more complex one only if it flags more than 3 percentage points more events
+*above luck* (section 6), averaged over the two tiers. This rule was written during review round 1,
+after the first results; the original rule was "highest raw detection". Under the new rule the choice
+flipped once: it first selected the z-score rule, and after the simulator was given the real
+correlation between heart rate and HRV it selected the multivariate EWMA (30.8 against 27.8). Real
+data and test missions had no vote, but the history means this is not a pre-registered choice. On
+the test missions the z-score rule was slightly ahead, on real data the multivariate detector was;
+at the notice tier the four personal detectors cannot be told apart.
 
 **Rules outside the detector.** Some things do not depend on a personal baseline or cannot wait for
 one, and have fixed rules that are always evaluated: red-flag symptoms; a single entered reading
-beyond a safety threshold (thermometer ≥ 38.0 °C [63], fingertip oxygen ≤ 92% [57], blood sugar
-< 70 mg/dL [64], systolic pressure < 90 mmHg [65]); resting heart rate above 100 on two nights; very
+beyond a safety threshold (thermometer ≥ 38.0 °C or 1.0 °C above the person's own earlier readings
+[63], fingertip oxygen ≤ 92% [57], blood sugar < 70 and < 54 mg/dL [64], systolic pressure < 90 mmHg
+[65], with severe tiers at 39.4 °C, 300 mg/dL, 180 and 80 mmHg, the last three being placeholders); resting heart rate above 100 on two nights; very
 low mood for days; body mass ≥ 5% below pre-flight; cabin CO2 at or above 3.0 mmHg as a 24-hour
 mean [38]; and a cabin CO2 above 2.5 mmHg together with a reported headache [37]. A reported sore
 throat or cough together with a sub-threshold drift in heart rate, HRV, temperature or oxygen also
@@ -221,8 +225,10 @@ radiation alarm [47][48]. After two days without any reading the status is "no r
 - **Intervals.** 95% percentile bootstrap, resampling people (real) or missions (simulated, because
   crewmates share a cabin). A person's real events and pseudo-events are resampled together; method
   differences use paired resampling.
-- **The window** (−10 to +4 days) was fixed before the first run on real data. The table of other
-  windows was computed afterwards.
+- **The window.** It was narrowed from −14..+7 to −10..+4 days while the real-data evaluation was
+  being written. The commit history cannot show that this preceded the first run, and of the four
+  windows later tabulated it has the largest gap above luck, so the original window's result (+27) is
+  the conservative figure.
 - **Leakage guards.** Causal baselines; thresholds from training people (unit test
   `test_cv_never_scores_a_person_with_a_model_that_saw_them`); simulator calibrated on a different half
   of the people than the realism check uses; detector selected on training missions.
@@ -230,12 +236,12 @@ radiation alarm [47][48]. After two days without any reading the status is "no r
 ### 6.1 Real data (`eval_real.py`)
 
 Stanford COVID-19 wearables phase 1 [58] and a phase 2 subset (all 84 positives plus 120 others).
-324 people were downloaded (all 120 of phase 1; all 84 positives of phase 2 plus the first 60 Fitbit
+324 recordings were downloaded (120 recordings from 118 people in phase 1; all 84 positives of phase 2 plus the first 60 Fitbit
 and first 60 other-device participants in ID order, which is not a random draw). 73 were left out for
 having fewer than 28 nights with a usable resting heart rate, leaving 251 people, 37,234 person-days
-and 103 illness episodes (79 COVID-19 with a symptom date, 19 with a test date only, 5 other illness).
-Of the 150 people without a dated episode, 64 reported no illness, 80 are phase 2 participants who
-were never confirmed healthy, and 6 reported an illness outside their recording. Further analyses:
+and 107 illness episodes (79 COVID-19 with a symptom date, 19 with a test date only, 9 other illness).
+Of the 146 people without a dated episode, 64 reported no illness, 80 are phase 2 participants who
+were never confirmed healthy, and 2 reported an illness outside their recording. Further analyses:
 train on one phase and test on the other, five fold seeds, retrospective against prospective cases,
 and the predictive value of an alert at the in-flight illness rate [52b]. Indicators: resting heart rate and daily steps (log scale, low is a concern). Onset =
 symptom date where reported, else test date. Episodes within 28 days of each other are one.
@@ -267,7 +273,7 @@ baseline, with the baseline restarted, with the band also widened, and with the 
 
 Keel computes, for each indicator, the mean `u` over the last three measured days; symptom counts
 over three days; the latest entered spot readings; the cabin readings; days since the last phase
-change; and days the detector's alert has been open. A fixed, ordered table of 28 rules is evaluated.
+change; and days the detector's alert has been open. A fixed, ordered table of 32 rules is evaluated.
 Rules have a scope:
 
 - **personal**: evaluated only while the detector has an alert open; the first one whose condition
@@ -287,7 +293,8 @@ Every finding supplies:
   (DOMAIN.md section 5 and references 63–67);
 - **how soon** (now, today, at the next routine opportunity) and **who** (the crew member alone, the
   medical officer, or the medical officer with the flight surgeon consulted when a link exists).
-  A rule may raise either when the pattern persists. For personal rules, going beyond
+  A rule may raise the audience when the pattern persists; persistence is counted from the day that
+  pattern began, not from the day the detector's alert opened. For personal rules, going beyond
   self-management requires the stricter alert tier or a symptom the person reported.
 
 The rule table is data, not code: it is shown in full in the app (Guide), and each alert displays the
@@ -298,32 +305,41 @@ every screen's status for a person agrees.
 
 ## 8. What the evaluation showed
 
-Numbers are in the app's Validation screen and in `app/public/results/*.json`.
+Numbers are in the app's Validation screen and in `app/public/results/*.json` (all four files carry
+the same code version).
 
-- **Real data, 1 false alert per person-month.** Keel flags 67% of illness episodes; luck gives 36%;
-  **+31 points above luck (95% interval 21 to 41)**. A fixed threshold: 40%, luck 24%, +15 (6 to 25).
-  Keel's advantage above luck: +15 (2 to 30). Measured false alerts: 1.00 (0.91 to 1.08).
-- **At 0.25 per person-month.** Keel 43%, luck 12%, +31 (21 to 41); fixed threshold +12 (5 to 19);
-  advantage +19 (8 to 30). Measured false alerts: 0.24.
-- **No early warning.** 40% of episodes had an alert start in the ten days up to onset; luck gives 28%.
-- **Most alerts are false.** At 0.97 upper-respiratory episodes per person-year [52b], about 1 in 11
-  alert-tier alerts and 1 in 41 notices would be such an illness.
-- **The simple rule nearly matches.** Two-of-three-days personal z-score: +26 (16 to 36).
-- **Steps carry most of the signal** (heart rate alone +14; with steps +31), largely because people
-  move less once they feel ill. Adjusting heart rate for the previous day's steps does not help.
+- **Real data, 1 false alert per person-month.** Keel flags 66% of 107 illness episodes; luck gives
+  36%; **+30 points above luck (95% interval 20 to 40)**. A fixed threshold: 41%, luck 25%, +17
+  (7 to 27). Keel's advantage above luck: +14 (0 to 28). Measured false alerts: 0.99.
+- **At 0.25 per person-month.** With daily steps: 43%, luck 11%, +32 (22 to 42); fixed threshold +9
+  (3 to 17). With the 7-day activity average, which is what the app's detector uses: +12 (3 to 20).
+- **No early warning.** 39% of episodes had an alert start in the ten days up to onset; luck gives 29%.
+- **Most alerts are false.** At 0.97 upper-respiratory episodes per person-year [52b], between 1 in 11
+  (daily steps) and 1 in 28 (7-day activity) alert-tier alerts would be such an illness; about 1 in 41
+  to 46 notices.
+- **The simple rule nearly matches.** Two-of-three-days personal z-score: +27 (17 to 38); its lead
+  over the fixed threshold, the like-for-like test of the personal baseline, is +11 (−3 to 25).
+- **Steps carry much of the signal.** Heart rate alone: +17 (7 to 27). Median daily steps fall from
+  7,554 to 4,210 in the five days from onset. Dates are shifted per person, so this cannot be
+  separated from isolation and lockdowns. Adjusting heart rate for the previous day's steps does not
+  help.
 - **Robustness.** Train on phase 1, test on phase 2: +29 above luck, 0.87 false alerts per
-  person-month; the reverse: +38, 1.10. Five fold seeds: +31 to +33.
-- **Simulation, full sensor set.** 67% (61 to 73), luck 40%, +26 (20 to 33). The z-score rule: +31.
-- **Mission-phase handling.** False alerts in the first 30 flight days: 0.90 per person-month against
-  1.98 without it, and it does not depend on a correct prior (1.06 with no expected shift). Cost:
-  events beginning in the first 25 flight days are flagged +19 above luck against +34 without it.
+  person-month; the reverse: +36, 1.11. Five fold seeds: +30 to +32. Original window: +27.
+- **Simulation, full sensor set.** 67% (60 to 73), luck 40%, +26 (20 to 33); lead over the fixed
+  threshold +7 (−2 to 14). The z-score rule: +30.
+- **Mission-phase handling.** False alerts in the first 30 flight days: 0.89 per person-month against
+  1.97 without it, and it does not depend on a correct prior (1.05 with no expected shift). Cost:
+  events beginning in the first 25 flight days are flagged +20 above luck against +35 without it.
 - **NASA bed-rest data.** After getting up, a plain baseline flags 9 of 14 volunteers; restarting the
   baseline, 8; widening the band, 4; adding the learned shift, 4 (exact paired p = 0.06).
 - **Simulator against reality.** Like for like on two channels, simulated illness is flagged +13 above
-  luck (2 to 23) against +28 (12 to 44) for real validation-half episodes: the simulator is harder.
-  Thresholds calibrated in simulation and applied to 144 real quiet people gave 1.39 false alerts per
-  person-month against a budget of 1.00, and 0.42 against 0.25. Simulated HRV is 37% more variable
-  than real, and simulated sleep carries over from night to night where real sleep does not.
+  luck (3 to 22) against +32 (15 to 48) for real validation-half episodes; the simulated exercise cut
+  (30%) was set by hand with this comparison in view. Thresholds calibrated in simulation and applied
+  to 72 real quiet people (validation half) gave 1.38 false alerts per person-month against a budget
+  of 1.00, and 0.39 against 0.25; with five indicators on 36 LifeSnaps people, 1.85 and 0.93. Against
+  its pass marks the simulator fails on HRV variability (37% too high), sleep carry-over, and the
+  size of the illness heart-rate rise over the four days from onset (2.1 bpm simulated, 4.6 real);
+  it passes on the other variabilities and on all four between-indicator correlations.
 
 ## 9. Crew readiness, sharing and the link
 

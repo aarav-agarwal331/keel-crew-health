@@ -1,5 +1,5 @@
 {
- "version": "1.1",
+ "version": "1.2",
  "note": "Auditable alert-to-action rules. Scopes: 'personal' rules are evaluated only while the detector has an open alert, so their false-alert rate is set by the detector's budget. 'vital', 'symptom', 'environment' and 'adaptation' rules bypass the detector: they react to a single entered value, a reported symptom or a cabin reading. u = mean deviation over the last three measured days, in robust standard deviations, in the direction of concern. Fixed thresholds are general clinical guidance or placeholders and need sign-off by a flight surgeon.",
  "rules": [
   {
@@ -65,7 +65,7 @@
     "val": "temp_oral",
     "min": 39.4
    },
-   "summary": "You entered a high fever. Keel does not interpret it.",
+   "summary": "You entered a temperature of 39.4 °C or more. Keel does not interpret it.",
    "action": "Tell the medical officer now.",
    "steps": [
     "No exercise.",
@@ -86,12 +86,20 @@
    "scope": "vital",
    "priority": 1.3,
    "urgency": "today",
-   "title": "Thermometer reading is 38.0 °C or higher",
+   "title": "Thermometer reading is in the fever range",
    "when": {
-    "val": "temp_oral",
-    "min": 38.0
+    "any": [
+     {
+      "val": "temp_oral",
+      "min": 38.0
+     },
+     {
+      "val": "temp_oral_rise",
+      "min": 1.0
+     }
+    ]
    },
-   "summary": "You entered a temperature in the fever range by general guidance. Body temperature may run higher on long flights, so the medical officer should judge it against your earlier readings.",
+   "summary": "You entered a temperature of 38.0 °C or more, or at least 1.0 °C above your own earlier thermometer readings. Body temperature may run higher on long flights, so the medical officer should judge it against your earlier readings.",
    "action": "No exercise today, and see the medical officer today.",
    "steps": [
     "Repeat the reading in four hours and log symptoms at check-in.",
@@ -109,24 +117,74 @@
    ]
   },
   {
-   "id": "R-V-GLU-LO",
+   "id": "R-V-GLU-LO2",
    "scope": "vital",
-   "priority": 1.4,
+   "priority": 1.35,
    "urgency": "now",
-   "title": "Blood sugar reading is below 70 mg/dL",
+   "title": "Blood sugar reading is below 54 mg/dL",
    "when": {
     "val": "glucose",
-    "max": 69.99
+    "max": 53.99
    },
-   "summary": "The reading you entered is below the level general guidance calls low. For some lean, fit people a fasting value just under 70 can be normal; Keel cannot tell.",
-   "action": "Eat or drink something sugary now and tell the medical officer.",
+   "summary": "The reading you entered is in the range that general guidance says can cause unclear thinking or seizure. Keel does not interpret it.",
+   "action": "Eat or drink something sugary now and tell the medical officer now.",
    "steps": [
-    "Repeat the reading in 15 minutes.",
-    "Do not exercise or do critical tasks until it is back above 70 and you feel normal.",
-    "Below 54 mg/dL, or if you feel shaky, sweaty or confused: this is urgent."
+    "Stay with another crew member.",
+    "Repeat the reading in 15 minutes."
    ],
    "tier": "cmo",
    "tier_reason": "A fixed safety threshold, not a trend.",
+   "cm": [
+    "CM-VITALS"
+   ],
+   "categories": [
+    "nutrition"
+   ]
+  },
+  {
+   "id": "R-V-GLU-LO",
+   "scope": "vital",
+   "priority": 1.4,
+   "urgency": "today",
+   "title": "Blood sugar reading is between 54 and 69 mg/dL",
+   "when": {
+    "val": "glucose",
+    "min": 54,
+    "max": 69.99
+   },
+   "summary": "The reading you entered is below the level general guidance calls low. For some lean, fit people a fasting value just under 70 can be normal; Keel cannot tell.",
+   "action": "Eat or drink something sugary, repeat the reading in 15 minutes, and tell the medical officer today.",
+   "steps": [
+    "If you feel shaky, sweaty or confused, tell the medical officer now.",
+    "Do not exercise or do critical tasks until it is back above 70 and you feel normal."
+   ],
+   "tier": "cmo",
+   "tier_reason": "A fixed safety threshold, not a trend.",
+   "cm": [
+    "CM-VITALS"
+   ],
+   "categories": [
+    "nutrition"
+   ]
+  },
+  {
+   "id": "R-V-GLU-HI2",
+   "scope": "vital",
+   "priority": 1.45,
+   "urgency": "now",
+   "title": "Blood sugar reading is 300 mg/dL or higher",
+   "when": {
+    "val": "glucose",
+    "min": 300
+   },
+   "summary": "The reading you entered is far above the usual range. Keel does not interpret it.",
+   "action": "Tell the medical officer now.",
+   "steps": [
+    "Repeat the reading once with a clean fingertip.",
+    "Tell them about vomiting, great thirst or confusion."
+   ],
+   "tier": "cmo",
+   "tier_reason": "A fixed safety threshold. Placeholder threshold for a clinician to set; not from a cited source.",
    "cm": [
     "CM-VITALS"
    ],
@@ -142,9 +200,10 @@
    "title": "Blood sugar reading is 200 mg/dL or higher",
    "when": {
     "val": "glucose",
-    "min": 200
+    "min": 200,
+    "max": 299.99
    },
-   "summary": "The reading you entered is in a range that general guidance links to diabetes when it is found on a random test. One reading proves nothing.",
+   "summary": "The reading you entered is well above the usual range. One reading proves nothing.",
    "action": "Repeat the reading before breakfast tomorrow and show both to the medical officer.",
    "steps": [
     "Clean the fingertip and wipe away the first drop.",
@@ -160,6 +219,55 @@
    ]
   },
   {
+   "id": "R-V-BP-LO2",
+   "scope": "vital",
+   "priority": 1.55,
+   "urgency": "now",
+   "title": "Upper blood pressure reading is very low",
+   "when": {
+    "any": [
+     {
+      "val": "sbp",
+      "max": 79.99
+     },
+     {
+      "all": [
+       {
+        "val": "sbp",
+        "max": 89.99
+       },
+       {
+        "any": [
+         {
+          "sym": "dizziness",
+          "min": 1
+         },
+         {
+          "sym": "fainting",
+          "min": 1
+         }
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   "summary": "You entered an upper reading below 80 mmHg, or below 90 with dizziness or fainting. Keel does not interpret it.",
+   "action": "Lie flat if you can, and tell the medical officer now.",
+   "steps": [
+    "Stay with another crew member.",
+    "Repeat the reading in five minutes."
+   ],
+   "tier": "cmo",
+   "tier_reason": "A fixed safety threshold. Placeholder threshold for a clinician to set; not from a cited source.",
+   "cm": [
+    "CM-VITALS"
+   ],
+   "categories": [
+    "cardio"
+   ]
+  },
+  {
    "id": "R-V-BP-LO",
    "scope": "vital",
    "priority": 1.6,
@@ -167,6 +275,7 @@
    "title": "Upper blood pressure reading is below 90 mmHg",
    "when": {
     "val": "sbp",
+    "min": 80,
     "max": 89.99
    },
    "summary": "The reading you entered is below the normal adult range. Keel does not interpret it.",
@@ -183,23 +292,30 @@
    "categories": [
     "cardio"
    ],
-   "escalate": [
-    {
-     "when": {
-      "any": [
-       {
-        "sym": "dizziness",
-        "min": 1
-       },
-       {
-        "sym": "fainting",
-        "min": 1
-       }
-      ]
-     },
-     "tier": "cmo",
-     "reason": "Low reading with dizziness: tell the medical officer now."
-    }
+   "escalate": []
+  },
+  {
+   "id": "R-V-BP-HI2",
+   "scope": "vital",
+   "priority": 1.65,
+   "urgency": "today",
+   "title": "Upper blood pressure reading is 180 mmHg or higher",
+   "when": {
+    "val": "sbp",
+    "min": 180
+   },
+   "summary": "You entered a very high upper reading. Keel does not interpret it.",
+   "action": "Rest five minutes and repeat. If it is still 180 or more, tell the medical officer today.",
+   "steps": [
+    "Tell the medical officer now if you have a headache, chest pain, breathlessness or a vision change."
+   ],
+   "tier": "cmo",
+   "tier_reason": "A fixed safety threshold. Placeholder threshold for a clinician to set; not from a cited source.",
+   "cm": [
+    "CM-VITALS"
+   ],
+   "categories": [
+    "cardio"
    ]
   },
   {
@@ -210,7 +326,8 @@
    "title": "Upper blood pressure reading is 140 mmHg or higher",
    "when": {
     "val": "sbp",
-    "min": 140
+    "min": 140,
+    "max": 179.99
    },
    "summary": "The reading you entered is above the normal adult range. A single high reading is common after effort, caffeine or stress.",
    "action": "Rest quietly for five minutes, repeat the reading, and show both to the medical officer at your next conference.",
@@ -278,7 +395,7 @@
    "steps": [
     "If you have thoughts of harming yourself, or cannot function, tell the medical officer or the commander now.",
     "A private conference with the support team at home can be recorded and sent when a link opens.",
-    "You decide what is shared; this recommendation is shown only to you."
+    "You decide what is shared. The commander sees only that a conversation with the medical officer is advised, not why."
    ],
    "tier": "cmo",
    "tier_reason": "Sustained very low mood should not wait for a trend.",
@@ -302,8 +419,8 @@
    "summary": "Vision changes are common on long flights and have no proven countermeasure, so they should be recorded and reviewed.",
    "action": "Tell the medical officer today.",
    "steps": [
-    "Now, not today, if it is sudden, in one eye, or comes with a headache.",
-    "Do the vision self-check and note which eye and what changed."
+    "Now, not today, if it is sudden, in one eye, painful, or comes with a headache.",
+    "Cover one eye at a time and read the same line of text; note which eye and what changed."
    ],
    "tier": "cmo",
    "tier_reason": "Needs to be recorded and reviewed.",
@@ -346,12 +463,20 @@
    "scope": "symptom",
    "priority": 2.0,
    "urgency": "today",
-   "title": "Cold-like symptoms, and your readings are drifting",
+   "title": "Throat or cough symptoms, and your readings are drifting",
    "when": {
     "all": [
      {
-      "sym": "sore_throat",
-      "min": 1
+      "any": [
+       {
+        "sym": "sore_throat",
+        "min": 1
+       },
+       {
+        "sym": "cough",
+        "min": 1
+       }
+      ]
      },
      {
       "any": [
@@ -376,10 +501,10 @@
     ]
    },
    "summary": "You reported a sore throat or cough, and your heart rate, HRV, skin temperature or oxygen has moved the way an infection would push it. Neither would trigger Keel alone; together they are worth acting on. Keel cannot tell you the cause.",
-   "action": "Take your temperature with the thermometer and hold exercise until you have. Tell the medical officer.",
+   "action": "Take your temperature now. No exercise until you have. Tell the medical officer.",
    "steps": [
-    "If it is 38.0 °C or more, or 1.0 °C above your own usual thermometer reading, or you have chest symptoms: no exercise today, and the medical officer decides what you do.",
-    "Otherwise a light session is reasonable; repeat the temperature in four hours and log symptoms at check-in.",
+    "Enter the thermometer reading below. At 38.0 °C or more, or with a cough or chest symptoms: no exercise today, and the medical officer decides what you do.",
+    "If you have no fever, no cough, no unusual tiredness or aches, and the medical officer agrees, a light session is reasonable. Repeat the temperature in four hours and log symptoms at check-in.",
     "Drink to your fluid target and protect tonight's sleep period.",
     "Keep some distance at meals and wipe shared surfaces until this clears."
    ],
@@ -392,6 +517,24 @@
    "categories": [
     "symptoms",
     "cardio"
+   ],
+   "escalate": [
+    {
+     "when": {
+      "all": [
+       {
+        "sym": "cough",
+        "min": 1
+       },
+       {
+        "u": "spo2",
+        "min": 1.5
+       }
+      ]
+     },
+     "tier": "cmo",
+     "reason": "Cough with falling oxygen: the medical officer should see you today, and now if you are short of breath."
+    }
    ]
   },
   {
@@ -454,7 +597,7 @@
     "env": "co2",
     "min": 3.0
    },
-   "summary": "The 24-hour average is at or above 3.0 mmHg, the level ISS operations adopted as a limit after crews reported headaches and slips at higher levels.",
+   "summary": "The 24-hour average is at or above 3.0 mmHg, the level ISS operations adopted after crews reported headaches and slips at higher levels.",
    "action": "Check the air revitalization system and move work and sleep to a better ventilated spot.",
    "steps": [
     "Commander or engineer: check scrubber status and fan airflow.",
@@ -591,16 +734,20 @@
        {
         "sym": "sore_throat",
         "min": 1
+       },
+       {
+        "sym": "cough",
+        "min": 1
        }
       ]
      }
     ]
    },
-   "summary": "Resting heart rate is up together with other recovery signals. This combination is often seen in the days before or during an infection, but Keel cannot tell you the cause.",
-   "action": "Take your temperature with the thermometer and hold exercise until you have. Tell the medical officer.",
+   "summary": "Resting heart rate is up together with other readings. This combination is often seen during an infection, usually once symptoms have started, but Keel cannot tell you the cause.",
+   "action": "Take your temperature now. No exercise until you have. Tell the medical officer.",
    "steps": [
-    "If it is 38.0 °C or more, or 1.0 °C above your own usual thermometer reading, or you have a cough or chest symptoms: no exercise today, and the medical officer decides what you do.",
-    "Otherwise a light session is reasonable; repeat the temperature in four hours and log symptoms at check-in.",
+    "Enter the thermometer reading below. At 38.0 °C or more, or with a cough or chest symptoms: no exercise today, and the medical officer decides what you do.",
+    "If you have no fever, no cough, no unusual tiredness or aches, and the medical officer agrees, a light session is reasonable. Repeat the temperature in four hours and log symptoms at check-in.",
     "Drink to your fluid target and protect tonight's sleep period.",
     "Keep some distance at meals and wipe shared surfaces until this clears."
    ],
@@ -623,12 +770,12 @@
         "min": 3.0
        },
        {
-        "alert_days_min": 4
+        "pattern_days_min": 4
        }
       ]
      },
      "tier": "ground",
-     "reason": "Strong temperature deviation or no improvement after four days: the medical officer should consult the flight surgeon when a link is available."
+     "reason": "Strong temperature deviation, or this pattern has lasted four days: the medical officer should consult the flight surgeon when a link is available."
     }
    ],
    "urgency": "today"
@@ -695,7 +842,7 @@
    "escalate": [
     {
      "when": {
-      "alert_days_min": 10
+      "pattern_days_min": 10
      },
      "tier": "cmo",
      "reason": "Lasting ten days or more: Keel recommends sharing it with the medical officer."
@@ -746,7 +893,7 @@
         "min": 2.0
        },
        {
-        "alert_days_min": 6
+        "pattern_days_min": 6
        }
       ]
      },
@@ -809,7 +956,7 @@
      "when": {
       "any": [
        {
-        "alert_days_min": 5
+        "pattern_days_min": 5
        },
        {
         "sym": "dizziness",
@@ -850,7 +997,7 @@
    "escalate": [
     {
      "when": {
-      "alert_days_min": 10
+      "pattern_days_min": 10
      },
      "tier": "cmo",
      "reason": "Ten days below plan: the medical officer should adjust the prescription."
@@ -884,7 +1031,7 @@
    "escalate": [
     {
      "when": {
-      "alert_days_min": 7
+      "pattern_days_min": 7
      },
      "tier": "cmo",
      "reason": "A week below plan."
@@ -918,7 +1065,7 @@
    "escalate": [
     {
      "when": {
-      "alert_days_min": 4
+      "pattern_days_min": 4
      },
      "tier": "cmo",
      "reason": "Slower for four days."
@@ -930,7 +1077,7 @@
    "id": "R-CARD",
    "scope": "personal",
    "priority": 26,
-   "title": "Your heart is working harder at rest",
+   "title": "Resting heart rate or HRV is off your normal",
    "when": {
     "any": [
      {
@@ -961,7 +1108,7 @@
    "escalate": [
     {
      "when": {
-      "alert_days_min": 4
+      "pattern_days_min": 4
      },
      "tier": "cmo",
      "reason": "Not back in range after four days."
@@ -994,7 +1141,7 @@
    "escalate": [
     {
      "when": {
-      "alert_days_min": 5
+      "pattern_days_min": 5
      },
      "tier": "cmo",
      "reason": "Persisting for five days without explanation."

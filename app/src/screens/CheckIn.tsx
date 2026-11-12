@@ -5,18 +5,20 @@ import { Card, go, href } from '../ui/kit'
 
 const MOODS = ['Very low', 'Low', 'OK', 'Good', 'Very good']
 const FOOD = [{ label: 'All of it', v: 100 }, { label: 'Most', v: 85 }, { label: 'About half', v: 55 }, { label: 'Little', v: 30 }]
-const SPOT = ['temp', 'spo2', 'sbp', 'glucose', 'mass', 'sleep_h', 'rhr'] as const
+// thermometer first: it is the reading Keel's advice most often asks for
+const SPOT = ['temp_oral', 'spo2', 'sbp', 'dbp', 'glucose', 'mass', 'sleep_h', 'rhr'] as const
 
-export function CheckIn() {
+export function CheckIn({ open }: { open?: string }) {
   const { mission, day, me, entries, saveEntry } = useApp()
   const existing = entries.find((e) => e.mission === mission.id && e.crew === me && e.day === day)
   const [mood, setMood] = useState<number | null>(existing?.values.mood ?? null)
   const [sym, setSym] = useState<string[]>(existing?.symptoms ?? [])
   const usual = rawSeries(mission, me, 'fluid', []).slice(Math.max(0, day - 14), day).filter((v) => !Number.isNaN(v))
   const fluidHint = usual.length ? usual.reduce((a, b) => a + b, 0) / usual.length : 2.25
-  const [fluid, setFluid] = useState<number>(existing?.values.fluid ?? Math.round(fluidHint * 4) / 4)
+  const [fluid, setFluid] = useState<number>(existing?.values.fluid ?? 0)
+  const [serious, setSerious] = useState((existing?.symptoms ?? []).some((x) => SYMPTOMS.find((q) => q.id === x)?.red_flag))
   const [noSym, setNoSym] = useState(existing ? existing.symptoms.length === 0 : false)
-  const [more, setMore] = useState(false)
+  const [more, setMore] = useState(open === 'measure')
   const [food, setFood] = useState<number | null>(existing?.values.energy ?? null)
   const [ex, setEx] = useState<number | null>(existing?.values.ex_min ?? null)
   const [spot, setSpot] = useState<Record<string, string>>(() => Object.fromEntries(SPOT.filter((k) => existing?.values[k] !== undefined).map((k) => [k, String(existing!.values[k])])))
@@ -70,11 +72,16 @@ export function CheckIn() {
           <button className="choice" aria-pressed={noSym && sym.length === 0} onClick={() => { setSym([]); setNoSym(true) }} data-testid="sym-none">No symptoms</button>
           {routine.map((s) => <button key={s.id} className="choice" aria-pressed={sym.includes(s.id)} onClick={() => toggle(s.id)} data-testid={`sym-${s.id}`}>{s.label}</button>)}
         </div>
-        <span className="lab">Tell the medical officer now if you have any of these:</span>
-        <div className="choices" role="group" aria-label="Symptoms that need the medical officer now">
-          {redFlags.map((s) => <button key={s.id} className="choice red" aria-pressed={sym.includes(s.id)} onClick={() => toggle(s.id)} data-testid={`sym-${s.id}`}>{s.label}</button>)}
-        </div>
-        {red && <p className="banner strong" role="alert"><strong>Do not wait.</strong> Save this check-in and tell the medical officer now, whatever else Keel shows.</p>}
+        <button className={`choice red ${serious ? '' : ''}`} aria-expanded={serious} onClick={() => setSerious((v) => !v)} data-testid="serious-toggle" style={{ minHeight: 56 }}>Something serious? Chest pain, fainting, trouble breathing, bleeding, vision loss, thoughts of harming yourself…</button>
+        {serious && (
+          <>
+            <span className="lab">Tell the medical officer now if you have any of these. Ticking one and saving shows it to the medical officer and the commander at once (emergency sharing).</span>
+            <div className="choices" role="group" aria-label="Symptoms that need the medical officer now">
+              {redFlags.map((s) => <button key={s.id} className="choice red" aria-pressed={sym.includes(s.id)} onClick={() => toggle(s.id)} data-testid={`sym-${s.id}`}>{s.label}</button>)}
+            </div>
+          </>
+        )}
+        {red && <p className="banner strong" role="alert"><strong>Do not wait.</strong> Save this check-in and tell the medical officer now, whatever else Keel shows. If you are the medical officer, tell the commander.</p>}
       </Card>
 
       <div className="grid2">
@@ -84,7 +91,8 @@ export function CheckIn() {
             <span className="v num" aria-live="polite">{fluid.toFixed(2)} L</span>
             <button aria-label="One drink bag more" onClick={() => setFluid((v) => Number((v + 0.25).toFixed(2)))} data-testid="fluid-plus">+</button>
           </div>
-          <p className="small muted">Starts at your recent average ({fluidHint.toFixed(1)} L). One tap is one 250 mL drink bag. The in-flight target is 2.0 to 2.5 L.</p>
+          <div className="row wrap"><button className="btn sm" onClick={() => setFluid(Math.round(fluidHint * 4) / 4)} data-testid="fluid-usual">Same as usual ({fluidHint.toFixed(1)} L)</button><button className="btn sm" onClick={() => setFluid((v) => Number((v + 1).toFixed(2)))}>+ 1 L</button></div>
+          <p className="small muted">One tap on + is one 250 mL drink bag. Aim for at least 2.0 to 2.5 L a day. Left at zero, nothing is recorded.</p>
         </Card>
         <Card title="4. How much of your planned food did you eat?">
           <div className="choices" role="group" aria-label="Food intake">{FOOD.map((f) => <button key={f.v} className="choice" aria-pressed={food === f.v} onClick={() => setFood(f.v)}>{f.label}</button>)}</div>
@@ -110,7 +118,7 @@ export function CheckIn() {
               <p className="small muted">Only needed if the exercise devices did not log your session.</p>
             </Card>
           </div>
-          <Card title="Measurements (only what you took today)">
+          <Card title="Measurements (only what you took today)" id="measurements">
             <div className="grid3 fields">
               {SPOT.map((k) => (
                 <div className="field" key={k}>
