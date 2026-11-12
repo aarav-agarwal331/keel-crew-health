@@ -12,7 +12,6 @@ const HAZARDS = [
   { name: 'Hostile, closed environment', does: 'Recycled air and water, shared microbes, an immune system that behaves differently.', keel: 'Cabin carbon dioxide, with an advisory line at 2.5 mmHg, an alert at 3.0 and an urgent alert at 4.0; signs of infection in heart rate, HRV and temperature, usually visible once symptoms have started.' },
 ]
 
-const lower = (t: string) => t.charAt(0).toLowerCase() + t.slice(1)
 const NOW = RULES.filter((r) => r.urgency === 'now' && r.id !== 'R-RED')
 const TODAY = RULES.filter((r) => r.urgency === 'today' && r.scope !== 'personal')
 
@@ -31,8 +30,10 @@ export function Guide({ focus }: { focus?: string }) {
       <Card title="When to involve someone else">
         <p className="small muted">This list is built from the rule table itself, so it cannot disagree with what Keel does.</p>
         <ul className="list">
-          <li><strong>Now, whatever else Keel shows:</strong> any of these symptoms: {SYMPTOMS.filter((x) => x.red_flag).map((x) => x.label.toLowerCase()).join('; ')}. Also: {NOW.map((r) => lower(r.title)).join('; ')}. Tell the medical officer. If you are the medical officer, tell the commander.</li>
-          <li><strong>Today:</strong> {TODAY.map((r) => lower(r.title)).join('; ')}; or whenever Keel shows "Act today".</li>
+          <li><strong>Now, whatever else Keel shows.</strong> Tell the medical officer; if you are the medical officer, tell the commander.
+            <ul className="list"><li>Any of these symptoms: {SYMPTOMS.filter((x) => x.red_flag).map((x) => x.label.toLowerCase()).join('; ')}.</li>{NOW.map((r) => <li key={r.id}>{r.title}.</li>)}</ul></li>
+          <li><strong>Today.</strong> Whenever Keel shows "Act today", and:
+            <ul className="list">{TODAY.map((r) => <li key={r.id}>{r.title}.</li>)}</ul></li>
           <li><strong>When a link opens:</strong> anything the medical officer wants a flight surgeon to review. The daily summary contains only what you chose to share.</li>
           <li><strong>If you have thoughts of harming yourself, or cannot function:</strong> tell the medical officer now. Keel shows that tick to the medical officer only.</li>
         </ul>

@@ -148,15 +148,26 @@ export class ScreenBoundary extends Component<{ children: ReactNode; name: strin
   }
 }
 
-/** The spot readings entered today, oldest first, with the time each was saved.  Nothing is overwritten. */
-export function ReadingLog({ readings, title = 'Readings today' }: { readings: { ind: string; v: number; ts: number }[]; title?: string }) {
+/** The spot readings entered today, oldest first, with the time each was saved.  Nothing is overwritten;
+ *  a reading withdrawn as a typing mistake stays visible, struck through. */
+export function ReadingLog({ readings, title = 'Readings today', onVoid }: { readings: { ind: string; v: number; ts: number; void?: boolean }[]; title?: string; onVoid?: (ind: string, ts: number) => void }) {
   if (!readings.length) return null
-  const time = (ts: number) => new Date(ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+  const time = (ts: number) => new Date(ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })
   return (
-    <p className="small muted" data-testid="reading-log"><strong>{title}:</strong>{' '}
-      {readings.map((r, i) => <span key={`${r.ind}-${r.ts}-${i}`} className="num">{i > 0 ? ' · ' : ''}{READING_LABEL[r.ind] ?? r.ind} {r.v} at {time(r.ts)}</span>)}
-      . Every reading is kept; the most abnormal one counts until a new day's reading or the medical officer closes it.
-    </p>
+    <div className="small muted" data-testid="reading-log"><strong>{title}:</strong>
+      <ul className="list small">
+        {readings.map((r, i) => (
+          <li key={`${r.ind}-${r.ts}-${i}`} className="num">
+            <span style={r.void ? { textDecoration: 'line-through' } : undefined}>{READING_LABEL[r.ind]?.[0] ?? r.ind} {r.v} {READING_LABEL[r.ind]?.[1] ?? ''}, at {time(r.ts)}</span>
+            {r.void ? ' (withdrawn as a typing mistake)' : onVoid ? <> <button className="btn sm" onClick={() => onVoid(r.ind, r.ts)} data-testid="void-reading">Typing mistake</button></> : null}
+          </li>
+        ))}
+      </ul>
+      <span>Every reading is kept. On the most recent day with a reading, the most abnormal one counts, and anything urgent stays on the medical officer's list until they close it.</span>
+    </div>
   )
 }
-const READING_LABEL: Record<string, string> = { temp_oral: '°C', spo2: 'oxygen %', sbp: 'upper BP', dbp: 'lower BP', glucose: 'sugar mg/dL', rhr: 'heart rate', mass: 'kg' }
+const READING_LABEL: Record<string, [string, string]> = {
+  temp_oral: ['Thermometer', '°C'], spo2_spot: ['Fingertip oxygen', '%'], spo2: ['Blood oxygen', '%'], sbp: ['Blood pressure, upper', 'mmHg'], dbp: ['Blood pressure, lower', 'mmHg'],
+  glucose: ['Blood sugar', 'mg/dL'], rhr_spot: ['Heart rate at rest', 'bpm'], rhr: ['Resting heart rate', 'bpm'], mass: ['Body mass', 'kg'],
+}

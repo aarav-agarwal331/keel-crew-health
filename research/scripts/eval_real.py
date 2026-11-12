@@ -19,7 +19,7 @@ import numpy as np
 import pandas as pd
 
 from keel import realdata
-from keel.core import Params
+from keel.core import Model, Params
 from keel.evaluate import (METHOD_LABELS, METHODS, Person, Windows, aggregate, bootstrap, calibrate, chance_rows, cv_run, fit_model,
                            net_stats, person_outcome, score_people)
 from keel.mission import SPEC2, ground_people
@@ -148,6 +148,12 @@ def summarise(res: dict, people: list[Person], w: Windows, p: Params, methods=ME
     return out
 
 
+def ppv_at(st: dict) -> float:
+    """Share of alerts that would be a real respiratory illness at the in-flight rate, for one result row."""
+    tr_ = max(0.0, st["net_detection"]) * URI_PER_PERSON_MONTH
+    return tr_ / (tr_ + st["fa_per_person_month"]) if tr_ + st["fa_per_person_month"] > 0 else float("nan")
+
+
 def train_test(train: list[Person], test: list[Person], spec_key: str, w: Windows, p: Params, budgets=(0.25, 1.0)) -> dict:
     """Fit and calibrate on one group of people, score another once."""
     model = fit_model(train, SPECS[spec_key], p, w)
@@ -221,6 +227,19 @@ def main():
             "only_people_who_had_an_episode": pick(with_net([rows[i] for i in ill_idx], [ch_by[people[i].pid] for i in ill_idx if people[i].pid in ch_by], None, 1000, strata=None)),
             "windows_with_a_score_every_day": pick(with_net(rows, old, None, 1000, strata=None)),
         }
+        # pretend dates matched to how far into the recording the real onsets fall (a young baseline is noisier)
+        cut = 60
+        ev_days = [o for q in people for o in q.onsets]
+        w_early = float(np.mean([o < cut for o in ev_days]))
+        hit = {True: [0, 0], False: [0, 0]}
+        for r_ in ch:
+            for l_, d_ in zip(r_["leads"], r_["days"]):
+                hit[d_ < cut][1] += 1
+                hit[d_ < cut][0] += l_ is not None
+        c_m = w_early * hit[True][0] / max(1, hit[True][1]) + (1 - w_early) * hit[False][0] / max(1, hit[False][1])
+        chance_sens[str(b)]["matched_on_days_since_recording_start"] = {
+            "chance_detection_rate": c_m, "net_detection": aggregate(rows)["detection_rate"] - c_m, "share_of_onsets_in_first_60_days": w_early,
+            "chance_first_60_days": hit[True][0] / max(1, hit[True][1]), "chance_later": hit[False][0] / max(1, hit[False][1]), "n_pseudo_first_60_days": hit[True][1]}
     print("chance sensitivity @1", {k: (round(v["chance_detection_rate"], 3), round(v["net_detection"], 3)) for k, v in chance_sens["1.0"].items()})
 
     # ---------------- sensitivity: an alert already open in the window also counts ----------------
@@ -387,6 +406,41 @@ def main():
         ch_by = {r["pid"]: r for r in ch}
         deployed_cfg["all"][str(b)] = with_net(rows, ch, None, 1000)
         deployed_cfg["held_out"][str(b)] = with_net([rows[i] for i in held], [ch_by[pe7[i].pid] for i in held if pe7[i].pid in ch_by], None, 1000)
+    for k_ in ["all", "held_out"]:
+        for b_ in ["0.25", "1.0"]:
+            deployed_cfg[k_][b_]["share_of_alerts_that_are_real"] = ppv_at(deployed_cfg[k_][b_])
+
+    # ---------------- the model file the app actually ships ----------------
+    # The stand-in above is NOT the shipped model: the app ships one 11-indicator model with thresholds
+    # calibrated on simulated missions (model_mission.json).  A real two-sensor import shares only overnight
+    # heart rate (and, for some people, sleep duration) with it; its activity input is exercise minutes, which
+    # this data does not have.  Score real people with that exact file and its own thresholds.
+    MJ = json.loads((APP_PUBLIC / "data" / "model_mission.json").read_text())
+    shipped = Model(indicators=MJ["indicators"], transform=MJ["transform"], concern=np.array(MJ["concern"], float), floor=np.array(MJ["floor"], float),
+                    pop_mean=np.array(MJ["pop_mean"], float), pop_sd=np.array(MJ["pop_sd"], float), corr=np.array(MJ["corr"], float),
+                    h_cusum=float(MJ["h_cusum"]), h_mewma=float(MJ["h_mewma"]))
+    pe_s = load_people(["rhr", "sleep_h"])
+    ship_people = []
+    for q in pe_s:
+        x11 = np.full((len(q.x), len(shipped.indicators)), np.nan)
+        x11[:, shipped.indicators.index("rhr")] = q.x[:, 0]
+        x11[:, shipped.indicators.index("sleep_h")] = q.x[:, 1]
+        ship_people.append(Person(pid=q.pid, x=x11, onsets=q.onsets, meta=q.meta, events_meta=q.events_meta))
+    s_sc = [x[DEPLOYED] for x in score_people(ship_people, shipped, p)]
+    held_s = [i for i, q in enumerate(ship_people) if q.pid in val_s or q.pid in val_e2]
+    shipped_cfg = {"label": "The model file the app ships (11 indicators, thresholds from simulated missions), given the channels a real import shares with it: overnight heart rate and, where recorded, sleep duration",
+                   "n_people": len(ship_people), "n_events": sum(len(q.onsets) for q in ship_people), "n_people_with_sleep": int(sum(1 for q in pe_s if np.sum(~np.isnan(q.x[:, 1])) >= MIN_DAYS)),
+                   "thresholds": MJ["thresholds"], "all": {}, "held_out": {}}
+    for b, key in [(0.25, "alert"), (1.0, "notice")]:
+        thr = float(MJ["thresholds"][key])
+        rows = [{**person_outcome(sc_, thr, q.onsets, w, p.merge_gap), "pid": q.pid} for sc_, q in zip(s_sc, ship_people)]
+        ch = chance_rows(ship_people, s_sc, [thr] * len(ship_people), w, p.merge_gap, 5, SEED, scored_only=False)
+        ch_by = {r["pid"]: r for r in ch}
+        shipped_cfg["all"][str(b)] = with_net(rows, ch, None, 1000)
+        shipped_cfg["held_out"][str(b)] = with_net([rows[i] for i in held_s], [ch_by[ship_people[i].pid] for i in held_s if ship_people[i].pid in ch_by], None, 1000)
+        shipped_cfg["all"][str(b)]["share_of_alerts_that_are_real"] = ppv_at(shipped_cfg["all"][str(b)])
+    print("shipped model on real people", {b: (round(v["detection_rate"], 2), round(v["chance_detection_rate"], 2), round(v["net_detection"], 2), [round(x, 2) for x in v["net_detection_ci"]], round(v["fa_per_person_month"], 2),
+                                              round(v["net_by_onset"], 2)) for b, v in shipped_cfg["all"].items()})
     print("deployed config (sim thresholds on real people)", {k: {b: (round(v["detection_rate"], 2), round(v["chance_detection_rate"], 2), round(v["net_detection"], 2), [round(x, 2) for x in v["net_detection_ci"]], round(v["fa_per_person_month"], 2))
                                                                    for b, v in deployed_cfg[k].items()} for k in ["all", "held_out"]})
 
@@ -413,7 +467,7 @@ def main():
         "indicators": SPEC_LABELS["rhr_steps"], "windows": {"det_pre": w.det_pre, "det_post": w.det_post, "excl_pre": w.excl_pre, "excl_post": w.excl_post},
         "budgets": BUDGETS, "deployed": DEPLOYED, "methods": METHODS, "method_labels": METHOD_LABELS, "cohort": cohort, "main": main_tbl, "breakdown": breakdown,
         "leads": leads, "false_alerts_quiet": fa_dist, "false_alerts_by_group": fa_by_group, "ppv": ppv, "steps_drop": steps_drop, "ablation": abl,
-        "window_sensitivity": win, "chance_sensitivity": chance_sens, "open_alert_sensitivity": open_alert, "deployed_config": deployed_cfg,
+        "window_sensitivity": win, "chance_sensitivity": chance_sens, "open_alert_sensitivity": open_alert, "deployed_config": deployed_cfg, "shipped_model": shipped_cfg,
         "chance_note": "Pretend events are placed on label-quiet days with the same missing data as real windows, and weighted to the device mix of the real episodes. They cannot be matched to the calendar (dates are shifted per person), so exposure, travel, testing and isolation near a real onset are not reproduced; detection above luck is therefore an upper bound on what physiology alone explains.", "cross_phase": cross, "fold_seeds": seeds, "event_aligned_rhr": aligned,
         "published": {"source": "Mishra et al. 2020 (DOMAIN.md ref 58), phase 1 only, their own online CuSum on hourly data",
                       "presymptomatic_detection": 0.63, "false_alarms_per_month_healthy": 0.66,

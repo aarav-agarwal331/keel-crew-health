@@ -15,7 +15,7 @@ import { allows, SHARE_CATEGORIES, type Level, type Role, type SharingSettings }
 import type { Finding, OpenItem, Photo, Reading, Status } from './types'
 
 export interface VisibleIndicator { ind: string; inRange: boolean; value?: number; expected?: number }
-export interface VisibleFinding { readings?: Reading[]; emergency?: boolean; steps?: string[]; countermeasures?: string[]; urgency?: string; key: string; category: string; status: Status; days: number; title?: string; tier?: string; action?: string; summary?: string; changes?: Finding['changes']; factors?: Finding['factors'] }
+export interface VisibleFinding { symptoms?: string[]; readings?: Reading[]; emergency?: boolean; steps?: string[]; countermeasures?: string[]; urgency?: string; key: string; category: string; status: Status; days: number; title?: string; tier?: string; action?: string; summary?: string; changes?: Finding['changes']; factors?: Finding['factors'] }
 export interface RoleView {
   overall: Status | 'private'
   categories: Record<string, { level: Level; status?: Status; indicators?: VisibleIndicator[] }>
@@ -60,7 +60,9 @@ export function viewFor(role: Role, a: DayAnalysis, share: SharingSettings, valu
     // Symptoms marked "medical officer only" (thoughts of self-harm, an injury, tooth pain) are held back from the
     // commander unless the patient is the medical officer, whose backup the commander is.
     if (f.status === 'urgent' && share.emergency !== false && role !== 'ground' && !(role === 'commander' && f.cmoOnly && !f.patientIsCmo)) {
-      findings.push({ key: f.key, category: cat, status: f.status, days: f.days, title: f.title, tier: f.tier, action: f.action, emergency: true })
+      // the medical officer is told what was reported or measured, with times; the commander only that it happened
+      findings.push({ key: f.key, category: cat, status: f.status, days: f.days, title: f.title, tier: f.tier, action: f.action, emergency: true,
+        ...(role === 'cmo' || f.patientIsCmo ? { readings: f.readings, symptoms: f.symptoms } : {}) })
       if (overall === 'private' || rank[f.status] > rank[overall]) overall = f.status
       continue
     }

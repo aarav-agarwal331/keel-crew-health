@@ -10,7 +10,7 @@ export const SYSTEMS: { id: string; label: string; what: string; hazard: string 
   { id: 'lungs', label: 'Lungs and oxygen', what: 'Blood oxygen, and the cabin air you breathe.', hazard: 'A sealed cabin recycles its own air: carbon dioxide can build up and dust does not settle.' },
   { id: 'gut', label: 'Food and fluids', what: 'Fluid intake, food intake and blood sugar.', hazard: 'Crews eat and drink less than they need in space, which speeds up body mass loss and raises kidney-stone risk.' },
   { id: 'muscle', label: 'Muscle and bone', what: 'Exercise done against your plan.', hazard: 'Weight-bearing bones lose about 1 to 1.5% of their density per month without countermeasures. Daily loading is the defence.' },
-  { id: 'core', label: 'Whole body', what: 'Body temperature and body mass.', hazard: 'Immune changes in flight make infections and reactivated viruses more likely; temperature is an early sign.' },
+  { id: 'core', label: 'Whole body', what: 'Body temperature and body mass.', hazard: 'Immune changes in flight make infections and reactivated viruses more likely; temperature is a common sign.' },
   { id: 'environment', label: 'Cabin and radiation', what: 'Cabin carbon dioxide and your radiation dose.', hazard: 'Beyond Earth\'s magnetic shield, cosmic rays give a steady dose and solar storms an occasional burst.' },
 ]
 

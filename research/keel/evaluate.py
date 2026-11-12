@@ -252,12 +252,13 @@ def cv_run(people: list[Person], spec: dict, p: Params, w: Windows, budgets: lis
 
 
 def chance_rows(people: list[Person], scores: list[np.ndarray], thrs: list[float], w: Windows, merge_gap: int,
-                per_person: int = 5, seed: int = 0, scored_only: bool = True, count_open: bool = False) -> list[dict]:
+                per_person: int = 5, seed: int = 0, scored_only: bool = True, count_open: bool = False,
+                day_range: tuple[int, int] | None = None) -> list[dict]:
     """How often would an alert fall inside a detection window by luck?  Place pseudo-events on
     random quiet days and score them exactly like real events.  Returns one row per person in
     the same shape as person_outcome.
 
-    scored_only=True needs a score on every day of the pseudo-window (used in simulation, where
+    day_range restricts the pretend dates (inclusive).  scored_only=True needs a score on every day of the pseudo-window (used in simulation, where
     missing data is unrelated to events).  scored_only=False needs only that the window lies in
     label-quiet time, so pseudo-windows carry the same missing data as real windows and a window
     with no score at all is a miss, as it is for a real event (used on real data)."""
@@ -269,12 +270,15 @@ def chance_rows(people: list[Person], scores: list[np.ndarray], thrs: list[float
         if scored_only:
             quiet = quiet & ~np.isnan(s)
         ok = [t for t in range(w.det_pre, T - w.det_post) if quiet[t - w.det_pre:t + w.det_post + 1].all()]
+        if day_range is not None:   # pretend events only on these days (for example the same flight days as the real ones)
+            ok = [t for t in ok if day_range[0] <= t <= day_range[1]]
         if not ok:
             continue
         picks = rng.choice(ok, size=min(per_person, len(ok)), replace=False)
         starts = [a for a, _ in episodes(s, thr, merge_gap)]
         leads = [_lead(s, starts, thr, int(o), w, count_open) for o in picks]
-        rows.append({"fa": 0, "quiet_days": 0, "leads": leads, "scorable": [True] * len(leads), "alert_days": 0, "pid": q.pid})
+        rows.append({"fa": 0, "quiet_days": 0, "leads": leads, "scorable": [True] * len(leads), "alert_days": 0, "pid": q.pid,
+                     "days": [int(o) for o in picks]})
     return rows
 
 

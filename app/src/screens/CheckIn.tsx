@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { dayLabel, IND, rawSeries, SYMPTOMS } from '../core/mission'
 import { useApp } from '../state'
 import type { Photo } from '../core/types'
+import { SPOT_KEY } from '../core/analysis'
 import { Card, go, href, ReadingLog } from '../ui/kit'
 
 const MOODS = ['Very low', 'Low', 'OK', 'Good', 'Very good']
@@ -13,7 +14,7 @@ const PHOTO_LABELS = ['Skin', 'Eye', 'Mouth or throat', 'Wound', 'Other']
 const SPOT = ['temp_oral', 'spo2', 'sbp', 'dbp', 'glucose', 'mass', 'sleep_h', 'rhr'] as const
 
 export function CheckIn({ open }: { open?: string }) {
-  const { mission, day, me, entries, saveEntry } = useApp()
+  const { mission, day, me, entries, saveEntry, voidReading } = useApp()
   const existing = entries.find((e) => e.mission === mission.id && e.crew === me && e.day === day)
   const [mood, setMood] = useState<number | null>(existing?.values.mood ?? null)
   const [sym, setSym] = useState<string[]>(existing?.symptoms ?? [])
@@ -25,27 +26,30 @@ export function CheckIn({ open }: { open?: string }) {
   const [more, setMore] = useState(open === 'measure')
   const [food, setFood] = useState<number | null>(existing?.values.energy ?? null)
   const [ex, setEx] = useState<number | null>(existing?.values.ex_min ?? null)
-  const [spot, setSpot] = useState<Record<string, string>>(() => Object.fromEntries(SPOT.filter((k) => existing?.values[k] !== undefined).map((k) => [k, String(existing!.values[k])])))
+  const sk = (k: string) => SPOT_KEY[k] ?? k
+  const [spot, setSpot] = useState<Record<string, string>>(() => Object.fromEntries(SPOT.filter((k) => existing?.values[sk(k)] !== undefined).map((k) => [k, String(existing!.values[sk(k)])])))
+  // fields typed into since the last save: a value typed again is logged again, even if it is the same number
+  const [dirty, setDirty] = useState<string[]>([])
   const [pvt, setPvt] = useState<number | null>(existing?.values.pvt_rt ?? null)
   const [meds, setMeds] = useState<string[]>(existing?.meds ?? [])
   const [photos, setPhotos] = useState<Photo[]>(existing?.photos ?? [])
   const [photoLabel, setPhotoLabel] = useState(PHOTO_LABELS[0])
   const [saved, setSaved] = useState(false)
   const [err, setErr] = useState('')
-  // far-from-usual values are accepted, but only after the crew member confirms what the device showed
-  const [pending, setPending] = useState<{ k: string; v: number }[]>([])
-  const [confirmed, setConfirmed] = useState<Record<string, number>>({})
+  // values far from usual, or past a fixed "act now" line, are saved at once (so nothing is lost) and then
+  // checked: "Is that what the device showed?"  "No" withdraws that reading as a typing mistake.
+  const [pending, setPending] = useState<{ k: string; v: number; ts: number }[]>([])
 
-  const save = async (extra: Record<string, number> = {}) => {
-    const ok = { ...confirmed, ...extra }
-    const values: Record<string, number> = {}
+  const NOW_LINE: Record<string, (v: number) => boolean> = { temp_oral: (v) => v >= 39.4, spo2: (v) => v <= 92, glucose: (v) => v < 54 || v >= 300, sbp: (v) => v < 80, rhr: (v) => v >= 150 || v <= 35 }
+  const save = async () => {
+    const values: Record<string, number> = { ...(existing?.values ?? {}) }
     if (mood !== null) values.mood = mood
     if (fluid > 0) values.fluid = fluid
     if (food !== null) values.energy = food
     if (ex !== null) values.ex_min = ex
     if (pvt !== null) values.pvt_rt = pvt
     const bad: string[] = []
-    const ask: { k: string; v: number }[] = []
+    const check: string[] = []
     for (const k of SPOT) {
       const raw = spot[k]
       if (raw === undefined || raw === '') continue
@@ -53,17 +57,24 @@ export function CheckIn({ open }: { open?: string }) {
       const [lo, hi] = IND[k].range
       const [hardLo, hardHi] = IND[k].limits ?? IND[k].range
       if (Number.isNaN(v) || v < hardLo || v > hardHi) { bad.push(`${IND[k].label}: ${raw} was not saved. Enter a value between ${hardLo} and ${hardHi} ${IND[k].unit}.`); continue }
-      // an extreme but possible value is exactly the one that must not be lost: keep it once confirmed
-      if ((v < lo || v > hi) && ok[k] !== v) { ask.push({ k, v }); continue }
-      values[k] = v
+      values[sk(k)] = v
+      if (dirty.includes(k) && (v < lo || v > hi || NOW_LINE[k]?.(v))) check.push(k)
     }
-    // symptoms and everything valid are always saved, whatever is wrong with one number
-    await saveEntry({ crew: me, day, values, symptoms: sym, meds, photos })
+    // symptoms and every valid value are always saved, whatever is wrong with one number
+    await saveEntry({ crew: me, day, values, symptoms: sym, meds, photos }, dirty.map(sk))
     setErr(bad.join(' '))
-    setPending(ask)
+    const ts = Date.now()
+    setPending(check.map((k) => ({ k, v: values[sk(k)], ts })))
+    setDirty([])
     setSaved(true)
   }
-  const confirm = (k: string, v: number) => { const next = { ...confirmed, [k]: v }; setConfirmed(next); void save(next) }
+  const withdraw = async (k: string) => {
+    const e = entries.find((x) => x.mission === mission.id && x.crew === me && x.day === day)
+    const last = [...(e?.readings ?? [])].reverse().find((r) => r.ind === sk(k) && !r.void)
+    if (last) await voidReading(me, day, sk(k), last.ts)
+    setSpot((p) => ({ ...p, [k]: '' }))
+    setPending((p) => p.filter((x) => x.k !== k))
+  }
   const addPhoto = async (file: File | undefined) => {
     if (!file) return
     const data = await shrink(file)
@@ -79,8 +90,9 @@ export function CheckIn({ open }: { open?: string }) {
       {err && <p className="banner strong" role="alert">{err}</p>}
       {pending.map((q) => (
         <div className="banner strong" role="alert" key={q.k}>
-          <p><strong>{IND[q.k].label}: {q.v} {IND[q.k].unit}</strong> is far outside the usual range and has not been saved yet. Everything else was saved. Is that what the device showed?</p>
-          <div className="row wrap"><button className="btn primary" onClick={() => confirm(q.k, q.v)} data-testid={`confirm-${q.k}`}>Yes, save {q.v}</button><button className="btn" onClick={() => { setSpot((p) => ({ ...p, [q.k]: '' })); setPending((p) => p.filter((x) => x.k !== q.k)) }}>No, clear it</button></div>
+          <p><strong>{IND[q.k].label}: {q.v} {IND[q.k].unit}</strong> is far outside the usual range, so Keel saved it and is acting on it. Is that what the device showed?</p>
+          <div className="row wrap"><button className="btn primary" onClick={() => setPending((p) => p.filter((x) => x.k !== q.k))} data-testid={`confirm-${q.k}`}>Yes, that is right</button><button className="btn" onClick={() => void withdraw(q.k)} data-testid={`withdraw-${q.k}`}>No, a typing mistake: withdraw it</button></div>
+          <p className="small">If you withdraw it, it stays in the log, struck through, and the medical officer still sees that it was entered.</p>
         </div>
       ))}
       <button className="btn primary block" onClick={() => void save()} data-testid="save-checkin">Save check-in</button>
@@ -89,7 +101,8 @@ export function CheckIn({ open }: { open?: string }) {
   return (
     <>
       <h1>Check-in</h1>
-      <p className="muted">{dayLabel(mission, day)}. Four quick answers take about a minute. Your answers stay on this tablet. Other roles see only what <a href={href('sharing')}>Sharing</a> allows: by default the commander sees a readiness tier without the reason, and a symptom marked serious goes to the medical officer at once.</p>
+      <p className="muted">{dayLabel(mission, day)}. Four quick answers take about a minute. Your answers are stored on your own tablet. Other crew members see only what <a href={href('sharing')}>Sharing</a> allows: by default the commander sees a readiness tier without the reason, a symptom marked serious goes to the medical officer at once, and the daily summary for the ground carries only what you set for the flight surgeon.</p>
+      {!existing && !Number.isNaN(rawSeries(mission, me, 'mood', [])[day]) && <p className="small muted">Today's check-in in this demo came from the simulation. Anything you save here is added to it.</p>}
 
       <Card title="1. How are you feeling?">
         <div className="choices five" role="group" aria-label="Mood, 1 very low to 5 very good">
@@ -106,7 +119,7 @@ export function CheckIn({ open }: { open?: string }) {
         {serious && (
           <>
             <span className="lab">Tell the medical officer now if you have any of these. Ticking one and saving shows it to the medical officer at once (emergency sharing). The commander is shown it too, except the items marked "medical officer only".</span>
-            <div className="choices" role="group" aria-label="Symptoms that need the medical officer now">
+            <div className="choices wide" role="group" aria-label="Symptoms that need the medical officer now">
               {redFlags.map((s) => <button key={s.id} className="choice red" aria-pressed={sym.includes(s.id)} onClick={() => toggle(s.id)} data-testid={`sym-${s.id}`}>{s.label}{(s as { commander?: boolean }).commander === false ? <span className="tiny"> (medical officer only)</span> : null}</button>)}
             </div>
           </>
@@ -169,17 +182,18 @@ export function CheckIn({ open }: { open?: string }) {
               {SPOT.map((k) => (
                 <div className="field" key={k}>
                   <label htmlFor={`f-${k}`}>{IND[k].label} <span className="muted small">({IND[k].unit})</span></label>
-                  <input id={`f-${k}`} type="number" inputMode="decimal" step="any" value={spot[k] ?? ''} onChange={(e) => setSpot((p) => ({ ...p, [k]: e.target.value }))} />
+                  <input id={`f-${k}`} type="number" inputMode="decimal" step="any" value={spot[k] ?? ''} onChange={(e) => { const v = e.target.value; setSpot((p) => ({ ...p, [k]: v })); setDirty((p) => (p.includes(k) ? p : [...p, k])) }} />
                   <details><summary className="small">How to measure</summary><p className="small muted">{IND[k].how}</p></details>
                 </div>
               ))}
             </div>
-            <ReadingLog readings={(existing?.readings ?? []).filter((r) => (SPOT as readonly string[]).includes(r.ind))} />
+            <ReadingLog readings={(existing?.readings ?? []).filter((r) => SPOT.map(sk).includes(r.ind))} onVoid={(ind, ts) => void voidReading(me, day, ind, ts)} />
             <p className="small muted">Taking a reading again? Type the new value and save: the earlier one is kept with its time, and both are shown to whoever you share them with.</p>
           </Card>
           {saveBtn}
         </>
       )}
+      <div aria-hidden="true" style={{ height: 96 }} />
     </>
   )
 }

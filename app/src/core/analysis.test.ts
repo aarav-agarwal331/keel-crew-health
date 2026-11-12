@@ -81,7 +81,7 @@ describe('end to end on the demo mission', () => {
     expect(run('c0', 100, [...earlier, mk({ temp_oral: 37.5 })]).findings.map((x) => x.ruleId)).toContain('R-V-TEMP')
     expect(run('c0', 100, [...earlier, mk({ temp_oral: 37.0 })]).findings.map((x) => x.ruleId)).not.toContain('R-V-TEMP')
     expect(rule(mk({ temp_oral: 39.6 }))).toContain('R-V-TEMP-HI')
-    expect(rule(mk({ spo2: 91 }))).toContain('R-V-SPO2')
+    expect(rule(mk({ spo2_spot: 91 }))).toContain('R-V-SPO2')
     expect(rule(mk({ glucose: 62 }))).toContain('R-V-GLU-LO')
     expect(rule(mk({ glucose: 48 }))).toContain('R-V-GLU-LO2')
     expect(rule(mk({ glucose: 450 }))).toContain('R-V-GLU-HI2')
@@ -93,9 +93,9 @@ describe('end to end on the demo mission', () => {
     expect(run('c0', 100, [mk({ sbp: 220 })]).status).not.toBe('watch')
     expect(run('c0', 100, [mk({ glucose: 48 })]).status).toBe('urgent')
     expect(run('c0', 100, [mk({ glucose: 66 })]).status).toBe('act')
-    expect(rule(mk({ temp_oral: 36.9, glucose: 92, sbp: 118, spo2: 97 })).filter((r) => r.startsWith('R-V'))).toEqual([])
+    expect(rule(mk({ temp_oral: 36.9, glucose: 92, sbp: 118, spo2_spot: 97 })).filter((r) => r.startsWith('R-V'))).toEqual([])
     expect(rule(mk({}, ['vision']))).toContain('R-VIS')
-    const a = run('c0', 100, [mk({ spo2: 91 })])
+    const a = run('c0', 100, [mk({ spo2_spot: 91 })])
     expect(a.status).toBe('urgent')
     expect(readiness(a).tier).toBe('hold')
   })
@@ -139,14 +139,14 @@ describe('end to end on the demo mission', () => {
   it('extreme readings and the added fixed rules fire', () => {
     const mk = (values: Record<string, number>, symptoms: string[] = []): Entry => ({ key: 'k', mission: m.id, crew: 'c0', day: 100, values, symptoms, ts: 0 })
     const rule = (e: Entry) => run('c0', 100, [e]).findings.map((x) => x.ruleId)
-    expect(rule(mk({ rhr: 170 }))).toContain('R-V-HR2')
-    expect(run('c0', 100, [mk({ rhr: 170 })]).status).toBe('urgent')
-    expect(rule(mk({ rhr: 128 }))).toContain('R-V-HR1')
+    expect(rule(mk({ rhr_spot: 170 }))).toContain('R-V-HR2')
+    expect(run('c0', 100, [mk({ rhr_spot: 170 })]).status).toBe('urgent')
+    expect(rule(mk({ rhr_spot: 128 }))).toContain('R-V-HR1')
     expect(rule(mk({ sbp: 150, dbp: 125 }))).toContain('R-V-BP-HI2')
     expect(rule(mk({ sbp: 128, dbp: 94 }))).toContain('R-V-BP-HI')
     expect(rule(mk({ sbp: 45 }))).toContain('R-V-BP-LO2')
     expect(rule(mk({ glucose: 20 }))).toContain('R-V-GLU-LO2')
-    expect(rule(mk({ spo2: 62 }))).toContain('R-V-SPO2')
+    expect(rule(mk({ spo2_spot: 62 }))).toContain('R-V-SPO2')
   })
   it('the medical officer as patient is sent to the commander, never to themself', () => {
     const cmo = m.crew.find((c) => c.role === 'cmo')!
@@ -162,6 +162,30 @@ describe('end to end on the demo mission', () => {
       expect(texts.includes('R-EX') || texts.includes('Exercise has dropped below your plan')).toBe(false)
       if (d > m.pre_days + 40) break
     }
+  })
+  it('an urgent reading colours its body and sharing areas, holds exercise, and leaves Today once closed', () => {
+    const e: Entry = { key: 'k', mission: m.id, crew: 'c0', day: 100, values: { glucose: 50, rhr_spot: 170 }, symptoms: [], ts: 0 }
+    const a = run('c0', 100, [e])
+    expect(a.systems.gut).toBe('urgent')
+    expect(a.categories.nutrition).toBe('urgent')
+    expect(a.systems.heart).toBe('urgent')
+    expect(a.exerciseHold).toBe(true)
+    expect(a.findings.filter((x) => x.ruleId.startsWith('R-V-HR')).length).toBe(1)
+    const x = features(m, 'c0', model.indicators, [e])
+    const closed = new Set([`open|${m.id}|c0|R-V-GLU-LO2|100`])
+    const b = analyzeDay(m, 'c0', { crewId: 'c0', x, scored: scorePerson(x, model, m.phases) }, model, 100, [e], closed)
+    expect(b.findings.some((q) => q.ruleId === 'R-V-GLU-LO2')).toBe(false)
+    expect(b.findings.some((q) => q.ruleId === 'R-V-HR2')).toBe(true)
+    // a reading withdrawn as a typing mistake is not used
+    const w: Entry = { ...e, values: {}, readings: [{ ind: 'glucose', v: 50, ts: 1, void: true }] }
+    expect(run('c0', 100, [w]).findings.some((q) => q.ruleId === 'R-V-GLU-LO2')).toBe(false)
+    // an urgent reading from an earlier day is no longer "now" but stays open
+    const later = run('c0', 101, [e]).findings.find((q) => q.ruleId === 'R-V-GLU-LO2')!
+    expect(later.status).toBe('act')
+  })
+  it('a red flag unticked later stays on the medical officer list', () => {
+    const e: Entry = { key: 'k', mission: m.id, crew: 'c0', day: 100, values: {}, symptoms: [], redFlags: ['chest_pain'], ts: 0 }
+    expect(run('c0', 100, [e]).openItems.some((x) => x.ruleId === 'R-RED')).toBe(true)
   })
   it('a red-flag symptom entered at check-in is urgent immediately', () => {
     const e: Entry = { key: 'k', mission: m.id, crew: 'c0', day: 100, values: {}, symptoms: ['chest_pain'], ts: 0 }

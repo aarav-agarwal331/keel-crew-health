@@ -212,12 +212,27 @@ def main():
     early_tr = missions(40, 80000, events_per=1, first_day=3, last_margin=sc_len() - 25, min_gap=1)
     early_te = missions(80, 81000, events_per=1, first_day=3, last_margin=sc_len() - 25, min_gap=1)
     early_events = {}
+    # Luck for these events must come from the same flight days: right after launch a naive baseline
+    # alerts on the adaptation itself, and those alerts would otherwise count as detections.  Pretend
+    # events are therefore placed on flight days 3 to 25 of separate missions with no event at all.
+    quiet_e = [simulate(Scenario(), 82000 + s_) for s_ in range(60)]
+    L0 = quiet_e[0].scenario.pre_days
     for label, aware in [("phase-aware", True), ("naive", False)]:
-        o, t_, sc_, _ = evaluate(people(early_tr + tr_m, 80000, aware=aware), people(early_te, 81000, aware=aware), spec, p, w, methods=[DEPLOYED], budgets=[1.0], keep=True)
-        te_ = people(early_te, 81000, aware=aware)
-        ch = chance_rows(te_, [s[DEPLOYED] for s in sc_], [t_[(DEPLOYED, 1.0)]] * len(te_), w, p.merge_gap, 3, 1)
-        early_events[label] = {**stat(o[DEPLOYED][1.0], 400), **net_m(o[DEPLOYED][1.0], ch, 400)}
-        print("events in the first 25 flight days,", label, round(early_events[label]["detection_rate"], 2), "net", round(early_events[label]["net_detection"], 2), "FA", round(early_events[label]["fa_per_person_month"], 2))
+        o, t_, sc_, mdl = evaluate(people(early_tr + tr_m, 80000, aware=aware), people(early_te, 81000, aware=aware), spec, p, w, methods=[DEPLOYED], budgets=[1.0], keep=True)
+        qp_ = people(quiet_e, 82000, aware=aware)
+        q_sc = [x_[DEPLOYED] for x_ in score_people(qp_, mdl, p)]
+        ch = chance_rows(qp_, q_sc, [t_[(DEPLOYED, 1.0)]] * len(qp_), w, p.merge_gap, 3, 1, day_range=(L0 + 3, L0 + 25))
+        ev_rows, ch_rows_ = by_mission(o[DEPLOYED][1.0]), by_mission(ch)
+        det, c_ = aggregate(ev_rows)["detection_rate"], aggregate(ch_rows_)["detection_rate"]
+        rng_ = np.random.default_rng(1)
+        boot = []
+        for _ in range(600):   # events and pretend events come from different missions, so they are resampled separately
+            a_ = aggregate([ev_rows[i] for i in rng_.integers(0, len(ev_rows), len(ev_rows))])["detection_rate"]
+            b_ = aggregate([ch_rows_[i] for i in rng_.integers(0, len(ch_rows_), len(ch_rows_))])["detection_rate"]
+            boot.append(a_ - b_)
+        early_events[label] = {**stat(o[DEPLOYED][1.0], 400), "chance_detection_rate": c_, "net_detection": det - c_,
+                               "net_detection_ci": [float(np.percentile(boot, 2.5)), float(np.percentile(boot, 97.5))], "n_pseudo_events": aggregate(ch_rows_)["n_events"]}
+        print("events in the first 25 flight days,", label, round(det, 2), "luck", round(c_, 2), "net", round(det - c_, 2), [round(x_, 2) for x_ in early_events[label]["net_detection_ci"]], "FA", round(early_events[label]["fa_per_person_month"], 2))
 
     # ---- like-for-like check against real data: simulated people on the ground, illness only,
     # the same two channels the real illness data has, similar wear time (eval_real.py scores

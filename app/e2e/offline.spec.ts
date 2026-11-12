@@ -116,7 +116,17 @@ test('every screen works with the network disabled', async ({ page }) => {
     await page.getByTestId('sym-headache').click()
     await page.getByTestId('save-checkin').first().click()
     await nav(page, '#/today')
-    await expect(page.locator('main')).toContainText('extremely fast or slow')
+    await expect(page.locator('main')).toContainText('150 or more')
+    await expect(page.locator('#today-routine')).toContainText('Exercise: on hold')
+    // a value withdrawn as a typing mistake stops counting, and stays visible in the log
+    await nav(page, '#/checkin/measure')
+    await page.getByLabel(/Blood sugar/).fill('45')
+    await page.getByTestId('save-checkin').first().click()
+    await page.getByTestId('withdraw-glucose').first().click()
+    await expect(page.getByTestId('reading-log').first()).toContainText('withdrawn as a typing mistake')
+    await nav(page, '#/today')
+    await expect(page.locator('main')).toContainText('withdrew the reading as a typing mistake')
+    await expect(page.locator('a', { hasText: 'below 54 mg/dL' })).toHaveCount(0)
   })
 
   await test.step('A photo and a medication class can be added for the medical officer', async () => {

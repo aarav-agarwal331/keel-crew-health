@@ -77,16 +77,19 @@ export interface Entry {
   readings?: Reading[]
   /** medication classes the crew member logged that day (free of doses: for the medical officer's context) */
   meds?: string[]
+  /** every red-flag symptom ever ticked for this day: unticking one later does not remove it from the medical officer's list */
+  redFlags?: string[]
   /** photos taken for the medical officer (downscaled, stored on this device only) */
   photos?: Photo[]
 }
 
 export interface Photo { ts: number; label: string; data: string }
 
-export interface Reading { ind: string; v: number; ts: number }
+/** `void` marks a reading the crew member withdrew as a typing mistake: it stays in the log, struck through, and no rule uses it */
+export interface Reading { ind: string; v: number; ts: number; void?: boolean }
 
 /** A 'now' or 'today' finding raised from the crew member's own entry; stays listed until the medical officer closes it. */
-export interface OpenItem { key: string; ruleId: string; title: string; day: number; urgency: Urgency; category: string }
+export interface OpenItem { key: string; ruleId: string; title: string; day: number; urgency: Urgency; category: string; /** the reading behind it was withdrawn by the crew member; the medical officer still closes it */ withdrawn?: boolean }
 
 export interface ActionLog {
   id?: number
@@ -174,6 +177,10 @@ export interface Finding {
   cmoOnly?: boolean
   /** the patient is the crew medical officer, so the commander is the backup */
   patientIsCmo?: boolean
+  /** red-flag symptom names behind an R-RED finding (shown to the medical officer under emergency sharing) */
+  symptoms?: string[]
   /** who leads, when it is not the tier's default (cabin issues) */
   who?: string
+  /** every indicator this finding rests on (rule condition and evidence); decides which body and sharing areas it colours */
+  inds?: string[]
 }

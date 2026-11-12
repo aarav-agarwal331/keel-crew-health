@@ -73,7 +73,7 @@ export function Replay() {
         else if (rank > prev.rank) out.push({ ...item, title: `More serious now: ${f.title}`, body })
         seen.set(id, { rank: prev && prev.rule === f.ruleId ? Math.max(prev.rank, rank) : rank, rule: f.ruleId, day: prev?.day ?? d })
       }
-      for (const e of events) if (e.onset === d && (e.crew === crewIdx || e.crew < 0)) out.push({ day: d, kind: 'truth', title: `What was scripted: ${e.label.replace(/^Scripted /, '')}`, body: e.type === 'illness' ? `This is the day the scripted illness symptoms begin and the simulated crew member ticks them at check-in. An odd tired or congested day before this is ordinary simulated background, not the script. ${e.detail ?? ''}` : 'This is the day the scripted event starts.' })
+      for (const e of events) if (e.onset === d && (e.crew === crewIdx || e.crew < 0)) out.push({ day: d, kind: 'truth', title: `What was scripted: ${e.label.replace(/^Scripted /, '')}`, body: e.type === 'illness' ? `This is the day the scripted illness symptoms begin and the simulated crew member ticks them at check-in. An odd tired or congested day before this is ordinary simulated background, not the script. ${e.detail ?? ''} On any one night, ordinary night-to-night variation of about 3.5 bpm comes on top of the scripted rise.` : 'This is the day the scripted event starts.' })
     }
     return out
   }, [t, start, mission, today, crew.id, events, crewIdx])
@@ -147,7 +147,7 @@ export function Replay() {
                 <TrendChart values={b.values.map((v, i) => (i <= t ? v : NaN))} lo={b.hasBand ? b.lo.map((v, i) => (i <= t ? v : NaN)) : undefined} hi={b.hasBand ? b.hi.map((v, i) => (i <= t ? v : NaN)) : undefined}
                   from={start} to={end} labelFor={(d) => shortDay(mission, d)} unit={def.unit} decimals={def.decimals} concern={def.concern} height={120}
                   refLines={id === 'co2' ? [{ y: 3, label: 'ISS limit' }] : undefined}
-                  markers={firstAlert && ev && firstAlert.day === ev.onset && ev.onset <= t ? [{ day: ev.onset, label: ev.type === 'illness' ? 'Symptoms begin, Keel flags' : 'Event starts, Keel flags', kind: 'alert' as const }]
+                  markers={firstAlert && ev && firstAlert.day === ev.onset && ev.onset <= t ? [{ day: ev.onset, label: ev.type === 'illness' ? 'Symptoms + flag' : 'Event + flag', kind: 'alert' as const }]
                     : [...(firstAlert && firstAlert.day <= t ? [{ day: firstAlert.day, label: 'Keel flags', kind: 'alert' as const }] : []), ...(ev && ev.onset <= t ? [{ day: ev.onset, label: ev.type === 'illness' ? 'Symptoms begin' : 'Event starts', kind: 'truth' as const }] : [])]}
                   ariaLabel={`${def.label} during the replay`} />
               </div>
@@ -173,7 +173,7 @@ export function Replay() {
           <span className="tag">Result of this replay</span>
           {lead === null ? <p className="do">Keel did not flag this event inside the replay window.</p>
             : <p className="do">In this scripted case Keel flagged it {lead > 0 ? `${lead} day${lead === 1 ? '' : 's'} before` : lead === 0 ? 'on the day' : `${-lead} day${lead === -1 ? '' : 's'} after`} {ev.type === 'illness' ? 'symptoms began' : 'it started'}, with a specific action and no link to Earth.</p>}
-          {ev.type === 'illness' && lead !== null && lead > 0 && <p className="small"><strong>Do not read this as early warning.</strong> On real data the alert usually starts on or after the day symptoms begin, and an alert a day or two ahead is about as likely to be luck.</p>}
+          {ev.type === 'illness' && lead !== null && lead > 0 && <p className="small"><strong>Do not read this as early warning.</strong> On real data an alert a day or two ahead is only somewhat more common than luck would give, and not at the stricter tier.</p>}
           {ev.type === 'illness' && firstAlert && (
             <p className="small"><strong>Sensors alone, or with her check-in?</strong> {firstAlert.led === 'personal'
               ? `The sensors alone showed the pattern on ${shortDay(mission, firstAlert.day)}; no symptom report was needed for this flag.`
@@ -183,7 +183,7 @@ export function Replay() {
           )}
           {misread && firstAlert && <p className="small">On {shortDay(mission, misread.day)} the detector had already moved, but the readings then looked like something else ("{misread.title.replace(/^[^:]+: /, '')}") and the advice was for that. It is not counted as flagging this event.</p>}
           {unrelated.length > 0 && <p className="small">Keel's log for this replay also has {unrelated.length} {unrelated.length === 1 ? 'entry that is' : 'entries that are'} not about the scripted event. Some are one open notice being read differently as the days pass; some reflect ordinary lapses in the simulated routine, such as a missed exercise session; some are false alerts. That is part of the picture: notices are budgeted at about one false one per person-month.</p>}
-          {val && <p className="small"><strong>Across all the real data, not this one script:</strong> run as the app runs it, Keel flagged {Math.round(val.det * 100)}% of {val.n} real illness episodes, {Math.round(val.net * 100)} points more than luck, at {val.fa.toFixed(1)} false alerts per person-month. It did not give early warning. Everything except illness is tested in simulation only.</p>}
+          {val && <p className="small"><strong>Across all the real data, not this one script:</strong> with two sensors and thresholds from the simulator, Keel flagged {Math.round(val.det * 100)}% of {val.n} real illness episodes, {Math.round(val.net * 100)} points more than luck, at {val.fa.toFixed(1)} false alerts per person-month. Useful early warning was not shown. Everything except illness is tested in simulation only.</p>}
           <p className="small muted">One scripted event proves nothing by itself.</p>
           <div className="row wrap">
             <button className="btn primary" onClick={() => { setMe(crew.id); setDay(firstAlert ? Math.max(firstAlert.day + 1, Math.min(end, ev.onset - 1)) : ev.onset); go('today') }} data-testid="replay-open-today">Open that day as {crew.name.split(' ')[0]}</button>

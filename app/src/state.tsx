@@ -5,6 +5,7 @@ import { linkState, type LinkState, type OutboxItem } from './core/link'
 import { defaultSharing, type AccessEntry, type Level, type Role, type SharingSettings } from './core/sharing'
 import type { ActionLog, CrewAnalysis, Entry, Mission, Reading } from './core/types'
 import { groundSummary } from './core/visibility'
+import { SYMPTOMS } from './core/mission'
 import { store } from './db'
 import type { WorkerResponse } from './worker/detect.worker'
 
@@ -35,6 +36,7 @@ interface Ctx {
   entries: Entry[]
   /** `repeat` names spot readings taken again on purpose, so they are logged even when the value is the same */
   saveEntry: (e: Omit<Entry, 'key' | 'ts' | 'mission' | 'readings'>, repeat?: string[]) => Promise<void>
+  voidReading: (crew: string, day: number, ind: string, ts: number) => Promise<void>
   actions: ActionLog[]
   logAction: (a: Omit<ActionLog, 'id' | 'ts' | 'mission'>) => Promise<void>
   sharing: Record<string, SharingSettings>
@@ -66,7 +68,7 @@ const getJson = async <T,>(path: string): Promise<T> => {
 }
 
 /** spot readings that are logged with their time each time they are entered */
-const LOGGED = ['temp_oral', 'spo2', 'sbp', 'dbp', 'glucose', 'rhr', 'mass']
+const LOGGED = ['temp_oral', 'spo2_spot', 'sbp', 'dbp', 'glucose', 'rhr_spot', 'mass']
 
 export function AppProvider({ children }: { children: ReactNode }) {
   const [mission, setMission] = useState<Mission | null>(null)
@@ -196,7 +198,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   // --- derived -------------------------------------------------------------------------------
   const cache = useRef(new Map<string, DayAnalysis>())
-  useEffect(() => { cache.current.clear() }, [analyses, entries, mission, model])
+  // items the medical officer (or, for their own items, the commander) closed with a note
+  const closed = useMemo(() => new Set(actions.filter((x) => x.did.startsWith('Closed')).map((x) => x.alertKey)), [actions])
+  useEffect(() => { cache.current.clear() }, [analyses, entries, mission, model, closed])
   const today = useCallback((crewId?: string, d?: number): DayAnalysis | null => {
     if (!mission || !model) return null
     const id = crewId ?? me
@@ -206,11 +210,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const key = `${id}|${dd}`
     let v = cache.current.get(key)
     if (!v) {
-      v = analyzeDay(mission, id, an, model, dd, entries.filter((x) => x.mission === mission.id))
+      v = analyzeDay(mission, id, an, model, dd, entries.filter((x) => x.mission === mission.id), closed)
       cache.current.set(key, v)
     }
     return v
-  }, [mission, model, analyses, me, day, entries])
+  }, [mission, model, analyses, me, day, entries, closed])
 
   const link = useMemo(() => (mission ? linkState(mission, day, linkCut) : { available: false, delayS: NaN, distanceAu: NaN, reason: '', manualCut: false, scheduledBlackout: false }), [mission, day, linkCut])
 
@@ -263,10 +267,28 @@ export function AppProvider({ children }: { children: ReactNode }) {
       const last = [...log].reverse().find((r) => r.ind === k)
       if (!last || last.v !== e.values[k] || repeat.includes(k)) log.push({ ind: k, v: e.values[k], ts })
     }
-    const full: Entry = { ...e, meds: e.meds ?? old?.meds, photos: e.photos ?? old?.photos, mission: mission.id, key, ts, readings: log }
+    // red flags are append-only for the day: unticking one later does not take it off the medical officer's list
+    const redFlags = [...new Set([...(old?.redFlags ?? []), ...(old?.symptoms ?? []), ...e.symptoms].filter((x) => SYMPTOMS.find((q) => q.id === x)?.red_flag))]
+    const full: Entry = { ...e, meds: e.meds ?? old?.meds, photos: e.photos ?? old?.photos, mission: mission.id, key, ts, readings: log, ...(redFlags.length ? { redFlags } : {}) }
     // state first, storage second: a screen opened straight after saving must already see the entry
     entriesRef.current = [...entriesRef.current.filter((x) => x.key !== key), full]
     setEntries((prev) => [...prev.filter((x) => x.key !== full.key), full])
+    await store.putEntry(full)
+  }, [mission])
+  /** Mark one logged reading as a typing mistake.  It stays in the log, struck through, and no rule uses it. */
+  const voidReading = useCallback(async (crew: string, d: number, ind: string, ts: number) => {
+    if (!mission) return
+    const key = `${mission.id}|${crew}|${d}`
+    const old = entriesRef.current.find((x) => x.key === key)
+    if (!old?.readings) return
+    const readings = old.readings.map((r) => (r.ind === ind && r.ts === ts ? { ...r, void: true } : r))
+    const live = readings.filter((r) => r.ind === ind && !r.void)
+    const values = { ...old.values }
+    if (live.length) values[ind] = live[live.length - 1].v
+    else delete values[ind]
+    const full: Entry = { ...old, readings, values }
+    entriesRef.current = [...entriesRef.current.filter((x) => x.key !== key), full]
+    setEntries((prev) => [...prev.filter((x) => x.key !== key), full])
     await store.putEntry(full)
   }, [mission])
   const logAction = useCallback(async (a: Omit<ActionLog, 'id' | 'ts' | 'mission'>) => {
@@ -314,7 +336,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const ready = !!mission && !!model && Object.keys(analyses).length > 0 && !!me
   const value: Ctx | null = mission && model ? {
     ready, error, mission, model, missions, loadMission, addMission, analyses, computeMs, day, setDay, me, setMe, today, entries, saveEntry,
-    actions, logAction, sharing, setShare, setEmergency, access, logAccess, link, linkCut, setLinkCut, outbox, theme, setTheme, resetLocal,
+    actions, logAction, voidReading, sharing, setShare, setEmergency, access, logAccess, link, linkCut, setLinkCut, outbox, theme, setTheme, resetLocal,
   } : null
 
   if (error) return <div className="boot"><h1>Keel could not start</h1><p>{error}</p><button className="btn" onClick={() => location.reload()}>Try again</button></div>

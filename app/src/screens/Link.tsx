@@ -34,7 +34,7 @@ export function LinkScreen() {
             <p className="muted">{link.reason}{link.available && day >= mission.pre_days && !Number.isNaN(link.delayS) ? `. A question and its answer take at least ${fmtDelay(link.delayS * 2)}.` : ''}</p>
           </div>
         </div>
-        <p><strong>Keel does not use the link to work.</strong> Detection, explanations and recommended actions all run on this tablet: it last re-checked the whole crew's readings in {computeMs < 1000 ? 'a fraction of a second' : `${(computeMs / 1000).toFixed(1)} seconds`}. The link only carries a summary for the flight surgeon when one is available.</p>
+        <p><strong>Keel does not use the link to work.</strong> Detection, explanations and recommended actions all run on the tablet. In this demo one tablet holds the whole simulated crew (on a mission each person's tablet holds their own data); it last re-checked all four in {computeMs < 1000 ? 'a fraction of a second' : `${(computeMs / 1000).toFixed(1)} seconds`}. The link only carries a summary for the flight surgeon when one is available.</p>
         {hasLink && (link.scheduledBlackout && !linkCut ? (
           <div className="col">
             <p className="banner info"><strong>Day {day - b0 + 1} of a {b1 - b0 + 1}-day blackout.</strong> The link is expected back on {shortDay(mission, b1 + 1)}. Every screen you have used so far was running without it, and {queued.length} daily {queued.length === 1 ? 'summary is' : 'summaries are'} waiting to go.</p>

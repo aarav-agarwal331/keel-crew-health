@@ -58,7 +58,8 @@ export function Today() {
   const exDone = ex[day] >= target * 0.8
   const wearOk = !Number.isNaN(rawSeries(mission, me, 'rhr', mine)[day])
   // the thermometer is on the list so that a personal baseline exists before a fever question comes up
-  const spotDue = ['mass', 'sbp', 'glucose', 'temp_oral'].filter((k) => {
+  const askingTemp = !!primary && ['R-ILL', 'R-SYM-ILL', 'R-V-TEMP', 'R-V-TEMP-HI'].includes(primary.ruleId)
+  const spotDue = ['mass', 'sbp', 'glucose', 'temp_oral'].filter((k) => !(k === 'temp_oral' && askingTemp)).filter((k) => {
     const v = rawSeries(mission, me, k, mine)
     for (let t = day; t > day - 7 && t >= 0; t--) if (!Number.isNaN(v[t])) return false
     return true
@@ -109,16 +110,18 @@ export function Today() {
           <p className="do">{primary.action}</p>
           <p className="small"><strong>When:</strong> {URGENCY_LABEL[primary.urgency].toLowerCase()}. <strong>Who:</strong> {(primary.who ?? WHO_LABEL[primary.tier]).toLowerCase()}.</p>
           <p className="small">{primary.tierReason}</p>
+          {primary.status === 'urgent' && !primary.crewWide && <p className="small"><strong>{sharing[me]?.emergency === false ? 'Emergency sharing is off: nobody else has been shown this. Tell the medical officer yourself.' : primary.cmoOnly && !primary.patientIsCmo ? 'Shown to the medical officer at once (emergency sharing). Not shown to the commander.' : 'Shown to the medical officer and the commander at once (emergency sharing).'}</strong></p>}
+          {others.filter((x) => x.status === 'urgent').length > 0 && <p className="small"><strong>Also needs attention now:</strong> {others.filter((x) => x.status === 'urgent').map((x) => x.title).join('; ')}. Each is listed below.</p>}
           {['R-ILL', 'R-SYM-ILL', 'R-V-TEMP', 'R-V-TEMP-HI'].includes(primary.ruleId) ? <TempEntry /> : <ReadingLog readings={primary.readings ?? []} title="Readings this is based on" />}
           <a className="btn primary block" href={href('alert', primary.key)} data-testid="open-alert">Why, and what next <Chev /></a>
           {needsCmo && <button className="btn block" onClick={() => shareCats.forEach((c) => setShare(me, 'cmo', c, 'detail'))} data-testid="today-share-cmo">Show the medical officer the readings behind this alert</button>}
-          {needsCmo && <p className="small muted">This changes one setting: <strong>{shareCats.map((c) => CAT[c]).join(', ')}</strong> goes from "{LEVEL_WORD[sharing[me]?.cmo[shareCats[0]] ?? 'none']}" to "Full detail" for the medical officer, until you change it back in Sharing. Nothing else changes. <strong>You still need to tell them.</strong></p>}
+          {needsCmo && <p className="small muted">This changes one setting: <strong>{shareCats.map((c) => CAT[c]).join(', ')}</strong> goes from "{LEVEL_WORD[sharing[me]?.cmo[shareCats[0]] ?? 'none']}" to "Full detail" for the medical officer, until you change it back in Sharing. Readings in other areas, such as sleep or reaction time, stay as you set them. <strong>You still need to tell them.</strong></p>}
           {primary.kind === 'personal' && primary.tier !== 'self' && !needsCmo && <p className="small muted">The medical officer can see this alert.</p>}
         </section>
       )}
       {waiting.length > 0 && (
         <Card title="Waiting for the medical officer to close">
-          <ul className="list small">{waiting.map((x) => <li key={x.key}><strong>{x.title}</strong> <span className="muted">({shortDay(mission, x.day)})</span></li>)}</ul>
+          <ul className="list small">{waiting.map((x) => <li key={x.key}><strong>{x.title}</strong> <span className="muted">({shortDay(mission, x.day)}{x.withdrawn ? '; you withdrew the reading as a typing mistake' : ''})</span></li>)}</ul>
           <p className="small muted">These came from your own entries. A later normal reading does not close them: the medical officer does, with a note{crew?.role === 'cmo' ? ' (for you, the commander)' : ''}.</p>
         </Card>
       )}
@@ -148,7 +151,7 @@ export function Today() {
           <BodyMap systems={a.systems} key={`${me}-${day}`} />
         </Card>
         <div className="col" style={{ gap: 14 }}>
-          <Card title="Today's routine" right={<span className="chip num" title="Days in a row with the sensor worn and a check-in done">{streak}-day streak</span>}>
+          <Card id="today-routine" title="Today's routine" right={<span className="chip num" title="Days in a row with the sensor worn and a check-in done">{streak}-day streak</span>}>
             <div className="row" style={{ gap: 14 }}>
               <Ring value={weekPct} label={`Exercise this week: ${Math.round(weekPct * 100)} percent of plan`} />
               <div className="col" style={{ gap: 2 }}>
@@ -161,7 +164,7 @@ export function Today() {
             <ul className="list">
               <li><StatusTag status={checked ? 'steady' : 'learning'} label={checkedByMe ? 'Check-in done' : checked ? 'Check-in done (simulated)' : 'Daily check-in (about a minute)'} size={18} />{!checked && <a className="btn sm" href={href('checkin')} style={{ marginLeft: 'auto', float: 'right' }}>Start</a>}</li>
               <li><StatusTag status={wearOk ? 'steady' : 'learning'} label={wearOk ? 'Sensor worn last night' : 'No sensor data last night: wear it tonight'} size={18} /></li>
-              <li><StatusTag status={exDone ? 'steady' : 'learning'} label={primary && ['R-ILL', 'R-SYM-ILL', 'R-V-TEMP', 'R-V-TEMP-HI'].includes(primary.ruleId) ? (tempToday === undefined ? 'Exercise: on hold until you take your temperature' : tempToday >= 38 ? 'Exercise: none today' : 'Exercise: light session only today') : exDone ? 'Exercise done today' : `Exercise: ${Number.isNaN(ex[day]) ? 0 : Math.round(ex[day])} of ${target} min today`} size={18} /></li>
+              <li><StatusTag status={exDone ? 'steady' : 'learning'} label={a.exerciseHold ? (askingTemp && tempToday === undefined ? 'Exercise: on hold until you take your temperature' : 'Exercise: on hold until the medical officer agrees (see the action above)') : exDone ? 'Exercise done today' : `Exercise: ${Number.isNaN(ex[day]) ? 0 : Math.round(ex[day])} of ${target} min today`} size={18} /></li>
               {spotDue.length > 0 && <li><StatusTag status="learning" label={`Weekly measurement due: ${spotDue.map((k) => IND[k].label.toLowerCase()).join(', ')}`} size={18} /> <a className="btn sm" href={href('checkin', 'measure')} data-testid="enter-measurements">Enter</a></li>}
               {!Number.isNaN(sleepLast) && sleepLast < 5.5 && <li><StatusTag status="watch" label={`Sleep last night ${sleepLast.toFixed(1)} h. The scheduled sleep period is 8.5 h.`} size={18} /></li>}
             </ul>
@@ -176,7 +179,7 @@ export function Today() {
               <a className="col" style={{ gap: 0, textDecoration: 'none', color: 'inherit' }} href={href('trends', 'rad')}>
                 <span className="small muted">Radiation dose</span>
                 <span><span className="num" style={{ fontSize: '1.4rem', fontWeight: 700 }}>{cum.toFixed(0)}</span> <span className="small muted">mSv this mission (dosimeter estimate)</span></span>
-                <span className="tiny muted">Today {Number.isNaN(rad[day]) ? '–' : rad[day].toFixed(2)} mSv.{fd > 20 && mission.flight_days ? ` At this rate about ${Math.round((cum / (fd + 1)) * mission.flight_days / 10) * 10} mSv by the end of this mission.` : ''} The 600 mSv career limit also counts earlier flights.</span>
+                <span className="tiny muted">Today {Number.isNaN(rad[day]) ? '–' : rad[day].toFixed(2)} mSv.{fd > 20 && mission.flight_days ? ` At this mission's average daily rate so far, about ${Math.round((cum / (fd + 1)) * mission.flight_days / 10) * 10} mSv by the end.` : ''} The 600 mSv career limit also counts earlier flights.</span>
               </a>
             </div>
           </Card>

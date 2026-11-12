@@ -1,7 +1,7 @@
 {
  "script": "research/scripts/calibrate_sim.py",
- "commit": "bc3a633",
- "code_version": "4094da0150f3",
+ "commit": "455012f",
+ "code_version": "e4d2c5502c36",
  "targets": {
   "rhr": {
    "source": "Stanford wearables, people with no reported illness (calibration half)",

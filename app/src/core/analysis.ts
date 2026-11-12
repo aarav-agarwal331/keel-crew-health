@@ -105,6 +105,17 @@ export function condVals(c: Cond): string[] {
   return []
 }
 
+/** Every indicator a condition refers to, whichever way (deviation, entered value, run of values, relative change). */
+export function condAll(c: Cond): string[] {
+  if ('all' in c) return c.all.flatMap(condAll)
+  if ('any' in c) return c.any.flatMap(condAll)
+  if ('u' in c) return [c.u]
+  if ('val' in c) return [c.val.replace(/_manual$|_rise$/, '')]
+  if ('run' in c) return [c.run]
+  if ('rel' in c) return [c.rel]
+  return []
+}
+
 export function condIndicators(c: Cond): string[] {
   if ('all' in c) return c.all.flatMap(condIndicators)
   if ('any' in c) return c.any.flatMap(condIndicators)
@@ -125,6 +136,9 @@ export function applyRule(r: Rule, f: RuleFeatures): { tier: Tier; reason: strin
   }
   return { tier, reason }
 }
+
+/** a single night shorter than this turns the sleep area amber (also used by the Today routine line) */
+export const SLEEP_FLOOR_H = 5
 
 const URGENCY_STATUS: Record<Urgency, Status> = { now: 'urgent', today: 'act', routine: 'watch' }
 const mean = (v: number[]) => (v.length ? v.reduce((a, b) => a + b, 0) / v.length : NaN)
@@ -149,6 +163,8 @@ export interface DayAnalysis {
   categories: Record<string, Status>
   /** cabin CO2 (mmHg) when it is above the level linked to headaches but below the alert rule */
   co2Advisory: number | null
+  /** exercise is on hold because an open finding says to stop or rest */
+  exerciseHold: boolean
   /** 'now' and 'today' findings from the crew member's own entries in the last 30 days (closing them is the medical officer's job) */
   openItems: OpenItem[]
   alert: { start: number; days: number; tier: 'notice' | 'alert'; score: number } | null
@@ -176,8 +192,15 @@ export const STATUS_LABEL: Record<Status, string> = {
   urgent: 'Act now',
 }
 
+/** Rules whose advice includes stopping or holding exercise.  While one is open, "do today's session"
+ *  is never shown and the routine shows exercise on hold. */
+export const NO_EXERCISE = new Set(['R-RED', 'R-V-SPO2', 'R-V-TEMP-HI', 'R-V-TEMP', 'R-V-HR0', 'R-V-HR2', 'R-V-HR1', 'R-V-HR', 'R-V-BP-LO2', 'R-V-BP-LO', 'R-V-BP-HI2', 'R-V-GLU-LO2', 'R-V-GLU-LO', 'R-SYM-ILL', 'R-ILL', 'R-CO2-HI', 'R-SPE-V', 'R-SPO2'])
+/** spot readings typed at check-in are kept apart from the wearable's overnight series, so a fingertip
+ *  check never overwrites the overnight value that prompted it */
+export const SPOT_KEY: Record<string, string> = { rhr: 'rhr_spot', spo2: 'spo2_spot' }
+
 export function analyzeDay(
-  m: Mission, crewId: string, an: CrewAnalysis, model: ModelJson, day: number, entries: Entry[],
+  m: Mission, crewId: string, an: CrewAnalysis, model: ModelJson, day: number, entries: Entry[], closed: Set<string> = new Set(),
 ): DayAnalysis {
   const ids = model.indicators
   const p = model.params
@@ -237,7 +260,7 @@ export function analyzeDay(
   const radHist = rad.slice(Math.max(m.pre_days, day - 30), Math.max(0, day - 1)).filter((v) => !Number.isNaN(v)).sort((a, b) => a - b)
   const radMed = radHist.length >= 5 ? radHist[Math.floor(radHist.length / 2)] : NaN
   const rad3 = Math.max(...[day, day - 1, day - 2].map((t) => (t >= 0 && !Number.isNaN(rad[t]) ? rad[t] : -Infinity)))
-  const env: Record<string, number> = { co2_3d: co23, co2: lastValid(co2, day), rad: lastValid(rad, day), rad_ratio: lastValid(rad, day) / radMed, rad_ratio_3d: rad3 / radMed }
+  const env: Record<string, number> = { co2_3d: co23, co2: lastValid(co2, day), rad: lastValid(rad, day), rad_ratio: lastValid(rad, day) / radMed, rad_ratio_3d: rad3 / radMed, rad_sum_3d: [day, day - 1, day - 2].reduce((acc, t) => acc + (t >= 0 && !Number.isNaN(rad[t]) ? rad[t] : 0), 0) }
   const ph = phaseAt(m, day)
   const hasPhase = m.phases.some((q) => day >= q.start)
   const adapting = hasPhase && ph.since < 14 ? { name: ph.name, day: ph.since + 1 } : null
@@ -258,8 +281,10 @@ export function analyzeDay(
     const series = manualOnly ? null : rawSeries(m, crewId, id, [])
     for (let t = day; t > day - back && t >= 0; t--) {
       const e = mineE.find((q) => q.day === t)
-      const log = (e?.readings ?? []).filter((r) => r.ind === id)
-      if (log.length) return { day: t, vals: log.map((r) => r.v), log }
+      const all = (e?.readings ?? []).filter((r) => r.ind === id)
+      const log = all.filter((r) => !r.void)
+      if (log.length) return { day: t, vals: log.map((r) => r.v), log: all }
+      if (all.length) continue   // every reading that day was withdrawn
       if (e && id in e.values) return { day: t, vals: [e.values[id]], log: [{ ind: id, v: e.values[id], ts: e.ts }] }
       if (series && !Number.isNaN(series[t])) return { day: t, vals: [series[t]], log: [] }
     }
@@ -278,23 +303,22 @@ export function analyzeDay(
   // a red flag stays open for three days unless a later check-in by the crew member leaves it out;
   // after that it remains on the open-items list until the medical officer closes it
   const lastEntry = mineE.filter((q) => q.day <= day && q.day > day - 3).sort((a, b) => b.day - a.day)[0]
-  const redSyms = [...new Set([...symptomsOn(m, crewId, day, entries), ...(lastEntry?.symptoms ?? [])].filter((x) => SYM[x]?.red_flag))]
+  const redSyms = [...new Set([...symptomsOn(m, crewId, day, entries), ...(lastEntry?.symptoms ?? []), ...(lastEntry?.redFlags ?? [])].filter((x) => SYM[x]?.red_flag))]
   const redFlag = redSyms.length > 0
   const patientIsCmo = m.crew.find((c) => c.id === crewId)?.role === 'cmo'
   const tOral = rawSeries(m, crewId, 'temp_oral', entries)
   const tPrev = tOral.slice(0, Math.max(0, day - 6)).filter((v) => !Number.isNaN(v)).sort((x, y) => x - y)
   const tUsual = tPrev.length >= 3 ? tPrev[Math.floor(tPrev.length / 2)] : NaN
   const force: Record<string, ReturnType<typeof inForce>> = {
-    temp_oral: inForce('temp_oral'), glucose: inForce('glucose'), sbp: inForce('sbp'), dbp: inForce('dbp'), spo2: inForce('spo2', true), rhr: inForce('rhr', true),
+    temp_oral: inForce('temp_oral'), glucose: inForce('glucose'), sbp: inForce('sbp'), dbp: inForce('dbp'), spo2: inForce('spo2_spot', true), rhr: inForce('rhr_spot', true),
   }
   const val: Record<string, number[]> = {
     temp_oral: force.temp_oral.vals, temp_oral_rise: force.temp_oral.vals.map((v) => v - tUsual), glucose: force.glucose.vals, sbp: force.sbp.vals, dbp: force.dbp.vals,
     spo2_manual: force.spo2.vals, rhr_manual: force.rhr.vals,
   }
   const f: RuleFeatures = { u: u3, sym, env, phaseDays: ph.since, hasPhase, alertDays: alert?.days ?? 0, patternDays: 0, val, run, rel, redFlag }
-  // which pattern rule applied on an earlier day of the same alert (used to date the pattern)
-  const personalRuleAt = (t: number): string | null => {
-    if (!alert || t < alert.start) return null
+  // the same features as they stood on an earlier day (deviations and symptoms; entered readings and cabin stay as today)
+  const featAt = (t: number): RuleFeatures => {
     const u: Record<string, number> = {}
     for (let j = 0; j < d; j++) {
       const v: number[] = []
@@ -303,8 +327,24 @@ export function analyzeDay(
     }
     const sy: Record<string, number> = {}
     for (let q = Math.max(0, t - 2); q <= t; q++) for (const x of symptomsOn(m, crewId, q, entries)) sy[x] = (sy[x] ?? 0) + 1
-    const ft: RuleFeatures = { ...f, u, sym: sy, alertDays: t - alert.start + 1, patternDays: 0 }
-    return (RULES.find((q) => q.scope === 'personal' && evalCond(q.when, ft)) ?? RULE['R-GEN']).id
+    return { ...f, u, sym: sy, alertDays: alert ? t - alert.start + 1 : 0, patternDays: 0 }
+  }
+  // How an open notice has been read, day by day.  A reading is kept while its rule still holds, unless a
+  // rule higher in the table (more specific or more serious) now applies: the headline does not flip
+  // back and forth between equally plausible readings.
+  const ruleSeq = (skipExToday: boolean): string[] => {
+    if (!alert) return []
+    const out: string[] = []
+    let prev: Rule | null = null
+    for (let t = Math.max(alert.start, day - 59); t <= day; t++) {
+      const ft = t === day ? f : featAt(t)
+      const skip = (q: Rule) => t === day && skipExToday && q.id === 'R-EX'
+      let cur: Rule = RULES.find((q) => q.scope === 'personal' && !skip(q) && evalCond(q.when, ft)) ?? RULE['R-GEN']
+      if (prev && prev.id !== cur.id && cur.priority > prev.priority && !skip(prev) && evalCond(prev.when, ft)) cur = prev
+      out.push(cur.id)
+      prev = cur
+    }
+    return out
   }
   // days in a row with no fresh reading at all (rolling averages do not count as fresh)
   const fresh = ['rhr', 'hrv', 'spo2', 'temp', 'sleep_h', 'mood', 'pvt_rt', 'fluid', 'energy', 'ex_min', 'steps'].map((id) => rawSeries(m, crewId, id, entries))
@@ -352,6 +392,7 @@ export function analyzeDay(
       action: r.action, steps: r.steps, tier: t.tier, tierReason: t.reason, urgency: r.urgency ?? 'routine', countermeasures: r.cm, categories: r.categories,
       ...(crewWide ? { who: 'The commander and the whole crew' } : {}), ...(patientIsCmo ? { patientIsCmo: true } : {}), ...extra,
     }
+    out.inds = [...new Set([...condAll(r.when), ...out.changes.map((c) => c.ind)])]
     // the medical officer cannot be told to see the medical officer: their backup is the commander
     return patientIsCmo && !crewWide ? forCmoAsPatient(out) : out
   }
@@ -360,15 +401,29 @@ export function analyzeDay(
     while (s > 0 && test(s - 1)) s--
     return s
   }
+  const rank: Record<Status, number> = { urgent: 4, act: 3, watch: 2, steady: 1, learning: 0 }
+  // a symptom-led finding dates from the first day in a row on which its rule held (a red flag: from the day it was ticked)
+  const symStart = (r: Rule): number => {
+    if (r.id === 'R-RED') return lastEntry && lastEntry.symptoms.some((x) => SYM[x]?.red_flag) ? lastEntry.day : day
+    let s0 = day
+    while (s0 > 0 && s0 > day - 14 && evalCond(r.when, featAt(s0 - 1))) s0--
+    return s0
+  }
   for (const r of RULES) {
     if ((r.scope === 'symptom' || r.scope === 'vital') && evalCond(r.when, f)) {
       const named = condIndicators(r.when)
       // a fixed rule dates from the day of the reading it is looking at, and carries those readings
       const vals = condVals(r.when).filter((v) => force[v]?.vals.length)
-      const start = vals.length ? Math.min(...vals.map((v) => force[v].day)) : day
+      const start = vals.length ? Math.min(...vals.map((v) => force[v].day)) : r.scope === 'symptom' ? symStart(r) : day
       const log = vals.flatMap((v) => force[v].log)
-      findings.push(mk(r, r.scope, start, URGENCY_STATUS[r.urgency ?? 'routine'], changes.filter((c) => named.includes(c.ind)).slice(0, 4), {
+      // the medical officer closed it: it leaves Today (the reading stays in the log)
+      if (r.urgency !== 'routine' && closed.has(`open|${m.id}|${crewId}|${r.id}|${start}`)) continue
+      // an "act now" reading from an earlier day is no longer "now": it waits for the medical officer
+      const stale = r.urgency === 'now' && start < day
+      findings.push(mk(r, r.scope, start, stale ? 'act' : URGENCY_STATUS[r.urgency ?? 'routine'], changes.filter((c) => named.includes(c.ind)).slice(0, 4), {
         ...(log.length ? { readings: log } : {}),
+        ...(stale ? { urgency: 'today' as Urgency, tierReason: `This reading was taken on ${m.day_label ? `${m.day_label} ${start + 1}` : `day ${start + 1}`}. It stays open until the medical officer closes it with a note.` } : {}),
+        ...(r.id === 'R-RED' ? { symptoms: redSyms.map((x) => SYM[x]?.label ?? x) } : {}),
         ...(r.id === 'R-RED' ? { cmoOnly: redSyms.every((x) => (SYM[x] as { commander?: boolean }).commander === false) } : {}),
       }))
     }
@@ -381,14 +436,20 @@ export function analyzeDay(
     }
     if (r.scope === 'adaptation' && evalCond(r.when, f)) findings.push(mk(r, 'adaptation', Math.max(0, day - ph.since), applyRule(r, f).tier !== 'self' ? 'act' : 'watch', []))
   }
+  // one finding per reading: when two fixed rules fire on the same indicator, the more urgent one stands
+  for (let i = findings.length - 1; i >= 0; i--) {
+    const a = findings[i]
+    if (a.kind === 'vital' && findings.some((b) => b !== a && b.kind === 'vital' && rank[b.status] > rank[a.status] && (b.inds ?? []).some((x) => (a.inds ?? []).includes(x)))) findings.splice(i, 1)
+  }
   if (alert && !learning) {
     // while an illness or fever finding is open, "do today's session" must not appear beside "no exercise"
-    const restAdvised = findings.some((x) => ['R-SYM-ILL', 'R-V-TEMP', 'R-V-TEMP-HI', 'R-RED'].includes(x.ruleId))
-    const r = RULES.find((q) => q.scope === 'personal' && !(restAdvised && q.id === 'R-EX') && evalCond(q.when, f)) ?? RULE['R-GEN']
+    const restAdvised = findings.some((x) => NO_EXERCISE.has(x.ruleId))
+    const seq = ruleSeq(restAdvised)
+    const r = RULE[seq[seq.length - 1]] ?? RULE['R-GEN']
     let patternDays = 1
-    for (let t = day - 1; t >= alert.start && patternDays < 60; t--) { if (personalRuleAt(t) === r.id) patternDays++; else break }
+    for (let k = seq.length - 2; k >= 0 && seq[k] === r.id; k--) patternDays++
     f.patternDays = patternDays
-    const firstRule = patternDays < alert.days ? RULE[personalRuleAt(alert.start) ?? 'R-GEN'] : null
+    const firstRule = patternDays < seq.length ? RULE[seq[0]] : null
     const noEx = restAdvised || r.id === 'R-ILL'
     const also = RULES.filter((q) => q.scope === 'personal' && q.id !== r.id && !['R-GEN', 'R-CARD'].includes(q.id) && !(noEx && q.id === 'R-EX') && evalCond(q.when, f)).map((q) => ({ title: q.title, action: q.action }))
     const t = applyRule(r, f)
@@ -403,17 +464,19 @@ export function analyzeDay(
     findings.push(mk(r, 'personal', alert.start, status, evidence, {
       score: alert.score, threshold: model.thresholds.notice, categories: [...cats], detectorTier: alert.tier, days: patternDays, patternStart: day - patternDays + 1,
       firstNotice: firstRule ? { day: alert.start, title: firstRule.title } : undefined, also,
-      factors: ['R-ILL'].includes(r.id) ? factors.filter((x) => x.id !== 'mood') : factors, urgency: (t.tier !== 'self' && !early ? 'today' : 'routine') as Urgency,
+      factors: ['R-ILL'].includes(r.id) ? factors.filter((x) => x.id !== 'mood') : factors, urgency: (status === 'act' ? 'today' : 'routine') as Urgency,
       ...(early ? { tier: 'self' as Tier, tierReason: 'Early signal. Keel will suggest involving the medical officer if it strengthens, lasts, or you report symptoms.', action: r.action.replace(/,? and tell the medical officer\.$/, '.').replace(/ Tell the medical officer\.$/, '') } : {}),
     }))
   }
-  const rank: Record<Status, number> = { urgent: 4, act: 3, watch: 2, steady: 1, learning: 0 }
   // one illness finding, not two: when the detector's own illness pattern is open it replaces the symptom-led one
   // (the merged finding keeps whichever urgency, status and audience is the more serious)
   const ill = findings.find((x) => x.ruleId === 'R-ILL')
   if (ill) for (let i = findings.length - 1; i >= 0; i--) if (findings[i].ruleId === 'R-SYM-ILL') {
     const sy = findings[i]
     if (rank[sy.status] > rank[ill.status]) Object.assign(ill, { status: sy.status, urgency: sy.urgency, action: sy.action, tier: TIER_RANK[sy.tier] > TIER_RANK[ill.tier] ? sy.tier : ill.tier, tierReason: sy.tierReason })
+    // the merged finding dates from whichever began first, so every screen gives the same "since" day
+    const began = Math.min(ill.patternStart ?? ill.start, sy.start)
+    Object.assign(ill, { patternStart: began, days: day - began + 1 })
     findings.splice(i, 1)
   }
   findings.sort((a, b) => rank[b.status] - rank[a.status])
@@ -422,6 +485,7 @@ export function analyzeDay(
   // --- one status per area, used by every screen (body map, sharing preview, role views) ------
   const co2Today = lastValid(co2, day)
   const envStatus: Status = findings.some((x) => x.kind === 'environment') ? 'act' : co23 >= 2.5 || co2Today >= 2.5 ? 'watch' : 'steady'
+  const sleepLast = lastValid(rawSeries(m, crewId, 'sleep_h', entries), day, 1)
   const areaStatus = (inds: string[]): Status => {
     let st: Status = 'learning'
     for (const id of inds) {
@@ -433,18 +497,22 @@ export function analyzeDay(
       const one: Status = uu >= 2 || uAt(day, j) >= 3 ? 'watch' : 'steady'
       if (rank[one] > rank[st]) st = one
     }
+    // an area shows the worst open finding that rests on any of its indicators, fixed-threshold rules included
     for (const fd of findings) {
       if (fd.kind === 'environment') continue
-      const ev = fd.changes.map((c) => c.ind)
+      const ev = fd.inds ?? fd.changes.map((c) => c.ind)
       if (ev.some((e) => inds.includes(e)) && rank[fd.status] > rank[st]) st = fd.status
     }
+    // a fixed floor beside the personal range: a night under five hours is worth a look whatever is usual for you
+    if (inds.includes('sleep_h') && sleepLast < SLEEP_FLOOR_H && rank[st] < rank.watch) st = 'watch'
     return st
   }
+  const allInds = Object.keys(IND).filter((i) => IND[i].category !== 'environment')
   const systems: Record<string, Status> = {}
-  for (const sysId of [...new Set(ids.map((i) => IND[i].system))]) systems[sysId] = areaStatus(ids.filter((i) => IND[i].system === sysId))
+  for (const sysId of [...new Set(allInds.map((i) => IND[i].system))]) systems[sysId] = areaStatus(allInds.filter((i) => IND[i].system === sysId))
   systems.environment = envStatus
   const categories: Record<string, Status> = {}
-  for (const cat of [...new Set(ids.map((i) => IND[i].category))]) categories[cat] = areaStatus(ids.filter((i) => IND[i].category === cat))
+  for (const cat of [...new Set(allInds.map((i) => IND[i].category))]) categories[cat] = areaStatus(allInds.filter((i) => IND[i].category === cat))
   const symFinding = findings.find((x) => x.kind === 'symptom' || x.kind === 'adaptation' || x.ruleId === 'R-CO2H')
   // A single tick of a common symptom is not a flag (stuffiness is near-universal in weightlessness):
   // the area turns amber for a symptom on two of the last three days (tiredness: all three), or
@@ -458,21 +526,26 @@ export function analyzeDay(
   // --- 'now' and 'today' findings from the crew member's own entries, for the medical officer to close ---
   const openItems: OpenItem[] = []
   for (const e of mineE) {
-    if (e.day > day || e.day <= day - 30) continue
-    const vv = (id: string) => { const log = (e.readings ?? []).filter((x) => x.ind === id).map((x) => x.v); return log.length ? log : id in e.values ? [e.values[id]] : [] }
-    const fe: RuleFeatures = {
+    if (e.day > day) continue   // no time limit: an item leaves the list only when the medical officer closes it
+    const vv = (id0: string, withVoid: boolean) => { const id = SPOT_KEY[id0] ?? id0; const log = (e.readings ?? []).filter((x) => x.ind === id && (withVoid || !x.void)).map((x) => x.v); return log.length ? log : (e.readings ?? []).some((x) => x.ind === id) ? [] : id in e.values ? [e.values[id]] : [] }
+    const feats = (withVoid: boolean): RuleFeatures => ({
       u: {}, sym: Object.fromEntries(e.symptoms.map((x) => [x, 1])), env: {}, phaseDays: 0, hasPhase: false, alertDays: 0, patternDays: 0, run: () => [], rel: {},
-      redFlag: e.symptoms.some((x) => SYM[x]?.red_flag),
-      val: { temp_oral: vv('temp_oral'), temp_oral_rise: [], glucose: vv('glucose'), sbp: vv('sbp'), dbp: vv('dbp'), spo2_manual: vv('spo2'), rhr_manual: vv('rhr') },
-    }
-    for (const r of RULES) {
-      if ((r.scope !== 'vital' && r.scope !== 'symptom') || r.urgency === 'routine' || !evalCond(r.when, fe)) continue
-      openItems.push({ key: `open|${m.id}|${crewId}|${r.id}|${e.day}`, ruleId: r.id, title: r.title, day: e.day, urgency: r.urgency, category: r.categories[0] })
+      redFlag: [...e.symptoms, ...(e.redFlags ?? [])].some((x) => SYM[x]?.red_flag),
+      val: { temp_oral: vv('temp_oral', withVoid), temp_oral_rise: [], glucose: vv('glucose', withVoid), sbp: vv('sbp', withVoid), dbp: vv('dbp', withVoid), spo2_manual: vv('spo2', withVoid), rhr_manual: vv('rhr', withVoid) },
+    })
+    const fAll = feats(true), fLive = feats(false)
+    const fired = RULES.filter((r) => (r.scope === 'vital' || r.scope === 'symptom') && r.urgency !== 'routine' && evalCond(r.when, fAll))
+    for (const r of fired) {
+      // one item per reading: a more urgent rule on the same indicator stands for the lesser one
+      const mine = condAll(r.when)
+      if (mine.length && fired.some((q) => q !== r && q.urgency === 'now' && r.urgency !== 'now' && condAll(q.when).some((x) => mine.includes(x)))) continue
+      openItems.push({ key: `open|${m.id}|${crewId}|${r.id}|${e.day}`, ruleId: r.id, title: r.title, day: e.day, urgency: r.urgency, category: r.categories[0], ...(evalCond(r.when, fLive) ? {} : { withdrawn: true }) })
     }
   }
   openItems.sort((a, b) => b.day - a.day)
 
-  return { status, findings, changes, learning, baselineDays, adapting, staleDays, u3, systems, categories, alert, features: f, co2Advisory: envStatus === 'watch' ? Math.max(co2Today || 0, co23 || 0) : null, openItems }
+  const exerciseHold = findings.some((x) => NO_EXERCISE.has(x.ruleId))
+  return { status, findings, changes, learning, baselineDays, adapting, staleDays, u3, systems, categories, alert, features: f, co2Advisory: envStatus === 'watch' ? Math.max(co2Today || 0, co23 || 0) : null, openItems, exerciseHold }
 }
 
 /** Wording for a finding when the patient is the crew medical officer: the commander is the backup. */

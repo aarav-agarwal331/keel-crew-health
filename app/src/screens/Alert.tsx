@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { CM, describeChange, evidenceTag, REFS, RULE, STATUS_LABEL, unusualness, URGENCY_LABEL, WHO_LABEL } from '../core/analysis'
+import { CM, describeChange, evidenceTag, REFS, RULE, STATUS_LABEL, unusualness, URGENCY_LABEL, WHO_LABEL, condAll } from '../core/analysis'
 import { IND, shortDay } from '../core/mission'
 import type { ShareCategory } from '../core/sharing'
 import { SHARE_CATEGORIES } from '../core/sharing'
@@ -21,7 +21,10 @@ export function Alert({ alertKey }: { alertKey?: string }) {
   const [feel, setFeel] = useState<number | null>(null)
   const [note, setNote] = useState('')
   const [saved, setSaved] = useState(false)
-  const f = a?.findings.find((x) => x.key === alertKey) ?? a?.findings[0]
+  // a fixed rule can be replaced by a more urgent one on the same reading (38.4 then 39.6 °C): follow it
+  const keyRule = alertKey?.split('|')[2]
+  const keyInds = keyRule && RULE[keyRule] ? condAll(RULE[keyRule].when) : []
+  const f = a?.findings.find((x) => x.key === alertKey) ?? a?.findings.find((x) => keyInds.length > 0 && (x.inds ?? []).some((i) => keyInds.includes(i))) ?? a?.findings[0]
   if (!a || !f) {
     return (
       <Card title="No open alert">

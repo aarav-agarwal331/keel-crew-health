@@ -1,7 +1,7 @@
 {
  "script": "research/scripts/eval_sim.py",
- "commit": "bc3a633",
- "code_version": "4094da0150f3",
+ "commit": "455012f",
+ "code_version": "e4d2c5502c36",
  "simulated": true,
  "deployed": "mewma",
  "design": {
@@ -3991,18 +3991,13 @@
     0.9919464117168886,
     1.049585882966265
    ],
-   "net_detection": 0.18531678082191783,
-   "net_by_onset": -0.026469748858447495,
-   "chance_used": 0.396875,
-   "chance_by_onset_used": 0.3072916666666667,
+   "chance_detection_rate": 0.34305555555555556,
+   "net_detection": 0.23913622526636225,
    "net_detection_ci": [
-    0.0938968316757082,
-    0.2671643833750953
+    0.14320369696234272,
+    0.32920471037691557
    ],
-   "net_by_onset_ci": [
-    -0.11037976190476188,
-    0.04187229149084379
-   ]
+   "n_pseudo_events": 720
   },
   "naive": {
    "n_people": 80,
@@ -4037,18 +4032,13 @@
     0.911551371327871,
     0.9903126342878084
    ],
-   "net_detection": 0.3446204337899543,
-   "net_by_onset": 0.1929937214611872,
-   "chance_used": 0.36770833333333336,
-   "chance_by_onset_used": 0.2864583333333333,
+   "chance_detection_rate": 0.5652777777777778,
+   "net_detection": 0.14705098934550986,
    "net_detection_ci": [
-    0.26146946376074176,
-    0.4321807220319635
+    0.0602733224083896,
+    0.25060129649824303
    ],
-   "net_by_onset_ci": [
-    0.08681696398146253,
-    0.30603204980622384
-   ]
+   "n_pseudo_events": 720
   }
  },
  "quiet": {

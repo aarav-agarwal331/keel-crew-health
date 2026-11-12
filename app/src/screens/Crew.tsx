@@ -79,7 +79,13 @@ export function Crew() {
                   : c.role === 'commander' ? <p className="small muted">This is the commander's own card. The reasons are on their own Today screen.</p>
                   : <p className="small muted"><StatusTag status="private" label="" size={16} /> Reason not shared. Ask {c.name.split(' ')[0]}{c.role === 'cmo' ? '' : ' or the medical officer'}.</p>
               })()}
-              {v.findings.filter((x) => x.emergency).map((x) => <p key={x.key} className="banner strong"><strong>{x.title}.</strong> {x.action} <span className="small">(shared automatically: emergency sharing)</span></p>)}
+              {v.findings.filter((x) => x.emergency).map((x) => (
+                <div key={x.key} className="banner strong">
+                  <p><strong>{x.title}{x.symptoms?.length ? `: ${x.symptoms.join('; ').toLowerCase()}` : ''}.</strong> <span className="small">(shared automatically: emergency sharing)</span></p>
+                  <ReadingLog readings={x.readings ?? []} title="Entered readings, in order" />
+                  <p className="small">{c.name.split(' ')[0]} was told: "{x.action}"</p>
+                </div>
+              ))}
               {role === 'cmo' && <p>{v.overall === 'private' ? <StatusTag status="private" label="Nothing shared with you" /> : <StatusTag status={v.overall} label={STATUS_LABEL[v.overall]} />}</p>}
               {role === 'cmo' && (
                 <ul className="list small">
@@ -88,14 +94,14 @@ export function Crew() {
                     const outs = x.indicators?.filter((i) => !i.inRange) ?? []
                     return <li key={cat}><StatusTag status={x.status!} label={catLabel(cat)} size={16} />{outs.length > 0 && <span className="muted">: {outs.map((i) => `${IND[i.ind].short}${i.value !== undefined && !Number.isNaN(i.value) ? ` ${i.value.toFixed(IND[i.ind].decimals)} ${IND[i.ind].unit}` : ' out of range'}`).join(', ')}</span>}</li>
                   })}
-                  {v.findings.filter((x) => !x.emergency).map((f) => (
+                  {v.findings.filter((x) => !x.emergency).filter((x, i, arr) => x.title || arr.findIndex((y) => !y.title && y.category === x.category) === i).map((f) => (
                     <li key={f.key}>
                       <strong>{f.title ?? `Alert in ${catLabel(f.category).toLowerCase()}`}</strong> <span className="muted">({STATUS_LABEL[f.status].toLowerCase()} for {f.days} d)</span>
                       {f.action && (
                         <details>
                           <summary>For the medical officer: what the crew member was told, and the basis</summary>
                           <div className="col small" style={{ paddingLeft: 30 }}>
-                            <p><strong>Advised ({URGENCY_LABEL[(f.urgency ?? 'routine') as 'now']}):</strong> {f.action}</p>
+                            <p><strong>{c.name.split(' ')[0]} was told ({URGENCY_LABEL[(f.urgency ?? 'routine') as 'now'].toLowerCase()}):</strong> "{f.action}"</p>
                             <ol className="list steps">{(f.steps ?? []).map((x) => <li key={x}><span>{x}</span></li>)}</ol>
                             <ReadingLog readings={f.readings ?? []} title="Entered readings, in order" />
                             {(f.changes ?? []).length > 0 && <p><strong>Readings shared with you:</strong> {f.changes!.map((ch) => `${IND[ch.ind].label} ${Number.isNaN(ch.value) ? '–' : ch.value.toFixed(IND[ch.ind].decimals)} ${IND[ch.ind].unit} (usual ${ch.expected.toFixed(IND[ch.ind].decimals)})`).join('; ')}.</p>}
@@ -117,7 +123,7 @@ export function Crew() {
                   <span className="lab">{role === 'cmo' && c.role === 'cmo' ? 'The medical officer\'s own open items: the commander, as backup, closes these' : 'Open items for you to close'}</span>
                   {open.filter((x) => !closed.has(x.key)).map((x) => (
                     <div key={x.key} className="col" style={{ gap: 6, borderTop: '1px solid var(--border)', paddingTop: 8 }}>
-                      <span className="small"><strong>{x.title}</strong> <span className="muted">({shortDay(mission, x.day)}, {x.urgency === 'now' ? 'needed attention at once' : 'needed attention the same day'})</span></span>
+                      <span className="small"><strong>{x.title}</strong> <span className="muted">({shortDay(mission, x.day)}, {x.urgency === 'now' ? 'needed attention at once' : 'needed attention the same day'}{x.withdrawn ? '; the crew member withdrew the reading as a typing mistake' : ''})</span></span>
                       {!(role === 'cmo' && c.role === 'cmo') && (
                         <div className="row wrap">
                           <input type="text" aria-label={`Closing note for ${x.title}`} value={notes[x.key] ?? ''} onChange={(e) => setNotes((p) => ({ ...p, [x.key]: e.target.value }))} placeholder="Note: what you found and did" style={{ flex: 1, minWidth: 180 }} />

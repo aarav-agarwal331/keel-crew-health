@@ -204,6 +204,62 @@ notice outright. In the simulated crew that made flags nearly universal, so tire
 when reported on two of the last three days. The sleep floor was set at five hours, not five and a
 half, for the same reason.
 
-## Round 4
+## Round 4 (2026-11-12, fresh reviewers, redeployed build)
 
-See the end of this file once the fourth round has run.
+Judge's scores: impact 7, creativity 8, validity 7, relevance 9, presentation 7 (38 of 50), "nominate:
+yes". All four reviewers found at least one high-severity issue.
+
+| # | Reviewer | High-severity finding | Fix |
+|---|---|---|---|
+| 1 | Judge, astronaut | After an urgent blood sugar (50) and heart rate (170), "Food and fluids" stayed green on the body figure and on the medical officer's card; heart showed only "act today". | An area now shows the worst open finding that rests on any of its indicators, fixed-threshold rules included. Unit-tested. |
+| 2 | Judge | The alert said "since Day 121"; the replay logged "Act today" on Day 120. | The merged illness finding dates from whichever part began first, and a symptom-led finding from the first day its rule held. |
+| 3 | Astronaut, flight surgeon | Exercise advice contradicted itself: "Exercise: 0 of 120 min today" beside "Stop, rest"; "Do today's session" beside the urgent CO2 rule and other stop-or-rest rules; "light session only today" after a normal temperature. | One list of rules that hold exercise; while any is open, the exercise rule is suppressed and the routine says "on hold until the medical officer agrees". End-to-end tested. |
+| 4 | Astronaut | "Your answers stay on this tablet" and "Nothing goes to the ground automatically" contradicted the daily ground summary and the one-tablet demo. | Reworded on Check-in, Sharing and Earth link to say what is stored where and what leaves. |
+| 5 | Flight surgeon | Saving a strap reading erased the day's check-in, including red flags; unticking a red flag removed it from the medical officer's list. | The strap reading merges into the day's entry; ticked red flags are append-only for the day. Unit-tested. |
+| 6 | Statistician | The headline "Keel as the app runs it" was a two-sensor stand-in, not the shipped model. | Relabelled everywhere as Keel's method on two sensors with simulator thresholds. The shipped 11-channel model was scored on a real import's channels: 12% flagged, +9 above luck, 0.08 false alerts per person-month, alert tier never fired. That result is on the Validation screen and the import card. |
+
+Medium-severity findings fixed in the same pass:
+
+- **Early warning** (statistician): alerts starting by onset are above luck at the notice tier (+15
+  to +18) but about zero at the alert tier. The text now says "no useful early warning shown" and
+  gives the numbers and the confounders.
+- **Phase-handling cost was an artefact** (statistician): luck now comes from the same flight days of
+  event-free missions. With phase handling +24 (14 to 33), without +15 (6 to 25). The earlier "it hides
+  early events" claim is withdrawn everywhere.
+- **Predictive value for the headline configuration** (statistician): 1 in 27 at the alert tier.
+- **Luck matched on time since the recording began** (statistician): 31%, gap +35; added to the
+  sensitivity table.
+- **"Nothing was fitted on"** (statistician) became "the simulator's calibration did not use".
+- **Calibration CV capped at 2.0** and an unsupported chart caption (statistician): fixed.
+- **Readings** (flight surgeon, astronaut): spot heart rate and oxygen are stored apart from the
+  overnight series; out-of-range or "act now" values are saved at once and can be withdrawn as typing
+  mistakes, kept struck through; a value typed again is logged again; closing an item removes its
+  finding; an urgent reading from an earlier day becomes "act today" and says it awaits the medical
+  officer; no time limit on the medical officer's list.
+- **One reading, one finding** (flight surgeon, astronaut): the lesser of two rules on the same
+  reading is dropped; the heart-rate rule is split into fast and slow.
+- **Ordering** (flight surgeon): heart rate, oxygen and blood pressure rank above blood sugar; every
+  other "act now" item is named in the action card; "if you are awake and can swallow" added.
+- **Emergency sharing content** (flight surgeon): the medical officer sees the symptom names and
+  readings with times, and "X was told: …".
+- **Notice that keeps changing its reading** (judge, astronaut): a notice keeps its reading while that
+  rule still holds unless a higher rule applies.
+- **Radiation and vomiting** (flight surgeon): the rule now needs at least 100 mSv in three days (a
+  provisional value) and says motion sickness is far more likely.
+- **Sleep below a floor** (judge, astronaut): a night under five hours turns the sleep area amber
+  whatever is usual for the person, so the medical officer no longer sees "Steady" at 4.5 h.
+- **Why not ship the simple rule** (judge): one sentence on the Validation screen.
+- **Wording and layout** (all): reading labels and 24-hour times, red-flag tiles in two columns,
+  space under the Save bar, a structured "When to involve someone else" list, CO2 3.0 labelled the
+  same everywhere, "act now" in the sharing key, the temperature-in-flight claim limited to what the
+  abstract says, "early sign" removed, chart labels shortened, Save reading made the primary button,
+  the duplicate thermometer prompt hidden, emergency sharing confirmed on Today.
+
+Not done from round 4: thresholds per sensor set (so imported watch data alerts at its budget); a
+demo mode; an overnight oxygen floor; a free-text field for "something else"; recording a true zero
+fluid intake; difference intervals for device and feature contrasts; a base rate for the bed-rest
+flags outside transitions; treatment guidance (excluded on purpose).
+
+## Round 5
+
+See the end of this file once the fifth round has run.

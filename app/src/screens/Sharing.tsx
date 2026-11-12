@@ -34,7 +34,7 @@ export function Sharing() {
             <button aria-pressed={s.emergency !== false} onClick={() => setEmergency(me, true)}>On</button>
             <button aria-pressed={s.emergency === false} onClick={() => setEmergency(me, false)}>Off</button>
           </div>
-          <span className="small muted">When on, a symptom you mark as serious or an "act now" safety reading is shown at once to the medical officer, and stays on their list until they close it with a note. The commander is shown it too, as backup, except the items marked "medical officer only" at check-in (thoughts of harming yourself, an injury, tooth pain, one-sided swelling). Nothing goes to the ground automatically. If you switch this off, both can see that it is off.</span>
+          <span className="small muted">When on, a symptom you mark as serious or an "act now" safety reading is shown at once to the medical officer, and stays on their list until they close it with a note. The commander is shown it too, as backup, except the items marked "medical officer only" at check-in (thoughts of harming yourself, an injury, tooth pain, one-sided swelling). Emergency sharing never sends anything to the ground; the daily ground summary carries only what you set for the flight surgeon below. If you switch this off, both can see that it is off.</span>
         </div>
       </Card>
 

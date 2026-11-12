@@ -1,7 +1,7 @@
 {
  "script": "research/scripts/eval_real.py",
- "commit": "bc3a633",
- "code_version": "4094da0150f3",
+ "commit": "455012f",
+ "code_version": "e4d2c5502c36",
  "seed": 20261112,
  "data": "Stanford COVID-19 wearables phase 1 (Mishra et al. 2020) and phase 2 subset (Alavi et al. 2022)",
  "indicators": "Resting heart rate + daily steps",
@@ -4044,6 +4044,14 @@
      0.21467067688431343,
      0.4157591769447594
     ]
+   },
+   "matched_on_days_since_recording_start": {
+    "chance_detection_rate": 0.09402116248310345,
+    "net_detection": 0.3358853795729713,
+    "share_of_onsets_in_first_60_days": 0.32710280373831774,
+    "chance_first_60_days": 0.1088646967340591,
+    "chance_later": 0.08680555555555555,
+    "n_pseudo_first_60_days": 643
    }
   },
   "1.0": {
@@ -4078,6 +4086,14 @@
      0.20451130962129635,
      0.40258003664337366
     ]
+   },
+   "matched_on_days_since_recording_start": {
+    "chance_detection_rate": 0.3132657955552972,
+    "net_detection": 0.35028560631386163,
+    "share_of_onsets_in_first_60_days": 0.32710280373831774,
+    "chance_first_60_days": 0.35769828926905134,
+    "chance_later": 0.2916666666666667,
+    "n_pseudo_first_60_days": 643
    }
   }
  },
@@ -4455,7 +4471,8 @@
      -0.04735001573457114,
      0.06925284937454856
     ],
-    "net_rescaled": 0.21383753070693795
+    "net_rescaled": 0.21383753070693795,
+    "share_of_alerts_that_are_real": 0.03665787280578243
    },
    "1.0": {
     "n_people": 251,
@@ -4504,7 +4521,8 @@
      0.08698895228824831,
      0.27904118440848186
     ],
-    "net_rescaled": 0.5310844289878713
+    "net_rescaled": 0.5310844289878713,
+    "share_of_alerts_that_are_real": 0.01802726110497592
    }
   },
   "held_out": {
@@ -4555,7 +4573,8 @@
      -0.08511656629585101,
      0.08590882019285309
     ],
-    "net_rescaled": 0.25643244944527505
+    "net_rescaled": 0.25643244944527505,
+    "share_of_alerts_that_are_real": 0.04709195798667717
    },
    "1.0": {
     "n_people": 113,
@@ -4604,7 +4623,220 @@
      0.023828336703741206,
      0.34866237752073503
     ],
-    "net_rescaled": 0.6632006629066317
+    "net_rescaled": 0.6632006629066317,
+    "share_of_alerts_that_are_real": 0.022224529791792427
+   }
+  }
+ },
+ "shipped_model": {
+  "label": "The model file the app ships (11 indicators, thresholds from simulated missions), given the channels a real import shares with it: overnight heart rate and, where recorded, sleep duration",
+  "n_people": 251,
+  "n_events": 107,
+  "n_people_with_sleep": 18,
+  "thresholds": {
+   "notice": 36.11482627239894,
+   "alert": 65.74450663673477
+  },
+  "all": {
+   "0.25": {
+    "n_people": 251,
+    "n_events": 107,
+    "n_scorable": 105,
+    "n_detected": 0,
+    "detection_rate": 0.0,
+    "early_rate": 0.0,
+    "by_onset_rate": 0.0,
+    "median_lead": null,
+    "false_alerts": 3,
+    "quiet_person_months": 704.9605781865965,
+    "fa_per_person_month": 0.0042555571089053544,
+    "quiet_days_in_alert_frac": 0.0002796029637914162,
+    "detection_rate_ci": [
+     0.0,
+     0.0
+    ],
+    "early_rate_ci": [
+     0.0,
+     0.0
+    ],
+    "by_onset_rate_ci": [
+     0.0,
+     0.0
+    ],
+    "median_lead_ci": [
+     null,
+     null
+    ],
+    "fa_per_person_month_ci": [
+     0.0,
+     0.009787321299546762
+    ],
+    "chance_pooled": 0.0,
+    "chance_detection_rate": 0.0,
+    "chance_by_onset_rate": 0.0,
+    "n_pseudo_events": 1219,
+    "net_detection": 0.0,
+    "net_by_onset": 0.0,
+    "net_detection_ci": [
+     0.0,
+     0.0
+    ],
+    "net_by_onset_ci": [
+     0.0,
+     0.0
+    ],
+    "net_rescaled": 0.0,
+    "share_of_alerts_that_are_real": 0.0
+   },
+   "1.0": {
+    "n_people": 251,
+    "n_events": 107,
+    "n_scorable": 105,
+    "n_detected": 13,
+    "detection_rate": 0.12149532710280374,
+    "early_rate": 0.04672897196261682,
+    "by_onset_rate": 0.04672897196261682,
+    "median_lead": -1.0,
+    "false_alerts": 53,
+    "quiet_person_months": 704.9605781865965,
+    "fa_per_person_month": 0.0751815089239946,
+    "quiet_days_in_alert_frac": 0.004939652360315019,
+    "detection_rate_ci": [
+     0.06478535353535353,
+     0.18489127609806807
+    ],
+    "early_rate_ci": [
+     0.009706404032860343,
+     0.08737864077669903
+    ],
+    "by_onset_rate_ci": [
+     0.009706404032860343,
+     0.08737864077669903
+    ],
+    "median_lead_ci": [
+     -3.0,
+     2.0
+    ],
+    "fa_per_person_month_ci": [
+     0.05513458429950511,
+     0.09742291518005804
+    ],
+    "chance_pooled": 0.027071369975389663,
+    "chance_detection_rate": 0.02706310164687912,
+    "chance_by_onset_rate": 0.02052745332514757,
+    "n_pseudo_events": 1219,
+    "net_detection": 0.09443222545592461,
+    "net_by_onset": 0.02620151863746925,
+    "net_detection_ci": [
+     0.03531220406237172,
+     0.1583007814726729
+    ],
+    "net_by_onset_ci": [
+     -0.012039609556142992,
+     0.06639450800666409
+    ],
+    "net_rescaled": 0.09705894145423917,
+    "share_of_alerts_that_are_real": 0.09217281641380037
+   }
+  },
+  "held_out": {
+   "0.25": {
+    "n_people": 113,
+    "n_events": 41,
+    "n_scorable": 40,
+    "n_detected": 0,
+    "detection_rate": 0.0,
+    "early_rate": 0.0,
+    "by_onset_rate": 0.0,
+    "median_lead": null,
+    "false_alerts": 1,
+    "quiet_person_months": 344.8094612352168,
+    "fa_per_person_month": 0.0029001524390243902,
+    "quiet_days_in_alert_frac": 9.527439024390244e-05,
+    "detection_rate_ci": [
+     0.0,
+     0.0
+    ],
+    "early_rate_ci": [
+     0.0,
+     0.0
+    ],
+    "by_onset_rate_ci": [
+     0.0,
+     0.0
+    ],
+    "median_lead_ci": [
+     null,
+     null
+    ],
+    "fa_per_person_month_ci": [
+     0.0,
+     0.009516083861534168
+    ],
+    "chance_pooled": 0.0,
+    "chance_detection_rate": 0.0,
+    "chance_by_onset_rate": 0.0,
+    "n_pseudo_events": 555,
+    "net_detection": 0.0,
+    "net_by_onset": 0.0,
+    "net_detection_ci": [
+     0.0,
+     0.0
+    ],
+    "net_by_onset_ci": [
+     0.0,
+     0.0
+    ],
+    "net_rescaled": 0.0
+   },
+   "1.0": {
+    "n_people": 113,
+    "n_events": 41,
+    "n_scorable": 40,
+    "n_detected": 7,
+    "detection_rate": 0.17073170731707318,
+    "early_rate": 0.04878048780487805,
+    "by_onset_rate": 0.04878048780487805,
+    "median_lead": -2.0,
+    "false_alerts": 23,
+    "quiet_person_months": 344.8094612352168,
+    "fa_per_person_month": 0.06670350609756098,
+    "quiet_days_in_alert_frac": 0.0035251524390243903,
+    "detection_rate_ci": [
+     0.06521739130434782,
+     0.30005813953488364
+    ],
+    "early_rate_ci": [
+     0.0,
+     0.11907142857142854
+    ],
+    "by_onset_rate_ci": [
+     0.0,
+     0.11907142857142854
+    ],
+    "median_lead_ci": [
+     -3.0,
+     4.0
+    ],
+    "fa_per_person_month_ci": [
+     0.042449572509032404,
+     0.09146946426468383
+    ],
+    "chance_pooled": 0.02882882882882883,
+    "chance_detection_rate": 0.027526132404181183,
+    "chance_by_onset_rate": 0.02416569879984514,
+    "n_pseudo_events": 555,
+    "net_detection": 0.143205574912892,
+    "net_by_onset": 0.02461478900503291,
+    "net_detection_ci": [
+     0.03654712524381297,
+     0.2684350530141245
+    ],
+    "net_by_onset_ci": [
+     -0.0284541832341706,
+     0.09260114426205263
+    ],
+    "net_rescaled": 0.14725904693658187
    }
   }
  },

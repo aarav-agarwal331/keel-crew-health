@@ -177,6 +177,8 @@ input[type='number'], input[type='text'], select, textarea { font: inherit; min-
 input[type='range'] { width: 100%; min-height: 44px; accent-color: var(--accent); }
 .choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 8px; }
 .choices.five { grid-template-columns: repeat(5, 1fr); }
+.choices.wide { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+.choices.wide .choice { font-size: 1rem; text-align: left; align-items: flex-start; padding: 8px 12px; }
 .choice { min-height: 64px; border-radius: 14px; border: 1px solid var(--border); background: var(--surface-2); font-weight: 650; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 6px; font-size: 0.9rem; text-align: center; }
 .choice[aria-pressed='true'] { border: 2px solid var(--accent); background: color-mix(in srgb, var(--accent) 18%, var(--surface)); }
 .choice .n { font-size: 1.4rem; font-weight: 750; }

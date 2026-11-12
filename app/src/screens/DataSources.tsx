@@ -7,7 +7,7 @@ import { TrendChart } from '../ui/charts'
 import { Card, go, Simulated } from '../ui/kit'
 
 export function DataSources() {
-  const { mission, missions, loadMission, addMission, me, day, saveEntry } = useApp()
+  const { mission, missions, loadMission, addMission, me, day, saveEntry, entries } = useApp()
   const [msg, setMsg] = useState('')
   const [err, setErr] = useState('')
   const [strap, setStrap] = useState<StrapSession | null>(null)
@@ -48,7 +48,9 @@ export function DataSources() {
   const saveReading = async () => {
     const values: Record<string, number> = { rhr: Math.round(restHr) }
     if (!Number.isNaN(hrv)) values.hrv = Math.round(hrv)
-    await saveEntry({ crew: me, day, values, symptoms: [] })
+    // merge with the day's check-in: a strap reading must never erase symptoms, mood or other entries
+    const cur = entries.find((e) => e.mission === mission.id && e.crew === me && e.day === day)
+    await saveEntry({ crew: me, day, values: { ...(cur?.values ?? {}), ...values }, symptoms: cur?.symptoms ?? [], meds: cur?.meds, photos: cur?.photos })
     setSaved(`Saved resting heart rate ${values.rhr} bpm${values.hrv ? ` and HRV ${values.hrv} ms` : ''} for ${dayLabel(mission, day)}.`)
   }
 
@@ -69,6 +71,7 @@ export function DataSources() {
       </Card>
 
       <Card title="Import your own wearable data">
+        <p className="banner"><strong>Expect few alerts from an import.</strong> Keel's thresholds are set for the full on-board sensor set. Tested on real watch data with only overnight heart rate (and sleep where recorded), the shipped model flagged about one illness in eight and rarely alerted at all. A version for watch data alone would need its own thresholds.</p>
         <p className="small muted">Read in this browser only; the file is never uploaded. Keel then learns your baseline from it and shows the same Today and Trends screens for you. Supported: a CSV with a <code>date</code> column and any of <code>rhr, hrv, spo2, temp, sleep_h, ex_min, mood, fluid, mass, sbp, glucose</code>; Fitbit export JSON (resting heart rate, sleep); Apple Health <code>export.xml</code>.</p>
         <div className="row wrap">
           <label className="btn primary" htmlFor="file">Choose a file</label>

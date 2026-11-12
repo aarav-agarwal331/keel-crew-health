@@ -57,6 +57,107 @@
    ]
   },
   {
+   "id": "R-V-HR2",
+   "scope": "vital",
+   "priority": 1.12,
+   "urgency": "now",
+   "title": "Heart rate reading at rest is 150 or more",
+   "when": {
+    "val": "rhr_manual",
+    "min": 150
+   },
+   "summary": "You entered a resting heart rate of 150 or more. Keel does not interpret it. The value 150 is provisional and has not been reviewed by a flight surgeon.",
+   "action": "Stop, rest, and tell the medical officer now.",
+   "steps": [
+    "Stay with another crew member.",
+    "Count your pulse by hand for a full minute to confirm the device.",
+    "Note the time, and any chest pain, breathlessness or light-headedness."
+   ],
+   "tier": "cmo",
+   "tier_reason": "A fixed safety threshold, not a trend.",
+   "cm": [
+    "CM-VITALS"
+   ],
+   "categories": [
+    "cardio"
+   ]
+  },
+  {
+   "id": "R-V-HR0",
+   "scope": "vital",
+   "priority": 1.13,
+   "urgency": "now",
+   "title": "Heart rate reading at rest is 35 or less",
+   "when": {
+    "val": "rhr_manual",
+    "max": 35
+   },
+   "summary": "You entered a resting heart rate of 35 or less. Keel does not interpret it. The value 35 is provisional and has not been reviewed by a flight surgeon.",
+   "action": "Stop, rest, and tell the medical officer now.",
+   "steps": [
+    "Stay with another crew member.",
+    "Count your pulse by hand for a full minute to confirm the device.",
+    "Note the time, and any chest pain, breathlessness or light-headedness."
+   ],
+   "tier": "cmo",
+   "tier_reason": "A fixed safety threshold, not a trend.",
+   "cm": [
+    "CM-VITALS"
+   ],
+   "categories": [
+    "cardio"
+   ]
+  },
+  {
+   "id": "R-V-BP-LO2",
+   "scope": "vital",
+   "priority": 1.15,
+   "urgency": "now",
+   "title": "Upper blood pressure reading is very low",
+   "when": {
+    "any": [
+     {
+      "val": "sbp",
+      "max": 79.99
+     },
+     {
+      "all": [
+       {
+        "val": "sbp",
+        "max": 89.99
+       },
+       {
+        "any": [
+         {
+          "sym": "dizziness",
+          "min": 1
+         },
+         {
+          "sym": "fainting",
+          "min": 1
+         }
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   "summary": "You entered an upper reading below 80 mmHg, or below 90 with dizziness or fainting. Keel does not interpret it.",
+   "action": "Stop what you are doing, hold on or strap in (lie flat with legs raised if you are under gravity), and tell the medical officer now.",
+   "steps": [
+    "Stay with another crew member.",
+    "Repeat the reading in five minutes."
+   ],
+   "tier": "cmo",
+   "tier_reason": "A fixed safety threshold. Placeholder threshold for a clinician to set; not from a cited source.",
+   "cm": [
+    "CM-VITALS"
+   ],
+   "categories": [
+    "cardio"
+   ]
+  },
+  {
    "id": "R-V-TEMP-HI",
    "scope": "vital",
    "priority": 1.2,
@@ -129,7 +230,7 @@
     "max": 53.99
    },
    "summary": "The reading you entered is in the range that general guidance says can cause unclear thinking or seizure. Keel does not interpret it.",
-   "action": "Eat or drink something sugary now and tell the medical officer now.",
+   "action": "If you are awake and can swallow, eat or drink something sugary now, and tell the medical officer now.",
    "steps": [
     "Stay with another crew member.",
     "Repeat the reading in 15 minutes."
@@ -206,7 +307,7 @@
     "max": 299.99
    },
    "summary": "The reading you entered is well above the usual range. One reading proves nothing.",
-   "action": "Repeat the reading before breakfast tomorrow and show both to the medical officer.",
+   "action": "Repeat the reading in two hours and tell the medical officer today.",
    "steps": [
     "Clean the fingertip and wipe away the first drop.",
     "Note when you last ate."
@@ -218,55 +319,6 @@
    ],
    "categories": [
     "nutrition"
-   ]
-  },
-  {
-   "id": "R-V-BP-LO2",
-   "scope": "vital",
-   "priority": 1.55,
-   "urgency": "now",
-   "title": "Upper blood pressure reading is very low",
-   "when": {
-    "any": [
-     {
-      "val": "sbp",
-      "max": 79.99
-     },
-     {
-      "all": [
-       {
-        "val": "sbp",
-        "max": 89.99
-       },
-       {
-        "any": [
-         {
-          "sym": "dizziness",
-          "min": 1
-         },
-         {
-          "sym": "fainting",
-          "min": 1
-         }
-        ]
-       }
-      ]
-     }
-    ]
-   },
-   "summary": "You entered an upper reading below 80 mmHg, or below 90 with dizziness or fainting. Keel does not interpret it.",
-   "action": "Stop what you are doing, hold on or strap in (lie flat with legs raised if you are under gravity), and tell the medical officer now.",
-   "steps": [
-    "Stay with another crew member.",
-    "Repeat the reading in five minutes."
-   ],
-   "tier": "cmo",
-   "tier_reason": "A fixed safety threshold. Placeholder threshold for a clinician to set; not from a cited source.",
-   "cm": [
-    "CM-VITALS"
-   ],
-   "categories": [
-    "cardio"
    ]
   },
   {
@@ -314,7 +366,7 @@
      }
     ]
    },
-   "summary": "You entered a very high upper reading. Keel does not interpret it.",
+   "summary": "You entered a very high reading. Keel does not interpret it.",
    "action": "Rest five minutes and repeat. If it is still that high, tell the medical officer today; with chest pain, severe headache or vision change, tell them now.",
    "steps": [
     "Tell the medical officer now if you have a headache, chest pain, breathlessness or a vision change."
@@ -355,40 +407,6 @@
    ],
    "tier": "cmo",
    "tier_reason": "A fixed reference value, not a trend.",
-   "cm": [
-    "CM-VITALS"
-   ],
-   "categories": [
-    "cardio"
-   ]
-  },
-  {
-   "id": "R-V-HR2",
-   "scope": "vital",
-   "priority": 1.74,
-   "urgency": "now",
-   "title": "Heart rate reading at rest is extremely fast or slow",
-   "when": {
-    "any": [
-     {
-      "val": "rhr_manual",
-      "min": 150
-     },
-     {
-      "val": "rhr_manual",
-      "max": 35
-     }
-    ]
-   },
-   "summary": "You entered a resting heart rate of 150 or more, or 35 or less. Keel does not interpret it. These two values are provisional and have not been reviewed by a flight surgeon.",
-   "action": "Stop, rest, and tell the medical officer now.",
-   "steps": [
-    "Stay with another crew member.",
-    "Count your pulse by hand for a full minute to confirm the device.",
-    "Note the time, and any chest pain, breathlessness or light-headedness."
-   ],
-   "tier": "cmo",
-   "tier_reason": "A fixed safety threshold, not a trend.",
    "cm": [
     "CM-VITALS"
    ],
@@ -526,12 +544,12 @@
    "scope": "symptom",
    "priority": 1.96,
    "urgency": "now",
-   "title": "Vomiting after a high radiation dose",
+   "title": "Vomiting after a very high radiation dose",
    "when": {
     "all": [
      {
-      "env": "rad_ratio_3d",
-      "min": 3
+      "env": "rad_sum_3d",
+      "min": 100
      },
      {
       "sym": "vomiting",
@@ -539,7 +557,7 @@
      }
     ]
    },
-   "summary": "You reported vomiting within three days of a daily dose far above normal. Keel cannot tell whether the two are linked. How soon vomiting starts helps the medical officer judge the dose.",
+   "summary": "You reported vomiting within three days of at least 100 mSv on your dosimeter. Keel cannot tell whether the two are linked: motion sickness and stomach bugs are far more common. How soon vomiting starts helps the medical officer judge the dose. The 100 mSv line is a provisional value chosen by us.",
    "action": "Tell the medical officer now, and note the time the vomiting started.",
    "steps": [
     "Sip fluids; do not take anything for nausea until the medical officer says so.",
@@ -1055,7 +1073,7 @@
     ]
    },
    "summary": "Your check-ins have been lower than your own normal for a while. That is common on long, isolated missions and easier to turn around early.",
-   "action": "Book a private conversation with the medical officer. You can also record a message for the support team at home; it goes when a link is available.",
+   "action": "Book a private conversation with the medical officer.",
    "steps": [
     "Put one thing you enjoy and one contact with home on today's plan.",
     "Keep exercise and the sleep period fixed; both lift mood, and short sleep makes low mood worse.",
@@ -1215,7 +1233,7 @@
    "steps": [
     "If a device is down, use the substitute session: elastic bands, or the resistance device at a load it can still give.",
     "If you are skipping because you feel unwell or low, say so at check-in so Keel can connect it.",
-    "Resting heart rate creeping up over the next weeks is the first sign of lost fitness."
+    "Over weeks, a resting heart rate creeping up can be one sign of lost fitness."
    ],
    "tier": "self",
    "tier_reason": "Getting back on plan is the countermeasure.",
@@ -1279,7 +1297,7 @@
     "u": "pvt_rt",
     "min": 1.5
    },
-   "summary": "Your reaction self-test is slower than your own normal without a clear sleep change.",
+   "summary": "Your reaction self-test is slower than your own normal.",
    "action": "Repeat the test after a ten-minute break; if it is still slow, ask for a buddy check on critical tasks today.",
    "steps": [
     "Check the cabin carbon dioxide reading on the Today screen.",
