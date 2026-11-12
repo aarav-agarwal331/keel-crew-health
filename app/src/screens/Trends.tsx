@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { episodes } from '../core/detect'
+import { deployedScore, episodes } from '../core/detect'
 import { CATEGORIES, IND, INDICATORS, shortDay } from '../core/mission'
 import { useApp } from '../state'
 import { TrendChart, TrendLegend, type Marker } from '../ui/charts'
@@ -17,7 +17,7 @@ export function Trends({ focus }: { focus?: string }) {
   const from = range === 'all' ? 0 : Math.max(0, day - Number(range) + 1)
   const markers: Marker[] = useMemo(() => {
     const out: Marker[] = mission.phases.map((p) => ({ day: p.start, label: p.name, kind: 'phase' as const }))
-    if (an) for (const [s] of episodes(an.scored.scores.fusion, model.thresholds.notice, model.params.merge_gap, day)) out.push({ day: s, label: 'Alert', kind: 'alert' })
+    if (an) for (const [s] of episodes(deployedScore(an.scored, model), model.thresholds.notice, model.params.merge_gap, day)) out.push({ day: s, label: 'Alert', kind: 'alert' })
     for (const a of actions.filter((x) => x.mission === mission.id && x.crew === me)) out.push({ day: a.day, label: 'Logged', kind: 'log' })
     return out
   }, [mission, an, model, day, actions, me])

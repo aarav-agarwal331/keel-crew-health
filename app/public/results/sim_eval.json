@@ -1,0 +1,3240 @@
+{
+ "script": "research/scripts/eval_sim.py",
+ "commit": "b7b27cd",
+ "simulated": true,
+ "deployed": "mewma",
+ "design": {
+  "train_missions": 60,
+  "test_missions": 100,
+  "crew": 4,
+  "flight_days": 180,
+  "events_per_mission": 2,
+  "seeds": {
+   "train": 5000,
+   "test": 9000
+  },
+  "n_test_events": 284,
+  "windows": {
+   "det_pre": 10,
+   "det_post": 4
+  }
+ },
+ "budgets": [
+  0.25,
+  0.5,
+  1.0,
+  2.0,
+  4.0
+ ],
+ "methods": [
+  "fixed",
+  "zscore",
+  "cusum",
+  "mewma",
+  "fusion"
+ ],
+ "method_labels": {
+  "fixed": "Fixed threshold (same for everyone)",
+  "zscore": "Personal baseline z-score",
+  "cusum": "Personal baseline + CUSUM",
+  "mewma": "Personal baseline + multivariate EWMA",
+  "fusion": "Keel (CUSUM + multivariate, fused)"
+ },
+ "main": {
+  "fixed": {
+   "0.25": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 97,
+    "detection_rate": 0.3415492957746479,
+    "early_rate": 0.04225352112676056,
+    "by_onset_rate": 0.04929577464788732,
+    "median_lead": -1.0,
+    "false_alerts": 574,
+    "quiet_person_months": 2284.658344283837,
+    "fa_per_person_month": 0.25124106693507803,
+    "quiet_days_in_alert_frac": 0.022115177223380546,
+    "detection_rate_ci": [
+     0.2822106398689342,
+     0.40808823529411764
+    ],
+    "early_rate_ci": [
+     0.01838235294117647,
+     0.06761565836298933
+    ],
+    "by_onset_rate_ci": [
+     0.025166556895328807,
+     0.07807253700935321
+    ],
+    "median_lead_ci": [
+     -2.0,
+     -1.0
+    ],
+    "fa_per_person_month_ci": [
+     0.2120181892119898,
+     0.2952200208527254
+    ],
+    "chance_detection_rate": 0.13166666666666665
+   },
+   "0.5": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 136,
+    "detection_rate": 0.4788732394366197,
+    "early_rate": 0.1267605633802817,
+    "by_onset_rate": 0.13732394366197184,
+    "median_lead": -1.0,
+    "false_alerts": 1269,
+    "quiet_person_months": 2284.658344283837,
+    "fa_per_person_month": 0.5554441009418363,
+    "quiet_days_in_alert_frac": 0.05543173484794018,
+    "detection_rate_ci": [
+     0.4188989076184198,
+     0.5427509293680297
+    ],
+    "early_rate_ci": [
+     0.08800137783221065,
+     0.17269685957718464
+    ],
+    "by_onset_rate_ci": [
+     0.09364247732248983,
+     0.18506340989970882
+    ],
+    "median_lead_ci": [
+     -1.0,
+     -1.0
+    ],
+    "fa_per_person_month_ci": [
+     0.4990310255050857,
+     0.6182465279725186
+    ],
+    "chance_detection_rate": 0.24166666666666667
+   },
+   "1.0": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 181,
+    "detection_rate": 0.6373239436619719,
+    "early_rate": 0.24295774647887325,
+    "by_onset_rate": 0.2676056338028169,
+    "median_lead": -1.0,
+    "false_alerts": 2442,
+    "quiet_person_months": 2284.658344283837,
+    "fa_per_person_month": 1.0688687899920915,
+    "quiet_days_in_alert_frac": 0.11999424832842044,
+    "detection_rate_ci": [
+     0.5758363792621431,
+     0.6979734393757503
+    ],
+    "early_rate_ci": [
+     0.1936619718309859,
+     0.29730633643677123
+    ],
+    "by_onset_rate_ci": [
+     0.21638901196278246,
+     0.3224812802818969
+    ],
+    "median_lead_ci": [
+     -1.0,
+     -1.0
+    ],
+    "fa_per_person_month_ci": [
+     0.9927794058389672,
+     1.1544452734916533
+    ],
+    "chance_detection_rate": 0.3983333333333333
+   },
+   "2.0": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 219,
+    "detection_rate": 0.7711267605633803,
+    "early_rate": 0.4225352112676056,
+    "by_onset_rate": 0.4471830985915493,
+    "median_lead": 2.0,
+    "false_alerts": 4857,
+    "quiet_person_months": 2284.658344283837,
+    "fa_per_person_month": 2.1259196203896757,
+    "quiet_days_in_alert_frac": 0.3023366165791933,
+    "detection_rate_ci": [
+     0.7112559503361634,
+     0.8252832037850625
+    ],
+    "early_rate_ci": [
+     0.3583450380677343,
+     0.4899049326630384
+    ],
+    "by_onset_rate_ci": [
+     0.38545454545454544,
+     0.5150674982911825
+    ],
+    "median_lead_ci": [
+     0.0,
+     3.0
+    ],
+    "fa_per_person_month_ci": [
+     2.0239097334753806,
+     2.2287469548156023
+    ],
+    "chance_detection_rate": 0.6033333333333334
+   },
+   "4.0": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 215,
+    "detection_rate": 0.7570422535211268,
+    "early_rate": 0.5633802816901409,
+    "by_onset_rate": 0.602112676056338,
+    "median_lead": 4.0,
+    "false_alerts": 7556,
+    "quiet_person_months": 2284.658344283837,
+    "fa_per_person_month": 3.3072778776331875,
+    "quiet_days_in_alert_frac": 0.5700769286073765,
+    "detection_rate_ci": [
+     0.6953593146064649,
+     0.8178883202889825
+    ],
+    "early_rate_ci": [
+     0.5,
+     0.6298939389693726
+    ],
+    "by_onset_rate_ci": [
+     0.538955322846168,
+     0.6655290102389079
+    ],
+    "median_lead_ci": [
+     3.0,
+     5.0
+    ],
+    "fa_per_person_month_ci": [
+     3.2353516132254305,
+     3.387669239061333
+    ],
+    "chance_detection_rate": 0.59
+   }
+  },
+  "zscore": {
+   "0.25": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 127,
+    "detection_rate": 0.4471830985915493,
+    "early_rate": 0.07746478873239436,
+    "by_onset_rate": 0.0880281690140845,
+    "median_lead": -1.0,
+    "false_alerts": 554,
+    "quiet_person_months": 2150.0985545335084,
+    "fa_per_person_month": 0.257662607526471,
+    "quiet_days_in_alert_frac": 0.027135632324405263,
+    "detection_rate_ci": [
+     0.38513513513513514,
+     0.5143884892086331
+    ],
+    "early_rate_ci": [
+     0.04676084035495339,
+     0.1126291880978705
+    ],
+    "by_onset_rate_ci": [
+     0.055133570066251754,
+     0.12288613093391249
+    ],
+    "median_lead_ci": [
+     -2.0,
+     -1.0
+    ],
+    "fa_per_person_month_ci": [
+     0.23694973266801375,
+     0.27827189233740784
+    ],
+    "chance_detection_rate": 0.10166666666666667
+   },
+   "0.5": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 160,
+    "detection_rate": 0.5633802816901409,
+    "early_rate": 0.16549295774647887,
+    "by_onset_rate": 0.18309859154929578,
+    "median_lead": -1.0,
+    "false_alerts": 1098,
+    "quiet_person_months": 2150.0985545335084,
+    "fa_per_person_month": 0.5106742654586014,
+    "quiet_days_in_alert_frac": 0.05228498525569528,
+    "detection_rate_ci": [
+     0.49995819397993313,
+     0.6311984960493023
+    ],
+    "early_rate_ci": [
+     0.1192239776951673,
+     0.21293544509058374
+    ],
+    "by_onset_rate_ci": [
+     0.13522891218620756,
+     0.23104906186612573
+    ],
+    "median_lead_ci": [
+     -1.0,
+     -1.0
+    ],
+    "fa_per_person_month_ci": [
+     0.4868039549927167,
+     0.5375558176295719
+    ],
+    "chance_detection_rate": 0.2175
+   },
+   "1.0": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 213,
+    "detection_rate": 0.75,
+    "early_rate": 0.2992957746478873,
+    "by_onset_rate": 0.3345070422535211,
+    "median_lead": -1.0,
+    "false_alerts": 2088,
+    "quiet_person_months": 2150.0985545335084,
+    "fa_per_person_month": 0.971118275298324,
+    "quiet_days_in_alert_frac": 0.10441717978884323,
+    "detection_rate_ci": [
+     0.6925675675675675,
+     0.8077067669172933
+    ],
+    "early_rate_ci": [
+     0.24738675958188153,
+     0.3551839485186984
+    ],
+    "by_onset_rate_ci": [
+     0.282461593284764,
+     0.3921023544800523
+    ],
+    "median_lead_ci": [
+     -1.0,
+     0.0
+    ],
+    "fa_per_person_month_ci": [
+     0.9361975630280789,
+     1.0058192383075697
+    ],
+    "chance_detection_rate": 0.39916666666666667
+   },
+   "2.0": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 245,
+    "detection_rate": 0.8626760563380281,
+    "early_rate": 0.47183098591549294,
+    "by_onset_rate": 0.528169014084507,
+    "median_lead": 2.0,
+    "false_alerts": 4274,
+    "quiet_person_months": 2150.0985545335084,
+    "fa_per_person_month": 1.987815856621186,
+    "quiet_days_in_alert_frac": 0.2335253403413345,
+    "detection_rate_ci": [
+     0.8112495484647803,
+     0.9110503454050659
+    ],
+    "early_rate_ci": [
+     0.41090252333218114,
+     0.5352168126871465
+    ],
+    "by_onset_rate_ci": [
+     0.46206896551724136,
+     0.5938566552901023
+    ],
+    "median_lead_ci": [
+     0.0,
+     3.0
+    ],
+    "fa_per_person_month_ci": [
+     1.9494006050077817,
+     2.0282274884470364
+    ],
+    "chance_detection_rate": 0.6908333333333333
+   },
+   "4.0": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 237,
+    "detection_rate": 0.8345070422535211,
+    "early_rate": 0.5880281690140845,
+    "by_onset_rate": 0.6373239436619719,
+    "median_lead": 4.0,
+    "false_alerts": 7415,
+    "quiet_person_months": 2150.0985545335084,
+    "fa_per_person_month": 3.448679124203579,
+    "quiet_days_in_alert_frac": 0.5611544866995676,
+    "detection_rate_ci": [
+     0.7949428692340246,
+     0.875
+    ],
+    "early_rate_ci": [
+     0.5324219805043338,
+     0.6411215907725579
+    ],
+    "by_onset_rate_ci": [
+     0.5827067669172933,
+     0.6914639490013711
+    ],
+    "median_lead_ci": [
+     3.0,
+     4.0
+    ],
+    "fa_per_person_month_ci": [
+     3.412917421001834,
+     3.4825039115584553
+    ],
+    "chance_detection_rate": 0.7708333333333334
+   }
+  },
+  "cusum": {
+   "0.25": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 85,
+    "detection_rate": 0.2992957746478873,
+    "early_rate": 0.07394366197183098,
+    "by_onset_rate": 0.0880281690140845,
+    "median_lead": -3.0,
+    "false_alerts": 518,
+    "quiet_person_months": 2163.304862023653,
+    "fa_per_person_month": 0.23944845180786928,
+    "quiet_days_in_alert_frac": 0.03895157248940791,
+    "detection_rate_ci": [
+     0.24161486242866556,
+     0.3609022556390977
+    ],
+    "early_rate_ci": [
+     0.04179010976826699,
+     0.10692197965765317
+    ],
+    "by_onset_rate_ci": [
+     0.05446176133023543,
+     0.12286689419795221
+    ],
+    "median_lead_ci": [
+     -4.0,
+     -3.0
+    ],
+    "fa_per_person_month_ci": [
+     0.21855848125743177,
+     0.26158602194545894
+    ],
+    "chance_detection_rate": 0.07
+   },
+   "0.5": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 128,
+    "detection_rate": 0.4507042253521127,
+    "early_rate": 0.11619718309859155,
+    "by_onset_rate": 0.14788732394366197,
+    "median_lead": -2.0,
+    "false_alerts": 1045,
+    "quiet_person_months": 2163.304862023653,
+    "fa_per_person_month": 0.4830572049019756,
+    "quiet_days_in_alert_frac": 0.07609603498807915,
+    "detection_rate_ci": [
+     0.380771541917041,
+     0.5272727272727272
+    ],
+    "early_rate_ci": [
+     0.08026435388577488,
+     0.15471269824289266
+    ],
+    "by_onset_rate_ci": [
+     0.11031893157246661,
+     0.18862406988029762
+    ],
+    "median_lead_ci": [
+     -3.0,
+     -2.0
+    ],
+    "fa_per_person_month_ci": [
+     0.4554585995132285,
+     0.5115989817045408
+    ],
+    "chance_detection_rate": 0.14
+   },
+   "1.0": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 186,
+    "detection_rate": 0.6549295774647887,
+    "early_rate": 0.24647887323943662,
+    "by_onset_rate": 0.27816901408450706,
+    "median_lead": -2.0,
+    "false_alerts": 2121,
+    "quiet_person_months": 2163.304862023653,
+    "fa_per_person_month": 0.9804443364565458,
+    "quiet_days_in_alert_frac": 0.15399917996689497,
+    "detection_rate_ci": [
+     0.5973992730818669,
+     0.7122302158273381
+    ],
+    "early_rate_ci": [
+     0.19170227727592362,
+     0.29966027874564455
+    ],
+    "by_onset_rate_ci": [
+     0.21950766161936713,
+     0.3345323741007194
+    ],
+    "median_lead_ci": [
+     -2.0,
+     -0.48750000000001137
+    ],
+    "fa_per_person_month_ci": [
+     0.9403963204922388,
+     1.01869742364273
+    ],
+    "chance_detection_rate": 0.3016666666666667
+   },
+   "2.0": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 224,
+    "detection_rate": 0.7887323943661971,
+    "early_rate": 0.4154929577464789,
+    "by_onset_rate": 0.4647887323943662,
+    "median_lead": 1.0,
+    "false_alerts": 4316,
+    "quiet_person_months": 2163.304862023653,
+    "fa_per_person_month": 1.99509559459993,
+    "quiet_days_in_alert_frac": 0.3277550834459613,
+    "detection_rate_ci": [
+     0.7350993377483444,
+     0.8383458646616542
+    ],
+    "early_rate_ci": [
+     0.358349218669741,
+     0.47794117647058826
+    ],
+    "by_onset_rate_ci": [
+     0.4097689830377993,
+     0.5215977729761583
+    ],
+    "median_lead_ci": [
+     0.0,
+     3.0
+    ],
+    "fa_per_person_month_ci": [
+     1.9451590931691296,
+     2.0391880471181114
+    ],
+    "chance_detection_rate": 0.5333333333333333
+   },
+   "4.0": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 209,
+    "detection_rate": 0.7359154929577465,
+    "early_rate": 0.4471830985915493,
+    "by_onset_rate": 0.5140845070422535,
+    "median_lead": 3.0,
+    "false_alerts": 6435,
+    "quiet_person_months": 2163.304862023653,
+    "fa_per_person_month": 2.9746154196595342,
+    "quiet_days_in_alert_frac": 0.5160437958421284,
+    "detection_rate_ci": [
+     0.6877152924500548,
+     0.7830882352941176
+    ],
+    "early_rate_ci": [
+     0.3854267227434487,
+     0.5101515409294186
+    ],
+    "by_onset_rate_ci": [
+     0.45193655847804565,
+     0.5765483133296347
+    ],
+    "median_lead_ci": [
+     1.0,
+     3.0
+    ],
+    "fa_per_person_month_ci": [
+     2.9348197367137603,
+     3.0104403381226095
+    ],
+    "chance_detection_rate": 0.6358333333333334
+   }
+  },
+  "mewma": {
+   "0.25": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 137,
+    "detection_rate": 0.4823943661971831,
+    "early_rate": 0.11619718309859155,
+    "by_onset_rate": 0.13732394366197184,
+    "median_lead": -2.0,
+    "false_alerts": 552,
+    "quiet_person_months": 2163.304862023653,
+    "fa_per_person_month": 0.25516514555587616,
+    "quiet_days_in_alert_frac": 0.027425551624121122,
+    "detection_rate_ci": [
+     0.4155808346065699,
+     0.5491136363636363
+    ],
+    "early_rate_ci": [
+     0.07782101167315175,
+     0.15613382899628253
+    ],
+    "by_onset_rate_ci": [
+     0.10033444816053512,
+     0.18046203392440144
+    ],
+    "median_lead_ci": [
+     -3.0,
+     -2.0
+    ],
+    "fa_per_person_month_ci": [
+     0.23535006360267885,
+     0.27471785676973
+    ],
+    "chance_detection_rate": 0.11166666666666666
+   },
+   "0.5": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 175,
+    "detection_rate": 0.6161971830985915,
+    "early_rate": 0.17253521126760563,
+    "by_onset_rate": 0.2147887323943662,
+    "median_lead": -2.0,
+    "false_alerts": 1077,
+    "quiet_person_months": 2163.304862023653,
+    "fa_per_person_month": 0.49784938725304095,
+    "quiet_days_in_alert_frac": 0.056445612063598126,
+    "detection_rate_ci": [
+     0.5507951610352644,
+     0.6832785017537572
+    ],
+    "early_rate_ci": [
+     0.1275783699059561,
+     0.22304904203603088
+    ],
+    "by_onset_rate_ci": [
+     0.1654264983917303,
+     0.2707041995231982
+    ],
+    "median_lead_ci": [
+     -2.0,
+     -1.0
+    ],
+    "fa_per_person_month_ci": [
+     0.47368138329748594,
+     0.5228712159177171
+    ],
+    "chance_detection_rate": 0.19583333333333333
+   },
+   "1.0": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 213,
+    "detection_rate": 0.75,
+    "early_rate": 0.30985915492957744,
+    "by_onset_rate": 0.352112676056338,
+    "median_lead": -1.0,
+    "false_alerts": 2162,
+    "quiet_person_months": 2163.304862023653,
+    "fa_per_person_month": 0.9993968200938482,
+    "quiet_days_in_alert_frac": 0.11734066301195123,
+    "detection_rate_ci": [
+     0.6887362935620454,
+     0.8088235294117647
+    ],
+    "early_rate_ci": [
+     0.25650557620817843,
+     0.3639705882352941
+    ],
+    "by_onset_rate_ci": [
+     0.2969183686652814,
+     0.4092526690391459
+    ],
+    "median_lead_ci": [
+     -1.0,
+     0.0
+    ],
+    "fa_per_person_month_ci": [
+     0.9666874929225134,
+     1.0350866510129186
+    ],
+    "chance_detection_rate": 0.38166666666666665
+   },
+   "2.0": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 245,
+    "detection_rate": 0.8626760563380281,
+    "early_rate": 0.4753521126760563,
+    "by_onset_rate": 0.528169014084507,
+    "median_lead": 1.0,
+    "false_alerts": 4334,
+    "quiet_person_months": 2163.304862023653,
+    "fa_per_person_month": 2.0034161971724043,
+    "quiet_days_in_alert_frac": 0.2775052770648889,
+    "detection_rate_ci": [
+     0.8122642196931972,
+     0.9105127073901031
+    ],
+    "early_rate_ci": [
+     0.4218181818181818,
+     0.5330746078444665
+    ],
+    "by_onset_rate_ci": [
+     0.4753521126760563,
+     0.5873772841510027
+    ],
+    "median_lead_ci": [
+     0.0,
+     3.0
+    ],
+    "fa_per_person_month_ci": [
+     1.9626580811693402,
+     2.0402653175147343
+    ],
+    "chance_detection_rate": 0.63
+   },
+   "4.0": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 215,
+    "detection_rate": 0.7570422535211268,
+    "early_rate": 0.5105633802816901,
+    "by_onset_rate": 0.5774647887323944,
+    "median_lead": 4.0,
+    "false_alerts": 6961,
+    "quiet_person_months": 2163.304862023653,
+    "fa_per_person_month": 3.21776191705517,
+    "quiet_days_in_alert_frac": 0.5392476955551169,
+    "detection_rate_ci": [
+     0.711470214731009,
+     0.8034688305313535
+    ],
+    "early_rate_ci": [
+     0.4485294117647059,
+     0.5669106914212548
+    ],
+    "by_onset_rate_ci": [
+     0.5180130016958734,
+     0.6360730253353204
+    ],
+    "median_lead_ci": [
+     2.0,
+     5.0
+    ],
+    "fa_per_person_month_ci": [
+     3.180773099528287,
+     3.2525416939313136
+    ],
+    "chance_detection_rate": 0.685
+   }
+  },
+  "fusion": {
+   "0.25": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 109,
+    "detection_rate": 0.38380281690140844,
+    "early_rate": 0.1056338028169014,
+    "by_onset_rate": 0.12323943661971831,
+    "median_lead": -2.0,
+    "false_alerts": 568,
+    "quiet_person_months": 2163.304862023653,
+    "fa_per_person_month": 0.2625612367314088,
+    "quiet_days_in_alert_frac": 0.038678228121061184,
+    "detection_rate_ci": [
+     0.3244124559341951,
+     0.44609808407206175
+    ],
+    "early_rate_ci": [
+     0.06843867111633888,
+     0.14545595271601464
+    ],
+    "by_onset_rate_ci": [
+     0.0853065108952481,
+     0.16387959866220736
+    ],
+    "median_lead_ci": [
+     -3.0,
+     -2.0
+    ],
+    "fa_per_person_month_ci": [
+     0.24025815119798505,
+     0.2862060762313952
+    ],
+    "chance_detection_rate": 0.08
+   },
+   "0.5": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 154,
+    "detection_rate": 0.5422535211267606,
+    "early_rate": 0.1619718309859155,
+    "by_onset_rate": 0.18309859154929578,
+    "median_lead": -2.0,
+    "false_alerts": 1082,
+    "quiet_person_months": 2163.304862023653,
+    "fa_per_person_month": 0.5001606657453949,
+    "quiet_days_in_alert_frac": 0.07108472156838924,
+    "detection_rate_ci": [
+     0.47440273037542663,
+     0.6097681006337622
+    ],
+    "early_rate_ci": [
+     0.11723676623226847,
+     0.20905923344947736
+    ],
+    "by_onset_rate_ci": [
+     0.13850726731554705,
+     0.2319588662288282
+    ],
+    "median_lead_ci": [
+     -2.0,
+     -2.0
+    ],
+    "fa_per_person_month_ci": [
+     0.4708209866155899,
+     0.529197963081242
+    ],
+    "chance_detection_rate": 0.16
+   },
+   "1.0": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 198,
+    "detection_rate": 0.6971830985915493,
+    "early_rate": 0.25704225352112675,
+    "by_onset_rate": 0.29225352112676056,
+    "median_lead": -1.0,
+    "false_alerts": 2097,
+    "quiet_person_months": 2163.304862023653,
+    "fa_per_person_month": 0.9693501996932469,
+    "quiet_days_in_alert_frac": 0.1405901201196641,
+    "detection_rate_ci": [
+     0.6331071428571429,
+     0.7626160889470243
+    ],
+    "early_rate_ci": [
+     0.2036006016042781,
+     0.3074149381235189
+    ],
+    "by_onset_rate_ci": [
+     0.23790551202160948,
+     0.3489251144538914
+    ],
+    "median_lead_ci": [
+     -2.0,
+     -1.0
+    ],
+    "fa_per_person_month_ci": [
+     0.9336458679822869,
+     1.00718703011726
+    ],
+    "chance_detection_rate": 0.30416666666666664
+   },
+   "2.0": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 232,
+    "detection_rate": 0.8169014084507042,
+    "early_rate": 0.45774647887323944,
+    "by_onset_rate": 0.5140845070422535,
+    "median_lead": 1.5,
+    "false_alerts": 4359,
+    "quiet_person_months": 2163.304862023653,
+    "fa_per_person_month": 2.014972589634174,
+    "quiet_days_in_alert_frac": 0.3152419856949781,
+    "detection_rate_ci": [
+     0.7706720695180574,
+     0.8639878648827952
+    ],
+    "early_rate_ci": [
+     0.4030377219137238,
+     0.5163946862996158
+    ],
+    "by_onset_rate_ci": [
+     0.46103715058176026,
+     0.566194594034797
+    ],
+    "median_lead_ci": [
+     0.0,
+     3.0
+    ],
+    "fa_per_person_month_ci": [
+     1.9711595381691387,
+     2.0559441435997705
+    ],
+    "chance_detection_rate": 0.5583333333333333
+   },
+   "4.0": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 215,
+    "detection_rate": 0.7570422535211268,
+    "early_rate": 0.4753521126760563,
+    "by_onset_rate": 0.5352112676056338,
+    "median_lead": 2.0,
+    "false_alerts": 6520,
+    "quiet_person_months": 2163.304862023653,
+    "fa_per_person_month": 3.0139071540295514,
+    "quiet_days_in_alert_frac": 0.5211310382530258,
+    "detection_rate_ci": [
+     0.706469584420799,
+     0.8057553956834532
+    ],
+    "early_rate_ci": [
+     0.40955631399317405,
+     0.5379373040752351
+    ],
+    "by_onset_rate_ci": [
+     0.4733037914043252,
+     0.596378499827169
+    ],
+    "median_lead_ci": [
+     1.4875000000000007,
+     3.0
+    ],
+    "fa_per_person_month_ci": [
+     2.975320463673605,
+     3.049926537117233
+    ],
+    "chance_detection_rate": 0.6375
+   }
+  }
+ },
+ "by_type": {
+  "0.25": {
+   "illness": {
+    "label": "Illness (infection-like)",
+    "n": 29,
+    "detection_rate": 0.5862068965517241,
+    "median_delay_days": -2.0
+   },
+   "sleep_loss": {
+    "label": "Sleep restriction",
+    "n": 48,
+    "detection_rate": 0.8333333333333334,
+    "median_delay_days": 2.0
+   },
+   "co2": {
+    "label": "Cabin CO2 rise (crew-wide)",
+    "n": 112,
+    "detection_rate": 0.29464285714285715,
+    "median_delay_days": 1.0
+   },
+   "decond": {
+    "label": "Exercise outage",
+    "n": 36,
+    "detection_rate": 0.5833333333333334,
+    "median_delay_days": 4.0
+   },
+   "dehydration": {
+    "label": "Low fluid intake",
+    "n": 33,
+    "detection_rate": 0.42424242424242425,
+    "median_delay_days": 3.0
+   },
+   "low_mood": {
+    "label": "Low-mood period",
+    "n": 26,
+    "detection_rate": 0.46153846153846156,
+    "median_delay_days": 2.0
+   }
+  },
+  "1.0": {
+   "illness": {
+    "label": "Illness (infection-like)",
+    "n": 29,
+    "detection_rate": 0.6896551724137931,
+    "median_delay_days": -2.0
+   },
+   "sleep_loss": {
+    "label": "Sleep restriction",
+    "n": 48,
+    "detection_rate": 0.9166666666666666,
+    "median_delay_days": 1.0
+   },
+   "co2": {
+    "label": "Cabin CO2 rise (crew-wide)",
+    "n": 112,
+    "detection_rate": 0.5892857142857143,
+    "median_delay_days": -0.5
+   },
+   "decond": {
+    "label": "Exercise outage",
+    "n": 36,
+    "detection_rate": 0.9166666666666666,
+    "median_delay_days": 2.0
+   },
+   "dehydration": {
+    "label": "Low fluid intake",
+    "n": 33,
+    "detection_rate": 0.8484848484848485,
+    "median_delay_days": 1.0
+   },
+   "low_mood": {
+    "label": "Low-mood period",
+    "n": 26,
+    "detection_rate": 0.8461538461538461,
+    "median_delay_days": -0.0
+   }
+  }
+ },
+ "dose": {
+  "illness": {
+   "label": "Illness (infection-like)",
+   "sizes": [
+    0.5,
+    1.0,
+    1.5,
+    2.0,
+    3.0
+   ],
+   "0.25": [
+    0.4583333333333333,
+    0.625,
+    0.9166666666666666,
+    0.9166666666666666,
+    0.9583333333333334
+   ],
+   "1.0": [
+    0.7083333333333334,
+    0.8541666666666666,
+    0.9375,
+    0.9791666666666666,
+    0.9583333333333334
+   ]
+  },
+  "sleep_loss": {
+   "label": "Sleep restriction",
+   "sizes": [
+    0.5,
+    1.0,
+    1.5,
+    2.0,
+    3.0
+   ],
+   "0.25": [
+    0.4375,
+    0.8333333333333334,
+    0.9583333333333334,
+    0.9166666666666666,
+    0.9583333333333334
+   ],
+   "1.0": [
+    0.875,
+    0.9375,
+    0.9791666666666666,
+    1.0,
+    0.9583333333333334
+   ]
+  },
+  "co2": {
+   "label": "Cabin CO2 rise (crew-wide)",
+   "sizes": [
+    0.5,
+    1.0,
+    1.5,
+    2.0,
+    3.0
+   ],
+   "0.25": [
+    0.109375,
+    0.21354166666666666,
+    0.2552083333333333,
+    0.328125,
+    0.4270833333333333
+   ],
+   "1.0": [
+    0.40625,
+    0.5729166666666666,
+    0.6458333333333334,
+    0.671875,
+    0.8177083333333334
+   ]
+  },
+  "decond": {
+   "label": "Exercise outage",
+   "sizes": [
+    0.5,
+    1.0,
+    1.5,
+    2.0,
+    3.0
+   ],
+   "0.25": [
+    0.2916666666666667,
+    0.4583333333333333,
+    0.625,
+    0.5833333333333334,
+    0.4791666666666667
+   ],
+   "1.0": [
+    0.6875,
+    0.8125,
+    0.9375,
+    0.875,
+    0.9166666666666666
+   ]
+  },
+  "dehydration": {
+   "label": "Low fluid intake",
+   "sizes": [
+    0.5,
+    1.0,
+    1.5,
+    2.0,
+    3.0
+   ],
+   "0.25": [
+    0.14583333333333334,
+    0.5208333333333334,
+    0.6458333333333334,
+    0.7708333333333334,
+    0.8958333333333334
+   ],
+   "1.0": [
+    0.4375,
+    0.8333333333333334,
+    0.8958333333333334,
+    0.9791666666666666,
+    0.9791666666666666
+   ]
+  },
+  "low_mood": {
+   "label": "Low-mood period",
+   "sizes": [
+    0.5,
+    1.0,
+    1.5,
+    2.0,
+    3.0
+   ],
+   "0.25": [
+    0.16666666666666666,
+    0.25,
+    0.5833333333333334,
+    0.6666666666666666,
+    1.0
+   ],
+   "1.0": [
+    0.4375,
+    0.5208333333333334,
+    0.8125,
+    0.875,
+    0.9375
+   ]
+  }
+ },
+ "missing": [
+  {
+   "label": "Nominal: 4% of nights unworn, 10% of check-ins skipped",
+   "0.25": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 137,
+    "detection_rate": 0.4823943661971831,
+    "early_rate": 0.11619718309859155,
+    "by_onset_rate": 0.13732394366197184,
+    "median_lead": -2.0,
+    "false_alerts": 552,
+    "quiet_person_months": 2163.304862023653,
+    "fa_per_person_month": 0.25516514555587616,
+    "quiet_days_in_alert_frac": 0.027425551624121122,
+    "detection_rate_ci": [
+     0.4252653289333617,
+     0.5478265374331551
+    ],
+    "early_rate_ci": [
+     0.07715753386289032,
+     0.1556530013433574
+    ],
+    "by_onset_rate_ci": [
+     0.101037149374577,
+     0.17647611676249447
+    ],
+    "median_lead_ci": [
+     -3.0,
+     -2.0
+    ],
+    "fa_per_person_month_ci": [
+     0.23555714073033118,
+     0.2748812393538442
+    ]
+   },
+   "1.0": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 213,
+    "detection_rate": 0.75,
+    "early_rate": 0.30985915492957744,
+    "by_onset_rate": 0.352112676056338,
+    "median_lead": -1.0,
+    "false_alerts": 2162,
+    "quiet_person_months": 2163.304862023653,
+    "fa_per_person_month": 0.9993968200938482,
+    "quiet_days_in_alert_frac": 0.11734066301195123,
+    "detection_rate_ci": [
+     0.6880606002890529,
+     0.8061133771171793
+    ],
+    "early_rate_ci": [
+     0.2518327067669173,
+     0.36209197447539576
+    ],
+    "by_onset_rate_ci": [
+     0.29576462332715153,
+     0.40808823529411764
+    ],
+    "median_lead_ci": [
+     -1.0,
+     0.0
+    ],
+    "fa_per_person_month_ci": [
+     0.963980943399645,
+     1.0370252569904461
+    ]
+   }
+  },
+  {
+   "label": "Wearable unworn 20% of nights",
+   "0.25": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 122,
+    "detection_rate": 0.4295774647887324,
+    "early_rate": 0.1056338028169014,
+    "by_onset_rate": 0.11971830985915492,
+    "median_lead": -2.0,
+    "false_alerts": 483,
+    "quiet_person_months": 2157.8843626806834,
+    "fa_per_person_month": 0.22383034436561824,
+    "quiet_days_in_alert_frac": 0.024038607922540572,
+    "detection_rate_ci": [
+     0.3715754540714348,
+     0.48946306163980074
+    ],
+    "early_rate_ci": [
+     0.06687244356915618,
+     0.14179813130753016
+    ],
+    "by_onset_rate_ci": [
+     0.07893614154841028,
+     0.15524047186932843
+    ],
+    "median_lead_ci": [
+     -3.0,
+     -2.0
+    ],
+    "fa_per_person_month_ci": [
+     0.20617589078119833,
+     0.24357190387329422
+    ]
+   },
+   "1.0": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 208,
+    "detection_rate": 0.7323943661971831,
+    "early_rate": 0.29225352112676056,
+    "by_onset_rate": 0.3345070422535211,
+    "median_lead": -1.0,
+    "false_alerts": 1886,
+    "quiet_person_months": 2157.8843626806834,
+    "fa_per_person_month": 0.8740042018086046,
+    "quiet_days_in_alert_frac": 0.10250281642968061,
+    "detection_rate_ci": [
+     0.6655841494571003,
+     0.7918199899053021
+    ],
+    "early_rate_ci": [
+     0.23937175685693104,
+     0.33463747589199605
+    ],
+    "by_onset_rate_ci": [
+     0.2851298580959441,
+     0.378729131777266
+    ],
+    "median_lead_ci": [
+     -1.0,
+     0.0
+    ],
+    "fa_per_person_month_ci": [
+     0.8436007627517832,
+     0.9084699923267652
+    ]
+   }
+  },
+  {
+   "label": "Wearable unworn 40% of nights",
+   "0.25": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 103,
+    "detection_rate": 0.3626760563380282,
+    "early_rate": 0.09154929577464789,
+    "by_onset_rate": 0.09859154929577464,
+    "median_lead": -2.0,
+    "false_alerts": 410,
+    "quiet_person_months": 2155.289093298292,
+    "fa_per_person_month": 0.19022970109896808,
+    "quiet_days_in_alert_frac": 0.02079046443214901,
+    "detection_rate_ci": [
+     0.3070894059588599,
+     0.4173362543683151
+    ],
+    "early_rate_ci": [
+     0.055193611535523296,
+     0.12727562246670526
+    ],
+    "by_onset_rate_ci": [
+     0.06177648667122352,
+     0.13523131672597866
+    ],
+    "median_lead_ci": [
+     -3.0,
+     -2.0
+    ],
+    "fa_per_person_month_ci": [
+     0.1733406359038188,
+     0.20953043414843264
+    ]
+   },
+   "1.0": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 191,
+    "detection_rate": 0.6725352112676056,
+    "early_rate": 0.23943661971830985,
+    "by_onset_rate": 0.28169014084507044,
+    "median_lead": -1.0,
+    "false_alerts": 1612,
+    "quiet_person_months": 2155.289093298292,
+    "fa_per_person_month": 0.747927507735455,
+    "quiet_days_in_alert_frac": 0.084899477189934,
+    "detection_rate_ci": [
+     0.605228981544771,
+     0.7354397164102635
+    ],
+    "early_rate_ci": [
+     0.18660106550081157,
+     0.2901133428650493
+    ],
+    "by_onset_rate_ci": [
+     0.2299592711178077,
+     0.3345457887700535
+    ],
+    "median_lead_ci": [
+     -2.0,
+     -1.0
+    ],
+    "fa_per_person_month_ci": [
+     0.7185891674075444,
+     0.7780102886290884
+    ]
+   }
+  },
+  {
+   "label": "Check-in skipped 30% of days",
+   "0.25": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 114,
+    "detection_rate": 0.4014084507042254,
+    "early_rate": 0.08450704225352113,
+    "by_onset_rate": 0.10211267605633803,
+    "median_lead": -2.0,
+    "false_alerts": 453,
+    "quiet_person_months": 2159.855453350854,
+    "fa_per_person_month": 0.2097362577191008,
+    "quiet_days_in_alert_frac": 0.022008943509871322,
+    "detection_rate_ci": [
+     0.3453026876157937,
+     0.4669467170671085
+    ],
+    "early_rate_ci": [
+     0.04929288847841145,
+     0.1226813377824581
+    ],
+    "by_onset_rate_ci": [
+     0.06753207487643285,
+     0.14234963823619526
+    ],
+    "median_lead_ci": [
+     -3.0,
+     -2.0
+    ],
+    "fa_per_person_month_ci": [
+     0.19275558896453712,
+     0.22771118736695592
+    ]
+   },
+   "1.0": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 189,
+    "detection_rate": 0.6654929577464789,
+    "early_rate": 0.2711267605633803,
+    "by_onset_rate": 0.31690140845070425,
+    "median_lead": -1.0,
+    "false_alerts": 1842,
+    "quiet_person_months": 2159.855453350854,
+    "fa_per_person_month": 0.8528348492683966,
+    "quiet_days_in_alert_frac": 0.09784625680649774,
+    "detection_rate_ci": [
+     0.6109322015298004,
+     0.7236949207376253
+    ],
+    "early_rate_ci": [
+     0.22171714497511383,
+     0.32088687010640427
+    ],
+    "by_onset_rate_ci": [
+     0.2683457264484741,
+     0.3684534840622683
+    ],
+    "median_lead_ci": [
+     -1.0,
+     0.0
+    ],
+    "fa_per_person_month_ci": [
+     0.8173636812570387,
+     0.8911109216184471
+    ]
+   }
+  },
+  {
+   "label": "Check-in skipped 60% of days",
+   "0.25": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 96,
+    "detection_rate": 0.3380281690140845,
+    "early_rate": 0.06690140845070422,
+    "by_onset_rate": 0.09507042253521127,
+    "median_lead": -2.0,
+    "false_alerts": 373,
+    "quiet_person_months": 2158.77135348226,
+    "fa_per_person_month": 0.17278346750262505,
+    "quiet_days_in_alert_frac": 0.01771339004458783,
+    "detection_rate_ci": [
+     0.2798496528186419,
+     0.3897314472146474
+    ],
+    "early_rate_ci": [
+     0.034482758620689655,
+     0.09936359831605895
+    ],
+    "by_onset_rate_ci": [
+     0.0633637188987584,
+     0.13380347138593643
+    ],
+    "median_lead_ci": [
+     -3.0,
+     -2.0
+    ],
+    "fa_per_person_month_ci": [
+     0.15790715546509132,
+     0.19025754021479663
+    ]
+   },
+   "1.0": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 171,
+    "detection_rate": 0.602112676056338,
+    "early_rate": 0.24295774647887325,
+    "by_onset_rate": 0.27816901408450706,
+    "median_lead": -1.0,
+    "false_alerts": 1528,
+    "quiet_person_months": 2158.77135348226,
+    "fa_per_person_month": 0.7078100223700029,
+    "quiet_days_in_alert_frac": 0.07765586718001004,
+    "detection_rate_ci": [
+     0.543918918918919,
+     0.6653995969009978
+    ],
+    "early_rate_ci": [
+     0.19390984654731458,
+     0.29577464788732394
+    ],
+    "by_onset_rate_ci": [
+     0.2286507478417988,
+     0.32778081182686436
+    ],
+    "median_lead_ci": [
+     -1.0,
+     0.0
+    ],
+    "fa_per_person_month_ci": [
+     0.6774425546006533,
+     0.7408160957223459
+    ]
+   }
+  },
+  {
+   "label": "Week-long wearable outages (about one per month)",
+   "0.25": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 118,
+    "detection_rate": 0.4154929577464789,
+    "early_rate": 0.11267605633802817,
+    "by_onset_rate": 0.13028169014084506,
+    "median_lead": -2.0,
+    "false_alerts": 515,
+    "quiet_person_months": 2160.939553219448,
+    "fa_per_person_month": 0.2383222609039359,
+    "quiet_days_in_alert_frac": 0.025692090180756775,
+    "detection_rate_ci": [
+     0.3580958027563988,
+     0.47368421052631576
+    ],
+    "early_rate_ci": [
+     0.07241379310344828,
+     0.14947518196585116
+    ],
+    "by_onset_rate_ci": [
+     0.08706146112983379,
+     0.16910042457837007
+    ],
+    "median_lead_ci": [
+     -3.0,
+     -2.0
+    ],
+    "fa_per_person_month_ci": [
+     0.21964878716283903,
+     0.2565648222486485
+    ]
+   },
+   "1.0": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 206,
+    "detection_rate": 0.7253521126760564,
+    "early_rate": 0.2992957746478873,
+    "by_onset_rate": 0.3485915492957746,
+    "median_lead": -1.0,
+    "false_alerts": 2026,
+    "quiet_person_months": 2160.939553219448,
+    "fa_per_person_month": 0.9375551467793672,
+    "quiet_days_in_alert_frac": 0.10922938931877955,
+    "detection_rate_ci": [
+     0.658781765980998,
+     0.7855550239234448
+    ],
+    "early_rate_ci": [
+     0.24384792440639638,
+     0.3523399245444572
+    ],
+    "by_onset_rate_ci": [
+     0.2935083014703995,
+     0.40441176470588236
+    ],
+    "median_lead_ci": [
+     -1.0,
+     0.0
+    ],
+    "fa_per_person_month_ci": [
+     0.9021139294319181,
+     0.9734042971178821
+    ]
+   }
+  },
+  {
+   "label": "Both: 40% unworn and 60% skipped",
+   "0.25": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 69,
+    "detection_rate": 0.24295774647887325,
+    "early_rate": 0.045774647887323945,
+    "by_onset_rate": 0.056338028169014086,
+    "median_lead": -3.0,
+    "false_alerts": 268,
+    "quiet_person_months": 2129.8948751642574,
+    "fa_per_person_month": 0.12582780639787766,
+    "quiet_days_in_alert_frac": 0.01403584538976463,
+    "detection_rate_ci": [
+     0.19572953736654805,
+     0.28311219672693977
+    ],
+    "early_rate_ci": [
+     0.024873540508694465,
+     0.07169872789326712
+    ],
+    "by_onset_rate_ci": [
+     0.031026538778392374,
+     0.08452959751390905
+    ],
+    "median_lead_ci": [
+     -3.0,
+     -2.0
+    ],
+    "fa_per_person_month_ci": [
+     0.11451904817665125,
+     0.13857038293107665
+    ]
+   },
+   "1.0": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 146,
+    "detection_rate": 0.5140845070422535,
+    "early_rate": 0.176056338028169,
+    "by_onset_rate": 0.21830985915492956,
+    "median_lead": -1.0,
+    "false_alerts": 1096,
+    "quiet_person_months": 2129.8948751642574,
+    "fa_per_person_month": 0.5145793873584847,
+    "quiet_days_in_alert_frac": 0.0562976216182867,
+    "detection_rate_ci": [
+     0.4536188920708788,
+     0.5777146805896806
+    ],
+    "early_rate_ci": [
+     0.1373189387159075,
+     0.22047533580361278
+    ],
+    "by_onset_rate_ci": [
+     0.17253521126760563,
+     0.264722850678733
+    ],
+    "median_lead_ci": [
+     -2.0,
+     -0.5
+    ],
+    "fa_per_person_month_ci": [
+     0.49077014346608033,
+     0.5421143353348512
+    ]
+   }
+  }
+ ],
+ "dropout": [
+  {
+   "label": "All sensors",
+   "0.25": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 137,
+    "detection_rate": 0.4823943661971831,
+    "early_rate": 0.11619718309859155,
+    "by_onset_rate": 0.13732394366197184,
+    "median_lead": -2.0,
+    "false_alerts": 552,
+    "quiet_person_months": 2163.304862023653,
+    "fa_per_person_month": 0.25516514555587616,
+    "quiet_days_in_alert_frac": 0.027425551624121122,
+    "detection_rate_ci": [
+     0.4252653289333617,
+     0.5478265374331551
+    ],
+    "early_rate_ci": [
+     0.07715753386289032,
+     0.1556530013433574
+    ],
+    "by_onset_rate_ci": [
+     0.101037149374577,
+     0.17647611676249447
+    ],
+    "median_lead_ci": [
+     -3.0,
+     -2.0
+    ],
+    "fa_per_person_month_ci": [
+     0.23555714073033118,
+     0.2748812393538442
+    ]
+   },
+   "1.0": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 213,
+    "detection_rate": 0.75,
+    "early_rate": 0.30985915492957744,
+    "by_onset_rate": 0.352112676056338,
+    "median_lead": -1.0,
+    "false_alerts": 2162,
+    "quiet_person_months": 2163.304862023653,
+    "fa_per_person_month": 0.9993968200938482,
+    "quiet_days_in_alert_frac": 0.11734066301195123,
+    "detection_rate_ci": [
+     0.6880606002890529,
+     0.8061133771171793
+    ],
+    "early_rate_ci": [
+     0.2518327067669173,
+     0.36209197447539576
+    ],
+    "by_onset_rate_ci": [
+     0.29576462332715153,
+     0.40808823529411764
+    ],
+    "median_lead_ci": [
+     -1.0,
+     0.0
+    ],
+    "fa_per_person_month_ci": [
+     0.963980943399645,
+     1.0370252569904461
+    ]
+   }
+  },
+  {
+   "label": "No HRV",
+   "0.25": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 131,
+    "detection_rate": 0.4612676056338028,
+    "early_rate": 0.09507042253521127,
+    "by_onset_rate": 0.11971830985915492,
+    "median_lead": -2.0,
+    "false_alerts": 452,
+    "quiet_person_months": 2163.304862023653,
+    "fa_per_person_month": 0.20893957570879712,
+    "quiet_days_in_alert_frac": 0.02239905240618973,
+    "detection_rate_ci": [
+     0.403942431571096,
+     0.5281842131928259
+    ],
+    "early_rate_ci": [
+     0.05921813048179743,
+     0.12975933547480417
+    ],
+    "by_onset_rate_ci": [
+     0.08448527528809219,
+     0.15424322249285174
+    ],
+    "median_lead_ci": [
+     -3.0,
+     -2.0
+    ],
+    "fa_per_person_month_ci": [
+     0.19242122876104042,
+     0.22931632991837977
+    ]
+   },
+   "1.0": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 205,
+    "detection_rate": 0.721830985915493,
+    "early_rate": 0.2535211267605634,
+    "by_onset_rate": 0.2992957746478873,
+    "median_lead": -1.0,
+    "false_alerts": 1777,
+    "quiet_person_months": 2163.304862023653,
+    "fa_per_person_month": 0.821428376182594,
+    "quiet_days_in_alert_frac": 0.09606535967563135,
+    "detection_rate_ci": [
+     0.6622458868864942,
+     0.7816933418693982
+    ],
+    "early_rate_ci": [
+     0.2013496453810726,
+     0.30249924815798707
+    ],
+    "by_onset_rate_ci": [
+     0.2456715247670879,
+     0.3485956217733447
+    ],
+    "median_lead_ci": [
+     -1.0,
+     -1.0
+    ],
+    "fa_per_person_month_ci": [
+     0.7914578855143455,
+     0.8537542957204988
+    ]
+   }
+  },
+  {
+   "label": "No temperature",
+   "0.25": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 126,
+    "detection_rate": 0.44366197183098594,
+    "early_rate": 0.09859154929577464,
+    "by_onset_rate": 0.11971830985915492,
+    "median_lead": -2.0,
+    "false_alerts": 496,
+    "quiet_person_months": 2163.304862023653,
+    "fa_per_person_month": 0.2292788264415119,
+    "quiet_days_in_alert_frac": 0.024843965923068746,
+    "detection_rate_ci": [
+     0.38426547018612867,
+     0.5108892297926364
+    ],
+    "early_rate_ci": [
+     0.057403906389833545,
+     0.13670647988651333
+    ],
+    "by_onset_rate_ci": [
+     0.08013588850174215,
+     0.15847776346796733
+    ],
+    "median_lead_ci": [
+     -3.0,
+     -2.0
+    ],
+    "fa_per_person_month_ci": [
+     0.21092315171298254,
+     0.24867086495569532
+    ]
+   },
+   "1.0": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 211,
+    "detection_rate": 0.7429577464788732,
+    "early_rate": 0.2887323943661972,
+    "by_onset_rate": 0.3345070422535211,
+    "median_lead": -1.0,
+    "false_alerts": 1913,
+    "quiet_person_months": 2163.304862023653,
+    "fa_per_person_month": 0.8842951511746214,
+    "quiet_days_in_alert_frac": 0.10528313920821247,
+    "detection_rate_ci": [
+     0.6824208019494905,
+     0.8014727340352483
+    ],
+    "early_rate_ci": [
+     0.23523946740858506,
+     0.33784136924380825
+    ],
+    "by_onset_rate_ci": [
+     0.2769947337042925,
+     0.38794422628543374
+    ],
+    "median_lead_ci": [
+     -1.0,
+     0.0
+    ],
+    "fa_per_person_month_ci": [
+     0.8505514690591255,
+     0.921348838984939
+    ]
+   }
+  },
+  {
+   "label": "No blood oxygen",
+   "0.25": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 133,
+    "detection_rate": 0.46830985915492956,
+    "early_rate": 0.10211267605633803,
+    "by_onset_rate": 0.1267605633802817,
+    "median_lead": -2.0,
+    "false_alerts": 526,
+    "quiet_person_months": 2163.304862023653,
+    "fa_per_person_month": 0.2431464973956356,
+    "quiet_days_in_alert_frac": 0.025906971799972665,
+    "detection_rate_ci": [
+     0.4090726395790705,
+     0.5390468294509373
+    ],
+    "early_rate_ci": [
+     0.06536870503597123,
+     0.13910462130937098
+    ],
+    "by_onset_rate_ci": [
+     0.08963222313757797,
+     0.16380631349070024
+    ],
+    "median_lead_ci": [
+     -3.0,
+     -2.0
+    ],
+    "fa_per_person_month_ci": [
+     0.2229852338321379,
+     0.264063709098792
+    ]
+   },
+   "1.0": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 210,
+    "detection_rate": 0.7394366197183099,
+    "early_rate": 0.30633802816901406,
+    "by_onset_rate": 0.34507042253521125,
+    "median_lead": -1.0,
+    "false_alerts": 2026,
+    "quiet_person_months": 2163.304862023653,
+    "fa_per_person_month": 0.9365300451018207,
+    "quiet_days_in_alert_frac": 0.10994517926834824,
+    "detection_rate_ci": [
+     0.6721049326330212,
+     0.7971658335295013
+    ],
+    "early_rate_ci": [
+     0.25081521739130436,
+     0.36030163459435816
+    ],
+    "by_onset_rate_ci": [
+     0.288228876118111,
+     0.404424710024855
+    ],
+    "median_lead_ci": [
+     -1.0,
+     0.0
+    ],
+    "fa_per_person_month_ci": [
+     0.9018202763353995,
+     0.9746514659405827
+    ]
+   }
+  },
+  {
+   "label": "No resting heart rate",
+   "0.25": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 130,
+    "detection_rate": 0.45774647887323944,
+    "early_rate": 0.09154929577464789,
+    "by_onset_rate": 0.11619718309859155,
+    "median_lead": -2.5,
+    "false_alerts": 487,
+    "quiet_person_months": 2163.304862023653,
+    "fa_per_person_month": 0.22511852515527478,
+    "quiet_days_in_alert_frac": 0.024251719791650847,
+    "detection_rate_ci": [
+     0.40135700567038596,
+     0.5212164622717291
+    ],
+    "early_rate_ci": [
+     0.05244064443188242,
+     0.13161681181370688
+    ],
+    "by_onset_rate_ci": [
+     0.07506692718575943,
+     0.15827781436822372
+    ],
+    "median_lead_ci": [
+     -3.0,
+     -2.0
+    ],
+    "fa_per_person_month_ci": [
+     0.2081162907142077,
+     0.24342616302153816
+    ]
+   },
+   "1.0": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 207,
+    "detection_rate": 0.7288732394366197,
+    "early_rate": 0.28169014084507044,
+    "by_onset_rate": 0.323943661971831,
+    "median_lead": -1.0,
+    "false_alerts": 1886,
+    "quiet_person_months": 2163.304862023653,
+    "fa_per_person_month": 0.8718142473159102,
+    "quiet_days_in_alert_frac": 0.10191189199860291,
+    "detection_rate_ci": [
+     0.6754056191028412,
+     0.7846363636363636
+    ],
+    "early_rate_ci": [
+     0.2255268187190384,
+     0.3278365928559883
+    ],
+    "by_onset_rate_ci": [
+     0.27361071112095703,
+     0.3774555684088758
+    ],
+    "median_lead_ci": [
+     -1.0,
+     0.0
+    ],
+    "fa_per_person_month_ci": [
+     0.83946163212422,
+     0.9067365920647625
+    ]
+   }
+  },
+  {
+   "label": "No sleep tracking",
+   "0.25": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 86,
+    "detection_rate": 0.3028169014084507,
+    "early_rate": 0.09507042253521127,
+    "by_onset_rate": 0.1056338028169014,
+    "median_lead": -2.0,
+    "false_alerts": 428,
+    "quiet_person_months": 2163.304862023653,
+    "fa_per_person_month": 0.19784543894549816,
+    "quiet_days_in_alert_frac": 0.020850100985558305,
+    "detection_rate_ci": [
+     0.2524957337883959,
+     0.3556520486555698
+    ],
+    "early_rate_ci": [
+     0.05632330568778525,
+     0.13456260109996765
+    ],
+    "by_onset_rate_ci": [
+     0.06751299376299377,
+     0.14569650103464027
+    ],
+    "median_lead_ci": [
+     -3.0,
+     -1.0
+    ],
+    "fa_per_person_month_ci": [
+     0.18145893423518417,
+     0.21631818647187867
+    ]
+   },
+   "1.0": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 175,
+    "detection_rate": 0.6161971830985915,
+    "early_rate": 0.24295774647887325,
+    "by_onset_rate": 0.2676056338028169,
+    "median_lead": -1.0,
+    "false_alerts": 1645,
+    "quiet_person_months": 2163.304862023653,
+    "fa_per_person_month": 0.7604106239844497,
+    "quiet_days_in_alert_frac": 0.08806244400236898,
+    "detection_rate_ci": [
+     0.5486722908239302,
+     0.6763663101604278
+    ],
+    "early_rate_ci": [
+     0.1932940182494086,
+     0.29181529279809465
+    ],
+    "by_onset_rate_ci": [
+     0.2147761569416499,
+     0.3235320855614973
+    ],
+    "median_lead_ci": [
+     -2.0,
+     0.0
+    ],
+    "fa_per_person_month_ci": [
+     0.7282289617731726,
+     0.7960247159272928
+    ]
+   }
+  },
+  {
+   "label": "No exercise log",
+   "0.25": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 96,
+    "detection_rate": 0.3380281690140845,
+    "early_rate": 0.07394366197183098,
+    "by_onset_rate": 0.07746478873239436,
+    "median_lead": -2.0,
+    "false_alerts": 218,
+    "quiet_person_months": 2146.3534822601837,
+    "fa_per_person_month": 0.10156761307109514,
+    "quiet_days_in_alert_frac": 0.00782122905027933,
+    "detection_rate_ci": [
+     0.2880565374977626,
+     0.39715073529411754
+    ],
+    "early_rate_ci": [
+     0.0446036388088864,
+     0.10563800894101812
+    ],
+    "by_onset_rate_ci": [
+     0.04776983326775526,
+     0.11272727272727273
+    ],
+    "median_lead_ci": [
+     -3.0,
+     -2.0
+    ],
+    "fa_per_person_month_ci": [
+     0.0880073345193668,
+     0.11439318325016903
+    ]
+   },
+   "1.0": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 164,
+    "detection_rate": 0.5774647887323944,
+    "early_rate": 0.19718309859154928,
+    "by_onset_rate": 0.22183098591549297,
+    "median_lead": -1.0,
+    "false_alerts": 1323,
+    "quiet_person_months": 2146.3534822601837,
+    "fa_per_person_month": 0.6163942756562334,
+    "quiet_days_in_alert_frac": 0.059432157342924924,
+    "detection_rate_ci": [
+     0.5226333521213363,
+     0.6360982582196376
+    ],
+    "early_rate_ci": [
+     0.1513552063522912,
+     0.2473195780328886
+    ],
+    "by_onset_rate_ci": [
+     0.17414349570359677,
+     0.27243039951772885
+    ],
+    "median_lead_ci": [
+     -1.5124999999999993,
+     -1.0
+    ],
+    "fa_per_person_month_ci": [
+     0.5859682703868764,
+     0.6467783768655673
+    ]
+   }
+  },
+  {
+   "label": "No reaction test",
+   "0.25": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 108,
+    "detection_rate": 0.38028169014084506,
+    "early_rate": 0.07394366197183098,
+    "by_onset_rate": 0.09507042253521127,
+    "median_lead": -2.0,
+    "false_alerts": 378,
+    "quiet_person_months": 2163.304862023653,
+    "fa_per_person_month": 0.17473265402195864,
+    "quiet_days_in_alert_frac": 0.018693717635267497,
+    "detection_rate_ci": [
+     0.3181742925948224,
+     0.4412683823529411
+    ],
+    "early_rate_ci": [
+     0.04088340198934994,
+     0.10915784441749836
+    ],
+    "by_onset_rate_ci": [
+     0.06473422613260743,
+     0.13380347138593643
+    ],
+    "median_lead_ci": [
+     -3.0,
+     -2.0
+    ],
+    "fa_per_person_month_ci": [
+     0.15915815233984626,
+     0.19168200121342632
+    ]
+   },
+   "1.0": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 189,
+    "detection_rate": 0.6654929577464789,
+    "early_rate": 0.25,
+    "by_onset_rate": 0.2887323943661972,
+    "median_lead": -1.0,
+    "false_alerts": 1654,
+    "quiet_person_months": 2163.304862023653,
+    "fa_per_person_month": 0.7645709252706868,
+    "quiet_days_in_alert_frac": 0.08602754703801005,
+    "detection_rate_ci": [
+     0.6061487663621811,
+     0.7316176470588235
+    ],
+    "early_rate_ci": [
+     0.20193697617478107,
+     0.29899583943897834
+    ],
+    "by_onset_rate_ci": [
+     0.23839665455627612,
+     0.3381349056093471
+    ],
+    "median_lead_ci": [
+     -1.0124999999999993,
+     0.0
+    ],
+    "fa_per_person_month_ci": [
+     0.7335763068144739,
+     0.7993598533740471
+    ]
+   }
+  },
+  {
+   "label": "No mood check-in",
+   "0.25": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 117,
+    "detection_rate": 0.4119718309859155,
+    "early_rate": 0.0880281690140845,
+    "by_onset_rate": 0.10915492957746478,
+    "median_lead": -2.0,
+    "false_alerts": 447,
+    "quiet_person_months": 2163.304862023653,
+    "fa_per_person_month": 0.20662829721644319,
+    "quiet_days_in_alert_frac": 0.021882735265979256,
+    "detection_rate_ci": [
+     0.35911645368902156,
+     0.4655521044624746
+    ],
+    "early_rate_ci": [
+     0.052030259129674176,
+     0.12269065134300225
+    ],
+    "by_onset_rate_ci": [
+     0.07142857142857142,
+     0.14664831091814037
+    ],
+    "median_lead_ci": [
+     -3.0,
+     -2.0
+    ],
+    "fa_per_person_month_ci": [
+     0.18859151861272097,
+     0.225028806159866
+    ]
+   },
+   "1.0": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 199,
+    "detection_rate": 0.7007042253521126,
+    "early_rate": 0.27816901408450706,
+    "by_onset_rate": 0.3204225352112676,
+    "median_lead": -1.0,
+    "false_alerts": 1810,
+    "quiet_person_months": 2163.304862023653,
+    "fa_per_person_month": 0.8366828142321301,
+    "quiet_days_in_alert_frac": 0.09518458337762524,
+    "detection_rate_ci": [
+     0.644096339603457,
+     0.7563883689839572
+    ],
+    "early_rate_ci": [
+     0.2277332019209144,
+     0.3307706766917293
+    ],
+    "by_onset_rate_ci": [
+     0.27150201663098145,
+     0.37139295916208204
+    ],
+    "median_lead_ci": [
+     -1.0,
+     0.0
+    ],
+    "fa_per_person_month_ci": [
+     0.8031966606672655,
+     0.871923574368059
+    ]
+   }
+  },
+  {
+   "label": "No fluid log",
+   "0.25": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 119,
+    "detection_rate": 0.41901408450704225,
+    "early_rate": 0.10915492957746478,
+    "by_onset_rate": 0.13380281690140844,
+    "median_lead": -2.0,
+    "false_alerts": 525,
+    "quiet_person_months": 2163.304862023653,
+    "fa_per_person_month": 0.2426842416971648,
+    "quiet_days_in_alert_frac": 0.02605882978238751,
+    "detection_rate_ci": [
+     0.3620544035414725,
+     0.4894366197183099
+    ],
+    "early_rate_ci": [
+     0.06983389037433155,
+     0.14676520778960048
+    ],
+    "by_onset_rate_ci": [
+     0.09613907849829352,
+     0.17219417498367687
+    ],
+    "median_lead_ci": [
+     -2.5,
+     -1.0
+    ],
+    "fa_per_person_month_ci": [
+     0.22473878067153955,
+     0.2624536655045239
+    ]
+   },
+   "1.0": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 191,
+    "detection_rate": 0.6725352112676056,
+    "early_rate": 0.29225352112676056,
+    "by_onset_rate": 0.3345070422535211,
+    "median_lead": -1.0,
+    "false_alerts": 2004,
+    "quiet_person_months": 2163.304862023653,
+    "fa_per_person_month": 0.9263604197354633,
+    "quiet_days_in_alert_frac": 0.10964146330351855,
+    "detection_rate_ci": [
+     0.611510183744896,
+     0.7359339757405644
+    ],
+    "early_rate_ci": [
+     0.23485640152822576,
+     0.3420665205938107
+    ],
+    "by_onset_rate_ci": [
+     0.28073475737771986,
+     0.3852200212239123
+    ],
+    "median_lead_ci": [
+     -1.0,
+     0.5
+    ],
+    "fa_per_person_month_ci": [
+     0.8926664278046559,
+     0.9630477948102074
+    ]
+   }
+  },
+  {
+   "label": "No food log",
+   "0.25": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 132,
+    "detection_rate": 0.4647887323943662,
+    "early_rate": 0.1056338028169014,
+    "by_onset_rate": 0.1267605633802817,
+    "median_lead": -2.0,
+    "false_alerts": 516,
+    "quiet_person_months": 2163.304862023653,
+    "fa_per_person_month": 0.2385239404109277,
+    "quiet_days_in_alert_frac": 0.025512141045694065,
+    "detection_rate_ci": [
+     0.40874630839448717,
+     0.5282547515576731
+    ],
+    "early_rate_ci": [
+     0.06824463034719906,
+     0.14085554217498297
+    ],
+    "by_onset_rate_ci": [
+     0.09018835484615977,
+     0.1656471242866952
+    ],
+    "median_lead_ci": [
+     -3.0,
+     -2.0
+    ],
+    "fa_per_person_month_ci": [
+     0.21962285438075652,
+     0.25830050939831345
+    ]
+   },
+   "1.0": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 209,
+    "detection_rate": 0.7359154929577465,
+    "early_rate": 0.2887323943661972,
+    "by_onset_rate": 0.323943661971831,
+    "median_lead": -1.0,
+    "false_alerts": 1937,
+    "quiet_person_months": 2163.304862023653,
+    "fa_per_person_month": 0.8953892879379204,
+    "quiet_days_in_alert_frac": 0.10564759836600811,
+    "detection_rate_ci": [
+     0.669167158510611,
+     0.7937743190661478
+    ],
+    "early_rate_ci": [
+     0.23690834028561614,
+     0.3412969283276451
+    ],
+    "by_onset_rate_ci": [
+     0.27137546468401486,
+     0.375
+    ],
+    "median_lead_ci": [
+     -1.0,
+     -1.0
+    ],
+    "fa_per_person_month_ci": [
+     0.8556836272962087,
+     0.931283320720866
+    ]
+   }
+  },
+  {
+   "label": "Wearable only (no check-ins at all)",
+   "0.25": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 79,
+    "detection_rate": 0.27816901408450706,
+    "early_rate": 0.0528169014084507,
+    "by_onset_rate": 0.07042253521126761,
+    "median_lead": -2.0,
+    "false_alerts": 300,
+    "quiet_person_months": 2158.7385019710905,
+    "fa_per_person_month": 0.1389700511322133,
+    "quiet_days_in_alert_frac": 0.014959215972729487,
+    "detection_rate_ci": [
+     0.22405258519388954,
+     0.33088615618661255
+    ],
+    "early_rate_ci": [
+     0.02387879963929823,
+     0.08273500404974034
+    ],
+    "by_onset_rate_ci": [
+     0.04220779220779221,
+     0.10692448636309021
+    ],
+    "median_lead_ci": [
+     -3.0,
+     -2.0
+    ],
+    "fa_per_person_month_ci": [
+     0.12486614023687743,
+     0.1518950206094629
+    ]
+   },
+   "1.0": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 145,
+    "detection_rate": 0.5105633802816901,
+    "early_rate": 0.19014084507042253,
+    "by_onset_rate": 0.22887323943661972,
+    "median_lead": -1.0,
+    "false_alerts": 1154,
+    "quiet_person_months": 2158.7385019710905,
+    "fa_per_person_month": 0.5345714633552472,
+    "quiet_days_in_alert_frac": 0.061297784270757244,
+    "detection_rate_ci": [
+     0.4572416849257736,
+     0.571943495787028
+    ],
+    "early_rate_ci": [
+     0.14631468358602503,
+     0.23593865826538174
+    ],
+    "by_onset_rate_ci": [
+     0.18382352941176472,
+     0.27816901408450706
+    ],
+    "median_lead_ci": [
+     -2.0,
+     0.0
+    ],
+    "fa_per_person_month_ci": [
+     0.5077363564669006,
+     0.5680263198583457
+    ]
+   }
+  },
+  {
+   "label": "Check-ins only (no wearable)",
+   "0.25": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 53,
+    "detection_rate": 0.18661971830985916,
+    "early_rate": 0.035211267605633804,
+    "by_onset_rate": 0.03873239436619718,
+    "median_lead": -3.0,
+    "false_alerts": 265,
+    "quiet_person_months": 2154.8948751642574,
+    "fa_per_person_month": 0.12297583657290953,
+    "quiet_days_in_alert_frac": 0.013903498742282186,
+    "detection_rate_ci": [
+     0.1442393554523583,
+     0.22561446720248893
+    ],
+    "early_rate_ci": [
+     0.010903267550954384,
+     0.061923241165794805
+    ],
+    "by_onset_rate_ci": [
+     0.0142311162347752,
+     0.06502802391373971
+    ],
+    "median_lead_ci": [
+     -3.0,
+     -2.0
+    ],
+    "fa_per_person_month_ci": [
+     0.10953535183025802,
+     0.13690586298492302
+    ]
+   },
+   "1.0": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 142,
+    "detection_rate": 0.5,
+    "early_rate": 0.14788732394366197,
+    "by_onset_rate": 0.16901408450704225,
+    "median_lead": -2.0,
+    "false_alerts": 983,
+    "quiet_person_months": 2154.8948751642574,
+    "fa_per_person_month": 0.45617074472139646,
+    "quiet_days_in_alert_frac": 0.05326625504992759,
+    "detection_rate_ci": [
+     0.4393184479454971,
+     0.5540813791732909
+    ],
+    "early_rate_ci": [
+     0.10579336022339436,
+     0.190165480940249
+    ],
+    "by_onset_rate_ci": [
+     0.12778105673740664,
+     0.21354868974441926
+    ],
+    "median_lead_ci": [
+     -2.5,
+     -2.0
+    ],
+    "fa_per_person_month_ci": [
+     0.43241262267404273,
+     0.48142379316065814
+    ]
+   }
+  }
+ ],
+ "ablation": [
+  {
+   "label": "Keel as deployed",
+   "0.25": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 137,
+    "detection_rate": 0.4823943661971831,
+    "early_rate": 0.11619718309859155,
+    "by_onset_rate": 0.13732394366197184,
+    "median_lead": -2.0,
+    "false_alerts": 552,
+    "quiet_person_months": 2163.304862023653,
+    "fa_per_person_month": 0.25516514555587616,
+    "quiet_days_in_alert_frac": 0.027425551624121122,
+    "detection_rate_ci": [
+     0.4252653289333617,
+     0.5478265374331551
+    ],
+    "early_rate_ci": [
+     0.07715753386289032,
+     0.1556530013433574
+    ],
+    "by_onset_rate_ci": [
+     0.101037149374577,
+     0.17647611676249447
+    ],
+    "median_lead_ci": [
+     -3.0,
+     -2.0
+    ],
+    "fa_per_person_month_ci": [
+     0.23555714073033118,
+     0.2748812393538442
+    ]
+   },
+   "1.0": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 213,
+    "detection_rate": 0.75,
+    "early_rate": 0.30985915492957744,
+    "by_onset_rate": 0.352112676056338,
+    "median_lead": -1.0,
+    "false_alerts": 2162,
+    "quiet_person_months": 2163.304862023653,
+    "fa_per_person_month": 0.9993968200938482,
+    "quiet_days_in_alert_frac": 0.11734066301195123,
+    "detection_rate_ci": [
+     0.6880606002890529,
+     0.8061133771171793
+    ],
+    "early_rate_ci": [
+     0.2518327067669173,
+     0.36209197447539576
+    ],
+    "by_onset_rate_ci": [
+     0.29576462332715153,
+     0.40808823529411764
+    ],
+    "median_lead_ci": [
+     -1.0,
+     0.0
+    ],
+    "fa_per_person_month_ci": [
+     0.963980943399645,
+     1.0370252569904461
+    ]
+   },
+   "first_30_flight_days_fa_per_person_month": 0.9334933333333334
+  },
+  {
+   "label": "Without mission-phase handling (naive rolling baseline)",
+   "0.25": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 96,
+    "detection_rate": 0.3380281690140845,
+    "early_rate": 0.056338028169014086,
+    "by_onset_rate": 0.06338028169014084,
+    "median_lead": -3.0,
+    "false_alerts": 546,
+    "quiet_person_months": 2163.304862023653,
+    "fa_per_person_month": 0.2523916113650514,
+    "quiet_days_in_alert_frac": 0.024980638107242107,
+    "detection_rate_ci": [
+     0.28325622756083507,
+     0.3972466427765447
+    ],
+    "early_rate_ci": [
+     0.028469750889679714,
+     0.08534344416065817
+    ],
+    "by_onset_rate_ci": [
+     0.032467532467532464,
+     0.0955904183107705
+    ],
+    "median_lead_ci": [
+     -3.0,
+     -2.0
+    ],
+    "fa_per_person_month_ci": [
+     0.23549483790461775,
+     0.27170134591946
+    ]
+   },
+   "1.0": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 193,
+    "detection_rate": 0.6795774647887324,
+    "early_rate": 0.22887323943661972,
+    "by_onset_rate": 0.2746478873239437,
+    "median_lead": -1.0,
+    "false_alerts": 2123,
+    "quiet_person_months": 2163.304862023653,
+    "fa_per_person_month": 0.9813688478534873,
+    "quiet_days_in_alert_frac": 0.12589026742190704,
+    "detection_rate_ci": [
+     0.6163245156482862,
+     0.7443669876129172
+    ],
+    "early_rate_ci": [
+     0.1811444888845267,
+     0.2709086037966932
+    ],
+    "by_onset_rate_ci": [
+     0.2229234067962219,
+     0.32734129597730266
+    ],
+    "median_lead_ci": [
+     -2.0,
+     -1.0
+    ],
+    "fa_per_person_month_ci": [
+     0.9493070063067665,
+     1.0151139426387412
+    ]
+   },
+   "first_30_flight_days_fa_per_person_month": 1.9963566666666668
+  },
+  {
+   "label": "Baseline window 14 days",
+   "0.25": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 131,
+    "detection_rate": 0.4612676056338028,
+    "early_rate": 0.13732394366197184,
+    "by_onset_rate": 0.1619718309859155,
+    "median_lead": -2.0,
+    "false_alerts": 605,
+    "quiet_person_months": 2163.304862023653,
+    "fa_per_person_month": 0.279664697574828,
+    "quiet_days_in_alert_frac": 0.02558807003690149,
+    "detection_rate_ci": [
+     0.4068777215487819,
+     0.5236363636363637
+    ],
+    "early_rate_ci": [
+     0.10097818015650883,
+     0.17296845316137313
+    ],
+    "by_onset_rate_ci": [
+     0.12164842008653468,
+     0.20003412969283274
+    ],
+    "median_lead_ci": [
+     -3.0,
+     -2.0
+    ],
+    "fa_per_person_month_ci": [
+     0.25942343858580924,
+     0.3007021355617838
+    ]
+   },
+   "1.0": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 223,
+    "detection_rate": 0.7852112676056338,
+    "early_rate": 0.3732394366197183,
+    "by_onset_rate": 0.3908450704225352,
+    "median_lead": -1.0,
+    "false_alerts": 2253,
+    "quiet_person_months": 2163.304862023653,
+    "fa_per_person_month": 1.0414620886546901,
+    "quiet_days_in_alert_frac": 0.12343016810678653,
+    "detection_rate_ci": [
+     0.7275862068965517,
+     0.8421052631578947
+    ],
+    "early_rate_ci": [
+     0.3186795073228214,
+     0.43235873386538015
+    ],
+    "by_onset_rate_ci": [
+     0.3345070422535211,
+     0.4509604054482103
+    ],
+    "median_lead_ci": [
+     -1.0,
+     1.0
+    ],
+    "fa_per_person_month_ci": [
+     1.0079776876634834,
+     1.0780329575994168
+    ]
+   },
+   "first_30_flight_days_fa_per_person_month": 0.8472466666666667
+  },
+  {
+   "label": "Baseline window 56 days",
+   "0.25": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 144,
+    "detection_rate": 0.5070422535211268,
+    "early_rate": 0.09507042253521127,
+    "by_onset_rate": 0.11267605633802817,
+    "median_lead": -2.0,
+    "false_alerts": 592,
+    "quiet_person_months": 2163.304862023653,
+    "fa_per_person_month": 0.27365537349470775,
+    "quiet_days_in_alert_frac": 0.02782038237839972,
+    "detection_rate_ci": [
+     0.44132843414358397,
+     0.5699448529411764
+    ],
+    "early_rate_ci": [
+     0.061120724871207135,
+     0.12955080775237457
+    ],
+    "by_onset_rate_ci": [
+     0.0763510971786834,
+     0.15202863272017264
+    ],
+    "median_lead_ci": [
+     -3.0,
+     -2.0
+    ],
+    "fa_per_person_month_ci": [
+     0.2500845394377481,
+     0.2949739920291595
+    ]
+   },
+   "1.0": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 205,
+    "detection_rate": 0.721830985915493,
+    "early_rate": 0.2852112676056338,
+    "by_onset_rate": 0.3485915492957746,
+    "median_lead": -1.0,
+    "false_alerts": 2276,
+    "quiet_person_months": 2163.304862023653,
+    "fa_per_person_month": 1.0520939697195182,
+    "quiet_days_in_alert_frac": 0.125449879272904,
+    "detection_rate_ci": [
+     0.6655620663155754,
+     0.7857212340188994
+    ],
+    "early_rate_ci": [
+     0.23790671507254665,
+     0.3382913603711882
+    ],
+    "by_onset_rate_ci": [
+     0.2969093006385939,
+     0.40302880372282085
+    ],
+    "median_lead_ci": [
+     -1.0,
+     0.0
+    ],
+    "fa_per_person_month_ci": [
+     1.0084203894835075,
+     1.0907038635973532
+    ]
+   },
+   "first_30_flight_days_fa_per_person_month": 1.2226733333333335
+  },
+  {
+   "label": "No gap before the baseline window",
+   "0.25": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 140,
+    "detection_rate": 0.49295774647887325,
+    "early_rate": 0.12323943661971831,
+    "by_onset_rate": 0.13028169014084506,
+    "median_lead": -2.0,
+    "false_alerts": 573,
+    "quiet_person_months": 2203.4494086727987,
+    "fa_per_person_month": 0.2600468146646192,
+    "quiet_days_in_alert_frac": 0.027194251039911736,
+    "detection_rate_ci": [
+     0.4327780239255649,
+     0.5539347656405033
+    ],
+    "early_rate_ci": [
+     0.08453544527567125,
+     0.16541353383458646
+    ],
+    "by_onset_rate_ci": [
+     0.090218126250879,
+     0.1740693282159037
+    ],
+    "median_lead_ci": [
+     -2.0,
+     -2.0
+    ],
+    "fa_per_person_month_ci": [
+     0.24265976784781437,
+     0.2811121035809508
+    ]
+   },
+   "1.0": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 217,
+    "detection_rate": 0.7640845070422535,
+    "early_rate": 0.3028169014084507,
+    "by_onset_rate": 0.3485915492957746,
+    "median_lead": -1.0,
+    "false_alerts": 2251,
+    "quiet_person_months": 2203.4494086727987,
+    "fa_per_person_month": 1.0215800694765407,
+    "quiet_days_in_alert_frac": 0.11210173989533792,
+    "detection_rate_ci": [
+     0.7042059252064108,
+     0.8178523149712741
+    ],
+    "early_rate_ci": [
+     0.24906723126712713,
+     0.35231828771857954
+    ],
+    "by_onset_rate_ci": [
+     0.30065007298239005,
+     0.3956889778279765
+    ],
+    "median_lead_ci": [
+     -1.0,
+     0.0
+    ],
+    "fa_per_person_month_ci": [
+     0.9890015117794427,
+     1.0570552874646237
+    ]
+   },
+   "first_30_flight_days_fa_per_person_month": 0.9436400000000001
+  },
+  {
+   "label": "Slower smoothing (lambda 0.15)",
+   "0.25": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 111,
+    "detection_rate": 0.3908450704225352,
+    "early_rate": 0.08450704225352113,
+    "by_onset_rate": 0.09859154929577464,
+    "median_lead": -2.0,
+    "false_alerts": 562,
+    "quiet_person_months": 2163.304862023653,
+    "fa_per_person_month": 0.25978770254058403,
+    "quiet_days_in_alert_frac": 0.0343350898239966,
+    "detection_rate_ci": [
+     0.33450643516270034,
+     0.4552139667576284
+    ],
+    "early_rate_ci": [
+     0.05510617499508164,
+     0.1150171048463731
+    ],
+    "by_onset_rate_ci": [
+     0.06474820143884892,
+     0.13158128863082974
+    ],
+    "median_lead_ci": [
+     -3.0,
+     -2.0
+    ],
+    "fa_per_person_month_ci": [
+     0.2390404529903963,
+     0.2809034112330544
+    ]
+   },
+   "1.0": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 192,
+    "detection_rate": 0.676056338028169,
+    "early_rate": 0.2640845070422535,
+    "by_onset_rate": 0.31338028169014087,
+    "median_lead": -1.0,
+    "false_alerts": 2169,
+    "quiet_person_months": 2163.304862023653,
+    "fa_per_person_month": 1.0026326099831437,
+    "quiet_days_in_alert_frac": 0.14446249867124267,
+    "detection_rate_ci": [
+     0.6168583899544164,
+     0.7354268022998672
+    ],
+    "early_rate_ci": [
+     0.20955882352941177,
+     0.3094194569156704
+    ],
+    "by_onset_rate_ci": [
+     0.24748901681563398,
+     0.36721460506706405
+    ],
+    "median_lead_ci": [
+     -2.0,
+     0.0
+    ],
+    "fa_per_person_month_ci": [
+     0.9643854422740125,
+     1.0452178330265303
+    ]
+   },
+   "first_30_flight_days_fa_per_person_month": 0.9461766666666668
+  },
+  {
+   "label": "Faster smoothing (lambda 0.5)",
+   "0.25": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 130,
+    "detection_rate": 0.45774647887323944,
+    "early_rate": 0.09507042253521127,
+    "by_onset_rate": 0.11619718309859155,
+    "median_lead": -2.0,
+    "false_alerts": 541,
+    "quiet_person_months": 2163.304862023653,
+    "fa_per_person_month": 0.25008033287269743,
+    "quiet_days_in_alert_frac": 0.021214560143353937,
+    "detection_rate_ci": [
+     0.399379219983305,
+     0.5138079880922848
+    ],
+    "early_rate_ci": [
+     0.05816612164813604,
+     0.13016755958889126
+    ],
+    "by_onset_rate_ci": [
+     0.07913669064748201,
+     0.15468259195460532
+    ],
+    "median_lead_ci": [
+     -2.0,
+     -1.0
+    ],
+    "fa_per_person_month_ci": [
+     0.23087005992388857,
+     0.2701625461219108
+    ]
+   },
+   "1.0": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 223,
+    "detection_rate": 0.7852112676056338,
+    "early_rate": 0.33098591549295775,
+    "by_onset_rate": 0.39436619718309857,
+    "median_lead": 0.0,
+    "false_alerts": 2181,
+    "quiet_person_months": 2163.304862023653,
+    "fa_per_person_month": 1.0081796783647932,
+    "quiet_days_in_alert_frac": 0.0979787702540584,
+    "detection_rate_ci": [
+     0.7241379310344828,
+     0.847925815348364
+    ],
+    "early_rate_ci": [
+     0.2803952702702703,
+     0.3818591934381408
+    ],
+    "by_onset_rate_ci": [
+     0.34507042253521125,
+     0.44491119511184746
+    ],
+    "median_lead_ci": [
+     -1.0,
+     0.0
+    ],
+    "fa_per_person_month_ci": [
+     0.9719497601899182,
+     1.0469579674308067
+    ]
+   },
+   "first_30_flight_days_fa_per_person_month": 0.8852966666666667
+  },
+  {
+   "label": "Heart indicators only (resting HR, HRV)",
+   "0.25": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 43,
+    "detection_rate": 0.15140845070422534,
+    "early_rate": 0.09859154929577464,
+    "by_onset_rate": 0.10915492957746478,
+    "median_lead": 2.0,
+    "false_alerts": 545,
+    "quiet_person_months": 1982.7201051248358,
+    "fa_per_person_month": 0.27487490472876697,
+    "quiet_days_in_alert_frac": 0.02172184113728999,
+    "detection_rate_ci": [
+     0.11036165820934032,
+     0.19574538984147524
+    ],
+    "early_rate_ci": [
+     0.06614076385950064,
+     0.13911313675622589
+    ],
+    "by_onset_rate_ci": [
+     0.07283683489381138,
+     0.1521071552022122
+    ],
+    "median_lead_ci": [
+     0.0,
+     3.0
+    ],
+    "fa_per_person_month_ci": [
+     0.2519589834094983,
+     0.29757149486870915
+    ]
+   },
+   "1.0": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 121,
+    "detection_rate": 0.426056338028169,
+    "early_rate": 0.27816901408450706,
+    "by_onset_rate": 0.29225352112676056,
+    "median_lead": 2.0,
+    "false_alerts": 2021,
+    "quiet_person_months": 1982.7201051248358,
+    "fa_per_person_month": 1.0193067568015375,
+    "quiet_days_in_alert_frac": 0.1063392650031481,
+    "detection_rate_ci": [
+     0.37008270445770447,
+     0.4759809616225671
+    ],
+    "early_rate_ci": [
+     0.21929871146267158,
+     0.33834729409074016
+    ],
+    "by_onset_rate_ci": [
+     0.23271113869066087,
+     0.3556715291750503
+    ],
+    "median_lead_ci": [
+     1.0,
+     4.0
+    ],
+    "fa_per_person_month_ci": [
+     0.9792613922167335,
+     1.0641452342972515
+    ]
+   },
+   "first_30_flight_days_fa_per_person_month": 1.1267921782628467
+  },
+  {
+   "label": "Wearable indicators only",
+   "0.25": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 79,
+    "detection_rate": 0.27816901408450706,
+    "early_rate": 0.0880281690140845,
+    "by_onset_rate": 0.10915492957746478,
+    "median_lead": -1.0,
+    "false_alerts": 493,
+    "quiet_person_months": 1982.7201051248358,
+    "fa_per_person_month": 0.2486483083142791,
+    "quiet_days_in_alert_frac": 0.018590317128939257,
+    "detection_rate_ci": [
+     0.22755228942905598,
+     0.33080253846257934
+    ],
+    "early_rate_ci": [
+     0.056937418917149686,
+     0.12041621537985454
+    ],
+    "by_onset_rate_ci": [
+     0.07635851896447923,
+     0.14662759840778414
+    ],
+    "median_lead_ci": [
+     -2.0,
+     -0.5
+    ],
+    "fa_per_person_month_ci": [
+     0.22638518875433258,
+     0.27096331401139595
+    ]
+   },
+   "1.0": {
+    "n_people": 100,
+    "n_events": 284,
+    "n_detected": 158,
+    "detection_rate": 0.5563380281690141,
+    "early_rate": 0.3028169014084507,
+    "by_onset_rate": 0.3415492957746479,
+    "median_lead": 1.0,
+    "false_alerts": 1988,
+    "quiet_person_months": 1982.7201051248358,
+    "fa_per_person_month": 1.0026629552308048,
+    "quiet_days_in_alert_frac": 0.0972263644497465,
+    "detection_rate_ci": [
+     0.5017404122918439,
+     0.6178430804863926
+    ],
+    "early_rate_ci": [
+     0.2517985611510791,
+     0.3588917652254993
+    ],
+    "by_onset_rate_ci": [
+     0.2918037456156072,
+     0.3943991285844563
+    ],
+    "median_lead_ci": [
+     0.0,
+     3.0
+    ],
+    "fa_per_person_month_ci": [
+     0.9654667205092168,
+     1.041676777270974
+    ]
+   },
+   "first_30_flight_days_fa_per_person_month": 0.9717544338335607
+  }
+ ],
+ "quiet": {
+  "0.25": {
+   "false_alerts": 280,
+   "quiet_person_months": 1050.0328515111694,
+   "fa_per_person_month": 0.26665832368676284,
+   "quiet_days_in_alert_frac": 0.0280949848262053,
+   "fa_per_person_month_ci": [
+    0.2466199846644424,
+    0.28857188002860723
+   ],
+   "share_of_people_with_zero": 0.15,
+   "per_person_p90": 0.4566
+  },
+  "1.0": {
+   "false_alerts": 1104,
+   "quiet_person_months": 1050.0328515111694,
+   "fa_per_person_month": 1.0513956762506649,
+   "quiet_days_in_alert_frac": 0.12589556674905358,
+   "fa_per_person_month_ci": [
+    1.0189177121993223,
+    1.0874514832897868
+   ],
+   "share_of_people_with_zero": 0.0,
+   "per_person_p90": 1.3766834170854272
+  }
+ },
+ "like_for_like": {
+  "indicators": "Resting heart rate + exercise only, 30% of nights unworn, illness events with the real spread of sizes",
+  "0.25": {
+   "n_people": 60,
+   "n_events": 120,
+   "n_detected": 44,
+   "detection_rate": 0.36666666666666664,
+   "early_rate": 0.13333333333333333,
+   "by_onset_rate": 0.175,
+   "median_lead": -1.0,
+   "false_alerts": 374,
+   "quiet_person_months": 1361.4980289093298,
+   "fa_per_person_month": 0.2746974230286652,
+   "quiet_days_in_alert_frac": 0.03631406234919409,
+   "detection_rate_ci": [
+    0.275,
+    0.45020833333333315
+   ],
+   "early_rate_ci": [
+    0.08333333333333333,
+    0.19187499999999982
+   ],
+   "by_onset_rate_ci": [
+    0.10812500000000001,
+    0.25
+   ],
+   "median_lead_ci": [
+    -2.0,
+    0.5
+   ],
+   "fa_per_person_month_ci": [
+    0.24970655331531155,
+    0.29942499506521864
+   ]
+  },
+  "1.0": {
+   "n_people": 60,
+   "n_events": 120,
+   "n_detected": 81,
+   "detection_rate": 0.675,
+   "early_rate": 0.36666666666666664,
+   "by_onset_rate": 0.45,
+   "median_lead": 1.0,
+   "false_alerts": 1373,
+   "quiet_person_months": 1361.4980289093298,
+   "fa_per_person_month": 1.0084480262522924,
+   "quiet_days_in_alert_frac": 0.14363961007624745,
+   "detection_rate_ci": [
+    0.5914583333333333,
+    0.7583333333333333
+   ],
+   "early_rate_ci": [
+    0.2833333333333333,
+    0.45
+   ],
+   "by_onset_rate_ci": [
+    0.35,
+    0.5418749999999998
+   ],
+   "median_lead_ci": [
+    0.0,
+    2.0
+   ],
+   "fa_per_person_month_ci": [
+    0.9671738980086811,
+    1.047083259979117
+   ]
+  }
+ }
+}

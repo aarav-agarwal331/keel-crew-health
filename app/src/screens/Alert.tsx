@@ -10,6 +10,7 @@ import { Card, href, Sources, StatusTag } from '../ui/kit'
 import { bandFor } from '../ui/series'
 
 const TIERS: Tier[] = ['self', 'cmo', 'ground']
+const DETECTOR_NAME: Record<string, string> = { zscore: 'personal z-score with persistence', cusum: 'CUSUM on personal z-scores', mewma: 'multivariate EWMA of personal z-scores', fusion: 'fused CUSUM and multivariate EWMA' }
 const DID = ['Did it', 'Did part of it', 'Not yet', 'Chose not to']
 
 export function Alert({ alertKey }: { alertKey?: string }) {
@@ -111,7 +112,7 @@ export function Alert({ alertKey }: { alertKey?: string }) {
           <summary>Audit trail: exactly why Keel said this</summary>
           <div className="col small">
             <p>Rule <code>{f.ruleId}</code> from the on-board rule table (<code>shared/rules.json</code>). No language model wrote any of this text.</p>
-            {f.score !== undefined && <p>Detector: fused score {f.score.toFixed(2)} against the notice threshold {f.threshold?.toFixed(2)} and the alert threshold {model.thresholds.alert.toFixed(2)} ({f.detectorTier === 'alert' ? 'alert tier reached' : 'notice tier'}). Thresholds are set to a false-alert budget of {model.budgets?.notice ?? 1} per person-month for notices and {model.budgets?.alert ?? 0.25} for alerts{model.simulated_calibration ? ', calibrated on simulated missions' : ''}.</p>}
+            {f.score !== undefined && <p>Detector ({DETECTOR_NAME[model.deployed ?? 'fusion']}): score {f.score.toFixed(2)} against the notice threshold {f.threshold?.toFixed(2)} and the alert threshold {model.thresholds.alert.toFixed(2)} ({f.detectorTier === 'alert' ? 'alert tier reached' : 'notice tier'}). Thresholds are set to a false-alert budget of {model.budgets?.notice ?? 1} per person-month for notices and {model.budgets?.alert ?? 0.25} for alerts{model.simulated_calibration ? ', calibrated on simulated missions' : ''}.</p>}
             <p>Rule condition: <code>{JSON.stringify(rule?.when)}</code></p>
             <p>Three-day deviations (robust SD, direction of concern): {Object.entries(a.u3).filter(([, v]) => !Number.isNaN(v)).map(([k, v]) => `${k} ${v.toFixed(1)}`).join(', ')}</p>
             <a href={href('method', 'action')}>How alerts become actions</a>

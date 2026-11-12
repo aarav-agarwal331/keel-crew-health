@@ -101,17 +101,17 @@ export function Simulated({ real, source }: { real?: boolean; source?: string })
     : <span className="chip sim" title="These numbers come from Keel's physiological simulator, not from a person.">Simulated data</span>
 }
 
-export function Ring({ value, size = 56, label }: { value: number; size?: number; label: string }) {
+export function Ring({ value, size = 68, label }: { value: number; size?: number; label: string }) {
   const r = (size - 8) / 2
   const c = 2 * Math.PI * r
   const v = Math.max(0, Math.min(1, value))
   return (
     <svg width={size} height={size} role="img" aria-label={label}>
-      <g className="ring" style={{ transformOrigin: 'center' }}>
+      <g transform={`rotate(-90 ${size / 2} ${size / 2})`}>
         <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="var(--surface-3)" strokeWidth="7" />
         <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="var(--series-3)" strokeWidth="7" strokeLinecap="round" strokeDasharray={`${c * v} ${c}`} />
       </g>
-      <text x="50%" y="50%" dominantBaseline="central" textAnchor="middle" fontSize={size * 0.26} fontWeight="700" fill="var(--text)">{Math.round(v * 100)}%</text>
+      <text x="50%" y="50%" dominantBaseline="central" textAnchor="middle" fontSize={size * 0.24} fontWeight="700" fill="var(--text)">{Math.round(v * 100)}%</text>
     </svg>
   )
 }

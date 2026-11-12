@@ -57,7 +57,7 @@ export function Today() {
           <div className="glyph"><Glyph status={a.status} size={44} /></div>
           <div className="col" style={{ gap: 4, color: 'var(--text)' }}>
             <h1>{STATUS_LABEL[a.status]}</h1>
-            <p className="muted">{primary ? primary.title : HEADLINE[a.status]}</p>
+            <p className="muted">{primary ? primary.title : a.status === 'steady' && changes.length ? `Nothing needs action. ${changes.length === 1 ? 'One reading is' : `${changes.length} readings are`} a little off your usual; Keel is watching.` : HEADLINE[a.status]}</p>
           </div>
         </div>
         {!link.available && mission.simulated && <p className="banner strong" data-testid="offline-banner">No link to Earth right now. Everything on this screen was worked out on this device.</p>}
@@ -76,7 +76,7 @@ export function Today() {
         <LinkRow key={f.key} to={href('alert', f.key)} left={<span className={`st-${f.status}`}><Glyph status={f.status} /></span>} title={f.title} sub={f.action} />
       ))}
 
-      <Card title={changes.length ? 'What changed' : 'Nothing unusual'} right={<a className="chip" href={href('trends')}>All trends</a>}>
+      <Card title={changes.length ? (primary ? 'What changed' : 'Worth knowing') : 'Nothing unusual'} right={<a className="chip" href={href('trends')}>All trends</a>}>
         {!changes.length && <p className="muted">{a.learning ? 'Baselines appear after about a week of readings.' : 'Every tracked reading is within your usual range over the last three days.'}</p>}
         {changes.map((c) => {
           const b = bandFor(mission, model, analyses[me], me, c.ind, mine)

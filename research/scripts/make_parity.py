@@ -1,5 +1,9 @@
 """Write shared/parity.json: inputs and Python outputs that the TypeScript detector must reproduce."""
-import common  # noqa: F401
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / "research"))  # our own package; scripts run with python -I
 import json
 
 import numpy as np

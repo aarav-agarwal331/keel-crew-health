@@ -108,7 +108,7 @@ def event_drivers(ev: Event, T: int, P: dict) -> dict[str, np.ndarray]:
     if ev.type == "illness":
         pro = int(P["illness_prodrome_days"])
         dur = ev.duration or int(P["illness_duration_days"])
-        return {"illness": m * _bump(T, ev.onset - pro, pro + 2, 2, dur),
+        return {"illness": m * _bump(T, ev.onset - pro, pro + 2, int(P.get("illness_hold_days", 2)), dur),
                 "symptomatic": (np.arange(T) >= ev.onset) & (np.arange(T) < ev.onset + dur)}
     if ev.type == "sleep_loss":
         dur = ev.duration or 8
@@ -177,6 +177,9 @@ def simulate(sc: Scenario, seed: int, P: dict | None = None) -> Mission:
             "d_sleep": rng.normal(P["flight_sleep_shift"], 0.3),
             "sms": bool(rng.random() < P["sms_incidence"]),
         }
+        # some people's readings are simply noisier than others' (real wearables show this clearly)
+        ns = {k: float(np.exp(rng.normal(0, P.get("within_sd_person_sigma", 0.0)))) for k in ["rhr", "lnhrv", "spo2", "temp", "sleep"]}
+        tr["noise_scale"] = ns
         # ---- latent drivers ------------------------------------------------------------
         a = np.where(flight, 1 - np.exp(-fd / P["adapt_tau_days"]), 0.0)
         if landing is not None:  # partial gravity undoes a fraction of the microgravity shift
@@ -195,7 +198,7 @@ def simulate(sc: Scenario, seed: int, P: dict | None = None) -> Mission:
             sms = np.maximum(sms, ((day >= landing) & (day < landing + 2)) * 0.5)
 
         # ---- sleep, sleep debt ---------------------------------------------------------
-        n_sleep = _ar1(rng, T, P["sleep_within_sd"], 0.25)
+        n_sleep = _ar1(rng, T, P["sleep_within_sd"] * ns["sleep"], 0.25)
         sleep = (tr["sleep_need"] + tr["d_sleep"] * a - P["sleep_loss_cut_h"] * drv["sleep_cut"]
                  - 0.5 * drv["low_mood"] - 0.35 * np.minimum(co2_excess, 3) - 0.8 * sms
                  + 0.6 * drv["illness"] * (rng.random(T) - 0.6) * 2 + n_sleep)
@@ -209,8 +212,9 @@ def simulate(sc: Scenario, seed: int, P: dict | None = None) -> Mission:
         # ---- exercise and deconditioning ------------------------------------------------
         target = np.where(flight, P["ex_flight_min"], P["ex_ground_min"])
         rest = (day % 7) == tr["rest_dow"]
-        ex = target * (1 - 0.8 * drv["ex_cut"]) * (1 - 0.6 * np.minimum(1, drv["illness"]) * symptomatic) * (1 - 0.35 * drv["low_mood"]) * (1 - 0.7 * sms)
-        ex = np.where(rest, ex * 0.15, ex) + rng.normal(0, 12, T)
+        ex = target * (1 - 0.8 * drv["ex_cut"]) * (1 - P["illness_exercise_cut"] * np.minimum(1, drv["illness"]) * symptomatic) * (1 - 0.35 * drv["low_mood"]) * (1 - 0.7 * sms)
+        missed = rng.random(T) < P["ex_missed_session_prob"]
+        ex = np.where(rest | missed, ex * 0.15, ex) + rng.normal(0, P["ex_within_sd"], T)
         ex = np.clip(ex, 0, None)
         dec = np.zeros(T)
         for t in range(1, T):
@@ -233,11 +237,11 @@ def simulate(sc: Scenario, seed: int, P: dict | None = None) -> Mission:
         ill = drv["illness"]
         rhr = (tr["rhr"] + tr["d_rhr"] * a + P["rhr_per_debt_h"] * debt + P["rhr_per_ex_hour"] * ex_dev
                + P["illness_rhr_peak"] * ill + P["decond_rhr_max"] * dec + P["dehyd_rhr"] * dehyd
-               + 2.0 * sms + _ar1(rng, T, P["rhr_within_sd"], P["rhr_ar1"]))
+               + 2.0 * sms + _ar1(rng, T, P["rhr_within_sd"] * ns["rhr"], P["rhr_ar1"]))
         lnhrv = (tr["lnhrv"] + tr["d_lnhrv"] * a - 0.04 * debt - 0.03 * ex_dev - P["illness_lnhrv_drop"] * ill
-                 - 0.15 * dec - 0.12 * dehyd - 0.08 * drv["low_mood"] + _ar1(rng, T, P["lnhrv_within_sd"], 0.4))
-        spo2 = np.clip(tr["spo2"] - P["illness_spo2_drop"] * ill + rng.normal(0, P["spo2_within_sd"], T), 85, 100)
-        temp = tr["temp"] + P["illness_temp_peak"] * ill + 0.1 * dehyd + _ar1(rng, T, P["temp_within_sd"], 0.3)
+                 - 0.15 * dec - 0.12 * dehyd - 0.08 * drv["low_mood"] + _ar1(rng, T, P["lnhrv_within_sd"] * ns["lnhrv"], 0.4))
+        spo2 = np.clip(tr["spo2"] - P["illness_spo2_drop"] * ill + rng.normal(0, P["spo2_within_sd"] * ns["spo2"], T), 85, 100)
+        temp = tr["temp"] + P["illness_temp_peak"] * ill + 0.1 * dehyd + _ar1(rng, T, P["temp_within_sd"] * ns["temp"], 0.3)
         sbp = tr["sbp"] + P["flight_sbp_shift"] * a + 3 * dec - 4 * dehyd + rng.normal(0, 5, T)
         glucose = tr["glucose"] + 4 * np.minimum(1, ill) + rng.normal(0, 5, T)
 
@@ -305,7 +309,7 @@ def apply_missing(m: Mission, seed: int, p_wear: float = 0.04, p_checkin: float 
 
 
 def random_events(rng: np.random.Generator, sc: Scenario, n_events: int, types: list[str] | None = None,
-                  magnitudes: tuple[float, ...] = (0.5, 1.0, 1.5, 2.0), min_gap: int = 35) -> list[Event]:
+                  magnitudes: tuple[float, ...] = (0.5, 1.0, 1.5, 2.0), min_gap: int = 35, illness_spread: bool = True) -> list[Event]:
     """Scatter events through the flight with a quiet gap between them so each can be scored alone."""
     types = types or ["illness", "sleep_loss", "co2", "decond", "dehydration", "low_mood"]
     lo, hi = sc.pre_days + 30, sc.T - 30
@@ -317,8 +321,12 @@ def random_events(rng: np.random.Generator, sc: Scenario, n_events: int, types: 
         if all(abs(t - o) >= min_gap for o in onsets):
             onsets.append(t)
     out = []
+    sigma = load_params().get("illness_magnitude_sigma", 1.0)
     for t in sorted(onsets):
         ty = str(rng.choice(types))
         crew = -1 if ty in ("co2", "spe") else int(rng.integers(0, sc.n_crew))
-        out.append(Event(ty, crew, t, float(rng.choice(magnitudes))))
+        # illness size follows the spread seen between real episodes (log-normal around the
+        # fitted mean response); other event types use the fixed grid
+        mag = float(np.clip(np.exp(rng.normal(0, sigma)), 0.25, 4.0)) if ty == "illness" and illness_spread else float(rng.choice(magnitudes))
+        out.append(Event(ty, crew, t, mag))
     return out

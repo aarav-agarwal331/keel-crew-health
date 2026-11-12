@@ -52,7 +52,8 @@ def adaptation_prior(ids: list[str], P: dict | None = None) -> dict:
     P = P or load_params()
     shift = {"rhr": P["flight_rhr_shift"], "hrv": P["flight_lnhrv_shift"], "sleep_h": P["flight_sleep_shift"],
              "ex7": P["ex_flight_min"] * 6.15 / 7 - P["ex_ground_min"] * 6.15 / 7, "energy": P["energy_flight_pct"] - 100.0}
-    tau = {"ex7": 4.0}
+    # the 7-day exercise average lags by construction and crews ramp up over the first week
+    tau = {"ex7": 9.0}
     return {"shift": [float(shift.get(i, 0.0)) for i in ids], "tau": [float(tau.get(i, P["adapt_tau_days"])) for i in ids]}
 
 

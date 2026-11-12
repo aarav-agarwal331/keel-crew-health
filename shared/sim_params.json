@@ -16,18 +16,18 @@
    "note": "Between-astronaut SD of sleeping heart rate"
   },
   "rhr_within_sd": {
-   "value": 2.0,
+   "value": 3.4577,
    "unit": "bpm",
    "basis": "calibrated",
    "ref": null,
-   "note": "Fitted by research/scripts/calibrate_sim.py to the calibration dataset"
+   "note": "Fitted so simulated within-person SD matches 3.508 from Stanford wearables, people with no reported illness (calibration half), n = 74 people"
   },
   "rhr_ar1": {
-   "value": 0.55,
+   "value": 0.1633,
    "unit": "",
    "basis": "calibrated",
    "ref": null,
-   "note": "Fitted by research/scripts/calibrate_sim.py to the calibration dataset"
+   "note": "Lag-1 autocorrelation 0.16 in Stanford wearables, people with no reported illness (calibration half), n = 74 people"
   },
   "hrv_median": {
    "value": 45.0,
@@ -42,10 +42,11 @@
    "ref": null
   },
   "lnhrv_within_sd": {
-   "value": 0.13,
+   "value": 0.2363,
    "unit": "ln ms",
-   "basis": "assumption",
-   "ref": null
+   "basis": "calibrated",
+   "ref": null,
+   "note": "Fitted so simulated within-person SD matches 0.235 from LifeSnaps (calibration half), n = 21 people"
   },
   "spo2_mean": {
    "value": 97.5,
@@ -55,10 +56,11 @@
    "note": "Normal range 95-100% (terrestrial)"
   },
   "spo2_within_sd": {
-   "value": 0.5,
+   "value": 1.0343,
    "unit": "%",
-   "basis": "assumption",
-   "ref": null
+   "basis": "calibrated",
+   "ref": null,
+   "note": "Fitted so simulated within-person SD matches 0.954 from LifeSnaps (calibration half), n = 13 people"
   },
   "temp_mean": {
    "value": 36.7,
@@ -67,10 +69,11 @@
    "ref": null
   },
   "temp_within_sd": {
-   "value": 0.12,
+   "value": 0.5182,
    "unit": "degC",
-   "basis": "assumption",
-   "ref": null
+   "basis": "calibrated",
+   "ref": null,
+   "note": "Fitted so simulated within-person SD matches 0.476 from LifeSnaps nightly skin temperature (calibration half), n = 29 people"
   },
   "sleep_ground_mean": {
    "value": 6.95,
@@ -80,11 +83,11 @@
    "note": "Post-flight actigraphy sleep 6.95 h on ISS missions, used as the ground value"
   },
   "sleep_within_sd": {
-   "value": 0.8,
+   "value": 1.353,
    "unit": "h",
    "basis": "calibrated",
    "ref": null,
-   "note": "Fitted by research/scripts/calibrate_sim.py to the calibration dataset"
+   "note": "Fitted so simulated within-person SD matches 1.404 from LifeSnaps (calibration half), n = 28 people"
   },
   "pvt_mean": {
    "value": 250.0,
@@ -309,24 +312,25 @@
    "ref": null
   },
   "illness_prodrome_days": {
-   "value": 4.0,
+   "value": 6.0,
    "unit": "days",
-   "basis": "published",
-   "ref": "58",
-   "note": "Signal a median of 4 days before symptom onset"
+   "basis": "calibrated",
+   "ref": null,
+   "note": "Fitted to the mean resting-heart-rate change around 38 dated illness onsets (calibration half, Stanford phases 1 and 2)"
   },
   "illness_duration_days": {
-   "value": 8.0,
+   "value": 4.0,
    "unit": "days",
-   "basis": "assumption",
-   "ref": null
+   "basis": "calibrated",
+   "ref": null,
+   "note": "Fitted with the prodrome (same fit)"
   },
   "illness_rhr_peak": {
-   "value": 7.0,
+   "value": 3.1137,
    "unit": "bpm",
-   "basis": "published",
-   "ref": "58",
-   "note": "Median resting heart rate rise of 7 bpm in 32 COVID-19 cases"
+   "basis": "calibrated",
+   "ref": null,
+   "note": "Fitted peak of the mean resting-heart-rate change around 38 dated illness onsets (calibration half, Stanford phases 1 and 2). Per-episode quartiles -0.4 / 3.0 / 7.4 bpm; the published median among detected cases is 7 bpm (DOMAIN ref 58)"
   },
   "illness_lnhrv_drop": {
    "value": 0.22,
@@ -342,11 +346,11 @@
    "ref": null
   },
   "illness_temp_peak": {
-   "value": 0.8,
+   "value": 0.37,
    "unit": "degC",
    "basis": "assumption",
    "ref": "60",
-   "note": "7 bpm divided by a second-hand 8.5 bpm per degree C"
+   "note": "Fitted heart-rate peak divided by a second-hand 8.5 bpm per degree C (DOMAIN ref 60)"
   },
   "decond_rate": {
    "value": 0.12,
@@ -378,6 +382,48 @@
    "basis": "published",
    "ref": "37",
    "note": "Each +1 mmHg doubles the odds of a headache report"
+  },
+  "illness_hold_days": {
+   "unit": "days",
+   "value": 3.0,
+   "basis": "calibrated",
+   "ref": null,
+   "note": "Fitted with the prodrome (same fit)"
+  },
+  "illness_magnitude_sigma": {
+   "unit": "log units",
+   "value": 1.2,
+   "basis": "calibrated",
+   "ref": null,
+   "note": "Spread of the per-episode response (log-normal), from the upper quartile over the median"
+  },
+  "within_sd_person_sigma": {
+   "value": 0.2974,
+   "unit": "log units",
+   "basis": "calibrated",
+   "ref": null,
+   "note": "Mean over five indicators of ln(Q3/Q1)/1.349 of the within-person SD across people (calibration halves)"
+  },
+  "illness_exercise_cut": {
+   "value": 0.3,
+   "unit": "fraction",
+   "basis": "assumption",
+   "ref": null,
+   "note": "Exercise reduction while symptomatic. Real step counts fall by about half after symptom onset in the Stanford data, but that includes isolating at home, so a smaller cut is assumed for a crew."
+  },
+  "ex_within_sd": {
+   "value": 20.0,
+   "unit": "min",
+   "basis": "assumption",
+   "ref": null,
+   "note": "Day-to-day spread of exercise minutes"
+  },
+  "ex_missed_session_prob": {
+   "value": 0.07,
+   "unit": "probability/day",
+   "basis": "assumption",
+   "ref": null,
+   "note": "Sessions lost to operations (maintenance, spacewalk days)"
   }
  }
 }

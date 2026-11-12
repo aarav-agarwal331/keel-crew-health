@@ -23,5 +23,6 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src", "../shared/*.json"]
+  "include": ["src", "../shared/*.json"],
+  "exclude": ["src/**/*.test.ts"]
 }

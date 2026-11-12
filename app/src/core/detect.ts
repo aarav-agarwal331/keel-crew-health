@@ -40,6 +40,8 @@ export interface ModelJson {
   thresholds: { notice: number; alert: number }
   budgets?: { notice: number; alert: number }
   calibrated_on?: string
+  /** which score drives alerts; chosen on training missions by fit_mission_model.py */
+  deployed?: 'zscore' | 'cusum' | 'mewma' | 'fusion'
   simulated_calibration?: boolean
 }
 
@@ -314,4 +316,9 @@ export function episodes(score: number[], thr: number, mergeGap: number, upTo = 
     else runs.push([t, t])
   }
   return runs
+}
+
+/** The score that drives alerts in the app (model.deployed, default fusion). */
+export function deployedScore(scored: Scored, model: ModelJson): number[] {
+  return scored.scores[model.deployed ?? 'fusion']
 }

@@ -9,7 +9,10 @@ Protocol (docs/METHOD.md section 6):
 """
 from __future__ import annotations
 
+import os
+from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass, field, replace
+
 import numpy as np
 
 from .core import (Model, Params, Phase, all_scores, concern_dev, episodes, transform, zscores,
@@ -38,8 +41,8 @@ class Person:
 
 @dataclass
 class Windows:
-    det_pre: int = 14     # an alert starting up to this many days before onset counts as detection
-    det_post: int = 7     # ... or up to this many days after
+    det_pre: int = 10     # an alert starting up to this many days before onset counts as detection
+    det_post: int = 4     # ... or up to this many days after
     excl_pre: int = 21    # days around an event that are neither quiet nor counted as false alarms
     excl_post: int = 28
 
@@ -120,7 +123,7 @@ def fit_model(train: list[Person], spec: dict, p: Params, w: Windows, shrink: fl
     # covariate slopes: pooled within-person regression of the baseline residual on the lagged covariate
     if adjust_spec:
         model.adjust = []
-        base = [zscores(q.x, model, p, q.phases) for q in train]
+        base = _pmap(_z_one, [(q.x, q.phases, model, p) for q in train])
         for tname, cname, lag in adjust_spec:
             tj, cj = ids.index(tname), ids.index(cname)
             num = den = 0.0
@@ -139,11 +142,8 @@ def fit_model(train: list[Person], spec: dict, p: Params, w: Windows, shrink: fl
                 den += float(cc @ cc)
             model.adjust.append((tj, cj, lag, num / den if den > 0 else 0.0))
     # correlation of personal z on quiet days, shrunk towards the identity
-    zs = []
-    for q in train:
-        z, _, _ = zscores(q.x, model, p, q.phases)
-        zs.append(z[quiet_mask(len(q.x), q.onsets, w)])
-    Z = np.concatenate(zs)
+    zall = [r[0] for r in _pmap(_z_one, [(q.x, q.phases, model, p) for q in train])]
+    Z = np.concatenate([z[quiet_mask(len(q.x), q.onsets, w)] for z, q in zip(zall, train)])
     R = np.eye(d)
     for a in range(d):
         for b in range(a + 1, d):
@@ -154,18 +154,40 @@ def fit_model(train: list[Person], spec: dict, p: Params, w: Windows, shrink: fl
     model.corr = (1 - shrink) * R + shrink * np.eye(d)
     # reference thresholds for the fusion score: each component alone at 1 false alert / person-month
     on = [q.onsets for q in train]
-    cs, ms = [], []
-    for q in train:
-        z, _, _ = zscores(q.x, model, p, q.phases)
-        cs.append(score_cusum(z, model, p))
-        ms.append(score_mewma(z, model, p))
+    cs = [score_cusum(z, model, p) for z in zall]
+    ms = [score_mewma(z, model, p) for z in zall]
     model.h_cusum = calibrate(cs, on, 1.0, w, p.merge_gap)
     model.h_mewma = calibrate(ms, on, 1.0, w, p.merge_gap)
     return model
 
 
+def _score_one(args):
+    x, phases, model, p = args
+    return all_scores(x, model, p, phases)
+
+
+def _z_one(args):
+    x, phases, model, p = args
+    return zscores(x, model, p, phases)
+
+
+_POOL: ProcessPoolExecutor | None = None
+
+
+def _pmap(fn, items: list):
+    """Map over people in worker processes (KEEL_WORKERS=1 turns this off).  Results are
+    identical to the serial path; only the wall-clock time changes."""
+    global _POOL
+    n = int(os.environ.get("KEEL_WORKERS", max(1, (os.cpu_count() or 2) - 1)))
+    if n <= 1 or len(items) < 24:
+        return [fn(a) for a in items]
+    if _POOL is None:
+        _POOL = ProcessPoolExecutor(max_workers=n)
+    return list(_POOL.map(fn, items, chunksize=max(1, len(items) // (n * 4))))
+
+
 def score_people(people: list[Person], model: Model, p: Params) -> list[dict[str, np.ndarray]]:
-    return [all_scores(q.x, model, p, q.phases) for q in people]
+    return _pmap(_score_one, [(q.x, q.phases, model, p) for q in people])
 
 
 def folds(n: int, k: int, seed: int) -> list[np.ndarray]:
@@ -194,6 +216,8 @@ def cv_run(people: list[Person], spec: dict, p: Params, w: Windows, budgets: lis
         fl_arr = folds(n, k, seed)
     out = {m: {b: [None] * n for b in budgets} for m in methods}
     thr_log = {m: {b: [] for b in budgets} for m in methods}
+    scores: dict[str, list] = {m: [None] * n for m in methods}
+    thr_person: dict[str, dict[float, list]] = {m: {b: [None] * n for b in budgets} for m in methods}
     models = []
     for f in fl_arr:
         test = set(int(i) for i in f)
@@ -201,7 +225,8 @@ def cv_run(people: list[Person], spec: dict, p: Params, w: Windows, budgets: lis
         model = fit_model(train, spec, p, w, adjust_spec=adjust_spec)
         models.append(model)
         tr_scores = score_people(train, model, p)
-        te_scores = {i: all_scores(people[i].x, model, p, people[i].phases) for i in test}
+        te_list = sorted(test)
+        te_scores = dict(zip(te_list, score_people([people[i] for i in te_list], model, p)))
         tr_on = [q.onsets for q in train]
         for m in methods:
             for b in budgets:
@@ -211,7 +236,33 @@ def cv_run(people: list[Person], spec: dict, p: Params, w: Windows, budgets: lis
                     r = person_outcome(te_scores[i][m], thr, people[i].onsets, w, p.merge_gap)
                     r["pid"] = people[i].pid
                     out[m][b][i] = r
-    return {"outcomes": out, "thresholds": thr_log, "models": models, "folds": [f.tolist() for f in fl_arr]}
+                    scores[m][i] = te_scores[i][m]
+                    thr_person[m][b][i] = thr
+    return {"outcomes": out, "thresholds": thr_log, "models": models, "folds": [f.tolist() for f in fl_arr],
+            "scores": scores, "thr_person": thr_person}
+
+
+def chance_rows(people: list[Person], scores: list[np.ndarray], thrs: list[float], w: Windows, merge_gap: int,
+                per_person: int = 5, seed: int = 0) -> list[dict]:
+    """How often would an alert fall inside a detection window by luck?  Place pseudo-events on
+    random quiet days (whole window inside quiet, scored time) and score them exactly like
+    real events.  Returns one row per person in the same shape as person_outcome."""
+    rng = np.random.default_rng(seed)
+    rows = []
+    for q, s, thr in zip(people, scores, thrs):
+        T = len(s)
+        quiet = quiet_mask(T, q.onsets, w) & ~np.isnan(s)
+        ok = [t for t in range(w.det_pre, T - w.det_post) if quiet[t - w.det_pre:t + w.det_post + 1].all()]
+        if not ok:
+            continue
+        picks = rng.choice(ok, size=min(per_person, len(ok)), replace=False)
+        starts = [a for a, _ in episodes(s, thr, merge_gap)]
+        leads = []
+        for o in picks:
+            hit = [a for a in starts if o - w.det_pre <= a <= o + w.det_post]
+            leads.append(float(o - min(hit)) if hit else None)
+        rows.append({"fa": 0, "quiet_days": 0, "leads": leads, "scorable": [True] * len(leads), "alert_days": 0, "pid": q.pid})
+    return rows
 
 
 def aggregate(rows: list[dict]) -> dict:
@@ -224,6 +275,7 @@ def aggregate(rows: list[dict]) -> dict:
         "n_people": len(rows), "n_events": n_ev, "n_detected": len(det),
         "detection_rate": len(det) / n_ev if n_ev else float("nan"),
         "early_rate": sum(1 for l in det if l >= 1) / n_ev if n_ev else float("nan"),
+        "by_onset_rate": sum(1 for l in det if l >= 0) / n_ev if n_ev else float("nan"),
         "median_lead": float(np.median(det)) if det else float("nan"),
         "false_alerts": fa, "quiet_person_months": months,
         "fa_per_person_month": fa / months if months > 0 else float("nan"),
@@ -235,7 +287,7 @@ def bootstrap(rows: list[dict], n_boot: int = 2000, seed: int = 0) -> dict:
     """Cluster bootstrap over people: 95% percentile intervals for the headline metrics."""
     rng = np.random.default_rng(seed)
     n = len(rows)
-    keys = ["detection_rate", "early_rate", "median_lead", "fa_per_person_month"]
+    keys = ["detection_rate", "early_rate", "by_onset_rate", "median_lead", "fa_per_person_month"]
     acc = {k: [] for k in keys}
     for _ in range(n_boot):
         a = aggregate([rows[i] for i in rng.integers(0, n, n)])

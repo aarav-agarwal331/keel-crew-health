@@ -1,0 +1,57 @@
+{
+ "script": "research/scripts/eval_bedrest.py",
+ "commit": "b7b27cd",
+ "data": "NASA Life Sciences Data Archive, public head-down-tilt bed-rest campaigns (UTMB campaigns 1 and 3, CFT70): daily nurse-taken pulse",
+ "n_subjects": 29,
+ "n_calibration": 14,
+ "n_validation": 15,
+ "expected_shift_bpm": {
+  "PRE_TEST>IN_TEST": {
+   "median": -1.25,
+   "iqr": [
+    -2.75,
+    0.0
+   ],
+   "n": 14
+  },
+  "IN_TEST>POST_TEST": {
+   "median": 1.0,
+   "iqr": [
+    -1.0,
+    5.5
+   ],
+   "n": 13
+  }
+ },
+ "transitions": {
+  "PRE_TEST>IN_TEST": {
+   "n": 15,
+   "naive_flagged": 2,
+   "aware_flagged": 1,
+   "naive_mean_u": -0.21108227193482537,
+   "aware_mean_u": -0.01897746990262355
+  },
+  "IN_TEST>POST_TEST": {
+   "n": 14,
+   "naive_flagged": 9,
+   "aware_flagged": 4,
+   "naive_mean_u": 0.8099349936785194,
+   "aware_mean_u": 0.32898560626563705
+  }
+ },
+ "days_outside_transitions": {
+  "naive": {
+   "days": 1017,
+   "share_of_days_at_or_above_2sd": 0.09832841691248771
+  },
+  "aware": {
+   "days": 1017,
+   "share_of_days_at_or_above_2sd": 0.1111111111111111
+  }
+ },
+ "flag_rule": "pulse at least 2.0 robust SD above the personal baseline on 2 of 3 consecutive days within 14 days after the transition",
+ "labels": {
+  "PRE_TEST>IN_TEST": "Going into bed rest (head-down tilt)",
+  "IN_TEST>POST_TEST": "Getting up after bed rest (return to upright)"
+ }
+}

@@ -6,7 +6,7 @@
 import rulesJson from '../../../shared/rules.json'
 import cmJson from '../../../shared/countermeasures.json'
 import refsJson from '../../../shared/references.json'
-import { concernDev, episodes, inverseTransform, type ModelJson } from './detect'
+import { concernDev, deployedScore, episodes, inverseTransform, type ModelJson } from './detect'
 import { IND, phaseAt, rawSeries, SYM, symptomsOn } from './mission'
 import type { Change, CrewAnalysis, Entry, Factor, Finding, Mission, Status, Tier } from './types'
 
@@ -66,6 +66,14 @@ export function evalCond(c: Cond, f: RuleFeatures): boolean {
   if ('alert_days_min' in c) return f.alertDays >= c.alert_days_min
   if ('always' in c) return true
   return false
+}
+
+/** Indicators a rule's condition refers to (they are shown first as the evidence for that rule). */
+export function condIndicators(c: Cond): string[] {
+  if ('all' in c) return c.all.flatMap(condIndicators)
+  if ('any' in c) return c.any.flatMap(condIndicators)
+  if ('u' in c && 'min' in c) return [c.u]
+  return []
 }
 
 const TIER_RANK: Record<Tier, number> = { self: 0, cmo: 1, ground: 2 }
@@ -179,12 +187,12 @@ export function analyzeDay(
   const adapting = hasPhase && ph.since < 14 ? { name: ph.name, day: ph.since + 1 } : null
 
   // --- detector state ----------------------------------------------------------------------
-  const eps = episodes(sc.scores.fusion, model.thresholds.notice, p.merge_gap, day)
+  const eps = episodes(deployedScore(sc, model), model.thresholds.notice, p.merge_gap, day)
   const last = eps[eps.length - 1]
   let alert: DayAnalysis['alert'] = null
   if (last && day - last[1] <= p.merge_gap) {
     let peak = 0
-    for (let t = last[0]; t <= day; t++) if (sc.scores.fusion[t] > peak) peak = sc.scores.fusion[t]
+    for (let t = last[0]; t <= day; t++) if (deployedScore(sc, model)[t] > peak) peak = deployedScore(sc, model)[t]
     alert = { start: last[0], days: day - last[0] + 1, tier: peak >= model.thresholds.alert ? 'alert' : 'notice', score: peak }
   }
   const f: RuleFeatures = { u: u3, sym, env, phaseDays: ph.since, hasPhase, alertDays: alert?.days ?? 0 }
@@ -249,8 +257,10 @@ export function analyzeDay(
     const corroborated = alert.tier === 'alert' || symList.some((s) => ['sore_throat', 'nausea', 'dizziness', 'vision'].includes(s))
     const early = t.tier !== 'self' && !corroborated
     const status: Status = alert.tier === 'alert' || (t.tier !== 'self' && corroborated) ? 'act' : 'watch'
-    const cats = new Set<string>([...r.categories, ...changes.slice(0, 4).map((c) => IND[c.ind]?.category ?? 'cardio')])
-    findings.push(mk(r, 'personal', alert.start, status, changes.slice(0, 4), {
+    const named = condIndicators(r.when)
+    const evidence = [...changes.filter((c) => named.includes(c.ind)), ...changes.filter((c) => !named.includes(c.ind))].slice(0, 4)
+    const cats = new Set<string>([...r.categories, ...evidence.map((c) => IND[c.ind]?.category ?? 'cardio')])
+    findings.push(mk(r, 'personal', alert.start, status, evidence, {
       score: alert.score, threshold: model.thresholds.notice, categories: [...cats], detectorTier: alert.tier,
       ...(early ? { tier: 'self' as Tier, tierReason: 'Early signal. Keel will suggest involving the medical officer if it strengthens, lasts, or you report symptoms.', action: r.action.replace(/,? and tell the medical officer\.$/, '.') } : {}),
     }))

@@ -13,6 +13,7 @@ export interface TruthEvent {
   onset: number
   magnitude: number
   label: string
+  detail?: string
 }
 
 export interface Mission {
