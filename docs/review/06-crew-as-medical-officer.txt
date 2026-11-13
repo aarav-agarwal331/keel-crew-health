@@ -10,9 +10,7 @@ Viewing as Kenji Sato (medical officer): demo view on one tablet
 
 Day 122. What each crew member has chosen to share with you. Nothing is shown that they have not shared, except, under the emergency sharing they agreed to, every open urgent or same-day safety item with its readings. Their overall status here covers only the areas they share with you; the commander's tier (a separate thing) uses all their readings.
 
-Labels: a crew member's own "Act now" shows to the commander as "Act now" when it is shared under emergency sharing, otherwise as "Talk to the medical officer first", as does an "Act today" that involves the medical officer; a self-managed "Act today" and "Worth a look" show as "Worth a look".
-
-Demo view. On a mission each role has its own device; here you can switch roles. Every look is written to the crew member's access log.
+Demo view. On a mission each role has its own device; here you can switch roles. Each time a role opens this screen it is written to each crew member's access log.
 
 Amara Okafor
 Commander

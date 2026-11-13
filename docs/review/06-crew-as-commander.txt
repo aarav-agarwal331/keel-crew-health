@@ -10,9 +10,9 @@ Viewing as Amara Okafor (commander): demo view on one tablet
 
 Day 122. Whether Keel has any flags for each crew member before a demanding task tomorrow, such as a spacewalk. You see a tier for everyone; reasons appear only where a crew member has chosen to share them, and for urgent items under their emergency sharing (as their backup).
 
-Labels: a crew member's own "Act now" shows to the commander as "Act now" when it is shared under emergency sharing, otherwise as "Talk to the medical officer first", as does an "Act today" that involves the medical officer; a self-managed "Act today" and "Worth a look" show as "Worth a look".
+Labels: "Act now" means an urgent item is open (go now). "Talk to the medical officer first" means something needs the medical officer before a demanding task. "Worth a look" means a minor flag.
 
-Demo view. On a mission each role has its own device; here you can switch roles. Every look is written to the crew member's access log.
+Demo view. On a mission each role has its own device; here you can switch roles. Each time a role opens this screen it is written to each crew member's access log.
 
 Task tomorrow: a critical task (a spacewalk, or robotic-arm work)
 

@@ -84,7 +84,7 @@ Day 85
 Day 104
 Day 122
 
-Hours actually asleep in the last sleep period. Your usual is not the standard (scheduled sleep period 8.5 h).
+Hours actually asleep in the last sleep period. Your usual range can differ from the standard (scheduled sleep period 8.5 h).
 
 Why it matters, how to measure, and the numbers
 Sleep timing shift
@@ -148,7 +148,7 @@ Day 85
 Day 104
 Day 122
 
-How much you drank today. Your usual is not the standard (At least 2.0 L).
+How much you drank today. Your usual range can differ from the standard (At least 2.0 L).
 
 Why it matters, how to measure, and the numbers
 Food intake
@@ -163,7 +163,7 @@ Day 85
 Day 104
 Day 122
 
-How much of your planned food you ate today. Your usual is not the standard (planned 100%).
+How much of your planned food you ate today. Your usual range can differ from the standard (planned 100%).
 
 Why it matters, how to measure, and the numbers
 Body mass
@@ -202,7 +202,7 @@ Day 85
 Day 104
 Day 122
 
-The sugar level in a fingertip drop of blood. Shown against general reference values, not a personal range.
+The sugar level in a fingertip drop of blood. Shown against general reference values, not a personal range. 99 is the fasting reference; readings after food are normally higher, so Keel flags blood sugar only by its fixed low and high lines (see the Guide).
 
 Why it matters, how to measure, and the numbers
 Cabin carbon dioxide
@@ -230,5 +230,7 @@ Day 104
 Day 122
 
 The radiation dose your personal dosimeter recorded today, and your running mission total.
+
+217 mSv so far. At this mission's average daily rate, about 320 mSv by flight day 180, the end of this leg; a return trip at the same rate would bring the total to about 640 mSv, past the 600 mSv career limit (which also counts earlier flights). Dose planning is for the flight surgeon and commander.
 
 Why it matters, how to measure, and the numbers

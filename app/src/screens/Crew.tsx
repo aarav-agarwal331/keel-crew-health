@@ -56,7 +56,21 @@ export function Crew() {
         // one banner per crew member and kind: the latest alert, with how many times it has been sent
         const sends = (x: (typeof open0)[number]) => open0.filter((y) => y.crew === x.crew && y.did === x.did)
         const open = open0.filter((x) => sends(x).every((y) => y.ts <= x.ts))
-        const items = (note: string) => note.replace(/ \((sent automatically|no answer after 5 minutes: sent again|medical officer only)\)/g, '').split('; ').filter(Boolean)
+        // one line per urgent item: split on "; " outside brackets only, with the "also open" context on its own line
+        const items = (note: string) => {
+          const t = note.replace(/ \((sent automatically|no answer after 5 minutes: sent again|medical officer only)\)/g, '').replace(/ \((also open, shown to the medical officer only: [^)]*)\)$/, '; $1')
+          const out: string[] = []
+          let depth = 0, cur = ''
+          for (let i = 0; i < t.length; i++) {
+            const ch = t[i]
+            if (ch === '(') depth++
+            if (ch === ')') depth = Math.max(0, depth - 1)
+            if (depth === 0 && t.startsWith('; ', i)) { out.push(cur); cur = ''; i++; continue }
+            cur += ch
+          }
+          out.push(cur)
+          return out.filter(Boolean).map((x) => x.replace(/^also open, shown to the medical officer only: /, 'Also open (shown to you only): '))
+        }
         return open.map((x) => (
           <section key={x.ts} className="card action" role="alert" data-testid="crew-alert">
             {role === 'commander' && (x.cmoOnly || /\(medical officer only\)/.test(x.note)) && !isCmo(x.crew) ? <p className="do">{`${mission.crew.find((c) => c.id === x.crew)?.name} needs the medical officer urgently. Find the medical officer, and stay with ${mission.crew.find((c) => c.id === x.crew)?.name.split(' ')[0]}. (What it is stays with the medical officer.)`}</p> : <p className="do">{x.did === 'Asked to be seen today' ? `${mission.crew.find((c) => c.id === x.crew)?.name} asks to be seen today` : /\(sent automatically\)/.test(x.note) ? `Alert about ${mission.crew.find((c) => c.id === x.crew)?.name}, sent automatically after an urgent check-in` : `${mission.crew.find((c) => c.id === x.crew)?.name} raised an alert`} at {new Date(x.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}{x.did === 'Asked to be seen today' ? '. See them today.' : '. Go to them now.'}</p>}

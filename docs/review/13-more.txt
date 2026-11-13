@@ -8,7 +8,7 @@ Watch a health event develop, get detected, and turn into an action, in under a 
 Earth link
 Signal delay, blackouts, what is queued for the ground. Includes the demo control that cuts the link.
 Sharing and privacy
-You choose what each role can see. Every access is logged.
+You choose what each role can see. Each time the medical officer or commander opens Crew, it is logged.
 Does it work? Validation
 Detection rates and false alerts measured on real wearable data and on simulated missions.
 How Keel works, and its limits
@@ -40,7 +40,7 @@ Display
 Dark (cabin night)
 Light
 
-Keel last re-checked the whole crew's readings on this tablet in 48 milliseconds. There is no server.
+Keel last re-checked the whole crew's readings on this tablet in 32 milliseconds. There is no server.
 
 Erase my data on this device
 

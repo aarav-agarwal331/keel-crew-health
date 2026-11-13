@@ -27,7 +27,7 @@ You are eating less than planned. Add one planned snack today and finish the mai
 Your reactions are slower than usual. Repeat the test after a ten-minute break; if it is still slow, ask for a buddy check on critical tasks today.
 What changed
 Heart rate variability: 28 ms, lower than your usual 43.
-More unusual than 49 of your last 53 days. Outside your usual range on each of the last 2 days with a reading.
+The last three days are further from your usual than 49 of your previous 53 days were. Outside your usual range on each of the last 2 days with a reading.
 20
 40
 60
@@ -40,7 +40,7 @@ Day 113
 Day 118
 Day 122
 Skin temperature (overnight): 34.8 °C, higher than your usual 34.1. Wrist skin temperature, not a fever reading.
-More unusual than 48 of your last 53 days. The latest reading is back inside your usual range; the last three days together are still unusual.
+The last three days are further from your usual than 48 of your previous 53 days were. The latest reading is back inside your usual range, but the last three days together are still unusual, so this is not over yet.
 33
 34
 35
@@ -53,7 +53,7 @@ Day 113
 Day 118
 Day 122
 Resting heart rate (overnight): 56 bpm, higher than your usual 53.
-More unusual than 50 of your last 53 days. The latest reading is back inside your usual range; the last three days together are still unusual.
+The last three days are further from your usual than 50 of your previous 53 days were. The latest reading is back inside your usual range, but the last three days together are still unusual, so this is not over yet.
 50
 60
 This pattern began
