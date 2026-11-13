@@ -1,5 +1,5 @@
 SCREEN: 09-validation
-TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 122 | Simulated data
+TOP BAR: Keel | No Earth link · running on board | Lucía's tablet · Flight day 122 | Simulated data
 BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
 Does it work?
@@ -20,23 +20,23 @@ The numbers behind this
 Jump to: real data · simulated missions · simulator realism · NASA bed-rest data · limitations
 
 Detection above luck on real illness, notice tier
-Heart rate alone, imports: the headline (planned…
+1. Heart rate alone (headline, planned window)
 +13
-Heart rate alone, imports (narrower window used …
+2. Heart rate alone (narrower window)
 +19
-Two sensors, simulator-set, at 1.31 false alerts…
+3. Two sensors, simulator-set (over budget)*
 +28
-HR + 7-day activity, real thresholds
+4. HR + 7-day activity
 +30
-With daily steps
+5. HR + daily steps
 +28
-Fixed threshold, daily steps
+6. Fixed threshold, daily steps
 +18
-Fixed threshold, 7-day activity
+7. Fixed threshold, 7-day activity
 +7
-Shipped 11-channel model, import channels
+8. Shipped 11-channel model, import channels
 +16
-Share of 107 real illness episodes flagged, minus the share an alert would hit by luck. Bars show 95% intervals. The first bar is heart rate alone, the model imported data runs on; the second is a two-sensor version of Keel's method with thresholds from the simulator, which runs over its false-alert budget; the next two use thresholds calibrated on other real people (5-fold over people) to one false alert per person-month; the next two are one fixed threshold for everyone; the last is the eleven-channel model the app ships, given only the channels a real import has. Heart rate alone is the figure most likely to carry over to a crew on a fixed exercise schedule.
+Share of 107 real illness episodes flagged, minus the share an alert would hit by luck. Bars show 95% intervals. In order: (1) heart rate alone, the model imported data runs on, in the detection window planned before the analysis (the headline); (2) the same in the narrower window used elsewhere on this page; (3) a two-sensor version of Keel's method with thresholds from the simulator, which runs over its false-alert budget; (4 and 5) heart rate with 7-day activity and with daily steps, thresholds calibrated on other real people (5-fold over people) to one false alert per person-month; (6 and 7) one fixed threshold for everyone, with daily steps and with 7-day activity; (8) the eleven-channel model the app ships, given only the channels a real import has. Each bar's label says which it is. Heart rate alone is the figure most likely to carry over to a crew on a fixed exercise schedule.
 How this was measured
 Made by research/scripts/eval_real.py
 1. Real wearable data with dated illness
@@ -108,7 +108,7 @@ When the alert came, relative to symptom onset
 Days from symptom onset to alert start (negative = alert first)
 Episodes
 Onset
-The simple rule on heart rate + daily steps with real-data thresholds (not a setup the app runs), at one false alert per person-month. Left of the line, the alert started before symptoms; right of it, after. 40 of 107 episodes had no alert in the window. The cluster just after onset is the real response; alerts a week before onset are mostly coincidence.
+The simple rule on heart rate + daily steps with real-data thresholds (not a setup the app runs), at one false alert per person-month. Left of the line, the alert started before symptoms; right of it, after. 40 of 107 episodes had no alert in the window. The cluster just after onset is the real response. More alerts start 5 to 9 days before onset than luck would give, with no excess just before onset: that pattern looks like behaviour or test-date anchoring (exposure, testing, quarantine), not physiology. 33 of the 67 flagged episodes were flagged on or after the day symptoms began, when the symptom rules already fire; what the sensors add for someone who reports symptoms was not measured.
 How this was measured
 Made by research/scripts/eval_real.py
 What real illness looks like in resting heart rate

@@ -1,5 +1,5 @@
 SCREEN: 08-replay-before
-TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 122 | Simulated data
+TOP BAR: Keel | No Earth link · running on board | Lucía's tablet · Flight day 122 | Simulated data
 BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
 Mission replay

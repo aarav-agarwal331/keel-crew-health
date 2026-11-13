@@ -1,5 +1,5 @@
 SCREEN: 01-today
-TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 122 | Simulated data
+TOP BAR: Keel | No Earth link · running on board | Lucía's tablet · Flight day 122 | Simulated data
 BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
 When Earth can't answer, Keel tells you what to do and who to tell. One written step at once for a dangerous reading, a silent alert to the medical officer and commander, and you choose most of who sees what. Demo: Lucía's tablet, simulated Mars transit.

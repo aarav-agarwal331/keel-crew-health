@@ -1,5 +1,5 @@
 SCREEN: 10-method
-TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 122 | Simulated data
+TOP BAR: Keel | No Earth link · running on board | Lucía's tablet · Flight day 122 | Simulated data
 BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
 How Keel works
@@ -21,7 +21,7 @@ The idea
 
 On the International Space Station a flight surgeon is seconds away by voice, speaks privately with each crew member about once a week, and the ground team follows exercise and cabin-air data. On the way to Mars the signal takes minutes each way and sometimes there is no link at all, so the crew has to notice and act on health changes themselves.
 
-Keel learns what is normal for each person, notices when their readings drift away from that, says what changed in plain words, and points to one documented action. All of it runs on the device. The crew member owns the data and chooses what the medical officer, the commander and the ground can see.
+Keel learns what is normal for each person, notices when their readings drift away from that, says what changed in plain words, and points to one documented action. All of it runs on the device. The crew member owns the data and chooses most of what the medical officer, the commander and the ground can see (always shared: a readiness tier for the commander and, under emergency sharing, urgent safety items).
 
 Keel is decision support, not a medical device. It never states a diagnosis. It says "this is unusual for you" and "this is what the documented countermeasure is".
 

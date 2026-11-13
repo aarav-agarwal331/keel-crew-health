@@ -1,5 +1,5 @@
 SCREEN: 14-today-steady-day-commander
-TOP BAR: Keel | Earth link: 1 min 34 s delay | Amara · Flight day 66 | Simulated data
+TOP BAR: Keel | Earth link: 1 min 34 s delay | Amara's tablet · Flight day 66 | Simulated data
 BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
 When Earth can't answer, Keel tells you what to do and who to tell. One written step at once for a dangerous reading, a silent alert to the medical officer and commander, and you choose most of who sees what. Demo: Amara's tablet, simulated Mars transit.

@@ -1,15 +1,17 @@
 SCREEN: 15-checkin-after-entering-readings
-TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 122 | Simulated data
+TOP BAR: Keel | No Earth link · running on board | Lucía's tablet · Flight day 122 | Simulated data
 BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
 Act now
 Blood sugar reading is below 54 mg/dL (entered: 50, then 85; the 50 still counts).
-Take sugar now if you can swallow, and call a crewmate to you. Your readings disagree (50, then 85): treat it as low to be safe. Tell the medical officer now. Re-check at 01:25.
+Take sugar now if you can swallow, and call a crewmate to you. Your readings disagree (50, then 85): treat it as low to be safe. Tell the medical officer now. Re-check at 01:38.
 Heart rate reading at rest is 150 or more (entered: 170).
 Call a crewmate to you now. Sit or strap in, put the ECG on now (or the pulse oximeter if there is none), and tell the medical officer now.
 
-Alerting the medical officer and commander in 9 s. A typing mistake? Withdraw it below.
+Alerting the medical officer and commander in 9 s. A typing mistake? Withdraw it here:
 
+Typing mistake: withdraw blood sugar 50
+Typing mistake: withdraw heart rate now, sitting at rest (spot check) 170
 Check-in
 
 Flight day 122. Four quick answers, about a minute. Anything urgent alerts the medical officer and commander ten seconds after you save, unless you withdraw a typing mistake. Who sees what
@@ -113,16 +115,16 @@ How to measure
 Heart rate now, sitting at rest (spot check) (bpm)
 How to measure
 Readings today:
-Blood sugar 50 mg/dL, at 01:10 Typing mistake?
-Blood sugar 85 mg/dL, at 01:10 (seconds after the one before) Typing mistake?
-Heart rate at rest 170 bpm, at 01:10 Typing mistake?
+Blood sugar 50 mg/dL, at 01:23 Typing mistake?
+Blood sugar 85 mg/dL, at 01:23 (seconds after the one before) Typing mistake?
+Heart rate at rest 170 bpm, at 01:23 Typing mistake?
 Every reading is kept. The most abnormal reading of the day stays on the medical officer's list until they close it. What you are told to do follows your latest reading once a repeat counts (for blood sugar, 15 minutes after the first).
 
 Taking a reading again? Type the new value and save: the earlier one is kept with its time, and both are shown to whoever you share them with.
 
 Save check-in
 
-Act now: Take sugar now if you can swallow, and call a crewmate to you. Your readings disagree (50, then 85): treat it as low to be safe. Tell the medical officer now. Re-check at 01:25.
+Act now: Take sugar now if you can swallow, and call a crewmate to you. Your readings disagree (50, then 85): treat it as low to be safe. Tell the medical officer now. Re-check at 01:38.
 
 Blood sugar: 50 mg/dL is past a fixed safety line, so Keel saved it and is acting on it. It is now on the medical officer's and the commander's Crew screens (emergency sharing), and an alert goes to them ten seconds after saving (at once if you leave this screen) unless you withdraw it below as a typing mistake. While it is open, the medical officer also sees whether your heart, oxygen, temperature and symptom readings are in your usual range, and today's medication classes. Is that what the device showed?
 

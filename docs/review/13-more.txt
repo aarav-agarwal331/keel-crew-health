@@ -1,5 +1,5 @@
 SCREEN: 13-more
-TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 122 | Simulated data
+TOP BAR: Keel | No Earth link · running on board | Lucía's tablet · Flight day 122 | Simulated data
 BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
 More
@@ -40,7 +40,7 @@ Display
 Dark (cabin night)
 Light
 
-Keel last re-checked the whole crew's readings on this tablet in 48 milliseconds. There is no server.
+Keel last re-checked the whole crew's readings on this tablet in 30 milliseconds. There is no server.
 
 Erase my data on this device
 

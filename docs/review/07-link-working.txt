@@ -1,5 +1,5 @@
 SCREEN: 07-link-working
-TOP BAR: Keel | Earth link: 3 min 06 s delay | Lucía · Flight day 101 | Simulated data
+TOP BAR: Keel | Earth link: 3 min 06 s delay | Lucía's tablet · Flight day 101 | Simulated data
 BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
 Earth link
