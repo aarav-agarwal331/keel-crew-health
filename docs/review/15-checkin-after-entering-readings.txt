@@ -4,7 +4,7 @@ BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
 Check-in
 
-Flight day 122. Four quick answers, about a minute. Stored on your tablet; anything urgent alerts the medical officer and commander (the medical officer only, for items marked so) ten seconds after you save (at once if you leave this screen), unless you withdraw a typing mistake. Who sees what
+Flight day 122. Four quick answers, about a minute. Stored on your tablet; anything urgent alerts the medical officer and commander (for an item marked "medical officer only", the commander is told only that you need the medical officer, never what it is) ten seconds after you save (at once if you leave this screen), unless you withdraw a typing mistake. Who sees what
 
 1. How are you feeling?
 Medical officer sees mood: status · commander: a tier only
@@ -105,16 +105,16 @@ How to measure
 Heart rate now, sitting at rest (spot check) (bpm)
 How to measure
 Readings today:
-Blood sugar 50 mg/dL, at 23:31 Typing mistake?
-Blood sugar 85 mg/dL, at 23:31 (0 s after the one before) Typing mistake?
-Heart rate at rest 170 bpm, at 23:31 Typing mistake?
+Blood sugar 50 mg/dL, at 23:44 Typing mistake?
+Blood sugar 85 mg/dL, at 23:44 (0 s after the one before) Typing mistake?
+Heart rate at rest 170 bpm, at 23:44 Typing mistake?
 Every reading is kept. The most abnormal reading of the day stays on the medical officer's list until they close it. What you are told to do follows your latest reading once a repeat counts (for blood sugar, 15 minutes after the first).
 
 Taking a reading again? Type the new value and save: the earlier one is kept with its time, and both are shown to whoever you share them with.
 
 Save check-in
 
-Act now: Take sugar now if you can swallow, and call a crewmate to you. Your readings disagree (50, then 85): treat it as low to be safe. Tell the medical officer now. Re-check at 23:46.
+Act now: Take sugar now if you can swallow, and call a crewmate to you. Your readings disagree (50, then 85): treat it as low to be safe. Tell the medical officer now. Re-check at 23:59.
 
 Blood sugar: 50 mg/dL is past a fixed safety line, so Keel saved it and is acting on it. It is now on the medical officer's and the commander's Crew screens (emergency sharing), and an alert goes to them ten seconds after saving (at once if you leave this screen) unless you withdraw it below as a typing mistake. While it is open, the medical officer also sees whether your heart, oxygen, temperature and symptom readings are in your usual range, and today's medication classes. Is that what the device showed?
 
