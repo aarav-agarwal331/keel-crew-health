@@ -14,6 +14,6 @@ export function AskCmo({ f }: { f: Finding }) {
     ? <p className="small"><strong>Asked the medical officer at {t(asked.ts)}.</strong> {seen ? `Acknowledged ${seen.note}.` : 'Not acknowledged yet.'}</p>
     : <div className="col" style={{ gap: 4 }}>
         <button className="btn primary block" onClick={() => void logAction({ crew: me, alertKey: rkey, day, did: 'Asked to be seen today', feel: null, ...alertFields([f]) })} data-testid="ask-cmo">Ask the medical officer to see me today</button>
-        <p className="small">{f.days >= 2 ? <strong>Open for {f.days} days without a conversation: ask today. </strong> : null}They may see that an item is open, but nobody has asked them to see you until you tap this or tell them.</p>
+        <p className="small">{f.days >= 2 ? <>Open for {f.days} days: the medical officer's screen now marks it overdue and asks them to see you today. Tap this to ask them directly as well.</> : 'They may see that an item is open, but nobody has asked them to see you until you tap this or tell them.'}</p>
       </div>
 }

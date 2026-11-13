@@ -320,7 +320,7 @@ baseline, with the baseline restarted, with the band also widened, and with the 
 
 Keel computes, for each indicator, the mean `u` over the last three measured days; symptom counts
 over three days; the latest entered spot readings; the cabin readings; days since the last phase
-change; and days the detector's alert has been open. A fixed, ordered table of 43 rules is evaluated.
+change; and days the detector's alert has been open. A fixed, ordered table of 44 rules is evaluated.
 Rules have a scope:
 
 - **personal**: evaluated only while the detector has an alert open; the first one whose condition
@@ -410,7 +410,7 @@ the same code version). Real data: 251 people, 107 illness episodes, two sensors
   cases), so it is not claimed as early warning.
 - **Most alerts are false.** At 0.97 upper-respiratory episodes per person-year [52b], between 1 in 13
   (daily steps, thresholds from real people) and 1 in 22 (two sensors, simulator thresholds)
-  alert-tier alerts would be such an illness; about 1 in 44 to 67 notices. For the import model, the
+  alert-tier alerts would be such an illness; about 1 in 42 to 70 notices. For the import model, the
   configuration the app runs on real data: 1 in 16 alert-tier alerts and 1 in 67 notices on night-time
   heart rate, 1 in 20 and 1 in 70 on the watch maker's own resting heart rate (assuming detection carries over unchanged, not measured). All are likely optimistic estimates of the share that is respiratory illness: the sensitivity comes from
   mostly symptomatic COVID-19, and uncounted alerts near episodes and over-budget transfers would lower

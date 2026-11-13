@@ -135,6 +135,15 @@ describe('end to end on the demo mission', () => {
     expect(run('c0', 100, [still]).findings.some((x) => /safe side/.test(x.action))).toBe(false)
     const soon: Entry = { ...e, readings: [{ ind: 'glucose', v: 50, ts: 1 }, { ind: 'glucose', v: 85, ts: 1 + 2 * 60 * 1000 }] }
     expect(run('c0', 100, [soon]).status).toBe('urgent')
+    // a high repeat after a low is not "treat it as low", and a normal repeat after a high counts at once
+    const lowHigh: Entry = { ...e, readings: [{ ind: 'glucose', v: 50, ts: 1 }, { ind: 'glucose', v: 320, ts: 1 + 2 * 60 * 1000 }] }
+    const lh = run('c0', 100, [lowHigh]).findings
+    expect(lh.find((x) => x.ruleId === 'R-V-GLU-LO2')!.action).toMatch(/take no more sugar/)
+    expect(lh.find((x) => x.ruleId === 'R-V-GLU-HI2')!.action).toMatch(/fingertip/)
+    const highNormal: Entry = { ...e, readings: [{ ind: 'glucose', v: 320, ts: 1 }, { ind: 'glucose', v: 95, ts: 1 + 60 * 1000 }] }
+    const hn = run('c0', 100, [highNormal]).findings.find((x) => x.ruleId === 'R-V-GLU-HI2')!
+    expect(hn.action).not.toMatch(/treat it as low/)
+    expect(hn.status).toBe('act')
     // the title names the reading that crossed the line, not the later one
     expect(run('c0', 100, [soon]).findings.find((x) => x.ruleId === 'R-V-GLU-LO2')!.title).toMatch(/50, then 85; the 50 still counts/)
     expect(f1.readings!.map((r) => r.v)).toEqual([50, 85])

@@ -48,7 +48,8 @@ export function viewFor(role: Role, a: DayAnalysis, share: SharingSettings, valu
     if (allows(level, 'trend')) {
       categories[cat].indicators = Object.keys(a.u3).filter((i) => IND[i]?.category === cat && !Number.isNaN(a.u3[i])).map((i) => {
         const ch = a.changes.find((c) => c.ind === i)
-        const v: VisibleIndicator = { ind: i, inRange: !(a.u3[i] >= 1.5) }
+        // the same test Today uses: outside the usual band on the latest reading(s), not the 3-day average
+        const v: VisibleIndicator = { ind: i, inRange: !(ch && ch.daysOut > 0) }
         if (allows(level, 'detail')) {
           v.value = ch?.value ?? values[i]
           v.expected = ch?.expected
@@ -71,11 +72,11 @@ export function viewFor(role: Role, a: DayAnalysis, share: SharingSettings, valu
       if (overall === 'private' || rank[f.status] > rank[overall]) overall = f.status
       continue
     }
-    const level0 = (s as Record<string, Level>)[cat] ?? 'none'
-    const level: Level = emergencyOpen && (cat === 'cardio' || cat === 'symptoms') && !allows(level0, 'trend') ? 'trend' : level0
+    // the emergency context covers whether readings are in range, not what a notice says
+    const level = (s as Record<string, Level>)[cat] ?? 'none'
     // a fixed safety rule that needs attention today (a reading or a reported symptom) reaches the medical officer
     // with its title under emergency consent, whatever the area's level, as the Sharing screen promises
-    const fixedToday = role === 'cmo' && share.emergency !== false && f.kind !== 'personal' && f.urgency === 'today' && f.status === 'act'
+    const fixedToday = role === 'cmo' && share.emergency !== false && (f.kind !== 'personal' || !!f.carriesFixed) && f.urgency === 'today' && f.status === 'act'
     if (!allows(level, 'status') && !fixedToday) continue
     const v: VisibleFinding = { key: f.key, category: cat, status: f.status, days: f.days, ...(f.kind !== 'personal' ? { fixed: true } : {}) }
     if (allows(level, 'trend') || fixedToday) { v.title = f.title; v.tier = f.tier }

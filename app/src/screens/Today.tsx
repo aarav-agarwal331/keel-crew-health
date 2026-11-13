@@ -130,7 +130,7 @@ export function Today() {
             const onlyCmo = urgentNow.every((x) => x.cmoOnly && !x.patientIsCmo)
             const on = sharing[me]?.emergency !== false
             return <div className="col">
-              {auto.counting && <div className="banner strong" role="alert"><p><strong>Alerting the medical officer and commander in {auto.autoLeft} s.</strong></p><button className="btn" onClick={auto.cancel} data-testid="cancel-auto-alert-today">Cancel the alert</button></div>}
+              {auto.counting && <div className="banner strong" role="alert"><p><strong>Alerting the medical officer and commander in {auto.autoLeft} s.</strong></p><p className="small" data-testid="cancel-auto-alert-today">A typing mistake? Withdraw that reading in the list below; the alert then goes only for anything else.</p></div>}
               {!sent && <button className="btn alert block" style={{ minHeight: 72, fontSize: '1.2rem' }} onClick={() => void logAction({ crew: me, alertKey: akey, day, did: 'Alerted the crew', feel: null, ...alertFields(urgentNow) })} data-testid="alert-crew">{onlyCmo ? 'Alert the medical officer now' : 'Alert the medical officer and commander now'}</button>}
               {sent && !auto.escalated && !acks.some((x) => /medical officer/.test(x.note)) && Date.now() - sent.ts > 5 * 60e3 && <button className="btn alert block" onClick={() => void logAction({ crew: me, alertKey: akey, day, did: 'Alerted the crew', feel: null, ...alertFields(urgentNow, ' (no answer after 5 minutes: sent again)') })} data-testid="alert-again">No answer yet: alert them again</button>}
               {sent && <p className="banner strong" role="status"><strong>Alert sent at {new Date(sent.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}.</strong> {acks.length ? acks.map((x) => `Acknowledged ${x.note} at ${new Date(x.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}.`).join(' ') : 'Not acknowledged yet: it stays at the top of their Crew screens until the medical officer does.'}</p>}
@@ -197,8 +197,8 @@ export function Today() {
             <div className="row" style={{ gap: 14 }}>
               <Ring value={weekPct} label={`Exercise this week: ${Math.round(weekPct * 100)} percent of plan`} />
               <div className="col" style={{ gap: 2 }}>
-                <strong>Exercise this week</strong>
-                <span className="small muted">{Math.round(week.reduce((x, y) => x + y, 0))} of {target * 6} planned minutes. {a.exerciseHold ? 'Paused: no exercise until the medical officer clears you.' : 'Every session protects bone, muscle and heart.'}</span>
+                <strong>{a.exerciseHold ? 'Exercise: paused' : 'Exercise this week'}</strong>
+                <span className="small muted">{a.exerciseHold ? `The plan is suspended until the medical officer clears you. Minutes logged this week, before the pause or by the exercise devices: ${Math.round(week.reduce((x, y) => x + y, 0))}.` : `${Math.round(week.reduce((x, y) => x + y, 0))} of ${target * 6} planned minutes. Every session protects bone, muscle and heart.`}</span>
               </div>
             </div>
             {mission.crew.length > 1 && <p className="small muted">Crew goal this week: <strong className="num" style={{ color: 'var(--text)' }}>{Math.round(crewPct * 100)}%</strong> of planned exercise done together. Individual numbers stay private.</p>}

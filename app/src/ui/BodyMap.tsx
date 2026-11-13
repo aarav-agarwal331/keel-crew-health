@@ -55,7 +55,7 @@ export function BodyMap({ systems }: { systems: Record<string, Status> }) {
         <div className="syslist">
           {SYSTEMS.map((s) => (
             <button key={s.id} type="button" aria-pressed={sel === s.id} onClick={() => setSel(s.id)}>
-              <span>{s.label}{['urgent', 'act'].includes(st(s.id)) && <strong className="tiny" style={{ display: 'block' }}>{st(s.id) === 'urgent' ? 'Act now' : 'Act today'}</strong>}</span>
+              <span>{s.label}{['urgent', 'act', 'watch'].includes(st(s.id)) && <strong className="tiny" style={{ display: 'block' }}>{STATUS_LABEL[st(s.id)]}</strong>}</span>
               <StatusTag status={st(s.id)} label="" size={18} />
             </button>
           ))}

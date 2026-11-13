@@ -10,7 +10,7 @@ const REPEATABLE = ['glucose', 'spo2', 'rhr']
 const LABEL: Record<string, string> = { glucose: 'blood sugar (mg/dL)', spo2: 'fingertip oxygen now (%)', rhr: 'heart rate now, sitting at rest (bpm)' }
 export function RepeatEntry({ f }: { f: Finding }) {
   const { me, day, entries, mission, saveEntry } = useApp()
-  const ind = (f.inds ?? []).find((x) => REPEATABLE.includes(x))
+  const ind = (f.inds ?? []).map((x) => x.replace(/_manual$|_rise$/, '')).find((x) => REPEATABLE.includes(x))
   const [v, setV] = useState('')
   const [err, setErr] = useState('')
   if (!ind || f.kind !== 'vital') return null

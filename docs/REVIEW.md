@@ -834,6 +834,42 @@ readings below unchallenged ones, one status vocabulary across screens, a crew c
 fixing the calibration cap in the research code (needs a rerun; disclosed on screen and in METHOD.md),
 rendering the Method screen's few typed figures from the JSON, a dispersion test for false alerts.
 
-## Round 18
+## Round 18 (2026-11-12, fresh reviewers, redeployed build)
 
-See the end of this file once the eighteenth round has run.
+Judge's scores: impact 7, creativity 8, validity 7, relevance 8, presentation 6 (36 of 50), "nominate:
+yes", with one high-severity issue. The astronaut found one, the flight surgeon one, the statistician
+none.
+
+| # | Reviewer | High-severity finding | Fix |
+|---|---|---|---|
+| 1 | Judge | Today said heart rate and skin temperature were back inside the usual range; the medical officer's Crew screen still called them out of range (it used the 3-day average). | Crew uses the same band test as Today; an area at "act now" names the reading behind it ("because of heart rate reading at rest is 150 or more (entered: 170)"). |
+| 2 | Astronaut | The round-17 emergency context let the medical officer see an infection notice's title, beyond what Sharing promises. | The emergency context is limited to whether readings are in range; Sharing and the Check-in message say exactly that. |
+| 3 | Flight surgeon | Blood-sugar repeats gave wrong advice: "treat it as low" was added to high-sugar rules, and a low followed by a high (sugar on the fingertip after treatment) kept "take sugar now" beside a high card. | Low and high rules are kept apart; a high is re-checked at once with a clean finger and a normal repeat says so; a high after a treated low says "take no more sugar, wash and repeat"; unit-tested. |
+
+Medium-severity findings fixed in the same pass:
+
+- **Triage order** (judge, astronaut): an unchallenged reading (heart rate 170) leads a contested one
+  (sugar 50 then 85); each urgent item's repeat box asks for its own reading.
+- **Exercise card** (judge, astronaut): while exercise is held it reads "Exercise: paused" and does not
+  show progress against the plan; exercise advice is also suppressed while a "not cleared" restriction
+  stands (flight surgeon).
+- **Body figure** (astronaut): a readings notice lights only the areas whose readings moved notably;
+  every flagged area shows its status word.
+- **"Unless you cancel"** (astronaut): the wording is "unless you withdraw a typing mistake"; a red-flag
+  symptom alert has no cancel at all (flight surgeon).
+- **Repeat low** (flight surgeon): a new rule, R-V-GLU-LO-R, makes a second reading below 70 "act now".
+- **Merged illness item** (flight surgeon): when the readings notice absorbs the fixed symptom rule, the
+  medical officer still sees it as that fixed rule.
+- **Overdue** (astronaut): the ask button says the medical officer's screen already marks the item overdue.
+- **Statistician wording**: "halves" became "about a third"; threshold transfer given for both
+  populations; "no direct vote"; the fixed-threshold comparison's differences named; the tile shows both
+  windows (+13 to +19); the predictive-value card names its window; METHOD.md's notice range is 42 to 70.
+
+Not done, with reasons: time-based (not day-based) repeat windows across midnight, a symptom branch for
+very high blood pressure, treating "vomited more than twice" as vomiting in three rules, separating the
+team's own analysis from the "published research" badge, clipping the fixed comparator (needs a rerun),
+a "what the medical officer may do next" line per rule (needs clinical input).
+
+## Round 19
+
+See the end of this file once the nineteenth round has run.

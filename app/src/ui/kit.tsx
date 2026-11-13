@@ -111,7 +111,7 @@ export function Ring({ value, size = 68, label }: { value: number; size?: number
         <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="var(--surface-3)" strokeWidth="7" />
         <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="var(--series-3)" strokeWidth="7" strokeLinecap="round" strokeDasharray={`${c * v} ${c}`} />
       </g>
-      <text x="50%" y="50%" dominantBaseline="central" textAnchor="middle" fontSize={size * 0.22} fontWeight="700" fill="var(--text)">{Math.round(v * 100)}%</text>
+      <text x="50%" y="50%" dominantBaseline="central" textAnchor="middle" fontSize={size * (v >= 0.995 ? 0.19 : 0.22)} fontWeight="700" fill="var(--text)">{Math.round(v * 100)}%</text>
     </svg>
   )
 }

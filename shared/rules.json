@@ -349,10 +349,36 @@
    "steps": [
     "If you feel shaky, sweaty or confused, tell the medical officer now.",
     "Do not exercise or do critical tasks until it is back above 70 and you feel normal.",
-    "If the repeat is still below 70, take sugar again and repeat after another 15 minutes."
+    "If the repeat is still below 70, take sugar again and tell the medical officer now."
    ],
    "tier": "cmo",
    "tier_reason": "A fixed safety threshold, not a trend.",
+   "cm": [
+    "CM-VITALS"
+   ],
+   "categories": [
+    "nutrition"
+   ]
+  },
+  {
+   "id": "R-V-GLU-LO-R",
+   "scope": "vital",
+   "priority": 1.06,
+   "urgency": "now",
+   "title": "Blood sugar still below 70 on a repeat reading",
+   "when": {
+    "val": "glucose",
+    "max": 69.99,
+    "count": 2
+   },
+   "summary": "Two readings below 70 mg/dL today. A low that does not come up after sugar needs the medical officer.",
+   "action": "Take sugar again now if you can swallow, and tell the medical officer now.",
+   "steps": [
+    "Do not exercise or do critical tasks until it is back above 70 and you feel normal.",
+    "Repeat the reading 15 minutes after the sugar."
+   ],
+   "tier": "cmo",
+   "tier_reason": "A fixed safety threshold, repeated.",
    "cm": [
     "CM-VITALS"
    ],

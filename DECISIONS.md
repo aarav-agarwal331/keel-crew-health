@@ -86,3 +86,5 @@ Reversible decisions made without asking, newest last.
 | 80 | 2026-11-12 | The blood-sugar meter unit is a per-tablet setting; LO and HI readouts are accepted. | Review round 16 (flight surgeon): asking per reading gave "take sugar" advice to mmol/L meters. |
 | 81 | 2026-11-12 | During the alert countdown each dangerous reading has its own withdraw button; the alert is built from the urgent items when it fires. | Review round 17 (astronaut, flight surgeon, high): one cancel withdrew every reading. |
 | 82 | 2026-11-12 | "Outside your usual range" uses the same band as the charts (expected ± 2 spreads). | Review round 17 (judge, high): text and charts disagreed. |
+| 83 | 2026-11-12 | Blood-sugar repeat logic treats low and high readings separately; a high is re-checked at once. | Review round 18 (flight surgeon, high): "treat it as low" appeared on high readings, and a low then a high kept "take sugar". |
+| 84 | 2026-11-12 | The medical officer's emergency context shows only whether readings are in range. | Review round 18 (astronaut, high): notice titles went beyond what Sharing promises. |

@@ -193,4 +193,8 @@ export interface Finding {
   holdsExercise?: boolean
   /** the medical officer closed this detector notice with a note */
   reviewed?: boolean
+  /** a later reading already disagrees with the one this item rests on (a repeat taken too soon to count) */
+  contested?: boolean
+  /** a readings notice that absorbed a fixed symptom rule: shown to the medical officer like that rule */
+  carriesFixed?: boolean
 }

@@ -519,7 +519,10 @@ export function analyzeDay(
         return [k, ll ? (k.endsWith('_rise') ? [ll.v - tUsual] : [ll.v]) : vs]
       })) }
       const mine = condFixed(r.when)
-      const anyRuleOnLatest = RULES.some((q) => q.scope === 'vital' && condFixed(q.when).some((x) => mine.includes(x)) && evalCond(q.when, latestF))
+      // blood sugar has two directions: a high repeat does not keep a low open (sugar on the fingertip after treating it), nor the reverse
+      const gluDir = (id: string) => (id.startsWith('R-V-GLU-LO') ? 'lo' : id.startsWith('R-V-GLU-HI') ? 'hi' : '')
+      const anyRuleOnLatest = RULES.some((q) => q.scope === 'vital' && condFixed(q.when).some((x) => mine.includes(x)) && gluDir(q.id) === gluDir(r.id) && evalCond(q.when, latestF))
+      const gluLow = gluDir(r.id) === 'lo', gluHigh = gluDir(r.id) === 'hi'
       // the repeat clock starts at the first reading that met THIS rule, not the day's first reading
       const meets = (q: Reading) => evalCond(r.when, { ...f, val: Object.fromEntries(Object.keys(f.val).map((k) => {
         const base = k.replace(/_manual$|_rise$/, '')
@@ -527,15 +530,18 @@ export function analyzeDay(
       })) })
       const firstBad = log.filter((q) => !q.void).find(meets)
       // a repeat counts only after the time the measurement needs: sugar to work, a full-minute pulse count, a rest
-      const waitMin = Math.max(...mine.map((x) => REPEAT_MIN[x] ?? 5))
+      // a high sugar is re-checked at once with a clean, dry finger; a low needs 15 minutes for the sugar to work
+      const waitMin = gluHigh ? 0 : Math.max(...mine.map((x) => REPEAT_MIN[x] ?? 5))
       const waited = !!firstBad && lastLive.length > 0 && lastLive[lastLive.length - 1].ts - firstBad.ts >= waitMin * 60 * 1000
       const repeatOk = r.scope === 'vital' && r.urgency !== 'routine' && lastLive.length > 0 && !!firstBad && lastLive[lastLive.length - 1].ts > firstBad.ts && !anyRuleOnLatest && !!waited
       // a repeat already back on the safe side, but taken too soon to count (blood sugar: under 15 minutes)
       const tooSoon = !repeatOk && !anyRuleOnLatest && !!firstBad && lastLive.length > 0 && lastLive[lastLive.length - 1].ts > firstBad.ts && !waited
       findings.push(mk(r, r.scope, start, repeatOk || stale || fromFile ? (r.urgency === 'routine' ? 'watch' : 'act') : URGENCY_STATUS[r.urgency ?? 'routine'], changes.filter((c) => named.includes(c.ind)).slice(0, 4), {
-        ...(tooSoon ? { action: `${mine.includes('glucose') ? `Your readings disagree (${firstBad!.v}, then ${lastLive[lastLive.length - 1].v}): treat it as low to be safe. ` : ''}${r.action} Re-check at ${new Date(firstBad!.ts + waitMin * 60 * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}${mine.includes('glucose') ? '' : `: your repeat (${lastLive[lastLive.length - 1].v}) came too soon to count`}.` } : {}),
+        ...(tooSoon && gluLow && lastLive[lastLive.length - 1].v >= 200 ? { contested: true, action: `Your later reading is high (${lastLive[lastLive.length - 1].v}): take no more sugar. Wash and dry your hands and repeat now; tell the medical officer.` } : tooSoon ? { contested: true, action: `${gluLow ? `Your readings disagree (${firstBad!.v}, then ${lastLive[lastLive.length - 1].v}): treat it as low to be safe. ` : ''}${r.action} Re-check at ${new Date(firstBad!.ts + waitMin * 60 * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}${mine.includes('glucose') ? '' : `: your repeat (${lastLive[lastLive.length - 1].v}) came too soon to count`}.` } : {}),
         ...(log.length ? { readings: log } : {}),
-        ...(repeatOk ? { urgency: r.urgency, action: `${r.id.startsWith('R-V-GLU-LO') ? `Your repeat reading (${lastLive[lastLive.length - 1].v}) is back on the safe side, so no more sugar is needed: eat a snack or your next meal now.` : `Your repeat reading (${lastLive[lastLive.length - 1].v}) is back on the safe side of this line.`} ${r.urgency === 'now' ? 'The first reading needed the medical officer at once: if you have not told them yet, tell them now.' : 'Tell the medical officer about the first reading today.'}`, tierReason: 'The first reading stays on the medical officer\'s list until they close it with a note.' } : {}),
+        ...(repeatOk ? { urgency: r.urgency, action: `${r.id.startsWith('R-V-GLU-LO') ? `Your repeat reading (${lastLive[lastLive.length - 1].v}) is back on the safe side, so no more sugar is needed: eat a snack or your next meal now.` : gluHigh ? `Your repeat reading (${lastLive[lastLive.length - 1].v}) is below this line: the first may have been sugar on your fingertip. Keep your hands clean for readings, and tell the medical officer today.` : `Your repeat reading (${lastLive[lastLive.length - 1].v}) is back on the safe side of this line.`} ${r.urgency === 'now' ? 'The first reading needed the medical officer at once: if you have not told them yet, tell them now.' : 'Tell the medical officer about the first reading today.'}`, tierReason: 'The first reading stays on the medical officer\'s list until they close it with a note.' } : {}),
+        // a high right after a treated low is often sugar on the fingertip: wash and repeat, no more sugar
+        ...(gluHigh && !repeatOk && !!firstBad && log.some((q) => !q.void && q.v < 70 && q.ts < firstBad.ts) ? { action: `You had a low reading earlier: a high one now may be sugar on your fingertip. Wash and dry your hands and repeat now; take no more sugar. ${r.action}` } : {}),
         ...(fromFile ? { urgency: 'today' as Urgency, action: `A value in your imported file (${m.day_label ? `${m.day_label} ${start + 1}` : `day ${start + 1}`}) is past this line. If it is recent and you feel unwell, contact a doctor; in an emergency call your local emergency number.`, tierReason: 'From imported data, not a reading just taken.' } : {}),
         ...(stale && !fromFile ? { urgency: 'today' as Urgency, action: `This ${r.scope === 'symptom' ? 'item' : 'reading'} from ${m.day_label ? `${m.day_label} ${start + 1}` : `Day ${start + 1}`} still waits for the medical officer. If you have not told them yet, tell them today; at once if you feel unwell.`, tierReason: 'It stays open until the medical officer closes it with a note.' } : {}),
         ...(r.id === 'R-RED' ? { symptoms: redSyms.map((x) => SYM[x]?.label ?? x) } : {}),
@@ -551,6 +557,8 @@ export function analyzeDay(
     }
     if (r.scope === 'adaptation' && evalCond(r.when, f)) findings.push(mk(r, 'adaptation', Math.max(0, day - ph.since), applyRule(r, f).tier !== 'self' ? 'act' : 'watch', []))
   }
+  const restrictTs = Math.max(-Infinity, ...[...closed.entries()].filter(([k]) => k.startsWith('restricted|') && (k.includes(`|${m.id}|${crewId}|`))).map(([, t]) => t))
+  const restricted = restrictTs > (closed.get(`cleared|${m.id}|${crewId}`) ?? -Infinity)
   // one finding per reading: when two fixed rules fire on the same indicator, the more urgent one stands
   for (let i = findings.length - 1; i >= 0; i--) {
     const a = findings[i]
@@ -568,7 +576,7 @@ export function analyzeDay(
     for (let k = seq.length - 2; k >= 0 && seq[k] === r.id; k--) patternDays++
     f.patternDays = patternDays
     const firstRule = patternDays < seq.length ? RULE[seq[0]] : null
-    const noEx = restAdvised || r.id === 'R-ILL'
+    const noEx = restAdvised || r.id === 'R-ILL' || restricted
     const also = RULES.filter((q) => q.scope === 'personal' && q.id !== r.id && !['R-GEN', 'R-CARD'].includes(q.id) && !(noEx && q.id === 'R-EX') && evalCond(q.when, f)).map((q) => ({ title: q.title, action: q.action }))
     const t = applyRule(r, f)
     // Escalation beyond self-management needs the stricter detector tier (its own, smaller
@@ -601,11 +609,13 @@ export function analyzeDay(
     if (rank[sy.status] > rank[ill.status]) Object.assign(ill, { status: sy.status, urgency: sy.urgency, action: sy.action, tier: TIER_RANK[sy.tier] > TIER_RANK[ill.tier] ? sy.tier : ill.tier, tierReason: sy.tierReason })
     // the merged finding dates from whichever began first, so every screen gives the same "since" day
     const began = Math.min(ill.patternStart ?? ill.start, sy.start)
-    Object.assign(ill, { patternStart: began, days: day - began + 1 })
+    // it now carries a fixed symptom rule: the medical officer sees it as they would have seen that rule
+    Object.assign(ill, { patternStart: began, days: day - began + 1, carriesFixed: true })
     findings.splice(i, 1)
   }
   // at the same urgency, an item with operational consequences (it stops exercise) leads
-  findings.sort((a, b) => rank[b.status] - rank[a.status] || Number(holdsEx(b.ruleId)) - Number(holdsEx(a.ruleId)))
+  // and an unchallenged reading leads one that a later reading already disagrees with
+  findings.sort((a, b) => rank[b.status] - rank[a.status] || Number(holdsEx(b.ruleId)) - Number(holdsEx(a.ruleId)) || Number(!!a.contested) - Number(!!b.contested))
   const status: Status = findings.length ? findings[0].status : learning || staleDays >= 2 ? 'learning' : 'steady'
 
   // --- one status per area, used by every screen (body map, sharing preview, role views) ------
@@ -626,7 +636,8 @@ export function analyzeDay(
     // an area shows the worst open finding that rests on any of its indicators, fixed-threshold rules included
     for (const fd of findings) {
       if (fd.kind === 'environment') continue
-      const ev = fd.inds ?? fd.changes.map((c) => c.ind)
+      // a readings-based notice lights only the areas whose readings moved notably, not every small change it lists
+      const ev = fd.kind === 'personal' ? fd.changes.filter((c) => c.notable || c.daysOut > 0).map((c) => c.ind) : fd.inds ?? fd.changes.map((c) => c.ind)
       if (ev.some((e) => inds.includes(e)) && rank[fd.status] > rank[st]) st = fd.status
     }
     // a fixed floor beside the personal range: a night under five hours is worth a look whatever is usual for you
@@ -701,8 +712,6 @@ export function analyzeDay(
   for (let i = openItems.length - 1; i >= 0; i--) if (isClosed(closed, openItems[i].key, openItems[i].ts)) openItems.splice(i, 1)
 
   // "handled, not cleared" holds exercise and duties until the medical officer clears the person, however long that takes
-  const restrictTs = Math.max(-Infinity, ...[...closed.entries()].filter(([k]) => k.startsWith('restricted|') && (k.includes(`|${m.id}|${crewId}|`))).map(([, t]) => t))
-  const restricted = restrictTs > (closed.get(`cleared|${m.id}|${crewId}`) ?? -Infinity)
   const exerciseHold = restricted || findings.some((x) => !(x as Finding & { reviewed?: boolean }).reviewed && ((holdsEx(x.ruleId) && !(x.kind === 'personal' && x.tier === 'self')) || (x as Finding & { holdsExercise?: boolean }).holdsExercise))
   return { status, findings, changes, learning, baselineDays, adapting, staleDays, u3, systems, categories, alert, features: f, co2Advisory: envStatus === 'watch' ? Math.max(co2Today || 0, co23 || 0) : null, openItems, exerciseHold, restricted }
 }
