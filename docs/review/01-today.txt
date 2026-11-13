@@ -9,7 +9,7 @@ The evidence
 Hide
 Act today
 
-Readings like those often seen early in an infection
+Several readings have moved the way they can during an infection
 
 Demo crew member, simulated readings.
 
@@ -20,6 +20,8 @@ Take your temperature now and tell the medical officer. No exercise until they c
 When: today. Who: the crew medical officer.
 
 Possible illness in a closed cabin affects the whole crew, and early rest is cheap.
+
+Ask the medical officer to see me today
 
 Also today, from the same readings:
 

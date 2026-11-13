@@ -4,7 +4,7 @@ BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
 Check-in
 
-Flight day 121. Four quick answers, about a minute. Stored on your tablet; emergency sharing is on, so anything urgent appears at once on the medical officer's and, as backup, the commander's Crew screens, and ten seconds after you save it alerts them unless you cancel. Who sees what
+Flight day 121. Four quick answers, about a minute. Stored on your tablet; anything urgent alerts the medical officer and commander ten seconds after you save, unless you cancel. Who sees what
 
 Today's check-in in this demo came from the simulation. Anything you save here is added to it.
 

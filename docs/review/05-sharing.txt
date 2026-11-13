@@ -4,7 +4,7 @@ BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
 Sharing and privacy
 
-Lucía Reyes, your health data is yours. You decide below what each role can see, with three exceptions: the commander always sees your readiness tier (worked out from all your readings, without the reason); with emergency sharing on, the medical officer sees every urgent or same-day safety item and is alerted to urgent ones; and cabin readings are shared with everyone.
+Lucía Reyes, your health data is yours. You decide below what each role can see, with four exceptions: the commander always sees your readiness tier (worked out from all your readings, without the reason); with emergency sharing on, the medical officer sees every urgent or same-day safety item, and both the medical officer and the commander are alerted to urgent ones and see what they are and the value entered (the commander does not see items marked "medical officer only"); the daily ground summary carries a count of urgent items still open; and cabin readings are shared with everyone.
 
 How it travels: in this demo every role is on one tablet. In a flight version your data stays on your tablet, and only the views allowed here would go over the cabin network, to the medical officer's and commander's tablets; the daily ground summary goes out when a link exists.
 
@@ -16,7 +16,7 @@ To everyone: cabin readings (air, radiation). They are not personal.
 Emergency sharing
 On
 Off
-When on, a symptom you mark as serious or an "act now" safety reading appears at once on the medical officer's Crew screen, an alert goes to them ten seconds after you save unless you cancel it, and it stays on their list until they close it with a note.
+When on, a symptom you mark as serious or an "act now" safety reading appears at once on the medical officer's and the commander's Crew screens (what it is, the value entered and the action; the commander never sees items marked "medical officer only" and never sees your reading log), an alert goes to both ten seconds after you save unless you cancel it, and it stays on the medical officer's list until they close it with a note.
 More about emergency sharing
 Who are you setting this for?
 Crew medical officer

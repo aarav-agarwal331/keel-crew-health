@@ -6,7 +6,7 @@ Crew readiness
 Commander
 Medical officer
 
-Day 121. Whether Keel has any flags for each crew member before a demanding task tomorrow, such as a spacewalk. You see a tier for everyone; reasons appear only where a crew member has chosen to share them.
+Day 121. Whether Keel has any flags for each crew member before a demanding task tomorrow, such as a spacewalk. You see a tier for everyone; reasons appear only where a crew member has chosen to share them, and for urgent items under their emergency sharing (as their backup).
 
 Labels: a crew member's own "Act today" or "Act now" shows to the commander as "Talk to the medical officer first"; "Worth a look" is the same on both screens.
 
