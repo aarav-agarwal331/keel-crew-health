@@ -98,7 +98,8 @@ export function visibleOpenItems(role: Role, items: OpenItem[], share: SharingSe
     const shared = allows((share[role] as Record<string, Level>)[it.category] ?? 'none', 'trend')
     const consent = share.emergency !== false && (role === 'cmo' || patientIsCmo)
     if (shared || (consent && it.urgency === 'now')) out.push(it)
-    else if (consent) out.push({ ...it, redacted: true, readings: undefined, symptoms: undefined })
+    // under emergency consent the medical officer sees what the item is and its readings: they may be asked to clear it
+    else if (consent) out.push(role === 'cmo' ? it : { ...it, redacted: true, readings: undefined, symptoms: undefined })
   }
   return out
 }

@@ -24,6 +24,7 @@ const ALIASES: Record<string, string[]> = {
   energy: ['energy', 'food_pct'],
   mass: ['mass', 'weight', 'weight_kg', 'body_mass'],
   sbp: ['sbp', 'systolic', 'bp_systolic'],
+  dbp: ['dbp', 'diastolic', 'bp_diastolic'],
   glucose: ['glucose', 'blood_sugar', 'glucose_mgdl'],
 }
 
@@ -78,14 +79,35 @@ export function parseCsv(text: string): ImportResult {
     }
     byDay.set(day, rec)
   }
-  return { rows: collapse(byDay), format: 'CSV', notes: [`Columns used: ${mapped.join(', ')}`] }
+  const notes = [`Columns used: ${mapped.join(', ')}`]
+  return { rows: glucoseUnits(collapse(byDay), notes), format: 'CSV', notes }
 }
 
+// spot readings that a fixed safety rule looks at: never average them, keep the most worrying one of the day
+const EXTREME: Record<string, (v: number[]) => number> = {
+  glucose: (v) => (Math.min(...v) < 70 ? Math.min(...v) : Math.max(...v)),
+  sbp: (v) => (Math.min(...v) < 90 ? Math.min(...v) : Math.max(...v)),
+  dbp: (v) => Math.max(...v),
+  spo2: (v) => Math.min(...v),
+}
 function collapse(byDay: Map<string, Record<string, number[]>>, sum: string[] = []): DayRow[] {
   return [...byDay.entries()].sort(([a], [b]) => (a < b ? -1 : 1)).map(([date, rec]) => ({
     date,
-    values: Object.fromEntries(Object.entries(rec).map(([k, v]) => [k, sum.includes(k) ? v.reduce((a, b) => a + b, 0) : v.reduce((a, b) => a + b, 0) / v.length])),
+    values: Object.fromEntries(Object.entries(rec).map(([k, v]) => [k, sum.includes(k) ? v.reduce((a, b) => a + b, 0) : EXTREME[k] ? EXTREME[k](v) : v.reduce((a, b) => a + b, 0) / v.length])),
   }))
+}
+
+/** A CSV gives no unit for blood sugar.  If most values are under 35 the file is in mmol/L: convert it. */
+function glucoseUnits(rows: DayRow[], notes: string[]): DayRow[] {
+  const g = rows.map((r) => r.values.glucose).filter((v) => v !== undefined && !Number.isNaN(v))
+  if (!g.length) return rows
+  const low = g.filter((v) => v < 35).length / g.length
+  if (low > 0.5) {
+    notes.push('Blood sugar values look like mmol/L (most are under 35), so they were converted to mg/dL (x 18).')
+    return rows.map((r) => (r.values.glucose === undefined ? r : { ...r, values: { ...r.values, glucose: r.values.glucose * 18.016 } }))
+  }
+  if (low > 0) notes.push(`${g.filter((v) => v < 35).length} blood sugar value(s) under 35 mg/dL were left out: check the unit in the file.`)
+  return rows.map((r) => (r.values.glucose !== undefined && r.values.glucose < 35 ? { ...r, values: Object.fromEntries(Object.entries(r.values).filter(([k]) => k !== 'glucose')) } : r))
 }
 
 /** Fitbit / Google Takeout: resting_heart_rate-*.json and sleep-*.json (arrays of records). */

@@ -283,7 +283,7 @@ symptom date where reported, else test date. Episodes within 28 days of each oth
 ### 6.2 Simulated missions (`eval_sim.py`)
 
 Four crew, 30 days pre-flight, 180 days in flight, two random events per mission from six types;
-illness sizes follow the real spread, the others a grid of 0.5 to 2 times the nominal size. Nominal
+illness sizes follow the real spread (its fitted between-episode spread sits on the fit's upper cap of 2.0 times the mean, so the real spread is probably wider than simulated), the others a grid of 0.5 to 2 times the nominal size. Nominal
 missingness: 4% of nights unworn, 10% of check-ins skipped, occasional multi-day outages. Further
 experiments: detection by event type and size, missing data, removal of each sensor, component
 ablations (each refitted and recalibrated), a deliberately wrong adaptation prior (×0, ×0.5, ×2),
@@ -299,7 +299,7 @@ before, during and after head-down-tilt bed rest. The expected pulse shift at ea
 estimated on a calibration half; on the other half we count volunteers for whom pulse is ≥ 2 robust SD
 above baseline on 2 of 3 consecutive days in the 14 days after a transition, with a plain rolling
 baseline, with the baseline restarted, with the band also widened, and with the learned shift added
-(the full method), and report an exact paired test.
+(the most complete variant of this pulse-only rule; it is not the app's detector, see section 8), and report an exact paired test.
 
 ## 7. From detection to action
 
@@ -395,9 +395,9 @@ the same code version). Real data: 251 people, 107 illness episodes, two sensors
   (daily steps, thresholds from real people) and 1 in 27 (two sensors, simulator thresholds)
   alert-tier alerts would be such an illness; about 1 in 37 to 56 notices. For the import model, the
   configuration the app runs on real data: 1 in 16 alert-tier alerts and 1 in 56 notices on night-time
-  heart rate, 1 in 30 and 1 in 61 on the watch maker's own resting heart rate. All are upper bounds only if false-alert rates hold as measured on Earth: the sensitivity comes from
-  mostly symptomatic COVID-19, but uncounted alerts near episodes and over-budget transfers push the
-  other way.
+  heart rate, 1 in 30 and 1 in 61 on the watch maker's own resting heart rate. All are upper bounds on the share that is respiratory illness: the sensitivity comes from
+  mostly symptomatic COVID-19, and uncounted alerts near episodes and over-budget transfers would lower
+  the shares further.
 - **How luck is measured matters by a few points.** Device-weighted pseudo-events with real
   missingness: luck 33%, gap +34. Only people who had an episode: 32%, +34. Matched to how far into
   the recording real onsets fall: 31%, +35. Requiring a score on every day of a pseudo-window (our

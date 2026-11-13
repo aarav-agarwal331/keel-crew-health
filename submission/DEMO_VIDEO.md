@@ -30,7 +30,7 @@ Notes for whoever records it:
 - The caption in shot 6 must keep "with thresholds set only in simulation" and "No useful early
   warning; most alerts are false" on screen together with the result.
 - On a clean start the Today screen shows the strip "Keel is a crew health monitor that works with
-  no link to Earth" and the button "Demo: replay a scripted event (40 s)". The strip is a good
+  no link to Earth" and the button "Demo: replay a scripted event". The strip is a good
   opening frame if you prefer to start there; dismiss nothing.
 - Every screen that shows mission data carries the "Simulated data" chip. Keep it in frame.
 - A phone-width recording also works; the layout is the same in one column.

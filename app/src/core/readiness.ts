@@ -30,8 +30,9 @@ export function readiness(a: DayAnalysis): Readiness {
     if (t === 'hold' || (t === 'caution' && tier === 'go')) tier = t
   }
   for (const f of a.findings) {
-    // a symptom marked "medical officer only" must not be readable from the commander's tier
-    if (f.cmoOnly && !f.patientIsCmo) continue
+    // a symptom marked "medical officer only" still puts the tier on hold (nobody goes on a spacewalk with it),
+    // but its reason is filed under a private label so the commander never sees what it is
+    if (f.cmoOnly && !f.patientIsCmo) { bump('hold'); reasons.push({ category: 'private', text: 'A private matter for the medical officer' }); continue }
     if (f.crewWide) continue
     if (f.status === 'urgent' || f.status === 'act' || f.tier !== 'self') bump('hold')
     else bump('caution')

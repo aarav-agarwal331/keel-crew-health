@@ -31,7 +31,7 @@ step and its source, and lets the crew member choose who sees what. It also watc
 readings against their own normal. On 107 real illness episodes, overnight heart rate alone flagged
 50% against 28% by chance, **+22 points above luck (12 to 32)** (+19 in the wider window we started with),
 at about one false alert a month;
-that is the model imported watch data runs on (+19 in the wider window we started with; on Fitbit's
+that is the model imported watch data runs on (on Fitbit's
 own daily resting heart rate it gives about one alert a month, as budgeted, and twice its budget at the
 stricter tier). The full on-board model is tested in simulation only.
 Useful early warning was not shown, most alerts are false, and Keel's detector is not shown to beat a
@@ -82,7 +82,7 @@ Real wearable data: 251 people, 107 dated illness episodes (Stanford COVID-19 we
 
 | Other evidence | Result |
 |---|---|
-| Simulated missions, full sensor set, 1 false alert per person-month | 67% flagged (luck 41%): +26 above luck (19 to 33). By event type: sleep restriction +55, exercise outage +54, low fluids +26 (10 to 40), cabin CO2 +11 (1 to 21), illness +11 (−9 to 30), low mood +13 (−5 to 32) |
+| Simulated missions, full sensor set, 1 false alert per person-month | 67% flagged (luck 41%): +26 above luck (19 to 33). By event type: sleep restriction +55, exercise outage +54, low fluids +26 (10 to 40), cabin CO2 +11 (1 to 21), illness +11 (−9 to 30) at the notice tier but +28 (8 to 46) at the stricter tier, where luck is lower, low mood +13 (−5 to 32) |
 | Events in the first 25 flight days, luck taken from the same flight days | +24 (14 to 33) with gravity-phase handling, +15 (6 to 25) without |
 | Gravity transitions, real NASA bed-rest pulse data, 14 volunteers | flags after getting up: 9 with a plain personal baseline, 4 with Keel's phase handling (a pulse-only 2-of-3 rule, not the full detector). The same rule flags 35% of 14-day stretches away from any transition (11 of 31): Keel's 4 of 14 is at about that level, and the plain baseline's 9 of 14, though higher, is not distinguishable from it either (p about 0.1). Not significant (exact paired p = 0.06), no ground truth that those flags are false, and the gain comes from widening the band |
 
@@ -90,12 +90,13 @@ Honest reading:
 
 - **No useful early warning shown.** At the notice tier an alert started in the ten days up to onset
   for 46% of episodes against 28% by luck (+18, 9 to 28) in the two-sensor linking analysis; for heart
-  rate alone +16 (7 to 25); at the stricter tier +1 (−5 to 7). The
+  rate alone +16 (7 to 25). At the stricter tier +1 (−5 to 7) for the linking analysis and +8 (2 to 15) for heart
+  rate alone; both windows include the day of onset itself. The
   notice-tier gain is small and confounded by test dates, isolation and lower activity, so we do not
   claim early warning.
-- **Most alerts are false.** At in-flight illness rates, about one alert in 16 at the strict tier would be
-  attributable to a real respiratory illness for the import model (about 1 in 30 on the watch maker's
-  own resting heart rate), and one in 27 for the two-sensor
+- **Most alerts are false.** At in-flight illness rates, about one alert in 30 at the strict tier would be
+  attributable to a real respiratory illness for the import model on the watch maker's own resting
+  heart rate, as imports carry it (1 in 16 on night-time heart rate), and one in 27 for the two-sensor
   simulator-threshold version (one in 11 for a daily-steps configuration the app does not run). All are upper bounds.
 - **Imported watch data uses its own model.** Because of the next point, the app runs imports on a
   heart-rate-only model calibrated on the 251 real people (expected: the "heart rate alone" row).
@@ -114,7 +115,7 @@ Honest reading:
   correction. The detector was picked on simulated training missions by a rule written during review.
 - **Simulation is not reality.** The simulator passes its checks only on quantities fitted to the other
   half of the same data. Its independent checks fail or are off: the illness heart-rate rise (2.1
-  against 4.6 bpm), HRV variability (37% too high), sleep carry-over, all four threshold transfers,
+  against 4.6 bpm, mean of days 0 to 3 after onset), HRV variability (37% too high), sleep carry-over, all four threshold transfers,
   and nights under six hours (50% against a published 44%). In simulation, illness and low mood are
   not detected reliably above luck.
 - The real data is from people on Earth, mostly with COVID-19, with two sensors. Everything beyond

@@ -13,7 +13,9 @@ baseline flagged 9 of 14 volunteers after getting up and Keel flagged 4, which i
 **2. Does it give early warning before symptoms? If not, what is the value?**
 No useful early warning shown. At the notice tier an alert started in the ten days up to symptom
 onset for 46% of episodes against 28% by luck (+18, 9 to 28). At the stricter tier, the one that
-brings in the medical officer, the gain is +1 (−5 to 7), that is, none. The notice-tier gain is small
+brings in the medical officer, the gain is +1 (−5 to 7), that is, none. Those are the two-sensor linking analysis; for heart rate
+alone, the model imports run on, they are +16 (7 to 25) and +8 (2 to 15), and both windows include
+the day of onset itself. The notice-tier gain is small
 and confounded (test dates, isolation after a positive test, lower activity on the day), so we do
 not claim it. In our scripted replay Keel flags the illness on the day symptoms begin, from the
 symptoms ticked at check-in combined with drifting readings; the sensors alone show it one day after.
@@ -50,7 +52,7 @@ thresholds come from the simulator, and on the 132 real people the simulator's f
 use the result is +35 (22 to 46). Checks on the cross-validated result: training on one Stanford
 cohort and testing on the other gives +33 and +33; five different fold splits give +34 to +36; the
 original, wider window gives +31 (22 to 40). The cautions are ours: nothing was pre-registered,
-analysis choices changed during four rounds of AI role-played review, and four detectors, two tiers
+analysis choices changed during more than ten rounds of AI role-played review, and four detectors, two tiers
 and several windows were compared without correction. That log is in the repository.
 
 **6. Does your detector beat a simple rule?**
@@ -88,7 +90,7 @@ study or public clinical guidance, with an audit trail on every alert. A unit te
 rule text reads like a diagnosis. By design Keel gives no medication advice; its actions are first steps such as rest, fluids, a repeat reading or sugar for a low blood sugar.
 
 **10. Has a doctor reviewed the advice?**
-No clinician has reviewed anything. We ran four rounds of role-played review with an AI reviewer (a
+No clinician has reviewed anything. We ran more than ten rounds of role-played review with AI reviewers (a
 flight surgeon, a statistician, an astronaut, a judge) and fixed what they found (missing red flags,
 no fixed safety thresholds, mis-tiered extreme readings, exercise advice before fever was excluded, a
 solar-storm alert that could not work), and we say plainly that this is not the same thing. The fixed

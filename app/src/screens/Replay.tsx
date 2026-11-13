@@ -35,7 +35,8 @@ export function Replay() {
   const crewIdx = ev && ev.crew >= 0 ? ev.crew : 0
   const crew = mission.crew[crewIdx]
   const start = ev ? Math.max(0, ev.onset - 16) : 0
-  const end = ev ? Math.min(mission.days - 1, ev.onset + 9) : mission.days - 1
+  // ends four days after onset, inside the detection window: a notice is never shown closing on its own
+  const end = ev ? Math.min(mission.days - 1, ev.onset + 4) : mission.days - 1
   const [t, setT] = useState(start)
   const [playing, setPlaying] = useState(false)
   const [speed, setSpeed] = useState(650)
@@ -184,7 +185,7 @@ export function Replay() {
           {misread && firstAlert && <p className="small">On {shortDay(mission, misread.day)} the detector had already moved, but the readings then looked like something else ("{misread.title.replace(/^[^:]+: /, '')}") and the advice was for that. It is not counted as flagging this event.</p>}
           {unrelated.length > 0 && <p className="small">Keel's log for this replay also has {unrelated.length} {unrelated.length === 1 ? 'entry that is' : 'entries that are'} not about the scripted event. Some are one open notice being read differently as the days pass; some reflect ordinary lapses in the simulated routine, such as a missed exercise session; some are false alerts. That is part of the picture: notices are budgeted at about one false one per person-month in simulation, and real crews would likely see more.</p>}
           {val && <p className="small"><strong>Across all the real data, not this one script:</strong> heart rate alone (not the eleven-channel model in this replay, which is tested in simulation only) flagged {Math.round(val.det * 100)}% of {val.n} real illness episodes, {Math.round(val.net * 100)} points more than luck, at about {val.fa.toFixed(1)} false alerts per person-month. Useful early warning was not shown.</p>}
-          <p className="small muted">The replay runs on past the demo's "today" ({shortDay(mission, mission.default_day ?? end)}) to show how the readings evolve; those later days are simulated ahead, and nobody closes the notice in them. One scripted event proves nothing by itself. The day of the scripted illness was chosen from a short list when the demo missions were built, by looking at the detector's output for two quiet weeks beforehand{(mission as { staging?: { quiet_two_weeks_before: boolean } }).staging?.quiet_two_weeks_before === false ? '; no candidate day had them, so the first was used and earlier notices appear' : ''}. This replay is not a random draw.</p>
+          <p className="small muted">The replay runs on past the demo's "today" ({shortDay(mission, mission.default_day ?? end)}) to show how the readings evolve over the next few days; those days are simulated ahead, and the notice is still open at the end (only the medical officer closes it). One scripted event proves nothing by itself. The day of the scripted illness was chosen from a short list when the demo missions were built, by looking at the detector's output for two quiet weeks beforehand{(mission as { staging?: { quiet_two_weeks_before: boolean } }).staging?.quiet_two_weeks_before === false ? '; no candidate day had them, so the first was used and earlier notices appear' : ''}. This replay is not a random draw.</p>
           <div className="row wrap">
             <button className="btn primary" onClick={() => { setMe(crew.id); setDay(firstAlert ? Math.max(firstAlert.day + 1, Math.min(end, ev.onset - 1)) : ev.onset); go('today') }} data-testid="replay-open-today">Open that day as {crew.name.split(' ')[0]}</button>
             <a className="btn" href="#/validation">See the validation</a>

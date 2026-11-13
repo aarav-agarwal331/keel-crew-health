@@ -9,7 +9,7 @@ export const ROLES: { id: Role; label: string; blurb: string }[] = [
 ]
 
 export const LEVELS: { id: Level; label: string; reveals: string }[] = [
-  { id: 'none', label: 'Private', reveals: 'Nothing.' },
+  { id: 'none', label: 'Private', reveals: 'Nothing beyond the always-visible items above.' },
   { id: 'status', label: 'Status', reveals: 'Only steady / worth a look / act today / act now.' },
   { id: 'trend', label: 'Trends', reveals: 'Status plus whether each reading is inside your normal range.' },
   { id: 'detail', label: 'Full detail', reveals: 'Status, trends, the actual numbers and your notes.' },

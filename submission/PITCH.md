@@ -65,7 +65,8 @@ bed-rest data, handling gravity changes flagged four volunteers in fourteen inst
 is not statistically significant.
 
 **Honesty and next steps (20 s).** What we cannot claim: useful early warning. At the tier that
-brings in the medical officer, alerts start before symptoms no more often than luck. Most alerts are
+brings in the medical officer, the two-sensor version starts alerts by the day of onset no more often
+than luck; heart rate alone does a little better, by 8 points, mostly on the day itself. Most alerts are
 false: at the alert tier between one in eleven and one in twenty-seven would be a real illness. The
 model file the app ships is tuned for eleven on-board channels; on a watch import, with overnight
 heart rate and sometimes sleep, it was only 9 points above luck, because thresholds have to match the sensors. So imports now run

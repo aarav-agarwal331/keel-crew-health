@@ -1,6 +1,7 @@
 import { STATUS_LABEL, unusualness, URGENCY_LABEL, WHO_LABEL } from '../core/analysis'
 import { deployedScore, episodes } from '../core/detect'
 import { TempEntry } from '../ui/TempEntry'
+import { GlucoseUnit } from '../ui/GlucoseUnit'
 import { CATEGORIES, IND, rawSeries, shortDay } from '../core/mission'
 import { useEffect, useState } from 'react'
 import { LEVELS, SHARE_CATEGORIES, type ShareCategory } from '../core/sharing'
@@ -39,7 +40,8 @@ export function Today() {
   const needsCmo = !!primary && primary.kind === 'personal' && primary.tier !== 'self' && !shareCats.every((c) => sharing[me]?.cmo[c] === 'detail')
   const crew = mission.crew.find((c) => c.id === me)
   // "Steady" is shown only when nothing at all is amber: an area worth a look, or cabin CO2 above the advisory line, changes the headline
-  const softAreas = [...SYSTEMS.filter((x) => a.systems[x.id] === 'watch' && x.id !== 'environment').map((x) => x.label.toLowerCase()), ...(a.co2Advisory !== null ? ['cabin air'] : [])]
+  // the personal headline is about the person; cabin air has its own banner and card
+  const softAreas = SYSTEMS.filter((x) => a.systems[x.id] === 'watch' && x.id !== 'environment').map((x) => x.label.toLowerCase())
   const shown: typeof a.status = a.status === 'steady' && softAreas.length ? 'watch' : a.status
   const liveRules = new Set(a.findings.map((x) => x.ruleId))
   const waiting = a.openItems.filter((x) => !(x.day === day && liveRules.has(x.ruleId)))
@@ -79,11 +81,12 @@ export function Today() {
 
   return (
     <>
+      <GlucoseUnit />
       {intro && mission.simulated && (
         <section className="card intro" data-testid="intro">
-          <p className="small"><strong>When Earth can't answer, Keel tells you what to do and who to tell.</strong> Responds at once to dangerous readings you enter. You choose who sees what. It also watches your readings against your own normal. Demo: {crew?.name.split(' ')[0]}'s tablet, simulated {mission.title}. A lunar base mission is under More.</p>
+          <p className="small"><strong>When Earth can't answer, Keel tells you what to do and who to tell.</strong> Responds at once to dangerous readings you enter. You choose who sees what. It also watches your readings against your own normal. Demo: {crew?.name.split(' ')[0]}'s tablet, simulated {mission.title}.</p>
           <div className="row wrap">
-            <a className="btn primary sm" href={href('replay')} data-testid="intro-replay">Demo: replay a scripted event (40 s)</a>
+            <a className="btn primary sm" href={href('replay')} data-testid="intro-replay">Demo: replay a scripted event</a>
             <a className="btn sm" href={href('validation')}>The evidence</a>
             <button className="btn sm" onClick={() => { setIntro(false); void store.putKv('intro-dismissed', true) }} aria-label="Hide this introduction">Hide</button>
           </div>
@@ -117,7 +120,8 @@ export function Today() {
             const onlyCmo = urgentNow.every((x) => x.cmoOnly && !x.patientIsCmo)
             const on = sharing[me]?.emergency !== false
             return <div className="col">
-              {!sent && <button className="btn alert block" style={{ minHeight: 72, fontSize: '1.2rem' }} onClick={() => void logAction({ crew: me, alertKey: akey, day, did: 'Alerted the crew', feel: null, note: urgentNow.map((x) => x.title).join('; ') })} data-testid="alert-crew">{onlyCmo ? 'Alert the medical officer now' : 'Alert the medical officer and commander now'}</button>}
+              {!sent && <button className="btn alert block" style={{ minHeight: 72, fontSize: '1.2rem' }} onClick={() => void logAction({ crew: me, alertKey: akey, day, did: 'Alerted the crew', feel: null, note: urgentNow.map((x) => x.title).join('; ') + (onlyCmo ? ' (medical officer only)' : '') })} data-testid="alert-crew">{onlyCmo ? 'Alert the medical officer now' : 'Alert the medical officer and commander now'}</button>}
+              {sent && !acks.some((x) => /medical officer/.test(x.note)) && Date.now() - sent.ts > 5 * 60e3 && <button className="btn alert block" onClick={() => void logAction({ crew: me, alertKey: akey, day, did: 'Alerted the crew', feel: null, note: `${urgentNow.map((x) => x.title).join('; ')} (no answer after 5 minutes: whole crew)` })} data-testid="alert-again">No answer yet: alert the whole crew</button>}
               {sent && <p className="banner strong" role="status"><strong>Alert sent at {new Date(sent.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}.</strong> {acks.length ? acks.map((x) => `Acknowledged ${x.note} at ${new Date(x.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}.`).join(' ') : 'Not acknowledged yet: it stays at the top of their Crew screens until the medical officer does.'}</p>}
               <p className="small">{on ? 'The details are visible on their Crew screens (emergency sharing). The button is what alerts them.' : 'Emergency sharing is off: the alert says only that you need help, not why.'}</p>
             </div>
@@ -145,7 +149,7 @@ export function Today() {
       {mission.kind === 'personal' && <p className="banner strong">This is your own imported data. Keel's advice is written for a space crew with a medical officer on board. If a reading or symptom worries you, contact a doctor; in an emergency call your local emergency number.</p>}
       {!link.available && mission.simulated && <p className="banner" data-testid="offline-banner">No link to Earth right now. Everything on this screen was worked out on this device.</p>}
       {a.status === 'urgent' ? (others.filter((f) => f.status !== 'urgent').length > 0 && (
-        <details className="card"><summary>Not urgent: {others.filter((f) => f.status !== 'urgent').length} more item{others.filter((f) => f.status !== 'urgent').length === 1 ? '' : 's'} for after the above</summary>
+        <details className="card"><summary>After the above: {others.filter((f) => f.status !== 'urgent').length} more item{others.filter((f) => f.status !== 'urgent').length === 1 ? '' : 's'} (act today or worth a look)</summary>
           {others.filter((f) => f.status !== 'urgent').map((f) => <LinkRow key={f.key} to={href('alert', f.key)} left={<span className={`st-${f.status}`}><Glyph status={f.status} /></span>} title={f.title} sub={f.action} />)}
         </details>
       )) : (<>
@@ -157,7 +161,7 @@ export function Today() {
       {askingTemp && primary && primary.status !== 'urgent' && !['R-ILL', 'R-SYM-ILL', 'R-V-TEMP', 'R-V-TEMP-HI'].includes(primary.ruleId) && (
         <Card title="Also: take your temperature"><TempEntry /></Card>
       )}
-      <Card title={changes.length ? (primary ? 'What changed' : 'Worth knowing') : 'Nothing unusual'} right={<a className="chip" href={href('trends')}>All trends</a>}>
+      <Card title={changes.length ? (primary ? (primary.kind === 'vital' || primary.kind === 'symptom' ? 'Other changes in your readings (not the cause of the alert above)' : 'What changed') : 'Worth knowing') : 'Nothing unusual'} right={<a className="chip" href={href('trends')}>All trends</a>}>
         {!changes.length && <p className="muted">{a.learning ? 'Baselines appear after about a week of readings.' : 'Every tracked reading is within your usual range over the last three days.'}</p>}
         {changes.map((c) => {
           const b = bandFor(mission, model, analyses[me], me, c.ind, mine)

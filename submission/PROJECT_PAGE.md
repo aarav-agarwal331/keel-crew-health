@@ -58,7 +58,7 @@ is decision support, not a diagnostic device.
 - **Earth link.** The current simulated signal delay or blackout, what is queued for the ground, and a
   control that cuts the link so you can see that nothing stops working.
 - **Mission replay.** A scripted illness on a simulated Mars transit, played in seconds (on first run
-  the Today screen offers it as "Demo: replay a scripted event (40 s)"). Keel flags it on the day
+  the Today screen offers it as "Demo: replay a scripted event"). Keel flags it on the day
   symptoms begin, from the symptoms ticked at check-in combined with drifting readings; the sensors
   alone show the illness pattern one day after symptoms begin.
 - **Validation and method.** Results, method and limitations written for a non-specialist.
@@ -239,7 +239,7 @@ fitted to the other half of the same data; the independent checks fail or are of
   and the readiness tier need review by a flight surgeon. Keel is decision support, not a medical
   device, and never states a diagnosis.
 - **Nothing was pre-registered.** Analysis choices (the metric, the detector selection rule, the
-  detection window) changed during four rounds of AI role-played review (a flight surgeon, a
+  detection window) changed during more than ten rounds of AI role-played review (a flight surgeon, a
   statistician, an astronaut, a judge). The decision log records each change.
 - The link delay, blackouts, cabin CO2 and radiation readings in the demo are simulated.
 

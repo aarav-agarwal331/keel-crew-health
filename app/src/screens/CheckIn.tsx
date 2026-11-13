@@ -1,3 +1,4 @@
+import { GlucoseUnit } from '../ui/GlucoseUnit'
 import { useEffect, useRef, useState } from 'react'
 import { dayLabel, IND, rawSeries, SYMPTOMS, symptomsOn } from '../core/mission'
 import { useApp } from '../state'
@@ -46,7 +47,30 @@ export function CheckIn({ open }: { open?: string }) {
   const [photos, setPhotos] = useState<Photo[]>(existing?.photos ?? [])
   const [photoLabel, setPhotoLabel] = useState(PHOTO_LABELS[0])
   const [saved, setSaved] = useState(false)
-  const [unitAsk, setUnitAsk] = useState<number | null>(null)
+  // after a save that leaves something "act now", alert the medical officer and commander automatically;
+  // the crew member has ten seconds to cancel it (a typing mistake), and can always alert by hand
+  const [autoAlert, setAutoAlert] = useState<{ key: string; ts: number } | null>(null)
+  const [, setTick] = useState(0)
+  useEffect(() => {
+    if (!saved || !sharingOn) return
+    const urgent = (today(me, day)?.findings ?? []).filter((f) => f.status === 'urgent' && !f.crewWide)
+    if (!urgent.length) return
+    const akey = `alert|${urgent.map((x) => x.key).sort().join('+')}`
+    if (autoAlert?.key === akey || actions.some((x) => x.crew === me && x.alertKey === akey && /Alerted the crew|Alert cancelled/.test(x.did))) return
+    setAutoAlert({ key: akey, ts: Date.now() })
+    const send = () => void logAction({ crew: me, alertKey: akey, day, did: 'Alerted the crew', feel: null, note: urgent.map((x) => x.title).join('; ') + ' (sent automatically)' })
+    const t = window.setTimeout(() => { flushRef.current = () => {}; send() }, 10_000)
+    const iv = window.setInterval(() => setTick((n) => n + 1), 1000)
+    cancelRef.current = () => { window.clearTimeout(t); window.clearInterval(iv); flushRef.current = () => {} }
+    // leaving the screen does not cancel it: the alert goes at once
+    flushRef.current = () => { window.clearTimeout(t); window.clearInterval(iv); send() }
+    window.setTimeout(() => window.clearInterval(iv), 11_000)
+  })
+  const cancelRef = useRef<() => void>(() => {})
+  const flushRef = useRef<() => void>(() => {})
+  useEffect(() => () => flushRef.current(), [])
+  const autoLeft = autoAlert ? Math.max(0, 10 - Math.floor((Date.now() - autoAlert.ts) / 1000)) : 0
+  const autoCancelled = autoAlert ? actions.some((x) => x.alertKey === autoAlert.key && x.did === 'Alert cancelled') : false
   const justSaved = useRef(false)
   const [err, setErr] = useState('')
   // values far from usual, or past a fixed "act now" line, are saved at once (so nothing is lost) and then
@@ -68,12 +92,13 @@ export function CheckIn({ open }: { open?: string }) {
       if (raw === undefined || raw === '') continue
       const v = Number(String(raw).replace(',', '.'))
       const [lo, hi] = IND[k].range
-      const [hardLo, hardHi] = IND[k].limits ?? IND[k].range
+      const [hardLo0, hardHi] = IND[k].limits ?? IND[k].range
+      // a meter in mmol/L shows 1 to 35: let it through to the unit question rather than refusing it
+      const hardLo = k === 'glucose' ? 1 : hardLo0
       if (Number.isNaN(v) || v < hardLo || v > hardHi) { bad.push(`${lab(k)}: ${raw} was not saved. Enter a value between ${hardLo} and ${hardHi} ${IND[k].unit}.`); continue }
       // a blood sugar under 35 is either a dangerous low in mg/dL or a reading in mmol/L: ask before acting on it
-      if (k === 'glucose' && v < 35 && dirty.includes(k)) { setUnitAsk(v); continue }
       values[sk(k)] = v
-      if (dirty.includes(k) && (v < lo || v > hi || NOW_LINE[k]?.(v) || (k === 'temp_oral' && v < 35) || (k === 'glucose' && v < 35))) check.push(k)
+      if (dirty.includes(k) && (v < lo || v > hi || NOW_LINE[k]?.(v) || (k === 'temp_oral' && v < 35)) && !(k === 'glucose' && v < 35)) check.push(k)   // under 35: the unit card asks instead
     }
     // symptoms and every valid value are always saved, whatever is wrong with one number
     await saveEntry({ crew: me, day, values, symptoms: sym, meds, photos }, dirty.map(sk))
@@ -105,29 +130,15 @@ export function CheckIn({ open }: { open?: string }) {
   const routine = SYMPTOMS.filter((x) => !x.red_flag)
   const redFlags = SYMPTOMS.filter((x) => x.red_flag)
   const toggle = (id: string) => { setNoSym(false); setSym((p) => (p.includes(id) ? p.filter((x) => x !== id) : [...p, id])) }
-  const saveGlucose = async (mgdl: number) => {
-    const e = entries.find((x) => x.mission === mission.id && x.crew === me && x.day === day)
-    await saveEntry({ crew: me, day, values: { ...(e?.values ?? {}), glucose: mgdl }, symptoms: e?.symptoms ?? sym, meds: e?.meds ?? meds, photos: e?.photos ?? photos }, ['glucose'])
-    setUnitAsk(null)
-    setSpot((p) => ({ ...p, glucose: '' }))
-  }
-  const unitPrompt = unitAsk !== null ? (
-    <div className="banner strong" role="alert" data-testid="glucose-unit">
-      <p><strong>Blood sugar {unitAsk}: which unit did your meter show?</strong> Keel has not saved it yet.</p>
-      <div className="row wrap">
-        <button className="btn primary" onClick={() => void saveGlucose(Math.round(unitAsk * 18))} data-testid="unit-mmol">mmol/L (save as {Math.round(unitAsk * 18)} mg/dL)</button>
-        <button className="btn alert" onClick={() => void saveGlucose(unitAsk)} data-testid="unit-mgdl">mg/dL: it really is {unitAsk}</button>
-      </div>
-    </div>
-  ) : null
-  const prompts = (err || pending.length > 0 || unitAsk !== null) ? <div className="col" data-testid="checkin-prompts">{unitPrompt}{err && <p className="banner strong" role="alert">{err}</p>}
+  const unitPrompt = <GlucoseUnit />
+  const prompts = (<div className="col" data-testid="checkin-prompts">{unitPrompt}{err && <p className="banner strong" role="alert">{err}</p>}
       {pending.map((q) => (
         <div className="banner strong" role="alert" key={q.k}>
           <p><strong>{lab(q.k)}: {q.v} {IND[q.k].unit}</strong> {NOW_LINE[q.k]?.(q.v) ? 'is past a fixed safety line' : 'is far outside the usual range'}, so Keel saved it and is acting on it. {NOW_LINE[q.k]?.(q.v) ? <strong>Act now: {(today(me, day)?.findings.find((f) => (f.inds ?? []).includes(q.k) && f.kind === 'vital')?.action) ?? 'tell the medical officer now.'} </strong> : null}{NOW_LINE[q.k]?.(q.v) ? (sharingOn ? 'It is past a safety line, so it is now visible on the medical officer\'s and the commander\'s Crew screens (emergency sharing). They are not alerted.' : 'It is past a safety line. Emergency sharing is off, so nobody else has been shown it: tell the medical officer.') : q.k === 'glucose' && q.v < 35 ? `Did your meter show mmol/L? ${q.v} mmol/L is ${Math.round(q.v * 18)} mg/dL. If so, withdraw this and type ${Math.round(q.v * 18)}.` : (today(me, day)?.findings.some((f) => (f.inds ?? []).includes(q.k) && f.kind === 'vital') ? 'It is past a fixed line for today: it is on the medical officer\'s list; tell them today.' : q.k === 'temp_oral' && q.v < 35 ? 'Below 35.0 °C is usually a measurement problem: wait five minutes and repeat. If it repeats, tell the medical officer.' : 'It is not past a fixed safety line, so nobody else has been shown it.')} Is that what the device showed?</p>
           <div className="row wrap"><button className="btn primary" onClick={() => setPending((p) => p.filter((x) => x.k !== q.k))} data-testid={`confirm-${q.k}`}>Yes, that is right</button><button className="btn" onClick={() => void withdraw(q.k)} data-testid={`withdraw-${q.k}`}>No, a typing mistake: withdraw it</button></div>
           <p className="small">If you withdraw it, it stays in the log, struck through, and the medical officer still sees that it was entered.</p>
         </div>
-      ))}</div> : null
+      ))}</div>)
   const saveBtn = (
     <>
       {pending.length === 0 && <div className="sticky-save col">
@@ -162,7 +173,7 @@ export function CheckIn({ open }: { open?: string }) {
             </div>
           </>
         )}
-        {red && <p className="banner strong" role="alert"><strong>Do not wait.</strong> Save this check-in and tell the medical officer now, whatever else Keel shows. If you are the medical officer, tell the commander.</p>}
+        {red && <p className="banner strong" role="alert"><strong>Do not wait.</strong> Call out to the medical officer now, then save this check-in, whatever else Keel shows. If you are the medical officer, tell the commander.</p>}
       </Card>
 
       <div className="grid2">
@@ -184,6 +195,7 @@ export function CheckIn({ open }: { open?: string }) {
       {prompts}
       {saved && <div className="card" role="status" ref={(el) => { if (el && justSaved.current) { justSaved.current = false; el.scrollIntoView({ block: 'center' }) } }}><strong>Saved.</strong><p className="muted">Keel has re-checked your readings on this tablet with your new entries.</p>{(() => { const n = (today(me, day)?.findings ?? []).filter((f) => f.status === 'urgent').length; const urgent = (today(me, day)?.findings ?? []).filter((f) => f.status === 'urgent')
             return n > 0 ? <div className="col"><p className="banner strong"><strong>{n === 1 ? 'One item needs' : `${n} items need`} action now.</strong> See Today for what to do.</p>
+              {autoAlert && !autoCancelled && autoLeft > 0 && <div className="banner strong" role="alert"><p><strong>Alerting the medical officer and commander in {autoLeft} s.</strong></p><button className="btn" onClick={() => { cancelRef.current(); void logAction({ crew: me, alertKey: autoAlert.key, day, did: 'Alert cancelled', feel: null, note: 'typing mistake' }) }} data-testid="cancel-auto-alert">Cancel: it was a typing mistake</button></div>}
               {(() => { const akey = `alert|${urgent.map((x) => x.key).sort().join('+')}`; return !actions.some((x) => x.crew === me && x.did === 'Alerted the crew' && x.alertKey === akey) ? <button className="btn alert block" style={{ minHeight: 72 }} onClick={() => void logAction({ crew: me, alertKey: akey, day, did: 'Alerted the crew', feel: null, note: urgent.map((x) => x.title).join('; ') })} data-testid="alert-crew-checkin">{urgent.every((x) => x.cmoOnly && !x.patientIsCmo) ? 'Alert the medical officer now' : 'Alert the medical officer and commander now'}</button> : <p className="small"><strong>Alert sent.</strong></p> })()}</div> : null })()}<div className="row wrap"><button className="btn" onClick={() => go('today')}>See Today</button><a className="btn" href={href('sharing')}>Who can see this?</a></div></div>}
 
       <button className="btn block" aria-expanded={more} onClick={() => setMore((v) => !v)} data-testid="more-checkin">{more ? 'Hide the optional extras' : 'Add more: reaction test, exercise, measurements (optional)'}</button>

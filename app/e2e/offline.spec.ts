@@ -64,11 +64,15 @@ test('every screen works with the network disabled', async ({ page }) => {
     await page.getByTestId('more-checkin').click()
     await page.getByLabel(/Fingertip oxygen now/).fill('91')
     await page.getByTestId('save-checkin').first().click()
+    // an automatic alert counts down, with a cancel for typing mistakes
+    await expect(page.getByTestId('cancel-auto-alert')).toBeVisible()
     await nav(page, '#/today')
     await expect(page.getByTestId('today-status')).toContainText('Act now')
     await expect(page.getByTestId('today-action')).toContainText('Tell the medical officer now')
     await nav(page, '#/crew')
     await expect(page.getByTestId('crew-c2')).toContainText(/emergency sharing/)
+    // the act-now reading alerted the medical officer and commander automatically (leaving check-in sends it at once)
+    await expect(page.getByTestId('crew-alert').first()).toBeVisible()
     await nav(page, '#/checkin')
     await page.getByTestId('more-checkin').click()
     await page.getByLabel(/Fingertip oxygen now/).fill('97')
@@ -91,7 +95,7 @@ test('every screen works with the network disabled', async ({ page }) => {
     await expect(page.locator('main')).toContainText('Thermometer reading is in the fever range')
     // the thermometer box sits on the fever alert itself
     // while an "act now" item is open, other items are folded under "Not urgent"
-    const fold = page.locator('summary', { hasText: 'Not urgent' })
+    const fold = page.locator('summary', { hasText: 'After the above' })
     if (await fold.count()) await fold.first().click()
     await page.locator('a', { hasText: 'Thermometer reading is in the fever range' }).first().click()
     await expect(page.getByTestId('temp-now').first()).toBeVisible()
@@ -111,7 +115,7 @@ test('every screen works with the network disabled', async ({ page }) => {
   await test.step('An extreme reading is accepted after confirmation, and a mistyped one does not block the save', async () => {
     await nav(page, '#/checkin/measure')
     await page.getByLabel(/Heart rate now/).fill('170')
-    await page.getByLabel(/Blood sugar/).fill('5')
+    await page.getByLabel(/Blood sugar/).fill('0.5')
     await page.getByTestId('sym-headache').click()
     await page.getByTestId('save-checkin').first().click()
     await expect(page.getByText('Saved.', { exact: true })).toBeVisible()
@@ -124,6 +128,16 @@ test('every screen works with the network disabled', async ({ page }) => {
     await nav(page, '#/today')
     await expect(page.locator('main')).toContainText('150 or more')
     await expect(page.locator('#today-routine')).toContainText(/Exercise: on hold|No exercise until/)
+    // a blood sugar under 35 is saved at once as a dangerous low; the unit question stays on Today until answered
+    await nav(page, '#/checkin/measure')
+    await page.getByLabel(/Blood sugar/).fill('5.5')
+    await page.getByTestId('save-checkin').first().click()
+    await expect(page.getByTestId('glucose-unit')).toBeVisible()
+    await nav(page, '#/today')
+    await expect(page.getByTestId('glucose-unit')).toBeVisible()
+    await expect(page.locator('main')).toContainText('Take sugar now')
+    await page.getByTestId('unit-mmol').click()
+    await expect(page.getByTestId('glucose-unit')).toHaveCount(0)
     // a value withdrawn as a typing mistake stops counting, and stays visible in the log
     await nav(page, '#/checkin/measure')
     await page.getByLabel(/Blood sugar/).fill('45')

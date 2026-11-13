@@ -322,12 +322,15 @@ export function analyzeDay(
     }
     return { day, vals: [], log: [] }
   }
-  const run = (id: string, n: number): number[] => {
-    const v = rawSeries(m, crewId, id, entries)
+  const rawCache = new Map<string, number[]>()
+  const runAt = (id: string, n: number, at: number): number[] => {
+    if (!rawCache.has(id)) rawCache.set(id, rawSeries(m, crewId, id, entries))
+    const v = rawCache.get(id)!
     const out: number[] = []
-    for (let t = day; t > day - n - 3 && t >= 0 && out.length < n; t--) if (!Number.isNaN(v[t])) out.unshift(v[t])
+    for (let t = at; t > at - n - 3 && t >= 0 && out.length < n; t--) if (!Number.isNaN(v[t])) out.unshift(v[t])
     return out.length >= n ? out : []
   }
+  const run = (id: string, n: number): number[] => runAt(id, n, day)
   const massS = rawSeries(m, crewId, 'mass', entries)
   const pre = massS.slice(0, Math.max(1, m.pre_days)).filter((v) => !Number.isNaN(v)).sort((x, y) => x - y)
   const massNow = lastValid(massS, day, 10)
@@ -363,8 +366,12 @@ export function analyzeDay(
     }
     const sy: Record<string, number> = {}
     for (let q = Math.max(0, t - 2); q <= t; q++) for (const x of symptomsOn(m, crewId, q, entries)) sy[x] = (sy[x] ?? 0) + 1
-    return { ...f, u, sym: sy, alertDays: alert ? t - alert.start + 1 : 0, patternDays: 0 }
+    return { ...f, u, sym: sy, run: (id: string, n: number) => runAt(id, n, t), alertDays: alert ? t - alert.start + 1 : 0, patternDays: 0 }
   }
+  // a rule that looks at a run of days (several nights of high heart rate, a week of low mood) holds on day t
+  const runRule = (r: Rule) => (r.scope === 'vital' || r.scope === 'symptom') && r.urgency !== 'routine' && JSON.stringify(r.when).includes('"run"')
+  const runHolds = (r: Rule, t: number) => t >= 0 && evalCond(r.when, { ...featAt(t), val: {} })
+  const runStart = (r: Rule, t: number) => { let s = t; while (s > 0 && s > t - 30 && runHolds(r, s - 1)) s--; return s }
   // How an open notice has been read, day by day.  A reading is kept while its rule still holds, unless a
   // rule higher in the table (more specific or more serious) now applies: the headline does not flip
   // back and forth between equally plausible readings.
@@ -461,13 +468,18 @@ export function analyzeDay(
       const named = condIndicators(r.when)
       // a fixed rule dates from the day of the reading it is looking at, and carries those readings
       const vals = [...new Set(condVals(r.when))].filter((v) => force[v]?.vals.length)
-      const start = vals.length ? Math.min(...vals.map((v) => force[v].day)) : r.scope === 'symptom' ? symStart(r) : day
+      const start = vals.length ? Math.min(...vals.map((v) => force[v].day)) : r.scope === 'symptom' ? symStart(r) : runRule(r) ? runStart(r, day) : day
       const log = vals.flatMap((v) => force[v].log)
+      // on imported personal data a fixed rule looks at a value from the file, not a reading just taken
+      const fromFile = m.kind === 'personal' && log.length === 0 && r.scope === 'vital'
       // the medical officer closed it: it leaves Today (the reading stays in the log)
       const latestTs = log.length ? Math.max(...log.filter((q) => !q.void).map((q) => q.ts), 0) : mineE.find((q) => q.day === start)?.ts ?? 0
       if (r.urgency !== 'routine' && isClosed(closed, `open|${m.id}|${crewId}|${r.id}|${start}`, latestTs)) continue
       // an "act now" reading from an earlier day is no longer "now": it waits for the medical officer
-      const stale = r.urgency === 'now' && start < day   // an earlier day's reading: waiting for the medical officer, not an emergency now
+      // an earlier day's urgent item becomes "waiting for the medical officer" only twelve hours after it
+      // was entered (a tick at 23:55 is still "now" at 00:05)
+      const enteredTs = log.length ? Math.max(...log.filter((q) => !q.void).map((q) => q.ts), 0) : (mineE.find((q) => q.day === start)?.ts ?? 0)
+      const stale = r.urgency === 'now' && start < day && Date.now() - enteredTs > 12 * 3600e3
       // a later reading the same day is back on the safe side of this rule: say so, but keep it for the medical officer
       const lastLive = vals.map((v) => { const live = force[v].log.filter((q) => !q.void); return live.length ? live[live.length - 1] : undefined }).filter((q): q is Reading => !!q)
       // The latest reading the same day is "back on the safe side" only if it triggers NO fixed rule on that
@@ -492,11 +504,12 @@ export function analyzeDay(
       const repeatOk = r.scope === 'vital' && r.urgency !== 'routine' && lastLive.length > 0 && !!firstBad && lastLive[lastLive.length - 1].ts > firstBad.ts && !anyRuleOnLatest && !!waited
       // a repeat already back on the safe side, but taken too soon to count (blood sugar: under 15 minutes)
       const tooSoon = !repeatOk && !anyRuleOnLatest && !!firstBad && lastLive.length > 0 && lastLive[lastLive.length - 1].ts > firstBad.ts && !waited
-      findings.push(mk(r, r.scope, start, repeatOk || stale ? 'act' : URGENCY_STATUS[r.urgency ?? 'routine'], changes.filter((c) => named.includes(c.ind)).slice(0, 4), {
-        ...(tooSoon ? { action: `${r.action} Re-check at ${new Date(firstBad!.ts + waitMin * 60 * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}: your repeat (${lastLive[lastLive.length - 1].v}) came too soon to count.` } : {}),
+      findings.push(mk(r, r.scope, start, repeatOk || stale || fromFile ? (r.urgency === 'routine' ? 'watch' : 'act') : URGENCY_STATUS[r.urgency ?? 'routine'], changes.filter((c) => named.includes(c.ind)).slice(0, 4), {
+        ...(tooSoon ? { action: `${mine.includes('glucose') ? `Your readings disagree (${firstBad!.v}, then ${lastLive[lastLive.length - 1].v}): treat it as low to be safe. ` : ''}${r.action} Re-check at ${new Date(firstBad!.ts + waitMin * 60 * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}${mine.includes('glucose') ? '' : `: your repeat (${lastLive[lastLive.length - 1].v}) came too soon to count`}.` } : {}),
         ...(log.length ? { readings: log } : {}),
         ...(repeatOk ? { urgency: r.urgency, action: `${r.id.startsWith('R-V-GLU-LO') ? `Your repeat reading (${lastLive[lastLive.length - 1].v}) is back on the safe side, so no more sugar is needed: eat a snack or your next meal now.` : `Your repeat reading (${lastLive[lastLive.length - 1].v}) is back below this line.`} ${r.urgency === 'now' ? 'The first reading needed the medical officer at once: if you have not told them yet, tell them now.' : 'Tell the medical officer about the first reading today.'}`, tierReason: 'The first reading stays on the medical officer\'s list until they close it with a note.' } : {}),
-        ...(stale ? { urgency: 'today' as Urgency, action: `This reading from ${m.day_label ? `${m.day_label} ${start + 1}` : `Day ${start + 1}`} still waits for the medical officer. If you have not told them yet, tell them today; at once if you feel unwell.`, tierReason: 'It stays open until the medical officer closes it with a note.' } : {}),
+        ...(fromFile ? { urgency: 'today' as Urgency, action: `A value in your imported file (${m.day_label ? `${m.day_label} ${start + 1}` : `day ${start + 1}`}) is past this line. If it is recent and you feel unwell, contact a doctor; in an emergency call your local emergency number.`, tierReason: 'From imported data, not a reading just taken.' } : {}),
+        ...(stale && !fromFile ? { urgency: 'today' as Urgency, action: `This ${r.scope === 'symptom' ? 'item' : 'reading'} from ${m.day_label ? `${m.day_label} ${start + 1}` : `Day ${start + 1}`} still waits for the medical officer. If you have not told them yet, tell them today; at once if you feel unwell.`, tierReason: 'It stays open until the medical officer closes it with a note.' } : {}),
         ...(r.id === 'R-RED' ? { symptoms: redSyms.map((x) => SYM[x]?.label ?? x) } : {}),
         ...(r.id === 'R-RED' ? { cmoOnly: redSyms.every((x) => (SYM[x] as { commander?: boolean }).commander === false) } : {}),
       }))
@@ -644,6 +657,15 @@ export function analyzeDay(
   for (const fd of findings) {
     if (fd.kind !== 'vital' || fd.urgency === 'routine' || openItems.some((x) => x.ruleId === fd.ruleId && x.day === fd.start)) continue
     openItems.push({ key: `open|${m.id}|${crewId}|${fd.ruleId}|${fd.start}`, ruleId: fd.ruleId, title: RULE[fd.ruleId].title, day: fd.start, urgency: fd.urgency, category: fd.categories[0], ts: 0 })
+  }
+  // a run of days that met a "today" rule stays on the list after the run ends, until the medical officer closes it
+  for (const r of RULES.filter((q) => q.scope === 'vital' && runRule(q))) {
+    for (let t = day - 1; t >= Math.max(0, day - 30); t--) {
+      if (!runHolds(r, t) || runHolds(r, t + 1)) continue
+      const s = runStart(r, t)
+      if (!openItems.some((x) => x.ruleId === r.id && x.day === s)) openItems.push({ key: `open|${m.id}|${crewId}|${r.id}|${s}`, ruleId: r.id, title: r.title, day: s, urgency: r.urgency, category: r.categories[0], ts: 0, settled: true })
+      t = s
+    }
   }
   openItems.sort((a, b) => b.day - a.day)
   // closed items leave the list; a reading after the closure note reopens them

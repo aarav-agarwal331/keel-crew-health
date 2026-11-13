@@ -228,6 +228,13 @@ describe('end to end on the demo mission', () => {
     const e: Entry = { key: 'k', mission: m.id, crew: 'c0', day: 100, values: {}, symptoms: [], redFlags: ['chest_pain'], ts: 0 }
     expect(run('c0', 100, [e]).openItems.some((x) => x.ruleId === 'R-RED')).toBe(true)
   })
+  it('a run of days that met a "today" rule stays on the medical officer list after the run ends', () => {
+    const es: Entry[] = [1, 1, 1, 4, 4].map((v, i) => ({ key: `k${i}`, mission: m.id, crew: 'c0', day: 100 + i, values: { mood: v }, symptoms: [], ts: 0 }))
+    // the rule first holds on the third low day
+    expect(run('c0', 102, es.slice(0, 3)).openItems.some((x) => x.ruleId === 'R-V-MOOD' && x.day === 102)).toBe(true)
+    expect(run('c0', 104, es).openItems.some((x) => x.ruleId === 'R-V-MOOD' && x.day === 102)).toBe(true)
+    expect(run('c0', 104, es).findings.some((x) => x.ruleId === 'R-V-MOOD')).toBe(false)
+  })
   it('a red-flag symptom entered at check-in is urgent immediately', () => {
     const e: Entry = { key: 'k', mission: m.id, crew: 'c0', day: 100, values: {}, symptoms: ['chest_pain'], ts: 0 }
     const a = run('c0', 100, [e])

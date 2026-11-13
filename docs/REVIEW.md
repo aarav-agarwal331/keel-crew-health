@@ -552,6 +552,55 @@ Medium-severity findings fixed in the same pass:
   hand-set exercise cut as a second route from real data into the on-board thresholds; the replay no
   longer compares a template peak with a four-day mean.
 
-## Round 12
+## Round 12 (2026-11-12, fresh reviewers, redeployed build)
 
-See the end of this file once the twelfth round has run.
+Judge's scores: impact 7, creativity 8, validity 8, relevance 8, presentation 6 (38 of 50), "nominate:
+yes", with one high-severity issue. The astronaut found three, the flight surgeon one, and the
+statistician one (the first since round 3).
+
+| # | Reviewer | High-severity finding | Fix |
+|---|---|---|---|
+| 1 | Judge | The finished replay ended on a green "Steady" while the same screen said nobody had closed the notice. | The replay ends four days after onset, while the notice is still open, and says what happens next. |
+| 2 | Astronaut | After a dangerous reading Check-in said "they are not alerted", and nobody was until the button was pressed. | An automatic alert after 10 seconds, with a cancel button for typing mistakes; leaving the screen sends it at once. |
+| 3 | Astronaut | The act-now block and alert button appeared about two screens above the measurements just typed. | Prompts sit next to the save button; the sticky save bar hides while a prompt waits. |
+| 4 | Astronaut | Sharing promised something the Crew screen did not do. | Sharing text rewritten to match what each role sees, generated from the same settings. |
+| 5 | Flight surgeon | Imported CSV blood sugar had no unit check, and same-day readings were averaged. | Blood pressure, blood sugar and oxygen keep the most extreme reading of the day; a file mostly under 35 is converted from mmol/L, otherwise values under 35 are dropped and listed; imported values past a safety line say they are from a file and point to a doctor, not to a crewmate. |
+| 6 | Statistician | The Method screen still said phase handling makes early problems "much harder to see" and that bed rest "roughly halves false flags". | Rewritten to match the results: no measured cost in simulation, bed rest not significant and at about chance level. |
+
+Medium-severity findings fixed in the same pass:
+
+- **Stale urgent items** (flight surgeon): an "act now" item from an earlier day becomes "waiting for the
+  medical officer" only 12 hours after the reading was entered.
+- **Commander as backup** (flight surgeon): the commander can record "handled, restrictions stay" but not
+  medical clearance; for an alert about the medical officer, the commander's acknowledgement counts.
+- **Medical-officer-only items** (flight surgeon): they put the commander's tier on hold again, with the
+  reason shown only as "a private matter for the medical officer"; the commander's alert banner stays
+  hidden for alerts about such items. Sharing says so.
+- **Emergency consent** (flight surgeon): the medical officer sees what every open item is and its
+  readings, since they may be asked to clear it.
+- **Items from a run of days** (flight surgeon): a week of low mood or nights of high heart rate stay on
+  the medical officer's list after the run ends, keyed by the day the rule first held.
+- **Blood sugar under 35** (flight surgeon): saved at once and treated as a dangerous low, with the
+  unit question kept on Check-in and Today until answered (it was held unsaved, and readings under 10 were
+  refused outright, so a typical 5.5 mmol/L could not be entered at all).
+- **Unanswered alert** (flight surgeon): after five minutes without the medical officer's acknowledgement,
+  a button alerts the whole crew.
+- **Red-flag order** (flight surgeon): "Call out to the medical officer now, then save."
+- **Early warning by configuration** (statistician): the early-warning figures name the configuration and
+  add heart rate alone (+16 and +8, both counting the day of onset).
+- **Predictive value for imports** (statistician): leads with the watch maker's own resting heart rate
+  (about 1 in 30 at the alert tier), the input imports actually carry.
+- **"Headline"** (statistician): the over-budget two-sensor configuration is called the linking analysis
+  everywhere.
+
+Low-severity items fixed: METHOD.md upper-bound direction and bed-rest wording, the simulator's illness
+spread cap disclosed, the simulated-illness tier flip reported, "caught" replaced by the detection window,
+the diastolic CSV column. Not done, with reasons: grams of sugar and hand-washing before a repeat reading
+(the sources Keel cites do not say either; no source was found and opened), new red-flag symptoms
+(black or bloody stool, sudden hearing loss: these change the indicator file and the research code version;
+listed for a clinician), removing "Same as usual" for fluids, and limiting light exercise to detector-only
+notices (both judgement calls for a clinician).
+
+## Round 13
+
+See the end of this file once the thirteenth round has run.
