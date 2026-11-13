@@ -85,7 +85,8 @@ export function Crew() {
       )}
 
       <div className="grid2">
-        {rows.map(({ c, a, r, v, s, open, extras }) => (
+        {/* anyone with an urgent item this role may see comes first (order never reveals a private one) */}
+        {[...rows].sort((x, y) => Number(!!y.v?.findings.some((f) => f.emergency)) - Number(!!x.v?.findings.some((f) => f.emergency))).map(({ c, a, r, v, s, open, extras }) => (
           <section className="card" key={c.id} data-testid={`crew-${c.id}`}>
             <div className="card-h"><div className="col" style={{ gap: 0 }}><h2>{c.name}</h2><span className="small muted">{c.role_label}</span></div></div>
             {!a || !r || !v ? <p className="muted">No data.</p> : <>
@@ -97,8 +98,9 @@ export function Crew() {
                   ? <ul className="list small">{shown.map((x, i) => <li key={i}>{x.text}</li>)}</ul>
                   : c.role === 'commander' ? <p className="small muted">This is the commander's own card. The reasons are on their own Today screen.</p>
                   : r?.reasons.some((x) => x.category === 'private') ? <p className="small muted"><StatusTag status="private" label="" size={16} /> A private medical matter; the medical officer is handling it. Please do not ask {c.name.split(' ')[0]} about it.</p>
-                  : <p className="small muted"><StatusTag status="private" label="" size={16} /> Reason not shared. Ask {c.name.split(' ')[0]}.</p>
+                  : <p className="small muted"><StatusTag status="private" label="" size={16} /> {v.findings.some((x) => x.emergency) ? 'Other reasons not shared.' : `Reason not shared. Ask ${c.name.split(' ')[0]}.`}</p>
               })()}
+              {role === 'commander' && v.findings.some((x) => x.emergency) && <p><StatusTag status="urgent" label="Act now: an urgent item is open" /></p>}
               {v.findings.filter((x) => x.emergency).map((x) => (
                 <div key={x.key} className="banner strong">
                   <p><strong>{x.title}{x.symptoms?.length ? `: ${x.symptoms.join('; ').toLowerCase()}` : ''}.</strong> <span className="small">(shared automatically: emergency sharing)</span></p>

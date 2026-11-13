@@ -1003,6 +1003,37 @@ an agency), °F and fraction checks on imports, a low-body-temperature rule (for
 no-data days in the 2-of-3 score (needs a rerun), the `chance_note` string in the result file (needs a
 rerun; the screen corrects it).
 
-## Round 23
+## Round 23 (2026-11-12, fresh reviewers, redeployed build)
 
-See the end of this file once the twenty-third round has run.
+Judge's scores: impact 7, creativity 8, validity 8, relevance 8, presentation 6 (37 of 50), "nominate:
+yes", with one high-severity issue. The astronaut found two, the flight surgeon one (the same as the
+judge's), the statistician none.
+
+| # | Reviewer | High-severity finding | Fix |
+|---|---|---|---|
+| 1 | Judge, astronaut, flight surgeon | Today said "Your commander sees: Talk to the medical officer first, with no reason", but under emergency sharing the commander sees the urgent items and values; the commander's card said "Reason not shared. Ask Lucía." directly above them. | Today builds the line from the commander's actual view (items with what they are, and whether emergency sharing or sharing settings put them there); the commander's card says "Other reasons not shared" when emergency items are shown; the line is not shown on the commander's own tablet. |
+| 2 | Astronaut (flight surgeon medium) | The blood-sugar unit could stay "not set yet", so a mmol/L reading was handled as mg/dL. | No blood sugar is saved until the person chooses their meter's unit (the guided demo sets mg/dL, as its banner says); end-to-end tested. |
+
+Medium-severity findings fixed in the same pass:
+
+- **Withdrawn act-now readings** (flight surgeon): an act-now item, even one withdrawn as a typing
+  mistake, keeps the commander's tier on hold until the medical officer closes it.
+- **Routine items** (flight surgeon): a routine item involving the medical officer gives "Worth a look",
+  not a hold the medical officer cannot clear.
+- **Crew order and urgency** (judge, astronaut): crew members with a visible urgent item come first; the
+  commander's card shows "Act now: an urgent item is open".
+- **Rule variants** (flight surgeon): the Guide lists the fixed variants written into the code.
+- **Personal against fixed for heart rate alone** (statistician): Validation shows it for the
+  configuration imports run on (+13, 0 to 26, notice; +15, 5 to 26, alert; paired).
+- **Wording** (statistician, judge, flight surgeon): "may come" for the activity share; the shipped
+  model's alert rate by tier; the bed-rest p-value moved to the comparison it belongs to; README cell and
+  "on the simulated training missions"; the context note reads "also open, shown to the medical officer
+  only"; the high-sugar rule says "wash and repeat now".
+
+Not done, with reasons: a free-text "something else" note, a private "request a conversation" button for
+self-managed items, °F detection on imports, receiving-side re-alerting, a paired activity-versus-heart
+-rate test and the `chance_note` string (pipeline reruns).
+
+## Round 24
+
+See the end of this file once the twenty-fourth round has run.

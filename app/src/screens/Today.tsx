@@ -1,3 +1,5 @@
+import { defaultSharing } from '../core/sharing'
+import { viewFor } from '../core/visibility'
 import { readiness, READY_LABEL } from '../core/readiness'
 import { SYMPTOMS } from '../core/mission'
 import { alertFields, alertState, contextNote } from '../core/alerts'
@@ -108,7 +110,7 @@ export function Today() {
           <div className="col" style={{ gap: 4, color: 'var(--text)' }}>
             <h1>{a.staleDays >= 2 && !primary ? 'No recent data' : STATUS_LABEL[shown]}</h1>
             <p className="muted">{primary ? primary.title : a.staleDays >= 2 ? `No readings for ${a.staleDays} days, so Keel cannot say how you are. Wear the sensor tonight and do a check-in.` : shown === 'watch' && !primary ? `No action needed yet. Keep an eye on: ${softAreas.join(', ')}.` : a.status === 'steady' && changes.length ? `Nothing needs action. ${changes.length === 1 ? 'One reading is' : `${changes.length} readings are`} a little off your usual; Keel is watching.` : HEADLINE[a.status]}</p>
-            <p className="small muted" data-testid="commander-sees">Your commander sees: {READY_LABEL[readiness(a).tier]}, with no reason.</p>
+            {mission.crew.find((c) => c.id === me)?.role !== 'commander' && <p className="small muted" data-testid="commander-sees">Your commander sees: {READY_LABEL[readiness(a).tier]}{(() => { const cv = viewFor('commander', a, sharing[me] ?? defaultSharing()); const n = cv.findings.filter((f) => f.title).length; return n ? `, plus ${n === 1 ? 'one item' : `${n} items`} with what it is${cv.findings.some((f) => f.emergency) ? ' and the value entered (emergency sharing)' : ' (your sharing settings)'}; nothing else.` : ', with no reason given.' })()}</p>}
             {primary?.kind === 'personal' && <p className="small muted" data-testid="based-on">{Object.entries(a.features.sym ?? {}).some(([, v]) => v > 0) ? `Triggered by readings that drifted from your normal, together with symptoms you reported in the last three days (${Object.entries(a.features.sym ?? {}).filter(([, v]) => v > 0).map(([k]) => SYMPTOMS.find((x) => x.id === k)?.label.toLowerCase() ?? k).join(', ')}).` : 'Triggered by readings that drifted from your normal, with no symptoms reported.'}</p>}
           </div>
         </div>
@@ -134,7 +136,7 @@ export function Today() {
             const onlyCmo = urgentNow.every((x) => x.cmoOnly && !x.patientIsCmo)
             const on = sharing[me]?.emergency !== false
             return <div className="col">
-              {auto.counting && <div className="banner strong" role="alert"><p><strong>Alerting the medical officer and commander in {auto.autoLeft} s.</strong></p><p className="small" data-testid="cancel-auto-alert-today">A typing mistake? Withdraw that reading in the list below; the alert then goes only for anything else.</p></div>}
+              {auto.counting && <div className="banner strong" role="alert"><p><strong>Alerting the medical officer and commander in {auto.autoLeft} s.</strong></p><p className="small" data-testid="cancel-auto-alert-today">A typing mistake? Withdraw that reading on Check-in; the alert then goes only for anything else.</p></div>}
               {!sent && <button className="btn alert block" style={{ minHeight: 72, fontSize: '1.2rem' }} onClick={() => void logAction({ crew: me, alertKey: akey, day, did: 'Alerted the crew', feel: null, ...alertFields(urgentNow, '', contextNote(a.findings)) })} data-testid="alert-crew">{onlyCmo ? 'Alert the medical officer now' : 'Alert the medical officer and commander now'}</button>}
               {sent && !auto.escalated && !acks.some((x) => /medical officer/.test(x.note)) && Date.now() - sent.ts > 5 * 60e3 && <button className="btn alert block" onClick={() => void logAction({ crew: me, alertKey: akey, day, did: 'Alerted the crew', feel: null, ...alertFields(urgentNow, ' (no answer after 5 minutes: sent again)') })} data-testid="alert-again">No answer yet: alert them again</button>}
               {sent && <p className="banner strong" role="status"><strong>Alert sent at {new Date(sent.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}.</strong> {acks.length ? acks.map((x) => `Acknowledged ${x.note} at ${new Date(x.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}.`).join(' ') : 'Not acknowledged yet: it stays at the top of their Crew screens until the medical officer does.'}</p>}

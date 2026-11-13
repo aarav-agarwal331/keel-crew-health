@@ -423,7 +423,7 @@
     "max": 299.99
    },
    "summary": "The reading you entered is well above the usual range. One reading proves nothing.",
-   "action": "Repeat the reading in two hours and tell the medical officer today.",
+   "action": "Wash and dry your hands and repeat the reading now; if it is still 200 or more, tell the medical officer today.",
    "steps": [
     "Clean the fingertip and wipe away the first drop.",
     "Note when you last ate."

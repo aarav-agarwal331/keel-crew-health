@@ -57,6 +57,7 @@ test('capture for review', async ({ page }) => {
   // entering readings: a low blood sugar, then a normal repeat; then an extreme heart rate
   await nav(page, '#/more'); await page.getByTestId('who').selectOption('c2'); await page.getByRole('button', { name: 'Back to the demo day' }).click()
   await nav(page, '#/checkin/measure')
+  await page.getByTestId('meter-mg').click()
   await page.getByLabel(/Blood sugar/).fill('50'); await page.getByTestId('save-checkin').first().click(); await expect(page.getByText('Saved.', { exact: true })).toBeVisible()
   await page.getByLabel(/Blood sugar/).fill('85'); await page.getByTestId('save-checkin').first().click(); await page.waitForTimeout(300)
   await page.getByLabel(/Heart rate now/).fill('170'); await page.getByTestId('save-checkin').first().click(); await page.waitForTimeout(400)

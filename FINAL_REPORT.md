@@ -83,7 +83,7 @@ source, how soon and who should know. No server, no language model.
    fixed threshold includes zero in both windows. The detector choice is arbitrary among
    equals and was made by a rule written during review.
 6. **Nothing was pre-registered.** The window, the metric, the chance estimate and the headline itself
-   changed across twenty-two review rounds. Everything is in `DECISIONS.md`. Intervals hold thresholds
+   changed across twenty-three review rounds. Everything is in `DECISIONS.md`. Intervals hold thresholds
    fixed and are not corrected for multiple comparisons.
 7. **The simulator's illness response was fitted on episodes from people who are also evaluated** (47 of the 107 episodes belong to its 55 calibration people; the fit used 38 curves with enough baseline). Results on the
    132 people its fits did not use are reported beside it; they rest on 60 episodes.

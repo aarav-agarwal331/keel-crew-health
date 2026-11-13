@@ -27,7 +27,7 @@ export function readiness(a: DayAnalysis): Readiness {
   const reasons: Readiness['reasons'] = []
   // the medical officer's "not cleared" and any open safety item outrank everything, including missing data
   const restrictedHold = !!a.restricted
-  const openNow = (a.openItems ?? []).some((x) => !x.withdrawn && !x.settled)
+  const openNow = (a.openItems ?? []).some((x) => !x.settled)
   if (a.learning || a.staleDays >= 2) {
     if (restrictedHold || openNow) return { tier: 'hold', reasons: [{ category: 'private', text: restrictedHold ? 'Not yet cleared by the medical officer' : 'A safety item is still open with the medical officer' }] }
     return { tier: 'unknown', reasons: [] }
@@ -37,13 +37,15 @@ export function readiness(a: DayAnalysis): Readiness {
     if (t === 'hold' || (t === 'caution' && tier === 'go')) tier = t
   }
   if (restrictedHold) { tier = 'hold'; reasons.push({ category: 'private', text: 'Not yet cleared by the medical officer' }) }
+  // an act-now item, even one withdrawn as a typing mistake, holds until the medical officer closes it
+  if ((a.openItems ?? []).some((x) => x.urgency === 'now' && !x.settled)) { bump('hold'); reasons.push({ category: 'private', text: 'An urgent item is still open with the medical officer' }) }
   for (const f of a.findings) {
     // a symptom marked "medical officer only" still puts the tier on hold (nobody goes on a spacewalk with it),
     // but its reason is filed under a private label so the commander never sees what it is
     if (f.cmoOnly && !f.patientIsCmo) { bump('hold'); reasons.push({ category: 'private', text: 'A private matter for the medical officer' }); continue }
     if (f.crewWide) continue
     // a self-managed item (a late night, a missed session) is worth a look, not a reason to stop someone working
-    if (f.status === 'urgent' || f.tier !== 'self') bump('hold')
+    if (f.status === 'urgent' || (f.tier !== 'self' && f.status === 'act')) bump('hold')
     else bump('caution')
     reasons.push({ category: f.categories[0] ?? 'symptoms', text: f.title })
   }

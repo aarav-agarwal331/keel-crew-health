@@ -49,6 +49,7 @@ export function CheckIn({ open }: { open?: string }) {
   const [meterUnit, setMeterUnit] = useMeterUnit()
   // a dangerous reading the crew member has confirmed is no longer a typing mistake: its alert cannot be cancelled
   const [confirmed, setConfirmed] = useState(false)
+  useEffect(() => { if (open === 'demo' && meterUnit === null) setMeterUnit('mg') }, [open, meterUnit])
   // a second value for the same reading within a minute is often a corrected typing mistake: ask
   const [replaceAsk, setReplaceAsk] = useState<{ k: string; prev: number; prevTs: number; now: number }[]>([])
   const [pvt, setPvt] = useState<number | null>(existing?.values.pvt_rt ?? null)
@@ -80,6 +81,8 @@ export function CheckIn({ open }: { open?: string }) {
       let v = Number(String(raw).replace(',', '.'))
       if (k === 'glucose') {
         // a meter's own out-of-range readouts are the most dangerous readings: keep them, past the lines
+        // the unit is chosen once, before the first blood sugar is saved: no guessing between mg/dL and mmol/L
+        if (meterUnit === null) { bad.push(`Blood sugar: ${raw} was not saved. Choose which unit your meter shows (just above the field), then save again.`); continue }
         const mg = toMgdl(String(raw), meterUnit)
         if (mg === null) { bad.push(`Blood sugar: ${raw} was not saved. That is more than a meter can show in ${meterUnit === 'mmol' ? 'mmol/L' : 'mg/dL'}: check which unit your meter shows.`); continue }
         v = mg

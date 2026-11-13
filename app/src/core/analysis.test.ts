@@ -278,7 +278,7 @@ describe('end to end on the demo mission', () => {
     expect(alertFields([{ title: 'Serious symptom', cmoOnly: true }]).cmoOnly).toBe(true)
     expect(alertFields([{ title: 'Serious symptom', cmoOnly: true, patientIsCmo: true }]).cmoOnly).toBe(false)
     // context about a non-urgent notice goes to the medical officer's copy only
-    const ctx = alertFields([{ title: 'Heart rate 150 or more' }], ' (sent automatically)', ' (for the medical officer only, also open: "notice")')
+    const ctx = alertFields([{ title: 'Heart rate 150 or more' }], ' (sent automatically)', ' (also open, shown to the medical officer only: "notice")')
     expect(ctx.note).toContain('also open')
     expect(ctx.cmdNote).not.toContain('also open')
   })

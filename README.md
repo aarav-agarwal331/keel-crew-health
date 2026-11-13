@@ -36,7 +36,7 @@ that is the model imported watch data runs on (on Fitbit's
 own daily resting heart rate it gives about one alert a month, as budgeted, and about a fifth over its
 budget at the alert tier). The full on-board model is tested in simulation only.
 Useful early warning was not shown, most alerts are false, and Keel's detector is itself a simple
-personal rule, because a more complex one did not earn its place. Its main contribution is the offline safety, sharing and action loop; detection is one
+personal rule, because a more complex one did not earn its place on the simulated training missions. Its main contribution is the offline safety, sharing and action loop; detection is one
 input to it.
 
 ## What is different
@@ -65,7 +65,7 @@ Real wearable data: 251 people, 107 dated illness episodes (Stanford COVID-19 we
 
 | Configuration, notice tier | Flagged | By luck | **Above luck** (95% interval) | False alerts per person-month |
 |---|---|---|---|---|
-| **Heart rate alone, thresholds from other real people (the import model), originally planned window** | 56% | 43% | **+13 (4 to 24)** |
+| **Heart rate alone, thresholds from other real people (the import model), originally planned window** | 56% | 43% | **+13 (4 to 24)** | 0.99 |
 | … the same, in the narrower window used elsewhere in this table | 50% | 31% | +19 (9 to 28) | 0.99 |
 | Heart rate + 7-day activity, thresholds from other real people (5-fold over people) | 64% | 34% | +30 (20 to 39) | 0.99 |
 | Heart rate + daily steps, thresholds from other real people | 63% | 34% | +28 (19 to 38) | 0.98 |

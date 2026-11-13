@@ -40,7 +40,7 @@ export function Guide({ focus }: { focus?: string }) {
         <p className="small muted">Keel gives first steps (rest, fluids, a repeat reading, sugar for a low blood sugar) but never recommends medication; that is for the medical officer with the onboard medical checklist. Some fixed thresholds come from public clinical guidance for adults on Earth; others (for example heart rate 35, 120 and 150, and the severe blood-pressure and blood-sugar lines) are provisional values we chose, marked as such in each rule. No threshold has been reviewed by a clinician; values without a cited source are marked provisional in the rule below. A fixed rule looks at every reading from the most recent day that has one, and anything needing attention now or today stays on the medical officer's list until they close it with a note. "Steady" on the Today screen means no change was detected, not that you are well.</p>
       </Card>
       <Card title="Everything Keel can recommend" id="actions">
-        <p className="small muted">The complete list of {RULES.length} rules. Each has one action, how soon, who should know, and where the advice comes from. Nothing else can appear on an alert.</p>
+        <p className="small muted">The complete list of {RULES.length} rules. Each has one action, how soon, who should know, and where the advice comes from. Apart from a few fixed variants written into the code (a repeat reading that counts, sugar on the fingertip after a low, a meter unit not yet confirmed, an early illness notice, a value from an imported file, and the crewmate and backup wording), nothing else can appear on an alert.</p>
         {RULES.map((r) => (
           <details key={r.id}>
             <summary>{r.title}</summary>

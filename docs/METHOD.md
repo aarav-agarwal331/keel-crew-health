@@ -446,8 +446,8 @@ the same code version). Real data: 251 people, 107 illness episodes, two sensors
   bed rest is real), and the learned shift adds nothing beyond widening the band (it is only +1.0 bpm, interquartile range −1 to
   5.5, from 13 volunteers). The same pulse-only
   2-of-3 rule flags 11 of 31 (35%) 14-day stretches away from any transition, the plain baseline's 9 of 14 (64%) is higher but not distinguishable from
-  that; those stretches are scored without the widened band, so the phase-handling rule's own chance level
-  was not measured and its 4 of 14 (29%) cannot be compared with chance (Fisher's exact p about 0.1, and the 31 stretches come from only 15 people). The bed-rest
+  that (Fisher's exact p about 0.1, treating the 31 stretches from only 15 people as independent); those stretches are scored without the widened band, so the phase-handling rule's own chance level
+  was not measured and its 4 of 14 (29%) cannot be compared with chance. The bed-rest
   variant is not the app's detector: it applies the 2-of-3 rule to pulse alone, with a 4-day adaptation
   constant and a 2.0 bpm floor (the app: the same rule over all its indicators, 6 days, 1.5 bpm).
 - **Simulator against reality.** The pass marks were set during review, not in advance. What passes
