@@ -84,7 +84,11 @@ export function CheckIn({ open }: { open?: string }) {
         // a meter's own out-of-range readouts are the most dangerous readings: keep them, past the lines
         // nothing typed is ever thrown away: with no unit chosen yet, 35 or more can only be mg/dL (mmol/L meters stop
         // near 33); under 35 is saved as a possible low, with sugar advised only if the person feels low, and the unit is asked
-        const mg = toMgdl(String(raw), meterUnit ?? 'mg')
+        let mg = toMgdl(String(raw), meterUnit ?? 'mg')
+        // with mmol/L set, a value no mmol/L meter can show (35 to 600) can only be mg/dL: keep it as mg/dL and say so,
+        // rather than refusing what may be a real low
+        const n0 = Number(String(raw).replace(',', '.'))
+        if (mg === null && meterUnit === 'mmol' && n0 >= 35 && n0 <= 600) { mg = n0; bad.push(`Blood sugar: ${raw} is more than an mmol/L meter can show, so it was saved as ${raw} mg/dL. Check which unit your meter shows (top of the screen). If you feel shaky, sweaty or confused, take sugar now.`) }
         if (mg === null) { bad.push(`Blood sugar: ${raw} was not saved. That is more than a meter can show in ${meterUnit === 'mmol' ? 'mmol/L' : 'mg/dL'}: check which unit your meter shows.`); continue }
         v = mg
       }
@@ -175,7 +179,7 @@ export function CheckIn({ open }: { open?: string }) {
         </section> : null
       })()}
       <h1>Check-in</h1>
-      <p className="muted">{dayLabel(mission, day)}. Four quick answers, about a minute. Stored on your tablet; {mission.kind === 'personal' ? 'this is your own data and nobody else sees it; for anything urgent, call your local emergency number.' : sharingOn ? 'anything urgent alerts the medical officer and commander (for a serious symptom the commander is told only that you need the medical officer, never which one) ten seconds after you save (at once if you leave this screen), unless you withdraw a typing mistake.' : 'emergency sharing is off: anything urgent sends an alert without the reason.'} <a href={href('sharing')}>Who sees what</a></p>
+      <p className="muted">{dayLabel(mission, day)}. Four quick answers, about a minute. {mission.kind === 'personal' ? 'Your own data; nobody else sees it. For anything urgent, call your local emergency number.' : sharingOn ? 'Anything urgent alerts the medical officer and commander ten seconds after you save, unless you withdraw a typing mistake.' : 'Emergency sharing is off: anything urgent sends an alert without the reason.'} <a href={href('sharing')}>Who sees what</a></p>
       {!existing && !Number.isNaN(rawSeries(mission, me, 'mood', [])[day]) && <p className="small muted">Today's check-in in this demo came from the simulation. Anything you save here is added to it.</p>}
 
       <Card title="1. How are you feeling?" right={<a className="tiny" href={href('sharing')}>Medical officer sees mood: {LEVELS.find((l) => l.id === (sharing[me]?.cmo.cognition ?? 'none'))?.label.toLowerCase()} · commander: a tier only</a>}>

@@ -187,6 +187,8 @@ export interface Finding {
   cmoOnly?: boolean
   /** "thoughts of harming someone else": the commander is told there is a crew safety concern, not which symptom */
   safety?: boolean
+  /** for a readings notice: the key its closure by the medical officer is saved under */
+  closeKey?: string
   /** the patient is the crew medical officer, so the commander is the backup */
   patientIsCmo?: boolean
   /** red-flag symptom names behind an R-RED finding (shown to the medical officer under emergency sharing) */

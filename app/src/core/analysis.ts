@@ -213,7 +213,7 @@ export const STATUS_LABEL: Record<Status, string> = {
 
 /** Rules whose advice includes stopping or holding exercise.  While one is open, "do today's session"
  *  is never shown and the routine shows exercise on hold. */
-export const NO_EXERCISE = new Set(['R-RED', 'R-V-HR1S', 'R-V-HR1R', 'R-V-SPO2', 'R-V-TEMP-HI', 'R-V-TEMP', 'R-V-HR0', 'R-V-HR2', 'R-V-HR1', 'R-V-HR', 'R-V-BP-LO2', 'R-V-BP-LO', 'R-V-BP-HI2', 'R-V-GLU-LO2', 'R-V-GLU-LO', 'R-SYM-ILL', 'R-ILL', 'R-CO2-HI', 'R-SPE-V', 'R-SPO2'])
+export const NO_EXERCISE = new Set(['R-RED', 'R-V-FEVER-PLUS', 'R-V-HR1S', 'R-V-HR1R', 'R-V-SPO2', 'R-V-TEMP-HI', 'R-V-TEMP', 'R-V-HR0', 'R-V-HR2', 'R-V-HR1', 'R-V-HR', 'R-V-BP-LO2', 'R-V-BP-LO', 'R-V-BP-HI2', 'R-V-GLU-LO2', 'R-V-GLU-LO', 'R-SYM-ILL', 'R-ILL', 'R-CO2-HI', 'R-SPE-V', 'R-SPO2'])
 /** spot readings typed at check-in are kept apart from the wearable's overnight series, so a fingertip
  *  check never overwrites the overnight value that prompted it */
 export const SPOT_KEY: Record<string, string> = { rhr: 'rhr_spot', spo2: 'spo2_spot' }
@@ -511,7 +511,11 @@ export function analyzeDay(
     if ((r.scope === 'symptom' || r.scope === 'vital') && evalCond(r.when, f) && (r.id !== 'R-V-GLU-LO-R' || lowSpanOk())) {
       const named = condIndicators(r.when)
       // a fixed rule dates from the day of the reading it is looking at, and carries those readings
-      const vals = [...new Set(condVals(r.when))].filter((v) => force[v]?.vals.length)
+      const vals0 = [...new Set(condVals(r.when))].filter((v) => force[v]?.vals.length)
+      // in a combination rule, only the readings that meet one of its conditions date it (an older normal blood
+      // pressure still in force must not make a new fever look days old)
+      const meetsCond = (v: string) => valConds(r.when).some((c) => c.val === v && force[v].vals.some((x) => (c.min === undefined || x >= c.min) && (c.max === undefined || x <= c.max)))
+      const vals = vals0.some(meetsCond) ? vals0.filter(meetsCond) : vals0
       const start = vals.length ? Math.min(...vals.map((v) => force[v].day)) : r.scope === 'symptom' ? symStart(r) : runRule(r) ? runStart(r, day) : day
       const log = vals.flatMap((v) => force[v].log)
       // on imported personal data a fixed rule looks at a value from the file, not a reading just taken
@@ -628,6 +632,8 @@ export function analyzeDay(
     findings.push(mk(r, 'personal', alert.start, reviewed ? 'watch' : status, evidence, {
       ...(reviewed ? { tier: 'self' as Tier, tierReason: restrictedNotice ? 'Handled by the medical officer; exercise and duties stay restricted until they clear you.' : 'Reviewed and cleared by the medical officer. Keel keeps showing it until your readings settle, and reopens it if it worsens.', urgency: 'routine' as Urgency, reviewed: !restrictedNotice, holdsExercise: restrictedNotice } : {}),
       score: alert.score, threshold: model.thresholds.notice, categories: [...cats], detectorTier: alert.tier, days: patternDays, patternStart: day - patternDays + 1,
+      // the key a closure is saved under and checked against, fixed here so a later merge cannot change it
+      closeKey: noticeKey,
       firstNotice: firstRule ? { day: alert.start, title: firstRule.title } : undefined, also,
       factors: ['R-ILL'].includes(r.id) ? factors.filter((x) => x.id !== 'mood') : factors, urgency: (status === 'act' ? 'today' : 'routine') as Urgency,
       ...(wasIll && !reviewed ? { tier: (TIER_RANK[t.tier] < TIER_RANK.cmo ? 'cmo' : t.tier) as Tier, tierReason: 'Earlier in this notice the readings looked like illness. Keep the medical officer involved, and no exercise until they agree.', holdsExercise: true } : {}),
@@ -735,7 +741,8 @@ export function analyzeDay(
     }
   }
   for (const fd of findings) {
-    if (fd.kind !== 'vital' || fd.urgency === 'routine' || openItems.some((x) => x.ruleId === fd.ruleId && x.day === fd.start)) continue
+    // symptom rules too (the same symptom three days running): the medical officer must be able to close what they have seen
+    if ((fd.kind !== 'vital' && fd.kind !== 'symptom') || fd.ruleId === 'R-RED' || fd.urgency === 'routine' || openItems.some((x) => x.ruleId === fd.ruleId && x.day === fd.start)) continue
     openItems.push({ key: `open|${m.id}|${crewId}|${fd.ruleId}|${fd.start}`, ruleId: fd.ruleId, title: RULE[fd.ruleId].title, day: fd.start, urgency: fd.urgency, category: fd.categories[0], ts: 0 })
   }
   // a run of days that met a "today" rule stays on the list after the run ends, until the medical officer closes it
@@ -766,6 +773,11 @@ function forCmoAsPatient(f: Finding): Finding {
     .replace(/talking to the medical officer/g, 'talking to the commander (your medical backup)')
     .replace(/with the medical officer/g, 'with the commander (your medical backup)')
     .replace(/Keep the medical officer involved/g, 'Keep the commander (your medical backup) involved')
+    // whoever comes to the medical officer must not be sent to fetch the patient: they get the backup and the checklist
+    .replace(/get the medical officer now/g, 'get the commander (the medical backup) now and open the onboard medical checklist')
+    .replace(/the medical officer decides/g, 'the commander (your medical backup) decides, with a flight surgeon when a link exists')
+    // anything left: the medical officer's role passes to the backup
+    .replace(/the (crew )?medical officer(?!'s list)/g, 'the commander (your medical backup)')
   return { ...f, action: sw(f.action), steps: f.steps.map(sw), tierReason: sw(f.tierReason), who: f.who ?? 'The commander, as your medical backup' }
 }
 
@@ -776,12 +788,13 @@ export function describeChange(c: Change): string {
   const v = Number.isNaN(c.value) ? '–' : c.value.toFixed(d)
   if (Number.isNaN(c.u3)) return `${def.label} is ${v} ${def.unit}.`
   const dir = c.ind === 'sleep_mid' ? 'shifted from' : c.direction === 'higher' ? 'higher than' : 'lower than'
+  if (c.latestInside && c.daysOut <= 1) return `${def.label}: ${v} ${def.unit} now, back inside your usual range (around ${c.expected.toFixed(d)}); over the last three days it ran ${c.ind === 'sleep_mid' ? 'away from' : c.direction === 'higher' ? 'higher than' : 'lower than'} usual.${c.ind === 'temp' ? ' Wrist skin temperature, not a fever reading.' : ''}`
   return `${def.label}: ${v} ${def.unit}, ${dir} your usual ${c.expected.toFixed(d)}.${c.ind === 'temp' ? ' Wrist skin temperature, not a fever reading.' : ''}`
 }
 
 export function unusualness(c: Change): string {
   if (Number.isNaN(c.percentile) || !c.nHist) return 'Not enough history yet to say how unusual this is for you.'
-  const days = c.daysOut > 1 ? ` Outside your usual range on each of the last ${c.daysOut} days with a reading.` : c.latestInside ? ' The latest reading is back inside your usual range, but the last three days together are still unusual, so this is not over yet.' : ''
+  const days = c.daysOut > 1 ? ` Outside your usual range on each of the last ${c.daysOut} days with a reading.` : c.latestInside ? ' The last three days together are still unusual, so this is not over yet.' : ''
   if ((c.nLess ?? 0) >= c.nHist) return `The last three days are the furthest from your usual in ${c.nHist} days of history.${days}`
   return `The last three days are further from your usual than ${c.nLess} of your previous ${c.nHist} days were.${days}`
 }

@@ -76,7 +76,7 @@ Alert thresholds are not chosen by feel. They are set in simulation to a budget 
 per person-month and one mistaken alert per four person-months, because alarm fatigue is an
 operational hazard; on real people they ran over that budget (1.31 and 0.41 per person-month).
 Thresholds depend on which sensors are present: imported watch data therefore runs on a separate
-heart-rate-only model calibrated on the 251 real people (+19 above luck, 9 to 28). A fixed table of 46 rules turns a pattern, an entered reading or a reported symptom into wording, one action,
+heart-rate-only model calibrated on the 251 real people (+19 above luck, 9 to 28). A fixed table of 47 rules turns a pattern, an entered reading or a reported symptom into wording, one action,
 follow-up steps, how soon and who, each citing a NASA document, a published study or public clinical
 guidance. No language model writes any advice, and by design Keel gives no medication or treatment
 advice.

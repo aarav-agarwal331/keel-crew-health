@@ -70,7 +70,7 @@ export function Alert({ alertKey }: { alertKey?: string }) {
         <span className="tag plain">Recommended action</span>
         <p className="do">{f.action}</p>
         <ol className="list steps">{f.steps.map((s) => <li key={s}><span>{s}</span></li>)}</ol>
-        {['R-ILL', 'R-SYM-ILL', 'R-V-TEMP', 'R-V-TEMP-HI'].includes(f.ruleId) ? <TempEntry /> : <ReadingLog readings={f.readings ?? []} title="Readings this is based on" />}
+        {['R-ILL', 'R-SYM-ILL', 'R-V-TEMP', 'R-V-TEMP-HI', 'R-V-FEVER-PLUS'].includes(f.ruleId) ? <TempEntry /> : <ReadingLog readings={f.readings ?? []} title="Readings this is based on" />}
         {(f.kind === 'vital' || f.kind === 'symptom') && f.urgency !== 'routine' && <p className="small">{sharing[me]?.emergency === false ? 'Emergency sharing is off, so the medical officer has not been told about this. Tell them yourself.' : 'Under emergency sharing the medical officer sees this item and what it is, until they close it with a note. A later normal reading does not close it. Seeing it is not the same as being asked to see you: ask them below, or tell them.'}</p>}
       </section>
       {(f.also ?? []).length > 0 && (

@@ -55,7 +55,7 @@ tested in simulation only, so the main contribution is the offline safety, shari
   sourced (or marked provisional) threshold are acted on at once. Every reading is kept with its time, the worst one counts,
   and anything urgent stays on the medical officer's list until they close it with a note.
 - **Alarm fatigue treated as a hazard.** Thresholds come from an explicit false-alert budget.
-- **Auditable advice.** A fixed table of 46 rules maps patterns, entered readings and reported
+- **Auditable advice.** A fixed table of 47 rules maps patterns, entered readings and reported
   symptoms to cited countermeasures, each with how soon and who. No language model writes medical text.
 - **Crew-owned data.** Per-role, per-area sharing with an access log; the commander sees readiness,
   not reasons, except that under emergency sharing an urgent reading (its value and the step given) is
@@ -216,7 +216,7 @@ statement saved in [docs/CHALLENGE.md](docs/CHALLENGE.md).
 |---|---|---|
 | A1 | Gathers health indicators | 18 indicators; wearable import, Bluetooth strap, check-in, cabin sensors (Data sources, Check-in) |
 | A2 | Astronauts evaluate their own health | Today status against a personal baseline; Trends; body map |
-| A3 | Act on it; guidance on treatments and improvements | One recommended action on Today; Alert detail with steps and cited countermeasures; Guide → "Everything Keel can recommend" (all 46 rules). Keel gives first steps (rest, fluids, a repeat reading, sugar for a low blood sugar) but deliberately no medication advice: that is left to the medical officer |
+| A3 | Act on it; guidance on treatments and improvements | One recommended action on Today; Alert detail with steps and cited countermeasures; Guide → "Everything Keel can recommend" (all 47 rules). Keel gives first steps (rest, fluids, a repeat reading, sugar for a low blood sugar) but deliberately no medication advice: that is left to the medical officer |
 | A4 | A visual tool | Charts with personal bands, clickable body map, replay |
 | A5 | Any input: keyboard, clicks, files, camera | Check-in taps and number entry; file import; live sensor; a photo taken or chosen at check-in for the medical officer (stored on the device, not analysed) |
 | A6 | Data represents a health indicator, with units | Units on every reading and entry field (for example blood sugar in mg/dL) |
@@ -244,7 +244,7 @@ statement saved in [docs/CHALLENGE.md](docs/CHALLENGE.md).
 | E4 | Simulation labelled | "Simulated data" chip on every screen that shows it |
 | E5 | Auditable alert-to-action | Alert detail → audit trail; `shared/rules.json` |
 | E6 | Crew-owned data, access log | Sharing |
-| E7 | Privacy-preserving readiness | Crew (tier never "Steady" while an area is flagged; "Talk to the medical officer first" for anything urgent or involving the medical officer; reasons only if shared) |
+| E7 | Privacy-preserving readiness | Crew (tier never "Steady" while an area is flagged; "Act now" while an urgent item is open under emergency sharing; "Talk to the medical officer first" for anything else involving the medical officer; reasons only if shared) |
 | E8 | Link delay, blackout, queued summary | Link |
 | E9 | Mission replay | Replay |
 | E10 | Decision support, not diagnosis | Stated on Today, Alert, More; enforced by a unit test on the rule text |

@@ -62,6 +62,18 @@ describe('end to end on the demo mission', () => {
     return analyzeDay(m, crew, { crewId: crew, x, scored: scorePerson(x, model, m.phases) }, model, day, entries)
   }
   const illness = m.truth.find((e) => e.type === 'illness')!
+  it('a medical officer closing a readings notice closes it, under the key the analysis checks (also after a merge)', () => {
+    let hit: { crew: string; day: number; key: string } | null = null
+    for (const c of m.crew) for (let d = m.pre_days + 20; d < m.days && !hit; d++) {
+      const f = run(c.id, d).findings.find((x) => x.kind === 'personal' && x.status === 'act' && x.closeKey)
+      if (f) hit = { crew: c.id, day: d, key: f.closeKey! }
+    }
+    expect(hit).not.toBeNull()
+    const closed = closuresFrom([{ did: 'Closed by the medical officer: handled, no restriction', alertKey: hit!.key, ts: 1 }])
+    const x = features(m, hit!.crew, model.indicators, [])
+    const after = analyzeDay(m, hit!.crew, { crewId: hit!.crew, x, scored: scorePerson(x, model, m.phases) }, model, hit!.day, [], closed)
+    expect(after.findings.some((q) => q.closeKey === hit!.key && q.status === 'act')).toBe(false)
+  })
   it('responds to the scripted illness by the time symptoms are reported, with the illness guidance', () => {
     const crew = m.crew[illness.crew].id
     // same window as the evaluation: 10 days before to 4 days after symptom onset
@@ -135,6 +147,15 @@ describe('end to end on the demo mission', () => {
     expect(run('c0', 100, [still]).findings.some((x) => /safe side/.test(x.action))).toBe(false)
     const soon: Entry = { ...e, readings: [{ ind: 'glucose', v: 50, ts: 1 }, { ind: 'glucose', v: 85, ts: 1 + 2 * 60 * 1000 }] }
     expect(run('c0', 100, [soon]).status).toBe('urgent')
+    // a fever with a fast heart rate at rest is one act-now item, though each alone is a same-day one
+    const sepsis: Entry = { key: 'k', mission: m.id, crew: 'c0', day: 100, values: { temp_oral: 38.6, rhr_spot: 130 }, symptoms: [], ts: 2, readings: [{ ind: 'temp_oral', v: 38.6, ts: 1 }, { ind: 'rhr_spot', v: 130, ts: 2 }] }
+    const fp = run('c0', 100, [sepsis]).findings.find((x) => x.ruleId === 'R-V-FEVER-PLUS')
+    expect(fp?.status).toBe('urgent')
+    expect(run('c0', 100, []).findings.some((x) => x.ruleId === 'R-V-FEVER-PLUS')).toBe(false)
+    // when the medical officer is the patient, nobody is told to fetch the medical officer
+    const cmoId = m.crew.find((c) => c.role === 'cmo')!.id
+    const asCmo = run(cmoId, 100, [{ ...soon, crew: cmoId }]).findings.find((x) => x.ruleId === 'R-V-GLU-LO2')!
+    expect([asCmo.action, ...asCmo.steps].join(' ')).not.toMatch(/medical officer/)
     // a low that still counts (50, then 85 too soon) comes first, and the fast heart rate is still an act-now item beside it
     const both: Entry = { ...soon, values: { glucose: 85, rhr: 170 }, readings: [...soon.readings!, { ind: 'rhr', v: 170, ts: 3 }] }
     const urgentFirst = run('c0', 100, [both]).findings.filter((x) => x.status === 'urgent')

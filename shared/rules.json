@@ -109,6 +109,66 @@
    ]
   },
   {
+   "id": "R-V-FEVER-PLUS",
+   "scope": "vital",
+   "priority": 1.105,
+   "urgency": "now",
+   "title": "Fever together with a fast heart rate, low blood pressure, low oxygen or confusion",
+   "when": {
+    "all": [
+     {
+      "any": [
+       {
+        "val": "temp_oral",
+        "min": 38.0
+       },
+       {
+        "val": "temp_oral_rise",
+        "min": 1.0
+       }
+      ]
+     },
+     {
+      "any": [
+       {
+        "val": "rhr_manual",
+        "min": 120
+       },
+       {
+        "val": "sbp",
+        "max": 99.99
+       },
+       {
+        "val": "spo2_manual",
+        "max": 94
+       },
+       {
+        "sym": "confusion",
+        "min": 1
+       }
+      ]
+     }
+    ]
+   },
+   "summary": "You entered a fever reading together with a resting heart rate of 120 or more, an upper blood pressure under 100, fingertip oxygen of 94% or less, or confusion. Each alone is a same-day item; together they can mean a serious infection. Keel does not interpret it. The combination and its values are provisional and have not been reviewed by a flight surgeon.",
+   "action": "Lie down or strap in, and tell the medical officer now.",
+   "steps": [
+    "For whoever is with you: if they stop responding or are not breathing normally, shout for the whole crew, start CPR and get the defibrillator.",
+    "Stay with another crew member.",
+    "Drink to your fluid target if you can.",
+    "Note the time of each reading."
+   ],
+   "tier": "cmo",
+   "tier_reason": "A fixed safety combination, not a trend.",
+   "cm": [
+    "CM-VITALS",
+    "CM-INFECT"
+   ],
+   "categories": [
+    "cardio"
+   ]
+  },
+  {
    "id": "R-V-HR1R",
    "scope": "vital",
    "priority": 1.115,

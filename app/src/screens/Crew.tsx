@@ -113,7 +113,7 @@ export function Crew() {
           <section className="card" key={c.id} data-testid={`crew-${c.id}`}>
             <div className="card-h"><div className="col" style={{ gap: 0 }}><h2>{c.name}</h2><span className="small muted">{c.role_label}</span></div></div>
             {!a || !r || !v ? <p className="muted">No data.</p> : <>
-              {role === 'commander' && (v.findings.some((x) => x.emergency) ? <p><StatusTag status="urgent" label="Act now: an urgent item is open" /></p> : <p><StatusTag status={r.tier} label={r.tier === 'hold' && c.role === 'cmo' ? 'Talk to the named backup medic first' : READY_LABEL[r.tier]} /></p>)}
+              {role === 'commander' && (v.findings.some((x) => x.emergency) ? <p><StatusTag status="urgent" label="Act now: an urgent item is open" /></p> : <p><StatusTag status={r.tier} label={r.tier === 'hold' && c.role === 'cmo' ? 'Talk to the medical backup (the commander) first' : READY_LABEL[r.tier]} /></p>)}
               {role === 'commander' && overdueForCommander(a, day, c.role === 'cmo') && <p className="small" data-testid="waiting-cmo"><strong>An item has waited more than a day for the medical officer.</strong> Nothing about it is shown here; please make sure the medical officer has seen {c.name.split(' ')[0]}.</p>}
               {s.emergency === false && <p className="tiny muted">Emergency sharing is switched off for this crew member: red-flag symptoms will not appear here.</p>}
               {role === 'commander' && r.tier !== 'go' && r.tier !== 'unknown' && (() => {
@@ -136,7 +136,7 @@ export function Crew() {
                   <p><strong>{x.title}{x.symptoms?.length ? `: ${x.symptoms.join('; ').toLowerCase()}` : ''}.</strong> <span className="small">(shared automatically: emergency sharing)</span></p>
                   <ReadingLog readings={x.readings ?? []} title="Entered readings, in order" note={false} />
                   <p className="small">{c.name.split(' ')[0]} was told: "{x.action}"</p>
-                  {(x.steps ?? []).filter((q) => /^For whoever is with you/.test(q)).map((q) => <p key={q} className="small" data-testid="responder-step"><strong>{q.replace(/^For whoever is with you: /, 'When you get there: ')}</strong></p>)}
+                  {(x.steps ?? []).filter((q) => /^For whoever is with you/.test(q)).map((q) => <p key={q} className="small" data-testid="responder-step"><strong>{q.replace(/^For whoever is with you: /, 'When you get there: ').replace(role === 'cmo' ? / and get the medical officer now/ : /^$/, ', and treat from the onboard checklist for a low blood sugar in someone who cannot swallow')}</strong></p>)}
                 </div>
               ))}
               {role === 'cmo' && <p>{v.overall === 'private' ? <StatusTag status="private" label="Nothing shared with you" /> : <StatusTag status={v.overall} label={STATUS_LABEL[v.overall]} />}</p>}
@@ -151,7 +151,7 @@ export function Crew() {
                     <li key={f.key}>
                       <strong>{f.title ?? (f.fixed ? `An item in ${catLabel(f.category).toLowerCase()} (details not shared)` : `Notice from the readings in ${catLabel(f.category).toLowerCase()} (details not shared)`)}</strong> <span className="muted">({STATUS_LABEL[f.status].toLowerCase()}, {f.days} {f.days === 1 ? 'day' : 'days'})</span>
                       {role === 'cmo' && c.role !== 'cmo' && f.key.includes('|P|') && ['act', 'urgent'].includes(f.status) && (() => {
-                        const k = `${f.key}#${f.status}#${day - f.days + 1}`
+                        const k = f.closeKey ?? `${f.key}#${f.status}#${day - f.days + 1}`
                         const note = (notes[k] ?? '').trim()
                         const log = (did: string) => void logAction({ crew: c.id, alertKey: k, day, did, feel: null, note })
                         return (
@@ -227,7 +227,7 @@ export function Crew() {
         ))}
       </div>
       <p className="small muted">"Steady" and "no flags" mean within the person's own usual range and no rule triggered. They do not mean the values are healthy.</p>
-      <p className="banner">The tier is a rule-based summary: it is never better than "Worth a look" when an area on the crew member's own screen is flagged, it is "Talk to the medical officer first" for anything urgent or anything that involves the medical officer, and nausea or clearly slowed reactions always mean a conversation first. It is not a validated fitness-for-duty test and not a clearance.</p>
+      <p className="banner">The tier is a rule-based summary: it is never better than "Worth a look" when an area on the crew member's own screen is flagged, it is "Act now" while an urgent item is open (shown under emergency sharing) and "Talk to the medical officer first" for anything else that involves the medical officer, and nausea or clearly slowed reactions always mean a conversation first. It is not a validated fitness-for-duty test and not a clearance.</p>
     </>
   )
 }

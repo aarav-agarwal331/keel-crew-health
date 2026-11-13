@@ -101,12 +101,10 @@ test('every screen works with the network disabled', async ({ page }) => {
     await page.getByTestId('save-checkin').first().click()
     await expect(page.getByText('Saved.', { exact: true })).toBeVisible()
     await nav(page, '#/today')
-    await expect(page.locator('main')).toContainText('Thermometer reading is in the fever range')
+    // the oxygen of 91 entered earlier today plus this fever is one act-now combination
+    await expect(page.locator('main')).toContainText('Fever together with a fast heart rate, low blood pressure, low oxygen or confusion')
     // the thermometer box sits on the fever alert itself
-    // while an "act now" item is open, other items are folded under "Not urgent"
-    const fold = page.locator('summary', { hasText: 'After the above' })
-    if (await fold.count()) await fold.first().click()
-    await page.locator('a', { hasText: 'Thermometer reading is in the fever range' }).first().click()
+    await page.getByTestId('open-alert').first().click()
     await expect(page.getByTestId('temp-now').first()).toBeVisible()
     await page.waitForTimeout(400)
     await page.getByTestId('temp-now').first().fill('39.6')
@@ -150,8 +148,9 @@ test('every screen works with the network disabled', async ({ page }) => {
     await expect(page.getByTestId('glucose-unit')).toHaveCount(0)
     // a value withdrawn as a typing mistake stops counting, and stays visible in the log
     await nav(page, '#/checkin/measure')
-    // the meter was set to mmol/L above: 2.5 mmol/L is 45 mg/dL, and a value no meter can show is refused
-    await page.getByLabel(/Blood sugar/).fill('45')
+    // the meter was set to mmol/L above: 2.5 mmol/L is 45 mg/dL, and a value no meter can show in either unit is refused
+    // (35 to 600 with mmol/L set is kept as mg/dL rather than refused: it may be a real low)
+    await page.getByLabel(/Blood sugar/).fill('700')
     await page.getByTestId('save-checkin').first().click()
     await expect(page.locator('main')).toContainText('more than a meter can show')
     await page.getByLabel(/Blood sugar/).fill('2.5')

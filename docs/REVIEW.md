@@ -1286,6 +1286,45 @@ simulation (statistician) are pipeline work, each disclosed where the number is 
 rule and changing R-CO2-HI to "today" (flight surgeon) are clinical calls left for a clinician. A
 wholesale copy cut (judge, astronaut) was done only where text was named.
 
-## Round 31
+## Round 31 (2026-11-13, fresh reviewers, redeployed build)
 
-See the end of this file once the thirty-first round has run.
+Judge's scores: impact 7, creativity 8, validity 7, relevance 8, presentation 6 (36 of 50), "nominate:
+yes". The astronaut and the statistician found no high-severity issue. The judge and the flight surgeon
+found one each:
+
+| # | Reviewer | High-severity finding | Fix |
+|---|---|---|---|
+| 1 | Judge | The Crew footer (and README row E7, and the Method screen) said the commander's tier is "Talk to the medical officer first" for anything urgent, while the same screen shows "Act now". | All three now say an urgent item open under emergency sharing gives "Act now", and "Talk to the medical officer first" covers anything else involving the medical officer. |
+| 2 | Flight surgeon | The severe-low step "give nothing by mouth and get the medical officer now" was shown to the medical officer as responder, and, when the medical officer is the patient, sent the commander to fetch the patient. | A medical officer reading it is told to treat from the onboard checklist; when the medical officer is the patient every remaining reference passes to the commander as medical backup with the checklist (unit test: no "medical officer" left in that advice). |
+
+Medium-severity findings fixed in the same pass:
+
+- **Fever with other abnormal readings** (flight surgeon): new act-now rule R-V-FEVER-PLUS; "take your
+  temperature now" beside a fast heart rate; a combination rule is dated by the readings that meet it.
+- **Closing items** (flight surgeon): same-day symptom rules get a closeable item; a readings notice keeps
+  the key its closure is saved under, so a merged infection notice closes (unit test).
+- **Wrong meter unit** (flight surgeon): with mmol/L set, 35 to 600 is kept as mg/dL with a warning and
+  sugar advice, not refused.
+- **Alert wording** (flight surgeon, judge): the intro says "a silent alert on their Crew screens (the
+  same tablet in this demo)"; the escalation text says a flight version repeats it with sound.
+- **Headline** (astronaut): with several act-now items, Today's headline names them all.
+- **Change lines** (astronaut): a reading back in range says so first, then how the last three days ran.
+- **Radiation** (astronaut): leads with the dose so far against the 600 mSv limit; the projection is
+  behind a toggle.
+- **Check-in intro** (astronaut): one short sentence.
+- **Statistics** (statistician): the shipped model's "1 in N" is said to be flattered by under-alerting,
+  with the figure at budget; bed-rest says fewer flags come from widening the band and benefit is
+  untested; "close to its budget, no interval" for the vendor resting heart rate; the simulated-illness
+  tile no longer blames sample size.
+- Low: the Validation bar label matches its bar; "seconds after the one before"; one name for the
+  medical officer's backup.
+
+Not done, with reasons: the held-out-people headline for heart rate alone, the paired steps comparison,
+an interval on the vendor resting-heart-rate rates and a larger illness simulation (statistician) are
+pipeline work, disclosed where shown; a "seen by the medical officer" state on same-day items, one
+vocabulary for every status word, and a second replay with a typical illness (astronaut, judge) are
+larger changes left for after the event.
+
+## Round 32
+
+See the end of this file once the thirty-second round has run.

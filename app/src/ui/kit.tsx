@@ -159,7 +159,7 @@ export function ReadingLog({ readings, title = 'Readings today', onVoid, note = 
       <ul className="list small">
         {readings.map((r, i) => (
           <li key={`${r.ind}-${r.ts}-${i}`} className="num">
-            <span style={r.void ? { textDecoration: 'line-through' } : undefined}>{READING_LABEL[r.ind]?.[0] ?? r.ind} {r.v} {READING_LABEL[r.ind]?.[1] ?? ''}, at {time(r.ts)}{(() => { const prev = readings.filter((q) => q.ind === r.ind && q.ts < r.ts).pop(); if (!prev) return ''; const g = Math.round((r.ts - prev.ts) / 1000); return g < 120 ? ` (${g} s after the one before)` : ` (${Math.round(g / 60)} min after the one before)` })()}</span>
+            <span style={r.void ? { textDecoration: 'line-through' } : undefined}>{READING_LABEL[r.ind]?.[0] ?? r.ind} {r.v} {READING_LABEL[r.ind]?.[1] ?? ''}, at {time(r.ts)}{(() => { const prev = readings.filter((q) => q.ind === r.ind && q.ts < r.ts).pop(); if (!prev) return ''; const g = Math.round((r.ts - prev.ts) / 1000); return g < 5 ? ' (seconds after the one before)' : g < 120 ? ` (${g} s after the one before)` : ` (${Math.round(g / 60)} min after the one before)` })()}</span>
             {r.void ? ' (withdrawn as a typing mistake)' : onVoid ? (ask === r.ts
               ? <> Withdraw this reading? It stays in the log, struck through, and the medical officer sees that it was withdrawn. Type the correct value above first if you have it. <button className="btn sm" onClick={() => { onVoid(r.ind, r.ts); setAsk(null) }} data-testid="void-confirm">Yes, withdraw</button> <button className="btn sm" onClick={() => setAsk(null)}>Keep it</button></>
               : <> <button className="btn sm" onClick={() => setAsk(r.ts)} data-testid="void-reading">Typing mistake?</button></>) : null}

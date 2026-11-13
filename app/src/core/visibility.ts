@@ -15,7 +15,7 @@ import { allows, SHARE_CATEGORIES, type Level, type Role, type SharingSettings }
 import type { Finding, OpenItem, Photo, Reading, Status } from './types'
 
 export interface VisibleIndicator { ind: string; inRange: boolean; value?: number; expected?: number }
-export interface VisibleFinding { /** an urgent item the commander may know of but not see */ private?: boolean; /** a crew safety concern: do not go alone */ safety?: boolean; symptoms?: string[]; readings?: Reading[]; emergency?: boolean; steps?: string[]; countermeasures?: string[]; urgency?: string; key: string; category: string; status: Status; days: number; title?: string; tier?: string; action?: string; summary?: string; changes?: Finding['changes']; factors?: Finding['factors']   /** from a fixed safety rule (a reading or a reported symptom), not from the readings detector */
+export interface VisibleFinding { closeKey?: string; /** an urgent item the commander may know of but not see */ private?: boolean; /** a crew safety concern: do not go alone */ safety?: boolean; symptoms?: string[]; readings?: Reading[]; emergency?: boolean; steps?: string[]; countermeasures?: string[]; urgency?: string; key: string; category: string; status: Status; days: number; title?: string; tier?: string; action?: string; summary?: string; changes?: Finding['changes']; factors?: Finding['factors']   /** from a fixed safety rule (a reading or a reported symptom), not from the readings detector */
   fixed?: boolean
 }
 export interface RoleView {
@@ -85,7 +85,7 @@ export function viewFor(role: Role, a: DayAnalysis, share: SharingSettings, valu
     // with its title under emergency consent, whatever the area's level, as the Sharing screen promises
     const fixedToday = role === 'cmo' && share.emergency !== false && (f.kind !== 'personal' || !!f.carriesFixed) && f.urgency === 'today' && f.status === 'act'
     if (!allows(level, 'status') && !fixedToday) continue
-    const v: VisibleFinding = { key: f.key, category: cat, status: f.status, days: f.days, ...(f.kind !== 'personal' ? { fixed: true } : {}) }
+    const v: VisibleFinding = { key: f.key, category: cat, status: f.status, days: f.days, ...(f.kind !== 'personal' ? { fixed: true } : {}), ...(role === 'cmo' && f.closeKey ? { closeKey: f.closeKey } : {}) }
     if (allows(level, 'trend') || fixedToday) { v.title = f.title; v.tier = f.tier }
     if (allows(level, 'detail')) {
       v.action = f.action
