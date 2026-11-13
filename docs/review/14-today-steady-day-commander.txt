@@ -2,7 +2,7 @@ SCREEN: 14-today-steady-day-commander
 TOP BAR: Keel | Earth link: 1 min 34 s delay | Amara · Flight day 66 | Simulated data
 BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
-Keel: crew health with no link to Earth. Responds at once to dangerous readings you enter. You choose who sees what. It also watches your readings against your own normal. Demo: Amara's tablet, simulated Mars transit. A lunar base mission is under More.
+When Earth can't answer, Keel tells you what to do and who to tell. Responds at once to dangerous readings you enter. You choose who sees what. It also watches your readings against your own normal. Demo: Amara's tablet, simulated Mars transit. A lunar base mission is under More.
 
 Demo: replay a scripted event (40 s)
 The evidence
@@ -20,6 +20,7 @@ All trends
 Sleep timing shift 1.5 h
 The middle of your sleep was 1.5 h after the schedule; you usually sleep 0.8 h before it. Your most unusual reading in 51 days. Out of your range for 4 days.
 Your body at a glance
+Cabin
 Brain, sleep and mood
 Heart and circulation
 Lungs and oxygen

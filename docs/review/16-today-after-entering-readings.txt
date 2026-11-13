@@ -2,7 +2,7 @@ SCREEN: 16-today-after-entering-readings
 TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 121 | Simulated data
 BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
-Keel: crew health with no link to Earth. Responds at once to dangerous readings you enter. You choose who sees what. It also watches your readings against your own normal. Demo: Lucía's tablet, simulated Mars transit. A lunar base mission is under More.
+When Earth can't answer, Keel tells you what to do and who to tell. Responds at once to dangerous readings you enter. You choose who sees what. It also watches your readings against your own normal. Demo: Lucía's tablet, simulated Mars transit. A lunar base mission is under More.
 
 Demo: replay a scripted event (40 s)
 The evidence
@@ -15,7 +15,7 @@ Demo crew member, simulated readings.
 
 RECOMMENDED ACTION
 
-Take sugar now if you can swallow, and call a crewmate to you. tell the medical officer now. Re-check at 19:23: your repeat (85) came too soon to count.
+Take sugar now if you can swallow, and call a crewmate to you. Tell the medical officer now. Re-check at 19:43: your repeat (85) came too soon to count.
 
 When: now. Who: the crew medical officer.
 
@@ -30,20 +30,14 @@ The details are visible on their Crew screens (emergency sharing). The button is
 Also act now
 Heart rate reading at rest is 150 or more (entered: 170). Call a crewmate to you now. Sit or strap in, count your pulse by hand for a full minute now, and tell the medical officer now.
 Readings this is based on:
-Blood sugar 50 mg/dL, at 19:08
-Blood sugar 85 mg/dL, at 19:08
+Blood sugar 50 mg/dL, at 19:28
+Blood sugar 85 mg/dL, at 19:28
 Every reading is kept. The most abnormal reading of the day stays on the medical officer's list until they close it. What you are told to do follows your latest reading once a repeat counts (for blood sugar, 15 minutes after the first).
 Why, and what next
 
 No link to Earth right now. Everything on this screen was worked out on this device.
 
-Heart rate reading at rest is 150 or more (entered: 170)
-Call a crewmate to you now. Sit or strap in, count your pulse by hand for a full minute now, and tell the medical officer now.
-Your body looks like it is under strain
-Take your temperature now and tell the medical officer. No exercise until they clear you.
-Also: take your temperature
-Thermometer reading (°C)
-Save reading
+Not urgent: 1 more item for after the above
 What changed
 All trends
 Resting heart rate (overnight) 66 bpm
@@ -55,6 +49,7 @@ Higher than your usual 261. Your most unusual reading in 52 days. Out of your ra
 Mood 2 /5
 Lower than your usual 4. Your most unusual reading in 52 days. Out of your range for 9 days.
 Your body at a glance
+Cabin
 Brain, sleep and mood
 Act today
 Heart and circulation
@@ -82,7 +77,7 @@ Today's routine
 13-day streak
 87%
 Exercise this week
-625 of 720 planned minutes. Every session protects bone, muscle and heart.
+625 of 720 planned minutes. Paused: no exercise until the medical officer clears you.
 
 Crew goal this week: 86% of planned exercise done together. Individual numbers stay private.
 

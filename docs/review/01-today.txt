@@ -2,7 +2,7 @@ SCREEN: 01-today
 TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 121 | Simulated data
 BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
-Keel: crew health with no link to Earth. Responds at once to dangerous readings you enter. You choose who sees what. It also watches your readings against your own normal. Demo: Lucía's tablet, simulated Mars transit. A lunar base mission is under More.
+When Earth can't answer, Keel tells you what to do and who to tell. Responds at once to dangerous readings you enter. You choose who sees what. It also watches your readings against your own normal. Demo: Lucía's tablet, simulated Mars transit. A lunar base mission is under More.
 
 Demo: replay a scripted event (40 s)
 The evidence
@@ -42,6 +42,7 @@ Higher than your usual 261. Your most unusual reading in 52 days. Out of your ra
 Skin temperature (overnight) 35.1 °C
 Higher than your usual 34.1. More unusual than 48 of your last 53 days. Out of your range for 2 days. Wrist skin temperature, not a fever reading.
 Your body at a glance
+Cabin
 Brain, sleep and mood
 Act today
 Heart and circulation
@@ -68,7 +69,7 @@ Today's routine
 13-day streak
 87%
 Exercise this week
-625 of 720 planned minutes. Every session protects bone, muscle and heart.
+625 of 720 planned minutes. Paused: no exercise until the medical officer clears you.
 
 Crew goal this week: 86% of planned exercise done together. Individual numbers stay private.
 
