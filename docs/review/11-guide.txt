@@ -31,6 +31,7 @@ Upper blood pressure reading is under 80, or under 90 with dizziness or fainting
 Blood pressure of 220 upper or 130 lower, twice.
 Thermometer reading is 39.4 °C or higher.
 Blood sugar reading is 300 mg/dL or higher.
+Overnight resting heart rate of 120 or more.
 Vomiting after a very high radiation dose.
 Cabin carbon dioxide is above 4 mmHg.
 Today. Whenever Keel shows "Act today" and "Who" is not "you manage this yourself", and:
@@ -51,11 +52,11 @@ Cabin carbon dioxide is elevated.
 When a link opens: anything the medical officer wants a flight surgeon to review. The daily summary contains only what you chose to share.
 If you have thoughts of harming yourself, or cannot function: tell the medical officer now. Keel tells only the medical officer what it is; the commander sees no reason, but your readiness tier for them changes to "Talk to the medical officer first".
 
-Keel gives first steps (rest, fluids, a repeat reading, sugar for a low blood sugar) but never recommends medication; that is for the medical officer with the onboard medical checklist. The fixed thresholds are public clinical guidance for adults on Earth. No threshold has been reviewed by a clinician; values without a cited source are marked provisional in the rule below. A fixed rule looks at every reading from the most recent day that has one, and anything needing attention now or today stays on the medical officer's list until they close it with a note. "Steady" on the Today screen means no change was detected, not that you are well.
+Keel gives first steps (rest, fluids, a repeat reading, sugar for a low blood sugar) but never recommends medication; that is for the medical officer with the onboard medical checklist. Some fixed thresholds come from public clinical guidance for adults on Earth; others (for example heart rate 35, 120 and 150, and the severe blood-pressure and blood-sugar lines) are provisional values we chose, marked as such in each rule. No threshold has been reviewed by a clinician; values without a cited source are marked provisional in the rule below. A fixed rule looks at every reading from the most recent day that has one, and anything needing attention now or today stays on the medical officer's list until they close it with a note. "Steady" on the Today screen means no change was detected, not that you are well.
 
 Everything Keel can recommend
 
-The complete list of 44 rules. Each has one action, how soon, who should know, and where the advice comes from. Nothing else can appear on an alert.
+The complete list of 45 rules. Each has one action, how soon, who should know, and where the advice comes from. Nothing else can appear on an alert.
 
 Smoke or chemical exposure
 Symptom that needs the medical officer now
@@ -75,6 +76,7 @@ Blood sugar reading is 200 mg/dL or higher
 Upper blood pressure reading is below 90 mmHg
 Blood pressure reading is 180 upper or 120 lower, or higher
 Blood pressure reading is 140 upper or 90 lower, or higher
+Overnight resting heart rate of 120 or more
 Resting heart rate of 120 or more
 Overnight blood oxygen of 90% or lower
 Resting heart rate above 100 on two nights

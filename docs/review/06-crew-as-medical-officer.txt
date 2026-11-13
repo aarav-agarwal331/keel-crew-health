@@ -6,6 +6,8 @@ Crew readiness
 Commander
 Medical officer
 
+Viewing as Kenji Sato (medical officer): demo view on one tablet
+
 Day 122. What each crew member has chosen to share with you. Nothing is shown that they have not shared, except, under the emergency sharing they agreed to, every open urgent or same-day safety item with its readings. Their overall status here covers only the areas they share with you; the commander's tier (a separate thing) uses all their readings.
 
 Labels: a crew member's own "Act now", or an "Act today" that involves the medical officer, shows to the commander as "Talk to the medical officer first"; a self-managed "Act today" and "Worth a look" show as "Worth a look".
@@ -50,6 +52,8 @@ Note only, keep open
 Handled, restrictions stay
 Handled, no restriction
 The same symptom three days running (act today, 1 day)
+
+Exercise is on hold for Lucía until you clear them; minutes logged by the devices may still appear.
 
 Overdue: an item that needs you has been open for 3 days. Please see Lucía today.
 

@@ -6,6 +6,8 @@ Crew readiness
 Commander
 Medical officer
 
+Viewing as Amara Okafor (commander): demo view on one tablet
+
 Day 122. Whether Keel has any flags for each crew member before a demanding task tomorrow, such as a spacewalk. You see a tier for everyone; reasons appear only where a crew member has chosen to share them, and for urgent items under their emergency sharing (as their backup).
 
 Labels: a crew member's own "Act now", or an "Act today" that involves the medical officer, shows to the commander as "Talk to the medical officer first"; a self-managed "Act today" and "Worth a look" show as "Worth a look".

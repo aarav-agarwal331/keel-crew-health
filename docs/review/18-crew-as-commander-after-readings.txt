@@ -1,0 +1,65 @@
+SCREEN: 18-crew-as-commander-after-readings
+TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 122 | Simulated data
+BOTTOM NAV: Today | Trends | Check-in | Crew | More
+
+Alert about Lucía Reyes, sent automatically after an urgent check-in at 22:34: Blood sugar reading is below 54 mg/dL (entered: 50, then 85; the 50 still counts); Heart rate reading at rest is 150 or more (entered: 170). Go to them now.
+
+Acknowledge: I am on my way
+
+In a flight version this would sound on the medical officer's and commander's tablets over the cabin network; no Earth link is needed.
+
+Crew readiness
+Commander
+Medical officer
+
+Viewing as Amara Okafor (commander): demo view on one tablet
+
+Day 122. Whether Keel has any flags for each crew member before a demanding task tomorrow, such as a spacewalk. You see a tier for everyone; reasons appear only where a crew member has chosen to share them, and for urgent items under their emergency sharing (as their backup).
+
+Labels: a crew member's own "Act now", or an "Act today" that involves the medical officer, shows to the commander as "Talk to the medical officer first"; a self-managed "Act today" and "Worth a look" show as "Worth a look".
+
+Demo view. On a mission each role has its own device; here you can switch roles. Every look is written to the crew member's access log.
+
+Task tomorrow: a critical task (a spacewalk, or robotic-arm work)
+
+1 of 4 should talk to the medical officer first. 1 has minor flags. 2 have none.
+
+This is not a medical clearance.
+
+NASA's medical operations standard requires medical clearance before every spacewalk. Keel's tier is one input to that conversation with the medical officer.
+
+Amara Okafor
+Commander
+
+Steady
+
+Kenji Sato
+Crew medical officer
+
+Steady
+
+Lucía Reyes
+Flight engineer
+
+Talk to the medical officer first
+
+ Reason not shared. Ask Lucía.
+
+Blood sugar reading is below 54 mg/dL (entered: 50, then 85; the 50 still counts). (shared automatically: emergency sharing)
+
+Lucía was told: "Take sugar now if you can swallow, and call a crewmate to you. Your readings disagree (50, then 85): treat it as low to be safe. Tell the medical officer now. Re-check at 22:49."
+
+Heart rate reading at rest is 150 or more (entered: 170). (shared automatically: emergency sharing)
+
+Lucía was told: "Call a crewmate to you now. Sit or strap in, count your pulse by hand for a full minute now, and tell the medical officer now."
+
+Tomás Novák
+Mission specialist
+
+Worth a look
+
+ Reason not shared. Ask Tomás.
+
+"Steady" and "no flags" mean within the person's own usual range and no rule triggered. They do not mean the values are healthy.
+
+The tier is a rule-based summary: it is never better than "Worth a look" when an area on the crew member's own screen is flagged, it is "Talk to the medical officer first" for anything urgent or anything that involves the medical officer, and nausea or clearly slowed reactions always mean a conversation first. It is not a validated fitness-for-duty test and not a clearance.
