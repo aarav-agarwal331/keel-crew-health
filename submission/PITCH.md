@@ -15,8 +15,8 @@ member owns the data and decides what the medical officer, the commander and the
 Watch: I cut the link. Everything still works.
 
 And we measured it. On 107 real illness episodes from 251 people, Keel's method, on two sensors,
-with thresholds set only in simulation, flags 72 percent. Luck alone gives 40, and we say so: it is
-32 points above luck, at 1.4 false alerts per person-month, over its budget of one. We also show
+with thresholds set only in simulation, flags 68 percent. Luck alone gives 41, and we say so: it is
+28 points above luck, at 1.3 false alerts per person-month, over its budget of one. We also show
 what it cannot do: no useful early warning shown, and most alerts are false. That is in the app,
 next to the result.
 
@@ -56,21 +56,22 @@ rule, these scores. Nothing here was written by a language model. Now the comman
 
 **Does it work (40 s).** We tested it on two public Stanford datasets: 251 people with overnight
 heart rate, activity and 107 dated illness episodes. We ran Keel's method on those two sensors, with
-its model and thresholds fitted only on simulated people, unchanged. It flags 72 percent of episodes. Luck alone gives 40, so
-the honest number is 32 points above luck, with an interval of 22 to 41. It costs 1.4 false alerts
+its model and thresholds fitted only on simulated people, unchanged. It flags 68 percent of episodes. Luck alone gives 41, so
+the honest number is 28 points above luck, with an interval of 18 to 37. It costs 1.3 false alerts
 per person-month against a budget of one. The alert tier, the one that brings in the medical
-officer, is 19 points above luck. Whether a personal baseline beats one threshold for everyone is mixed
-in a like-for-like test, and our detector is not shown to beat a simple personal rule. On NASA's public
+officer, is 24 points above luck. Whether a personal baseline beats one threshold for everyone is mixed
+in a like-for-like test, and our detector is itself a simple personal rule: a more complex one did not
+earn its place once a review fixed an error in it. On NASA's public
 bed-rest data, handling gravity changes flagged four volunteers in fourteen instead of nine, which
 is not statistically significant.
 
 **Honesty and next steps (20 s).** What we cannot claim: useful early warning. At the tier that
-brings in the medical officer, the two-sensor version starts alerts by the day of onset no more often
-than luck; heart rate alone does a little better, by 8 points, counting the day of onset. Most alerts are
-false: at the alert tier between one in eleven and one in twenty-seven would be a real illness. The
+brings in the medical officer, the two-sensor version starts alerts by the day of onset not
+measurably more often than luck; heart rate alone does a little better, by 7 points, counting the day of onset. Most alerts are
+false: at the alert tier between one in thirteen and one in twenty-two would be a real illness. The
 model file the app ships is tuned for eleven on-board channels; on a watch import, with overnight
-heart rate and sometimes sleep, it was only 9 points above luck, because thresholds have to match the sensors. So imports now run
-on a heart-rate-only model calibrated on the 251 real people, 22 points above luck. Much of the signal is people moving less when ill. Everything
+heart rate and sometimes sleep, it was only 16 points above luck, because thresholds have to match the sensors. So imports now run
+on a heart-rate-only model calibrated on the 251 real people, 19 points above luck. Much of the signal is people moving less when ill. Everything
 beyond illness is tested only in simulation, no clinician has reviewed anything, and no open
 astronaut wearable data exists. The next step is to ask NASA for the in-flight data that is available
 on request and repeat the test. Keel: it keeps working when Earth cannot answer.

@@ -161,6 +161,11 @@ def fit_model(train: list[Person], spec: dict, p: Params, w: Windows, shrink: fl
                 r = float(np.corrcoef(Z[ok, a], Z[ok, b])[0, 1])
                 R[a, b] = R[b, a] = 0.0 if np.isnan(r) else r
     model.corr = (1 - shrink) * R + shrink * np.eye(d)
+    # the scores are flipped to each indicator's direction of concern before the multivariate statistic,
+    # so the correlation matrix must be flipped the same way (D R D, D = sign of concern); without this a
+    # joint "heart rate up, HRV down" move was scored as if the two were negatively related (review round 15)
+    sgn = np.where(model.concern == 0, 1.0, np.sign(model.concern))
+    model.corr = model.corr * np.outer(sgn, sgn)
     # reference thresholds for the fusion score: each component alone at 1 false alert / person-month
     on = [q.onsets for q in train]
     cs = [score_cusum(z, model, p) for z in zall]

@@ -1,8 +1,10 @@
-import { alertFields } from '../core/alerts'
+import { alertFields, alertState } from '../core/alerts'
 import { useAutoAlert } from '../ui/useAutoAlert'
 import { STATUS_LABEL, unusualness, URGENCY_LABEL, WHO_LABEL } from '../core/analysis'
 import { deployedScore, episodes } from '../core/detect'
 import { TempEntry } from '../ui/TempEntry'
+import { AskCmo } from '../ui/AskCmo'
+import { RepeatEntry } from '../ui/RepeatEntry'
 import { GlucoseUnit } from '../ui/GlucoseUnit'
 import { CATEGORIES, IND, rawSeries, shortDay } from '../core/mission'
 import { useEffect, useState } from 'react'
@@ -90,7 +92,8 @@ export function Today() {
         <section className="card intro" data-testid="intro">
           <p className="small"><strong>When Earth can't answer, Keel tells you what to do and who to tell.</strong> Responds at once to dangerous readings you enter. You choose who sees what. It also watches your readings against your own normal. Demo: {crew?.name.split(' ')[0]}'s tablet, simulated {mission.title}.</p>
           <div className="row wrap">
-            <a className="btn primary sm" href={href('replay')} data-testid="intro-replay">Demo: replay a scripted event</a>
+            <a className="btn primary sm" href={href('checkin', 'demo')} data-testid="intro-danger">Demo: enter a dangerous reading</a>
+            <a className="btn sm" href={href('replay')} data-testid="intro-replay">Demo: replay a scripted event</a>
             <a className="btn sm" href={href('validation')}>The evidence</a>
             <button className="btn sm" onClick={() => { setIntro(false); void store.putKv('intro-dismissed', true) }} aria-label="Hide this introduction">Hide</button>
           </div>
@@ -102,6 +105,7 @@ export function Today() {
           <div className="col" style={{ gap: 4, color: 'var(--text)' }}>
             <h1>{a.staleDays >= 2 && !primary ? 'No recent data' : STATUS_LABEL[shown]}</h1>
             <p className="muted">{primary ? primary.title : a.staleDays >= 2 ? `No readings for ${a.staleDays} days, so Keel cannot say how you are. Wear the sensor tonight and do a check-in.` : shown === 'watch' && !primary ? `No action needed yet. Keep an eye on: ${softAreas.join(', ')}.` : a.status === 'steady' && changes.length ? `Nothing needs action. ${changes.length === 1 ? 'One reading is' : `${changes.length} readings are`} a little off your usual; Keel is watching.` : HEADLINE[a.status]}</p>
+            {primary?.kind === 'personal' && <p className="small muted" data-testid="based-on">{Object.values(a.features.sym ?? {}).some((v) => v > 0) ? 'Triggered by the symptoms you reported plus readings that drifted from your normal.' : 'Triggered by readings that drifted from your normal, with no symptoms reported.'}</p>}
           </div>
         </div>
         {a.status === 'steady' && a.co2Advisory !== null && <p className="banner info"><strong>Cabin CO2 is {a.co2Advisory.toFixed(1)} mmHg.</strong> Headaches get more likely the higher it goes; 2.5 is Keel's advisory line and 3.0 its alert. If you have a headache, log it at check-in and move to better airflow.</p>}
@@ -115,20 +119,13 @@ export function Today() {
           <p className="do">{primary.action}</p>
           <p className="small"><strong>When:</strong> {URGENCY_LABEL[primary.urgency].toLowerCase()}. <strong>Who:</strong> {(primary.who ?? WHO_LABEL[primary.tier]).toLowerCase()}.</p>
           <p className="small">{primary.tierReason}</p>
-          {primary.status === 'act' && primary.tier !== 'self' && (() => {
-            // the app can do the telling: one tap puts a request on the medical officer's Crew screen
-            const rkey = `ask|${primary.key}`
-            const asked = actions.find((x) => x.crew === me && x.alertKey === rkey && x.did === 'Asked to be seen today')
-            const seen = actions.find((x) => x.crew === me && x.alertKey === rkey && x.did === 'Acknowledged the alert')
-            return asked ? <p className="small"><strong>Asked at {new Date(asked.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}.</strong> {seen ? `Acknowledged ${seen.note}.` : 'Not acknowledged yet.'}</p>
-              : <button className="btn primary" onClick={() => void logAction({ crew: me, alertKey: rkey, day, did: 'Asked to be seen today', feel: null, ...alertFields([primary]) })} data-testid="ask-cmo">Ask the medical officer to see me today</button>
-          })()}
+          <AskCmo f={primary} />
           {[primary, ...others].filter((x) => x.status === 'urgent').flatMap((x) => x.steps.filter((q) => /^For whoever is with you/.test(q))).slice(0, 1).map((q) => <p key={q} className="banner strong small">{q}</p>)}
           {primary.status === 'urgent' && !primary.crewWide && (() => {
             const urgentNow = [primary, ...others].filter((x) => x.status === 'urgent')
             const akey = `alert|${urgentNow.map((x) => x.key).sort().join('+')}`
-            const sent = actions.filter((x) => x.crew === me && x.did === 'Alerted the crew' && x.alertKey === akey).sort((x, y) => y.ts - x.ts)[0]
-            const acks = actions.filter((x) => x.did === 'Acknowledged the alert' && x.alertKey === akey && x.crew === me)
+            // an item counts as alerted, and acknowledged, if any earlier alert covered it
+            const { sent, acks } = alertState(actions, me, urgentNow.map((x) => x.key))
             const onlyCmo = urgentNow.every((x) => x.cmoOnly && !x.patientIsCmo)
             const on = sharing[me]?.emergency !== false
             return <div className="col">
@@ -146,8 +143,8 @@ export function Today() {
             </div>
           )}
           {(primary.also ?? []).length > 0 && <div><p className="small"><strong>Also today, from the same readings:</strong></p><ul className="list small">{primary.also!.map((x) => <li key={x.title}><strong>{x.title}.</strong> {x.action}</li>)}</ul></div>}
-          {['R-ILL', 'R-SYM-ILL', 'R-V-TEMP', 'R-V-TEMP-HI'].includes(primary.ruleId) && primary.status !== 'urgent' ? <TempEntry /> : <ReadingLog readings={primary.readings ?? []} title="Readings this is based on" />}
-          <a className={`btn ${primary.status === 'urgent' ? '' : 'primary '}block`} href={href('alert', primary.key)} data-testid="open-alert">Why, and what next <Chev /></a>
+          {['R-ILL', 'R-SYM-ILL', 'R-V-TEMP', 'R-V-TEMP-HI'].includes(primary.ruleId) && primary.status !== 'urgent' ? <TempEntry /> : <><RepeatEntry f={primary} /><ReadingLog readings={primary.readings ?? []} title={[primary, ...others].filter((x) => x.status === "urgent").length > 1 ? "Readings behind the first item" : "Readings this is based on"} /></>}
+          <a className="btn block" href={href('alert', primary.key)} data-testid="open-alert">Why, and what next <Chev /></a>
           {needsCmo && <button className="btn block" onClick={() => shareCats.forEach((c) => setShare(me, 'cmo', c, 'detail'))} data-testid="today-share-cmo">Share {shareCats.map((c) => CAT[c].toLowerCase()).join(', ')} in full detail with the medical officer</button>}
           {needsCmo && <p className="small muted">This changes one setting: <strong>{shareCats.map((c) => CAT[c]).join(', ')}</strong> goes from "{LEVEL_WORD[sharing[me]?.cmo[shareCats[0]] ?? 'none']}" to "Full detail" for the medical officer, until you change it back in Sharing. Readings in other areas, such as sleep or reaction time, stay as you set them. <strong>You still need to tell them.</strong></p>}
           {primary.kind === 'personal' && primary.tier !== 'self' && !needsCmo && <p className="small muted">The medical officer can see this alert.</p>}

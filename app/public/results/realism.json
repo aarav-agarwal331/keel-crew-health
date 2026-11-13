@@ -1,7 +1,7 @@
 {
  "script": "research/scripts/sim_realism.py",
- "commit": "4767f29",
- "code_version": "10afb1b4415d",
+ "commit": "f10e89b",
+ "code_version": "8ab10aa726c4",
  "variability": [
   {
    "id": "rhr",
@@ -378,18 +378,18 @@
  ],
  "transfer": {
   "n_real_people": 72,
-  "detector": "mewma",
+  "detector": "zscore",
   "budgets": {
    "0.25": {
-    "threshold": 40.95751898413319,
-    "real_fa_per_person_month": 0.39506020872357506,
-    "real_quiet_person_months": 245.53219448094612,
+    "threshold": 3.544338011035142,
+    "real_fa_per_person_month": 0.3617936250675311,
+    "real_quiet_person_months": 243.23258869908014,
     "pass": false
    },
    "1.0": {
-    "threshold": 12.394358095933184,
-    "real_fa_per_person_month": 1.3806743377040407,
-    "real_quiet_person_months": 245.53219448094612,
+    "threshold": 1.8556401844707162,
+    "real_fa_per_person_month": 1.2950567260940034,
+    "real_quiet_person_months": 243.23258869908014,
     "pass": false
    }
   }
@@ -399,13 +399,13 @@
   "indicators": "overnight heart rate, HRV, blood oxygen, skin temperature, sleep duration",
   "budgets": {
    "0.25": {
-    "real_alerts_per_person_month": 0.9657814336075207,
-    "real_person_months": 27.95663600525624,
+    "real_alerts_per_person_month": 0.5847231638418079,
+    "real_person_months": 29.07358738501971,
     "pass": false
    },
    "1.0": {
-    "real_alerts_per_person_month": 2.0388719153936545,
-    "real_person_months": 27.95663600525624,
+    "real_alerts_per_person_month": 1.3414237288135593,
+    "real_person_months": 29.07358738501971,
     "pass": false
    }
   }

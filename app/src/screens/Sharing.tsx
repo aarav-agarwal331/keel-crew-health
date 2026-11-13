@@ -23,7 +23,17 @@ export function Sharing() {
   return (
     <>
       <h1>Sharing and privacy</h1>
-      <p className="muted">{crew.name}, your health data is yours. You decide below what each role can see, with four exceptions: the commander always sees your readiness tier (worked out from all your readings, without the reason); with emergency sharing on, the medical officer sees every urgent or same-day safety item, and both the medical officer and the commander are alerted to urgent ones and see what they are and the value entered (the commander does not see items marked "medical officer only"); the daily ground summary carries a count of urgent items still open; and cabin readings are shared with everyone.</p>
+      <p className="muted">{crew.name}, your health data is yours. You decide below what each role can see. What is shown whatever you choose:</p>
+      <table className="tbl small" data-testid="who-sees-table">
+        <thead><tr><th>Who</th><th>Always</th><th>Your choice</th></tr></thead>
+        <tbody>
+          <tr><td>Medical officer</td><td>With emergency sharing on: every urgent or same-day safety item, with the value entered, and an alert for urgent ones. With it off: an alert that you need help, and "an item, details private".</td><td>Each area: nothing, status, trend or full detail</td></tr>
+          <tr><td>Commander</td><td>Your readiness tier, without the reason. With emergency sharing on: urgent items, the value entered and an alert, as backup (never items marked "medical officer only"). With it off: an alert that you need help.</td><td>Each area</td></tr>
+          <tr><td>Crew</td><td>A count when three or more crew show a change in the same area</td><td>Nothing</td></tr>
+          <tr><td>Ground</td><td>A count of urgent items still open</td><td>Each area, for the flight surgeon</td></tr>
+          <tr><td>Everyone</td><td>Cabin air and radiation readings</td><td>Not personal</td></tr>
+        </tbody>
+      </table>
       <p className="small muted">How it travels: in this demo every role is on one tablet. In a flight version your data stays on your tablet, and only the views allowed here would go over the cabin network, to the medical officer's and commander's tablets; the daily ground summary goes out when a link exists.</p>
       <Card title="Always visible, whatever you choose below">
         <ul className="list small">
@@ -38,7 +48,7 @@ export function Sharing() {
             <button aria-pressed={s.emergency !== false} onClick={() => setEmergency(me, true)}>On</button>
             <button aria-pressed={s.emergency === false} onClick={() => setEmergency(me, false)}>Off</button>
           </div>
-          <span className="small muted">When on, a symptom you mark as serious or an "act now" safety reading appears at once on the medical officer's and the commander's Crew screens (what it is, the value entered and the action; the commander never sees items marked "medical officer only" and never sees your reading log), an alert goes to both ten seconds after you save unless you cancel it, and it stays on the medical officer's list until they close it with a note.</span>
+          <span className="small muted">When on, a symptom you mark as serious or an "act now" safety reading appears at once on the medical officer's and the commander's Crew screens (what it is, the value entered and the action; the commander never sees items marked "medical officer only" and never sees your reading log), an alert goes to both ten seconds after you save (at once if you leave Check-in) unless you cancel it, and it stays on the medical officer's list until they close it with a note.</span>
           <details className="small muted"><summary>More about emergency sharing</summary><p>The commander is shown it too, as backup, except the items marked "medical officer only" at check-in ({SYMPTOMS.filter((x) => (x as { commander?: boolean }).commander === false).map((x) => x.label.toLowerCase()).join('; ')}). Emergency sharing sends no details to the ground: the daily ground summary carries only what you set for the flight surgeon below, plus a count of urgent items still open, so the flight surgeon knows to call. Every fixed safety rule (a reading or a serious symptom) that needs attention now or today goes on the medical officer's list; notices from your readings follow the sharing levels below; under this consent they see what the item is and the readings behind it, even for an area you have not shared. With it off, nothing extra goes to anyone: urgent items reach the medical officer's list only as "an item, details private" (so they can close it once you have talked), and the alert (automatic or by the button) says only that you need help, and the ground gets no count. Both can see that it is off.</p></details>
         </div>
       </Card>

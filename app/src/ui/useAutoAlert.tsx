@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { alertFields } from '../core/alerts'
+import { alertFields, alertState } from '../core/alerts'
 import { useApp } from '../state'
 
 /** One alert service for every place a reading can be entered (Check-in, the thermometer box on Today).
@@ -18,10 +18,10 @@ export function useAutoAlert(trigger: boolean) {
   // the latest action log, read when the timer fires: another screen may have sent this alert meanwhile
   const actionsRef = useRef(actions)
   actionsRef.current = actions
-  const alreadySent = (k: string) => actionsRef.current.some((x) => x.crew === me && x.alertKey === k && x.did === 'Alerted the crew')
+  const alreadySent = (_k: string) => !!alertState(actionsRef.current, me, urgent.map((x) => x.key)).sent
   useEffect(() => {
     if (!trigger || !urgent.length) return
-    if (autoAlert?.key === akey || actions.some((x) => x.crew === me && x.alertKey === akey && /Alerted the crew|Alert cancelled/.test(x.did))) return
+    if (autoAlert?.key === akey || actions.some((x) => x.crew === me && x.alertKey === akey && /Alert cancelled/.test(x.did)) || alertState(actionsRef.current, me, urgent.map((x) => x.key)).sent) return
     setAutoAlert({ key: akey, ts: Date.now() })
     const send = () => alreadySent(akey) ? undefined : void logAction({ crew: me, alertKey: akey, day, did: 'Alerted the crew', feel: null, ...alertFields(urgent, ' (sent automatically)') })
     const t = window.setTimeout(() => { flushRef.current = () => {}; send() }, 10_000)
@@ -33,9 +33,10 @@ export function useAutoAlert(trigger: boolean) {
   useEffect(() => () => flushRef.current(), [])
   // escalation: no acknowledgement from the medical officer (or, when the patient is the medical officer, the commander)
   const patientIsCmo = mission.crew.find((c) => c.id === me)?.role === 'cmo'
-  const sent = actions.filter((x) => x.crew === me && x.did === 'Alerted the crew' && x.alertKey === akey).sort((x, y) => x.ts - y.ts)
-  const acked = actions.some((x) => x.did === 'Acknowledged the alert' && x.alertKey === akey && x.crew === me && (/medical officer/.test(x.note) || (patientIsCmo && /commander/.test(x.note))))
-  const escalated = sent.some((x) => /sent again/.test(x.note))
+  const st = alertState(actions, me, urgent.map((x) => x.key))
+  const sent = st.sent ? [st.sent] : []
+  const acked = st.acks.some((x) => /medical officer/.test(x.note) || (patientIsCmo && /commander/.test(x.note)))
+  const escalated = st.covering.some((x) => /sent again/.test(x.note))
   useEffect(() => {
     if (!sent.length || acked || escalated || !urgent.length) return
     const due = sent[0].ts + 5 * 60e3 - Date.now()

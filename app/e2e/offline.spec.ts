@@ -39,7 +39,8 @@ test('every screen works with the network disabled', async ({ page }) => {
   })
 
   await test.step('Alert detail: evidence, action, escalation, log what you did', async () => {
-    await page.getByTestId('open-alert').click()
+    // the readings-based notice (the persistent-symptom item is listed first, as reported items are)
+    await page.getByRole('link', { name: /during an infection/ }).first().click()
     await expect(page.getByTestId('alert-action')).toBeVisible()
     await expect(page.getByText('What changed')).toBeVisible()
     await page.getByRole('button', { name: 'Did it', exact: true }).click()
@@ -273,4 +274,18 @@ test('data entered offline survives a reload', async ({ page }) => {
   await page.reload()
   await nav(page, '#/today')
   await expect(page.getByText('Check-in done')).toBeVisible()
+})
+
+test('the guided demo enters a dangerous reading and shows the action and the alert countdown', async ({ page }) => {
+  await goOffline(page)
+  await nav(page, '#/checkin/demo')
+  await expect(page.getByTestId('demo-banner')).toBeVisible()
+  await page.getByTestId('save-checkin').last().click()
+  await expect(page.locator('main')).toContainText('Act now')
+  await expect(page.getByTestId('cancel-auto-alert')).toBeVisible()
+  // the repeat the card asks for can be entered on the card itself
+  await nav(page, '#/today')
+  await page.getByTestId('repeat-now').fill('90')
+  await page.getByTestId('repeat-save').click()
+  await expect(page.getByTestId('reading-log').first()).toContainText('90')
 })

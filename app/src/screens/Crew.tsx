@@ -54,6 +54,7 @@ export function Crew() {
         return open.map((x) => (
           <section key={x.ts} className="card action" role="alert" data-testid="crew-alert">
             <p className="do">{x.did === 'Asked to be seen today' ? `${mission.crew.find((c) => c.id === x.crew)?.name} asks to be seen today` : /\(sent automatically\)/.test(x.note) ? `Alert about ${mission.crew.find((c) => c.id === x.crew)?.name}, sent automatically after an urgent check-in` : `${mission.crew.find((c) => c.id === x.crew)?.name} raised an alert`} at {new Date(x.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}{(sharing[x.crew]?.emergency !== false) ? `: ${(role === 'commander' && !isCmo(x.crew) && x.cmdNote !== undefined ? x.cmdNote : x.note).replace(/ \(sent automatically\)/, '').replace(/ \(medical officer only\)/, '')}` : ''}{x.did === 'Asked to be seen today' ? '. See them today.' : '. Go to them now.'}</p>
+            {!acksFor(x).length && Date.now() - x.ts > 5 * 60e3 && <p className="banner strong"><strong>Not acknowledged for {Math.round((Date.now() - x.ts) / 60e3)} minutes.</strong> Whoever reads this: go to them, or find the medical officer.</p>}
             {acksFor(x).map((q) => <p key={q.ts} className="small">Acknowledged {q.note} at {new Date(q.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}.</p>)}
             {!acksFor(x).some((q) => q.note.includes(role === 'cmo' ? 'medical officer' : 'commander')) && <button className="btn primary" onClick={() => void logAction({ crew: x.crew, alertKey: x.alertKey, day, did: 'Acknowledged the alert', feel: null, note: `by the ${role === 'cmo' ? 'medical officer' : 'commander'}` })} data-testid="ack-alert">Acknowledge: I am on my way</button>}
             <p className="tiny muted">In a flight version this would sound on the medical officer's and commander's tablets over the cabin network; no Earth link is needed.</p>
@@ -61,7 +62,7 @@ export function Crew() {
         ))
       })()}
       <div className="card-h"><h1>Crew readiness</h1><Seg label="View as" value={role} onChange={setRole} options={[{ id: 'commander', label: 'Commander' }, { id: 'cmo', label: 'Medical officer' }]} /></div>
-      <p className="muted">{shortDay(mission, day)}. {role === 'commander' ? 'Whether Keel has any flags for each crew member before a demanding task tomorrow, such as a spacewalk. You see a tier for everyone; reasons appear only where a crew member has chosen to share them, and for urgent items under their emergency sharing (as their backup).' : 'What each crew member has chosen to share with you. Nothing is shown that they have not shared, except emergencies they agreed to share and, under that consent, the fact that an item is open in an area. Their overall status here covers only the areas they share with you; the commander\'s tier (a separate thing) uses all their readings.'}</p>
+      <p className="muted">{shortDay(mission, day)}. {role === 'commander' ? 'Whether Keel has any flags for each crew member before a demanding task tomorrow, such as a spacewalk. You see a tier for everyone; reasons appear only where a crew member has chosen to share them, and for urgent items under their emergency sharing (as their backup).' : 'What each crew member has chosen to share with you. Nothing is shown that they have not shared, except, under the emergency sharing they agreed to, every open urgent or same-day safety item with its readings. Their overall status here covers only the areas they share with you; the commander\'s tier (a separate thing) uses all their readings.'}</p>
       <p className="small muted">Labels: a crew member's own "Act today" or "Act now" shows to the commander as "Talk to the medical officer first"; "Worth a look" is the same on both screens.</p>
       <p className="banner">Demo view. On a mission each role has its own device; here you can switch roles. Every look is written to the crew member's access log.</p>
 
@@ -109,12 +110,12 @@ export function Crew() {
                   {SHARE_CATEGORIES.filter((cat) => v.categories[cat].status !== undefined).map((cat) => {
                     const x = v.categories[cat]
                     const outs = x.indicators?.filter((i) => !i.inRange) ?? []
-                    return <li key={cat}><StatusTag status={x.status!} label={catLabel(cat)} size={16} />{outs.length > 0 && <span className="muted">: {outs.map((i) => `${IND[i.ind].short}${i.value !== undefined && !Number.isNaN(i.value) ? ` ${i.value.toFixed(IND[i.ind].decimals)} ${IND[i.ind].unit}` : ' out of range'}`).join(', ')}</span>}</li>
+                    return <li key={cat}><StatusTag status={x.status!} label={`${catLabel(cat)}${x.status !== 'steady' && x.status !== 'learning' ? ` (${STATUS_LABEL[x.status!].toLowerCase()})` : ''}`} size={20} />{outs.length > 0 && <span className="muted">: {outs.map((i) => `${IND[i.ind].short}${i.value !== undefined && !Number.isNaN(i.value) ? ` ${i.value.toFixed(IND[i.ind].decimals)} ${IND[i.ind].unit}` : ' out of range'}`).join(', ')}</span>}</li>
                   })}
                   {v.findings.filter((x) => !x.emergency).filter((x, i, arr) => x.title || arr.findIndex((y) => !y.title && y.category === x.category) === i).map((f) => (
                     <li key={f.key}>
-                      <strong>{f.title ?? `Notice from the readings in ${catLabel(f.category).toLowerCase()} (details not shared)`}</strong> <span className="muted">({STATUS_LABEL[f.status].toLowerCase()} for {f.days} d)</span>
-                      {role === 'cmo' && f.key.includes('|P|') && ['act', 'urgent'].includes(f.status) && (() => {
+                      <strong>{f.title ?? `Notice from the readings in ${catLabel(f.category).toLowerCase()} (details not shared)`}</strong> <span className="muted">({STATUS_LABEL[f.status].toLowerCase()}, {f.days} {f.days === 1 ? 'day' : 'days'})</span>
+                      {role === 'cmo' && c.role !== 'cmo' && f.key.includes('|P|') && ['act', 'urgent'].includes(f.status) && (() => {
                         const k = `${f.key}#${f.status}#${day - f.days + 1}`
                         const note = (notes[k] ?? '').trim()
                         const log = (did: string) => void logAction({ crew: c.id, alertKey: k, day, did, feel: null, note })
@@ -123,8 +124,8 @@ export function Crew() {
                             <input type="text" aria-label={`Note on ${f.title ?? 'this notice'}`} value={notes[k] ?? ''} onChange={(e) => setNotes((p) => ({ ...p, [k]: e.target.value }))} placeholder="Note: what you found and decided" style={{ flex: 1, minWidth: 180 }} />
                             <button className="btn sm" disabled={!note} onClick={() => log('Noted by the medical officer (still open)')} data-testid="note-notice">Note only, keep open</button>
                             <button className="btn sm" disabled={!note} onClick={() => log('Closed by the medical officer: handled, not cleared for exercise or duties')} data-testid="close-notice-restricted">Handled, restrictions stay</button>
-                            {f.title ? <button className="btn sm" disabled={!note} onClick={() => log('Closed by the medical officer: cleared for exercise and duties')} data-testid="close-notice">Cleared for exercise and duties (lifts every restriction on them)</button>
-                              : <button className="btn sm" disabled={!note} onClick={() => log('Closed by the medical officer: cleared for exercise and duties after an in-person exam')} data-testid="close-notice-exam">Cleared after examining them in person</button>}
+                            {f.title ? <button className="btn sm" disabled={!note} onClick={() => log('Closed by the medical officer: handled, no restriction')} data-testid="close-notice">Handled, no restriction</button>
+                              : <button className="btn sm" disabled={!note} onClick={() => log('Closed by the medical officer: handled after an in-person exam, no restriction')} data-testid="close-notice-exam">Handled after examining them in person</button>}
                           </div>
                         )
                       })()}
@@ -148,6 +149,17 @@ export function Crew() {
               )}
               {role === 'cmo' && extras.meds.length > 0 && <p className="small"><strong>Medication logged today:</strong> {extras.meds.join(', ').toLowerCase()}.</p>}
               {role === 'cmo' && extras.photos.length > 0 && <div className="row wrap">{extras.photos.map((ph) => <figure key={ph.ts} style={{ margin: 0 }}><img src={ph.data} alt={`${ph.label} photo from ${c.name}`} style={{ width: 140, height: 140, objectFit: 'cover', borderRadius: 10 }} /><figcaption className="tiny">{ph.label}</figcaption></figure>)}</div>}
+              {/* clearance is about the person: one action, saying exactly what it lifts */}
+              {a?.restricted && (role === 'cmo' ? c.role !== 'cmo' : c.role === 'cmo') && (
+                <div className="col" data-testid={`clearance-${c.id}`} style={{ gap: 6 }}>
+                  <span className="lab">{c.name.split(' ')[0]} is restricted from exercise and duties by an earlier "not cleared" decision</span>
+                  <div className="row wrap">
+                    <input type="text" aria-label={`Clearance note for ${c.name}`} value={notes[`clear|${c.id}`] ?? ''} onChange={(e) => setNotes((p) => ({ ...p, [`clear|${c.id}`]: e.target.value }))} placeholder={role === 'cmo' ? 'Note: why they are cleared' : 'Who cleared them (flight surgeon or named backup) and why'} style={{ flex: 1, minWidth: 180 }} />
+                    <button className="btn sm" disabled={!(notes[`clear|${c.id}`] ?? '').trim()} onClick={() => void logAction({ crew: c.id, alertKey: `clear|${c.id}`, day, did: role === 'cmo' ? 'Cleared for exercise and duties by the medical officer' : 'Cleared for exercise and duties, recorded by the commander', feel: null, note: (notes[`clear|${c.id}`] ?? '').trim() })} data-testid={`clear-person-${c.id}`}>Clear for exercise and duties</button>
+                  </div>
+                  <p className="tiny muted">This lifts every earlier "not cleared" decision on {c.name.split(' ')[0]}. It does not close open items, and a hold from an item still open stays until that item is closed.</p>
+                </div>
+              )}
               {/* the worklist: 'now' and 'today' findings from this person's own entries stay here until closed with a note */}
               {(role === 'cmo' || c.role === 'cmo') && open.length > 0 && (
                 <div className="col" data-testid={`worklist-${c.id}`}>
@@ -159,7 +171,7 @@ export function Crew() {
                       {!(role === 'cmo' && c.role === 'cmo') && (
                         <div className="row wrap">
                           <input type="text" aria-label={`Closing note for ${x.title}`} value={notes[x.key] ?? ''} onChange={(e) => setNotes((p) => ({ ...p, [x.key]: e.target.value }))} placeholder="Note: what you found and did" style={{ flex: 1, minWidth: 180 }} />
-                          {role === 'cmo' && <button className="btn sm" disabled={!(notes[x.key] ?? '').trim()} onClick={() => void logAction({ crew: c.id, alertKey: x.key, day, did: `Closed by the ${role === 'cmo' ? 'medical officer' : 'commander (backup)'}: cleared for exercise and duties`, feel: null, note: (notes[x.key] ?? '').trim() })} data-testid="close-item">Close: cleared for exercise and duties (lifts every restriction on them)</button>}
+                          {role === 'cmo' && <button className="btn sm" disabled={!(notes[x.key] ?? '').trim()} onClick={() => void logAction({ crew: c.id, alertKey: x.key, day, did: `Closed by the ${role === 'cmo' ? 'medical officer' : 'commander (backup)'}: resolved, no restriction`, feel: null, note: (notes[x.key] ?? '').trim() })} data-testid="close-item">Close: resolved, no restriction</button>}
                           <button className="btn sm" disabled={!(notes[x.key] ?? '').trim()} onClick={() => void logAction({ crew: c.id, alertKey: x.key, day, did: `Closed by the ${role === 'cmo' ? 'medical officer' : 'commander (backup)'}: resolved, not cleared for exercise or duties`, feel: null, note: (notes[x.key] ?? '').trim() })} data-testid="close-item-restricted">Close: resolved, not cleared</button>
                         </div>
                       )}

@@ -68,12 +68,14 @@ is decision support, not a diagnostic device.
 Each person's baseline for each indicator is the median of their own previous four weeks, with a
 robust measure of spread. Launch and landing are treated as expected changes: the baseline follows a
 published adaptation curve and widens its band until the person's own new data takes over. Daily
-deviations feed a multivariate detector that reacts to several small changes in a worrying direction.
+deviations in a worrying direction feed a simple personal rule: an indicator beyond its threshold on
+two of the last three days. (A multivariate detector was used until a review found an error in it;
+once corrected it no longer beat the simple rule by our pre-set margin.)
 Alert thresholds are not chosen by feel. They are set in simulation to a budget of one mistaken notice
 per person-month and one mistaken alert per four person-months, because alarm fatigue is an
-operational hazard; on real people they ran over that budget (1.40 and 0.39 per person-month).
+operational hazard; on real people they ran over that budget (1.31 and 0.41 per person-month).
 Thresholds depend on which sensors are present: imported watch data therefore runs on a separate
-heart-rate-only model calibrated on the 251 real people (+22 above luck, 12 to 32). A fixed table of 43 rules turns a pattern, an entered reading or a reported symptom into wording, one action,
+heart-rate-only model calibrated on the 251 real people (+19 above luck, 9 to 28). A fixed table of 43 rules turns a pattern, an entered reading or a reported symptom into wording, one action,
 follow-up steps, how soon and who, each citing a NASA document, a published study or public clinical
 guidance. No language model writes any advice, and by design Keel gives no medication or treatment
 advice.
@@ -139,7 +141,7 @@ insignia are used. Keel is not affiliated with or endorsed by NASA.
 All numbers come from scripts in the repository and are shown in the app with their method.
 Detection is reported **above luck**: the share of episodes flagged minus the share an alert would
 hit by chance, measured with pretend illness dates. The detection window runs from 10 days before
-to 4 days after symptom onset. "Above luck" is an upper bound: pretend dates cannot be matched to the
+to 4 days after symptom onset. "Above luck" is likely optimistic: pretend dates cannot be matched to the
 calendar (dates are shifted for privacy), so travel, testing and isolation near a real onset are not
 reproduced.
 
@@ -148,37 +150,40 @@ activity).**
 
 | On real illness episodes | Flagged | By luck | Above luck (95% interval) | False alerts per person-month (budget) |
 |---|---|---|---|---|
-| **Keel's method, thresholds set only in simulation,** notice tier | 72% | 40% | **+32 points** (22 to 41) | 1.40 (1.00) |
-| Keel's method, thresholds set only in simulation, alert tier | 32% | 13% | +19 (9 to 28) | 0.39 (0.25) |
-| Thresholds calibrated on other real people, with daily steps | 66% | 33% | +34 (24 to 44) | about 1.00 |
+| **Keel's method, thresholds set only in simulation,** notice tier | 68% | 41% | **+28 points** (18 to 37) | 1.31 (1.00) |
+| Keel's method, thresholds set only in simulation, alert tier | 39% | 15% | +24 (14 to 34) | 0.41 (0.25) |
+| Thresholds calibrated on other real people, with daily steps | 63% | 34% | +28 (19 to 38) | about 1.00 |
 | One threshold for everyone, with daily steps | 41% | 23% | +18 (8 to 27) | |
 
 - The headline is Keel's method, on two sensors, with thresholds set only in simulation: the
   detector run on the two sensors the real data has (overnight heart rate and 7-day activity), with
   its model and thresholds fitted only on simulated people and applied unchanged to real people. On
-  the 132 people the simulator's fits did not use (60 episodes) it is +35 (22 to 46). The
+  the 132 people the simulator's fits did not use (60 episodes) it is +30 (17 to 42). The
   alert tier is the one that brings in the medical officer. Both tiers ran over their false-alert
   budget.
 - The model file the app ships is calibrated for all eleven on-board channels. Given only the
-  channels a real watch import has (overnight heart rate, sometimes sleep), it flagged 12% of
-  episodes, +9 above luck (4 to 16), at 0.08 false alerts per person-month, and its alert tier never
-  fired. See Limitations.
+  channels a real watch import has (overnight heart rate, sometimes sleep), it flagged 29% of
+  episodes, +16 above luck (7 to 25), at 0.35 false alerts per person-month, and at the alert tier
+  +10 (4 to 17) at 0.12. See Limitations.
 - With thresholds calibrated on other real people (five folds over people): heart rate alone
-  +22 (12 to 32); heart rate with 7-day activity +31 (21 to 41), alert tier +13 (4 to 21); heart rate
-  with daily steps +34, alert tier +33 (23 to 43). The +34 is not our headline because its thresholds
-  were set on real people and Keel does not use daily steps.
-- Keel's lead over one fixed threshold is +16 (3 to 29) in the detection window used and
-  +10 (−3 to 23) in the original wider window (−14 to +7 days). With 7-day activity the fixed
-  threshold is +7 (−1 to 15) and Keel's lead is +24 (11 to 36) at the notice tier and +8 (−1 to 18)
-  at the alert tier. Four detectors, two tiers and several windows were compared without correction,
-  and the like-for-like contrast (same rule, personal against population baseline) is +11 (−3 to 25),
-  and +17 (7 to 28) at the alert tier: mixed evidence that a personal baseline beats a fixed threshold.
-- Keel's detector is not shown to beat a simple personal rule (two of three days outside the personal
-  range). The simple rule alone is +28 (19 to 38); the detector's lead over it is +5 (−2 to 12), not
-  distinguishable.
-- Robustness of the cross-validated result: trained on one cohort and tested on the other, +33 and
-  +33; five fold splits, +34 to +36; original window, +31 (22 to 40).
-- Much of the signal is behavioural. Heart rate alone is +22; activity adds the rest because people
+  +19 (9 to 28); heart rate with 7-day activity +30 (20 to 39), but its alert tier never fires (the
+  threshold lands on the z-score cap of 4); heart rate with daily steps +28, alert tier +26 (17 to 35).
+  The +30 is not our headline because its thresholds were set on real people.
+- Keel's lead over one fixed threshold is +11 (−3 to 25) in the detection window used and
+  +7 (−5 to 20) in the original wider window (−14 to +7 days); both intervals include zero. With
+  7-day activity the fixed threshold is +7 (−1 to 15) and Keel's lead is +23 (11 to 35) at the notice
+  tier and −4 (−10 to 1) at the alert tier, where Keel's rule never fires. Four detectors, two tiers
+  and several windows were compared without correction. Keel now uses the same rule as the fixed
+  threshold, so its lead with daily steps is the like-for-like contrast (personal against population
+  baseline): +11 (−3 to 25), and +17 (7 to 28) at the alert tier: mixed evidence that a personal
+  baseline beats a fixed threshold.
+- Keel's detector is now the simple personal rule (two of three days outside the personal range):
+  +28 (19 to 38). A review found that the multivariate detector used before had correlations of the
+  wrong sign; once corrected, its lead on simulated training missions fell below our pre-set margin.
+  On real data it scores +34 (24 to 44), a paired difference of +5 (−2 to 12) over the rule: not distinguishable.
+- Robustness of the cross-validated result: trained on one cohort and tested on the other, +29 and
+  +22; five fold splits, +26 to +30; original window, +29 (20 to 38).
+- Much of the signal is behavioural. Heart rate alone is +19; activity adds the rest because people
   move less when ill (median daily steps fall from 7,554 to 4,210), which cannot be separated from
   isolating at home.
 
@@ -187,52 +192,53 @@ flags the pulse of 9 of 14 volunteers; Keel flags 4. The difference is not signi
 p = 0.06), there is no ground truth that those flags are false, and the fewer flags come from widening the
 band. Without phase handling the same rule flags about a third of quiet two-week stretches; the chance level with the widened band was not measured, so 4 of 14 cannot be compared with chance.
 
-**Simulated missions (full sensor set, 1 false alert per person-month).** 67% flagged against 41% by
-luck: +26 points (19 to 33). The lead over a fixed threshold is +6 (−2 to 14). By event type, above
-luck: sleep restriction +55, exercise outage +54, low fluids +26 (10 to 40), cabin CO2 +11 (1 to 21),
-illness +11 (−9 to 30), low mood +13 (−5 to 32); for illness and low mood the interval includes zero.
-Mission-phase handling (gravity changes) gives 0.90 false alerts per person-month in the first 30
-flight days against 1.98 without it. With luck taken from the same flight days, events that begin in
-the first 25 flight days are +24 (14 to 33) above luck with phase handling and +15 (6 to 25) without. The simulator passes its realism checks only on quantities
+**Simulated missions (full sensor set, 1 false alert per person-month).** 71% flagged against 41% by
+luck: +31 points (25 to 36). The lead over a fixed threshold is +11 (3 to 19). By event type, above
+luck: sleep restriction +57, exercise outage +51, low fluids +44 (30 to 54), cabin CO2 +16 (6 to 24),
+illness +14 (−6 to 34), low mood +17 (−3 to 36); for illness and low mood the interval includes zero.
+Mission-phase handling (gravity changes) gives 1.03 false alerts per person-month in the first 30
+flight days against 1.62 without it. With luck taken from the same flight days, events that begin in
+the first 25 flight days are +22 (13 to 31) above luck with phase handling and +18 (8 to 29) without. The simulator passes its realism checks only on quantities
 fitted to the other half of the same data; the independent checks fail or are off, as listed below.
 
 ## Limitations
 
 - **No useful early warning shown.** At the notice tier an alert started in the ten days up to
-  symptom onset for 46% of episodes against 28% by luck (+18, 9 to 28); at the alert tier, the one
-  that brings in the medical officer, the gain is +1 (−5 to 7), that is, none. The notice-tier gain
+  symptom onset for 44% of episodes against 30% by luck (+14, 4 to 24); at the alert tier, the one
+  that brings in the medical officer, the gain is +6 (−1 to 13), an interval that includes zero. The notice-tier gain
   is small and confounded (test dates, isolation after a positive test, lower activity on the day),
   so we do not claim it. In the scripted replay Keel flags the illness on the day symptoms begin,
   and the sensors alone show it one day after.
-- **Most alerts are false.** At the in-flight rate of respiratory illness, between 1 in 11 and
-  1 in 27 alert-tier alerts would be a real illness, and about 1 in 40 notices. An alert is a prompt
+- **Most alerts are false.** At the in-flight rate of respiratory illness, between 1 in 13 and
+  1 in 22 alert-tier alerts would be a real illness, and about 1 in 40 notices. An alert is a prompt
   to look, not a verdict.
-- **Keel's method runs over its false-alert budget on real people:** 1.40 against 1.00 per
-  person-month at the notice tier, 0.39 against 0.25 at the alert tier.
+- **Keel's method runs over its false-alert budget on real people:** 1.31 against 1.00 per
+  person-month at the notice tier, 0.41 against 0.25 at the alert tier.
 - **The shipped model is not set up for a watch import.** The model file the app ships is calibrated
   for all eleven on-board channels. Given only the channels a real watch import has (overnight heart
-  rate, sometimes sleep), it flagged 12% of episodes, +9 above luck (4 to 16), at 0.08 false alerts
-  per person-month, and its alert tier flagged no episodes. Imports now run on a heart-rate-only model
+  rate, sometimes sleep), it flagged 29% of episodes, +16 above luck (7 to 25), at 0.35 false alerts
+  per person-month, and +10 (4 to 17) at 0.12 at the alert tier. Imports now run on a heart-rate-only model
   calibrated on real people instead; other sensor subsets (a failed HRV sensor, say) still use the
   full-set thresholds.
-- **Not shown to beat simpler methods.** The detector cannot be told apart from a simple personal
-  rule, and the lead of a personal baseline over a fixed threshold is probable, not proven.
+- **Not shown to beat simpler methods.** The detector is now the simple personal rule, because the
+  multivariate one did not beat it by our pre-set margin once a review corrected it, and the lead of a
+  personal baseline over a fixed threshold is possible, not proven.
 - **Ground data stands in for spaceflight data.** No open astronaut wearable time series exists. The
   people in the real evaluation were on Earth, wore consumer watches and mostly had COVID-19, and
   much of the signal is their change in activity, which cannot be separated from isolation at home.
-  Heart rate alone (+22) is the safer figure.
+  Heart rate alone (+19) is the safer figure.
 - **Only illness is tested on real data,** with heart rate and activity. Sleep loss, cabin CO2,
   deconditioning, dehydration and low mood, and the contribution of HRV, oxygen, temperature and
   check-ins, are tested in simulation with assumed effect sizes.
 - **The simulation is not reality.** Simulated illness raises heart rate by 2.1 bpm against 4.6 in
   real episodes; simulated HRV variability is 37% too high; sleep carry-over is off; nights under six
-  hours are 50% against a published 44%. Thresholds from simulation gave 1.38 and 0.40 false alerts
-  per person-month on 72 real people (budgets 1.00 and 0.25), and 2.04 and 0.97 with five sensors on
-  16 people. Like for like on two channels, simulated illness is flagged +11 above luck against +35
+  hours are 50% against a published 44%. Thresholds from simulation gave 1.30 and 0.36 false alerts
+  per person-month on 72 real people (budgets 1.00 and 0.25), and 1.34 and 0.58 with five sensors on
+  16 people. Like for like on two channels, simulated illness is flagged +11 above luck against +30
   for real episodes.
-- **Gravity-change handling is tested only in simulation.** It halves false alerts after launch (0.90
-  against 1.98 per person-month) and has no measured cost: events that begin in the first 25 flight
-  days are +24 (14 to 33) above luck with it and +15 (6 to 25) without. An earlier analysis that
+- **Gravity-change handling is tested only in simulation.** It cuts false alerts after launch by about
+  a third (1.03 against 1.62 per person-month) and has no measured cost: events that begin in the first 25 flight
+  days are +22 (13 to 31) above luck with it and +18 (8 to 29) without. An earlier analysis that
   reported a cost was wrong (luck had been drawn from late flight).
 - **Small samples:** 107 illness episodes; 14 bed-rest volunteers in the comparison.
 - **Not clinically reviewed.** No clinician has reviewed anything. The rules, the fixed thresholds

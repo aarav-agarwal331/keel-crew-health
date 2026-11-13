@@ -1,6 +1,6 @@
 import fs from 'node:fs'
 import { describe, expect, it } from 'vitest'
-import { alertFields } from './alerts'
+import { alertFields, alertState } from './alerts'
 import { analyzeDay, applyRule, closuresFrom, CM, evalCond, REFS, RULE, RULES, type RuleFeatures } from './analysis'
 import { scorePerson, type ModelJson } from './detect'
 import { features } from './mission'
@@ -206,7 +206,7 @@ describe('end to end on the demo mission', () => {
     const e: Entry = { key: 'k', mission: m.id, crew: 'c0', day: 100, values: {}, symptoms: [], ts: 0, readings: [{ ind: 'temp_oral', v: 39.8, ts: 1 }, { ind: 'temp_oral', v: 36.9, ts: 1 + 40 * 60 * 1000 }] }
     const f1 = run('c0', 100, [e]).findings.find((x) => x.ruleId === 'R-V-TEMP-HI')!
     expect(f1.action).not.toMatch(/sugar/)
-    expect(f1.action).toMatch(/back below this line/)
+    expect(f1.action).toMatch(/back on the safe side of this line/)
     const hr: Entry = { key: 'k', mission: m.id, crew: 'c0', day: 100, values: {}, symptoms: [], ts: 0, readings: [{ ind: 'rhr_spot', v: 170, ts: 1 }, { ind: 'rhr_spot', v: 72, ts: 1 + 20 * 1000 }] }
     expect(run('c0', 100, [hr]).status).toBe('urgent')
   })
@@ -247,8 +247,14 @@ describe('end to end on the demo mission', () => {
     expect(a.exerciseHold).toBe(true)
     expect(readiness(a).tier).toBe('hold')
     const cleared = closuresFrom([{ did: 'Closed by the medical officer: handled, not cleared for exercise or duties', alertKey: `${m.id}|c0|P|90#act#90`, ts: 5, crew: 'c0', mission: m.id },
-      { did: 'Closed by the medical officer: cleared for exercise and duties', alertKey: 'other', ts: 6, crew: 'c0', mission: m.id }])
+      { did: 'Cleared for exercise and duties by the medical officer', alertKey: 'clear|c0', ts: 6, crew: 'c0', mission: m.id }])
     expect(an(cleared).restricted).toBe(false)
+  })
+  it('an item stays alerted and acknowledged when the set of urgent items changes', () => {
+    const acts = [{ crew: 'c0', did: 'Alerted the crew', alertKey: 'alert|a|1+b|2', ts: 1, note: '' }, { crew: 'c0', did: 'Acknowledged the alert', alertKey: 'alert|a|1+b|2', ts: 2, note: 'by the medical officer' }]
+    expect(alertState(acts, 'c0', ['b|2']).sent).toBeDefined()
+    expect(alertState(acts, 'c0', ['b|2']).acks).toHaveLength(1)
+    expect(alertState(acts, 'c0', ['b|2', 'c|3']).sent).toBeUndefined()
   })
   it('an alert about a "medical officer only" item carries nothing the commander may not see', () => {
     const f = alertFields([{ title: 'Serious symptom', cmoOnly: true }, { title: 'Heart rate 150 or more' }])

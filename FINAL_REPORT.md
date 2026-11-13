@@ -20,7 +20,7 @@ source, how soon and who should know. No server, no language model.
 | Real data used | Stanford COVID-19 wearables phases 1 and 2 (detection), LifeSnaps (variability), NASA Life Sciences Data Archive bed-rest campaigns (gravity transitions) |
 | Privacy | Per-role, per-area sharing at four levels, a tested privacy gate, access log, switchable emergency sharing, some symptoms shown to the medical officer only |
 | Offline | Service worker precache; automated test disables the network and uses every screen |
-| Tests | 24 Python and 60 TypeScript unit tests, including Python-to-TypeScript detector parity; 2 offline end-to-end tests; screenshot and review-capture runs |
+| Tests | 24 Python and 61 TypeScript unit tests, including Python-to-TypeScript detector parity; 3 offline end-to-end tests; screenshot and review-capture runs |
 | Reproducibility | `make all` (data → sim → model → validate → test → build). Remote range-request extraction was verified against the local copies |
 | Docs | README with traceability table, `docs/METHOD.md`, `DOMAIN.md` (69 opened sources), `DATA.md`, `REQUIREMENTS.md`, `REVIEW.md`, `DECISIONS.md`, `PLAN.md` |
 | Submission | Project page text, 30-second video storyboard, 7-slide deck (HTML), 60-second and 3-minute pitches, 15 judge questions, AI-use disclosure |
@@ -45,17 +45,17 @@ source, how soon and who should know. No server, no language model.
 
 | Result | Basis |
 |---|---|
-| Keel's method on two sensors, thresholds from the simulator, flags 72% of illness episodes; luck 40%; +32 points above luck (22 to 41), at 1.40 false alerts per person-month (budget 1.00). On people the simulator's fits did not use: +35 (22 to 46). Alert tier: +19 (9 to 28) at 0.39 (budget 0.25) | **Real** people and episodes (251, 107), scored with a two-sensor model and thresholds fitted in **simulation** |
-| The 11-channel model file the app ships, given only a real import's channels: 12% flagged, +9 (4 to 16), 0.08 false alerts per person-month; alert tier never fired | **Real** data, shipped model |
-| With thresholds from other real people: heart rate alone +22 (12 to 32); + 7-day activity +31 (21 to 41); + daily steps +34 (24 to 44). Fixed threshold +18 (8 to 27) and +7 (−1 to 15) | **Real**, 5-fold cross-validation over people |
-| Keel against a fixed threshold: +16 (3 to 29), or +10 (−3 to 23) in the original window. Against a simple personal rule: +5 (−2 to 12) | **Real**, paired bootstrap, no correction for multiple comparisons |
-| No useful early warning: alerts starting by onset are +15 to +18 above luck at the notice tier (confounded) and about zero at the alert tier | **Real** |
-| Between 1 in 11 and 1 in 27 alert-tier alerts would be a real respiratory illness | **Real** sensitivity combined with a **published** ISS illness rate |
-| Thresholds hold across the two Stanford cohorts (+33, +33); five fold seeds agree (+34 to +36) | **Real** |
+| Keel's method on two sensors, thresholds from the simulator, flags 68% of illness episodes; luck 41%; +28 points above luck (18 to 37), at 1.31 false alerts per person-month (budget 1.00). On people the simulator's fits did not use: +30 (17 to 42). Alert tier: +24 (14 to 34) at 0.41 (budget 0.25) | **Real** people and episodes (251, 107), scored with a two-sensor model and thresholds fitted in **simulation** |
+| The 11-channel model file the app ships, given only a real import's channels: 29% flagged, +16 (7 to 25), 0.35 false alerts per person-month; alert tier 14% flagged, +10 (4 to 17), at 0.12 | **Real** data, shipped model |
+| With thresholds from other real people: heart rate alone +19 (9 to 28); + 7-day activity +30 (20 to 39), whose alert tier never fires; + daily steps +28 (19 to 38). Fixed threshold +18 (8 to 27) and +7 (−1 to 15) | **Real**, 5-fold cross-validation over people |
+| Keel (now the simple personal 2-of-3 rule) against a fixed threshold: +11 (−3 to 25), or +7 (−5 to 20) in the original window; both intervals include zero. The multivariate EWMA scores +34 (24 to 44) against Keel's +28 (19 to 38); paired difference +5 (−2 to 12), not distinguishable | **Real**, paired bootstrap, no correction for multiple comparisons |
+| No useful early warning: alerts starting by onset are +12 to +14 above luck at the notice tier (confounded) and +6 (−1 to 13) to +8 (1 to 15) at the alert tier | **Real** |
+| Between 1 in 13 and 1 in 22 alert-tier alerts would be a real respiratory illness | **Real** sensitivity combined with a **published** ISS illness rate |
+| Thresholds hold across the two Stanford cohorts (+29, +22); five fold seeds agree (+26 to +30) | **Real** |
 | Gravity-transition handling: 9 of 14 flags down to 4, about the 35% the same rule reaches by chance (p = 0.06, not significant, no ground truth) | **Real** NASA bed-rest pulse data, 29 volunteers |
 | Day-to-day variability, indicator correlations and the illness heart-rate response used by the simulator | **Fitted to real data** on one half of the people, checked on the other; every independent check fails or is off |
-| 67% of simulated mission events flagged (+26 above luck, 19 to 33); by type from +55 (sleep restriction) to +11 (illness, interval −9 to 30); missing data, sensor loss, ablations | **Simulation**, with assumed effect sizes for everything except illness heart rate |
-| Phase handling halves alerts after launch; with luck from the same flight days it shows no cost for early events (+24 against +15) | **Simulation** |
+| 71% of simulated mission events flagged (+31 above luck, 25 to 36); by type from +57 (sleep restriction) to +14 (illness, interval −6 to 34); missing data, sensor loss, ablations | **Simulation**, with assumed effect sizes for everything except illness heart rate |
+| Phase handling cuts alerts after launch by about a third (1.03 against 1.62 per person-month); with luck from the same flight days it shows no cost for early events (+22 against +18) | **Simulation** |
 | Alert thresholds for the full sensor set used in the app | **Simulation** (no real dataset has the full set) |
 | Every mission, cabin CO2 and radiation reading, link delay and blackout shown in the app | **Simulation**, labelled |
 
@@ -64,31 +64,31 @@ source, how soon and who should know. No server, no language model.
 1. **No astronaut data.** Everything real is from people on Earth with consumer watches, mostly with
    COVID-19. Whether any of it transfers to a fit crew in weightlessness is untested.
 2. **No useful early warning, and most alerts are false.** Slightly more notice-tier alerts start
-   before onset than luck gives (+15 to +18, confounded by testing and isolation); at the alert tier,
-   none. A judge who expects "predicts illness days ahead" will be disappointed. Do not claim it. In the scripted
+   before onset than luck gives (+12 to +14, confounded by testing and isolation); at the alert tier,
+   +6 to +8, and the two-sensor version's interval includes zero. A judge who expects "predicts illness days ahead" will be disappointed. Do not claim it. In the scripted
    replay Keel flags the illness on the day symptoms begin, from the crew member's check-in combined
    with drifting readings; the sensors alone show the pattern one day later.
 3. **Thresholds do not transfer between sensor sets.** Simulator thresholds for a two-sensor version
-   run over budget on real people (1.40 against 1.00, 0.39 against 0.25; two to four times over with
-   five sensors), and the headline is quoted at that higher rate. The model the app ships is set for
-   eleven channels: given only a watch's heart rate it flags about one illness in eight and its alert
-   tier never flags an episode. The headline is therefore a two-sensor version of Keel's method, not the
+   run over budget on real people (1.31 against 1.00, 0.41 against 0.25; about 1.3 to 2.3 times over
+   with five sensors), and the headline is quoted at that higher rate. The model the app ships is set for
+   eleven channels: given only a watch's heart rate it flags about one illness in three (29%) and stays
+   well under budget (0.35 and 0.12 false alerts per person-month). The headline is therefore a two-sensor version of Keel's method, not the
    shipped file. Imports now run on a separate heart-rate-only model calibrated on real people; other
    sensor subsets (for example a failed HRV sensor) still use the full-set thresholds.
-4. **The evidence for illness detection is partly behavioural, and "above luck" is an upper bound.**
-   Heart rate alone is +22; activity adds the rest because people move less once they feel ill, and
+4. **The evidence for illness detection is partly behavioural, and "above luck" is likely optimistic.**
+   Heart rate alone is +19; activity adds the rest because people move less once they feel ill, and
    that cannot be separated from isolating at home. Pretend dates cannot be matched to the calendar.
    A crew on a fixed exercise schedule may show less.
-5. **Neither Keel's detector nor a personal baseline is shown to beat a simpler method.** Like for like, a personal against a population baseline is +11 (−3 to 25) at the notice tier and +17 (7 to 28) at the alert tier: mixed. **Keel's detector is not shown to beat a simple personal rule** (+5, −2 to 12), and its lead over a
-   fixed threshold includes zero in the original window. The detector choice is arbitrary among
+5. **Neither Keel's detector nor a personal baseline is shown to beat a simpler method.** Like for like, a personal against a population baseline is +11 (−3 to 25) at the notice tier and +17 (7 to 28) at the alert tier: mixed. **Keel now deploys the simple personal rule itself:** a review found the multivariate statistic used correlations of the wrong sign, and after the fix its lead on simulated training missions fell below the pre-set margin. On real data the multivariate EWMA scores +34 against the rule's +28 (no paired interval), and the rule's lead over a
+   fixed threshold includes zero in both windows. The detector choice is arbitrary among
    equals and was made by a rule written during review.
 6. **Nothing was pre-registered.** The window, the metric, the chance estimate and the headline itself
-   changed across fourteen review rounds. Everything is in `DECISIONS.md`. Intervals hold thresholds
+   changed across fifteen review rounds. Everything is in `DECISIONS.md`. Intervals hold thresholds
    fixed and are not corrected for multiple comparisons.
 7. **The simulator's illness response was fitted on episodes from people who are also evaluated** (47 of the 107 episodes belong to its 55 calibration people; the fit used 38 curves with enough baseline). Results on the
    132 people its fits did not use are reported beside it; they rest on 60 episodes.
-8. **Simulated detection of illness and low mood is not reliably above luck** (+11, −9 to 30; +13, −5
-   to 32). The simulated total (+26) leans on sleep restriction and exercise outage, which the
+8. **Simulated detection of illness and low mood is not reliably above luck** (+14, −6 to 34; +17, −3
+   to 36). The simulated total (+31) leans on sleep restriction and exercise outage, which the
    detector reads almost directly.
 9. **Phase handling is tested only in simulation.** An earlier report of a cost for early events was an artefact of drawing luck from late flight; corrected, there is no measured cost.
 10. **The simulator fails every independent realism check:** illness rise half the real one, HRV 37%

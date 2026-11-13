@@ -12,9 +12,9 @@ baseline flagged 9 of 14 volunteers after getting up and Keel flagged 4, which i
 
 **2. Does it give early warning before symptoms? If not, what is the value?**
 No useful early warning shown. At the notice tier an alert started in the ten days up to symptom
-onset for 46% of episodes against 28% by luck (+18, 9 to 28). At the alert tier, the one that
-brings in the medical officer, the gain is +1 (−5 to 7), that is, none. Those are the two-sensor linking analysis; for heart rate
-alone, the model imports run on, they are +16 (7 to 25) and +8 (2 to 15), and both windows include
+onset for 44% of episodes against 30% by luck (+14, 4 to 24). At the alert tier, the one that
+brings in the medical officer, the gain is +6 (−1 to 13), an interval that includes zero. Those are the two-sensor linking analysis; for heart rate
+alone, the model imports run on, they are +14 (5 to 23) and +7 (0 to 14), and both windows include
 the day of onset itself. The notice-tier gain is small
 and confounded (test dates, isolation after a positive test, lower activity on the day), so we do
 not claim it. In our scripted replay Keel flags the illness on the day symptoms begin, from the
@@ -26,50 +26,53 @@ covers slow changes nobody feels (sleep debt, missed exercise, low fluid intake)
 specific, sourced action when nobody on Earth can be asked.
 
 **3. Why is your headline not the best number you have, and is it what the app does with a watch import?**
-The best number (+34 above luck, 24 to 44) used daily steps and thresholds set on other real people;
-Keel uses neither. Our headline is Keel's method on two sensors (overnight heart rate, 7-day activity)
-with its model and thresholds fitted only on simulated people, applied unchanged to real people: 72%
-of 107 episodes flagged against 40% by luck, +32 points (22 to 41), at 1.40 false alerts per
+The best number for Keel's rule (+30 above luck, 20 to 39) used thresholds set on other real people;
+Keel does not. Our headline is Keel's method on two sensors (overnight heart rate, 7-day activity)
+with its model and thresholds fitted only on simulated people, applied unchanged to real people: 68%
+of 107 episodes flagged against 41% by luck, +28 points (18 to 37), at 1.31 false alerts per
 person-month against a budget of 1.00. At the alert tier, the one that brings in the medical
-officer, +19 (9 to 28) at 0.39 against 0.25. On the 132 people the simulator's fits did not use,
-+35 (22 to 46). It is not what the shipped app would do with a watch import: the model file it ships
-is calibrated for all eleven on-board channels, and given only a watch's channels it flagged 12% of
-episodes (+9, 4 to 16) at 0.08 false alerts per person-month, with the alert tier never firing.
+officer, +24 (14 to 34) at 0.41 against 0.25. On the 132 people the simulator's fits did not use,
++30 (17 to 42). It is not what the shipped app would do with a watch import: the model file it ships
+is calibrated for all eleven on-board channels, and given only a watch's channels it flagged 29% of
+episodes (+16, 7 to 25) at 0.35 false alerts per person-month, and at the alert tier +10 (4 to 17) at 0.12.
 Thresholds have to match the sensors, so imports now run on a separate heart-rate-only model
-calibrated on the 251 real people, whose cross-validated result is +22 above luck (12 to 32).
+calibrated on the 251 real people, whose cross-validated result is +19 above luck (9 to 28).
 
 **4. How do you know "above luck" is not just people staying home?**
 We do not. Much of the signal is behavioural: people move less when ill (median daily steps fall
 from 7,554 to 4,210), and that cannot be separated from isolating at home. "Above luck" is also an
-upper bound: the pretend illness dates we use to measure luck cannot be matched to the calendar,
+likely optimistic: the pretend illness dates we use to measure luck cannot be matched to the calendar,
 because dates are shifted for privacy, so travel, testing and isolation near a real onset are not
-reproduced. Heart rate alone is +22 (12 to 32), and that is the safer figure.
+reproduced. Heart rate alone is +19 (9 to 28), and that is the safer figure.
 
 **5. How do you know you did not overfit or leak?**
 People, not days, are held out: five folds over people on real data, and separate training and test
 missions in simulation. Baselines only look backwards, and that is unit-tested. The headline's
 thresholds come from the simulator, and on the 132 real people the simulator's fits did not
-use the result is +35 (22 to 46). Checks on the cross-validated result: training on one Stanford
-cohort and testing on the other gives +33 and +33; five different fold splits give +34 to +36; the
-original, wider window gives +31 (22 to 40). The cautions are ours: nothing was pre-registered,
+use the result is +30 (17 to 42). Checks on the cross-validated result: training on one Stanford
+cohort and testing on the other gives +29 and +22; five different fold splits give +26 to +30; the
+original, wider window gives +29 (20 to 38). The cautions are ours: nothing was pre-registered,
 analysis choices changed during more than ten rounds of AI role-played review, and four detectors, two tiers
 and several windows were compared without correction. That log is in the repository.
 
 **6. Does your detector beat a simple rule?**
-No, that is not shown. A simple personal rule (two of three days outside the personal range) is
-28 points above luck on its own (19 to 38). Keel's detector leads it by +5 (−2 to 12), which is not
-distinguishable. Against one fixed threshold for everyone the lead is +16 (3 to 29) in the detection
-window used and +10 (−3 to 23) in the original wider window; with 7-day activity it is +24
-(11 to 36) at the notice tier and +8 (−1 to 18) at the alert tier. So a personal baseline is probably
-better than a fixed threshold, not proven, and the extra complexity of our detector has not earned
-its place on real data.
+Keel's detector now is the simple rule. A review found that our multivariate detector used
+correlations of the wrong sign; after correcting it, its lead on simulated training missions fell
+below our pre-set margin, so Keel deploys the simple personal rule (two of three days outside the
+personal range): 28 points above luck (19 to 38). The multivariate EWMA scores +34 (24 to 44) on the
+same real data; the paired difference is +5 (−2 to 12), not distinguishable. Against one fixed threshold for everyone
+the rule's lead is +11 (−3 to 25) in the detection window used and +7 (−5 to 20) in the original wider
+window, both including zero; with 7-day activity it is +23 (11 to 35) at the notice tier and −4
+(−10 to 1) at the alert tier, where the personal rule never fires. So a personal baseline is possibly
+better than a fixed threshold, not proven, and the extra complexity of a multivariate detector did not
+earn its place.
 
 **7. Most of your alerts are false. Is that not alarm fatigue by design?**
-At in-flight illness rates between 1 in 11 and 1 in 27 alert-tier alerts would be a real respiratory
+At in-flight illness rates between 1 in 13 and 1 in 22 alert-tier alerts would be a real respiratory
 illness, and about 1 in 40 notices. We state that in the app. That is why there are two tiers. A
 notice is quiet, self-managed and shown as "worth a look". Only the alert tier, or a symptom the
 person reports, can recommend involving the medical officer. Both tiers ran over budget on real
-people: 1.40 false alerts per person-month against 1.00, and 0.39 against 0.25. Whether those
+people: 1.31 false alerts per person-month against 1.00, and 0.41 against 0.25. Whether those
 budgets are right is a question for crews and flight surgeons; the point is that it is a dial with a
 measured meaning, not a guess.
 
@@ -77,10 +80,10 @@ measured meaning, not a guess.
 Largely, and the app says which parts. The simulator passes its realism checks only on quantities
 fitted to the other half of the same data. The independent checks fail or are off: simulated illness
 raises heart rate by 2.1 bpm against 4.6 in real episodes, HRV variability is 37% too high, and sleep
-carry-over is off. Thresholds from simulation gave 1.38 and 0.40 false alerts per person-month on 72
-real people (budgets 1.00 and 0.25), and 2.04 and 0.97 with five sensors on 16 people. Like for like
-on two channels, simulated illness is flagged +11 above luck against +35 for real episodes. In
-simulation overall Keel is +26 above luck (19 to 33), and for illness and low mood the interval
+carry-over is off. Thresholds from simulation gave 1.30 and 0.36 false alerts per person-month on 72
+real people (budgets 1.00 and 0.25), and 1.34 and 0.58 with five sensors on 16 people. Like for like
+on two channels, simulated illness is flagged +11 above luck against +30 for real episodes. In
+simulation overall Keel is +31 above luck (25 to 36), and for illness and low mood the interval
 includes zero.
 
 **9. Why not use an AI model to explain alerts or answer questions?**
@@ -110,9 +113,9 @@ makes it explicit and shows each person exactly what every role sees.
 
 **12. How does it avoid flagging normal adaptation to weightlessness as illness?**
 A phase change restarts the baseline, widens its band, and hands over to the person's own post-launch
-data as it arrives. In simulation this halves false alerts after launch: 0.90 per person-month in the
-first 30 flight days against 1.98 without it. With luck taken from the same flight days, events that
-begin in the first 25 flight days are +24 (14 to 33) above luck with phase handling and +15 (6 to 25)
+data as it arrives. In simulation this cuts false alerts after launch by about a third: 1.03 per person-month in the
+first 30 flight days against 1.62 without it. With luck taken from the same flight days, events that
+begin in the first 25 flight days are +22 (13 to 31) above luck with phase handling and +18 (8 to 29)
 without, so there is no measured cost. An earlier analysis that reported a cost was wrong: its luck
 had been drawn from late flight. All of this is simulation only. On NASA bed-rest data the same
 handling flagged 4 of 14 volunteers after getting up against 9, not significant, and the gain comes

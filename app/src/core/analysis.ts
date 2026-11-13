@@ -230,11 +230,11 @@ const REPEAT_MIN: Record<string, number> = { glucose: 15, rhr: 2, spo2: 2, sbp: 
 export type Closures = Map<string, number>
 export function closuresFrom(actions: { did: string; alertKey: string; ts: number; crew?: string; mission?: string }[]): Closures {
   const c: Closures = new Map()
-  for (const a of actions) if (a.did.startsWith('Closed')) {
+  for (const a of actions) if (a.did.startsWith('Closed') || a.did.startsWith('Cleared for exercise and duties')) {
     c.set(a.alertKey, Math.max(c.get(a.alertKey) ?? 0, a.ts))
     if (/not cleared/.test(a.did)) c.set(`restricted|${a.alertKey}`, a.ts)   // closed, but exercise and duties stay restricted
     // a medical clearance is about the person: it lifts every earlier restriction on them
-    else if (/cleared for exercise and duties/.test(a.did) && a.crew) c.set(`cleared|${a.mission}|${a.crew}`, Math.max(c.get(`cleared|${a.mission}|${a.crew}`) ?? 0, a.ts))
+    else if (a.did.startsWith('Cleared for exercise and duties') && a.crew) c.set(`cleared|${a.mission}|${a.crew}`, Math.max(c.get(`cleared|${a.mission}|${a.crew}`) ?? 0, a.ts))
   }
   return c
 }
@@ -520,7 +520,7 @@ export function analyzeDay(
       findings.push(mk(r, r.scope, start, repeatOk || stale || fromFile ? (r.urgency === 'routine' ? 'watch' : 'act') : URGENCY_STATUS[r.urgency ?? 'routine'], changes.filter((c) => named.includes(c.ind)).slice(0, 4), {
         ...(tooSoon ? { action: `${mine.includes('glucose') ? `Your readings disagree (${firstBad!.v}, then ${lastLive[lastLive.length - 1].v}): treat it as low to be safe. ` : ''}${r.action} Re-check at ${new Date(firstBad!.ts + waitMin * 60 * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}${mine.includes('glucose') ? '' : `: your repeat (${lastLive[lastLive.length - 1].v}) came too soon to count`}.` } : {}),
         ...(log.length ? { readings: log } : {}),
-        ...(repeatOk ? { urgency: r.urgency, action: `${r.id.startsWith('R-V-GLU-LO') ? `Your repeat reading (${lastLive[lastLive.length - 1].v}) is back on the safe side, so no more sugar is needed: eat a snack or your next meal now.` : `Your repeat reading (${lastLive[lastLive.length - 1].v}) is back below this line.`} ${r.urgency === 'now' ? 'The first reading needed the medical officer at once: if you have not told them yet, tell them now.' : 'Tell the medical officer about the first reading today.'}`, tierReason: 'The first reading stays on the medical officer\'s list until they close it with a note.' } : {}),
+        ...(repeatOk ? { urgency: r.urgency, action: `${r.id.startsWith('R-V-GLU-LO') ? `Your repeat reading (${lastLive[lastLive.length - 1].v}) is back on the safe side, so no more sugar is needed: eat a snack or your next meal now.` : `Your repeat reading (${lastLive[lastLive.length - 1].v}) is back on the safe side of this line.`} ${r.urgency === 'now' ? 'The first reading needed the medical officer at once: if you have not told them yet, tell them now.' : 'Tell the medical officer about the first reading today.'}`, tierReason: 'The first reading stays on the medical officer\'s list until they close it with a note.' } : {}),
         ...(fromFile ? { urgency: 'today' as Urgency, action: `A value in your imported file (${m.day_label ? `${m.day_label} ${start + 1}` : `day ${start + 1}`}) is past this line. If it is recent and you feel unwell, contact a doctor; in an emergency call your local emergency number.`, tierReason: 'From imported data, not a reading just taken.' } : {}),
         ...(stale && !fromFile ? { urgency: 'today' as Urgency, action: `This ${r.scope === 'symptom' ? 'item' : 'reading'} from ${m.day_label ? `${m.day_label} ${start + 1}` : `Day ${start + 1}`} still waits for the medical officer. If you have not told them yet, tell them today; at once if you feel unwell.`, tierReason: 'It stays open until the medical officer closes it with a note.' } : {}),
         ...(r.id === 'R-RED' ? { symptoms: redSyms.map((x) => SYM[x]?.label ?? x) } : {}),

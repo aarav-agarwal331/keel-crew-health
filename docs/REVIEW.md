@@ -697,6 +697,61 @@ sensitivity (all need pipeline changes and a full rerun; disclosed instead); lar
 the strap countdown text and strap readings bypassing the automatic alert; a repeated sub-35 °C rule;
 the Earth–Mars delay rounding (about 4 to 24 minutes is what the cited source gives).
 
-## Round 15
+## Round 15 (2026-11-12, fresh reviewers, redeployed build)
 
-See the end of this file once the fifteenth round has run.
+Judge's scores: impact 7, creativity 8, validity 8, relevance 9, presentation 6 (38 of 50), "nominate:
+yes", **no high-severity issue**. The flight surgeon and the statistician found none either. The
+astronaut found one:
+
+| # | Reviewer | High-severity finding | Fix |
+|---|---|---|---|
+| 1 | Astronaut (judge medium) | "Ten seconds after you save, unless you cancel" was not true: leaving Check-in, even by its own "See Today" button, sends the alert at once. | Every place that states the window adds "at once if you leave this screen"; the countdown bar is pinned to the top of the screen and says so. |
+
+The most consequential finding was a statistician **medium**: the multivariate EWMA turned each score to
+its direction of concern but used a correlation matrix estimated on the unturned scores, so a joint
+"heart rate up, HRV down" move was scored about 2.8 times too high. Fixed in `fit_model` (the matrix is
+now D·R·D, D = sign of concern) and the whole pipeline rerun. After the correction the multivariate
+detector led the simple 2-of-3 rule by 2.2 points on the simulated training missions, under the pre-set
+3-point margin, so **the app now deploys the simple personal rule**. Every result reported for "Keel's
+detector" changed with it (heart rate alone +22 → +19 (9 to 28); the two-sensor linking analysis
++32 → +28; the shipped model on import channels +9 → +16 at 0.35 false alerts a month; simulation
++26 → +31; the 7-day-activity configuration never fires at the alert tier, because its threshold lands on
+the z-score cap). All documents were updated from the result files; the multivariate EWMA is reported
+beside the rule (+34 on real data, paired difference +5, −2 to 12). The demo day now lists the
+persistent-headache item before the readings-based notice, since reported items come first.
+
+Medium-severity findings fixed in the same pass:
+
+- **Alerts keyed per item** (flight surgeon): an item counts as alerted and acknowledged if any alert
+  covered it, so a change in the set of urgent items no longer resets "Alert sent" or re-sends; unit-tested.
+- **Clearance** (flight surgeon): items close one by one ("resolved, no restriction" or "not cleared");
+  "Clear for exercise and duties" is a separate person-level action that says what it lifts. When the
+  patient is the medical officer, the commander records a clearance passed on by the flight surgeon or a
+  named backup; the medical officer cannot close their own notices.
+- **Repeat reading on the card** (flight surgeon): urgent blood sugar, oxygen and heart-rate cards have
+  a repeat box; end-to-end tested.
+- **"Back below this line"** (flight surgeon): "back on the safe side of this line" for every rule.
+- **Receiving-side escalation** (flight surgeon): an alert unacknowledged for five minutes says so on the
+  Crew screen, for whoever reads it.
+- **Shingles** (flight surgeon): the rash rule fires on the first day and leads with "painful or
+  blistering, in a band on one side: tell the medical officer today".
+- **Guided demo** (judge): "Demo: enter a dangerous reading" on the landing banner fills in a blood sugar
+  of 50 for the person to save; end-to-end tested.
+- **What triggered a notice** (judge): Today says whether reported symptoms were part of it.
+- **Sharing** (judge, astronaut): a who-sees-what table (always / your choice) at the top; five
+  exceptions listed, matching the box below.
+- **One primary button** (astronaut): "Ask the medical officer to see me today" is the only primary
+  button on an act-today card, and it is also on Alert detail; "Why, and what next" is secondary.
+- **Readings label, share button, Crew area rows** (astronaut): "Readings behind the first item" when
+  several items are urgent; "Share symptoms, medicines and photos"; area rows carry a status word.
+- **Statistician wording**: simulated illness "through physiology and assumed drops in exercise, food and
+  sleep"; "likely optimistic" instead of "upper bound"; missing data "handled the same way", not "the
+  same"; the over-budget bar labelled with its rate; the bed-rest field fixed.
+
+Not done, with reasons: a mission-wide glucose unit setting, a repeated sub-35 °C rule, a fever line
+relative to in-flight baseline, R-MOOD's audience (judgement calls for a clinician); a nested bootstrap
+that refits thresholds, a physiology-only simulated-illness ablation (pipeline work, disclosed).
+
+## Round 16
+
+See the end of this file once the sixteenth round has run.

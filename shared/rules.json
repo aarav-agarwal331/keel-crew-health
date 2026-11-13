@@ -870,10 +870,10 @@
    "title": "You reported a rash or itchy skin",
    "when": {
     "sym": "rash",
-    "min": 2
+    "min": 1
    },
    "summary": "Skin problems are among the most common medical events on the space station.",
-   "action": "Show it to the medical officer at the next opportunity.",
+   "action": "If it is painful or blistering, in a band on one side of the body, tell the medical officer today. Otherwise show it to them at the next opportunity.",
    "steps": [
     "Keep the area clean and dry; do not share towels.",
     "Note any new soap, wipe or glove material.",

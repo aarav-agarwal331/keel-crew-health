@@ -142,7 +142,8 @@ def summarise(res: dict, people: list[Person], w: Windows, p: Params, methods=ME
         for m in methods:
             other = (res["outcomes"]["fixed"][b], ch["fixed"]) if m != "fixed" and "fixed" in methods else None
             out[m][str(b)] = with_net(res["outcomes"][m][b], ch[m], other)
-            if m == DEPLOYED and "zscore" in methods and m != "zscore":
+            # every detector more complex than the simple rule is compared with it, paired over people
+            if m not in ("fixed", "zscore") and "zscore" in methods:
                 d = net_stats(res["outcomes"][m][b], ch[m], 2000, SEED, (res["outcomes"]["zscore"][b], ch["zscore"]), STRATA)
                 out[m][str(b)]["net_diff_vs_zscore"], out[m][str(b)]["net_diff_vs_zscore_ci"] = d["net_diff"], d["net_diff_ci"]
     return out
@@ -151,7 +152,7 @@ def summarise(res: dict, people: list[Person], w: Windows, p: Params, methods=ME
 def ppv_at(st: dict) -> float:
     """Share of alerts that would be a real respiratory illness at the in-flight rate, for one result row."""
     tr_ = max(0.0, st["net_detection"]) * URI_PER_PERSON_MONTH
-    return tr_ / (tr_ + st["fa_per_person_month"]) if tr_ + st["fa_per_person_month"] > 0 else float("nan")
+    return tr_ / (tr_ + st["fa_per_person_month"]) if tr_ + st["fa_per_person_month"] > 0 else None
 
 
 def train_test(train: list[Person], test: list[Person], spec_key: str, w: Windows, p: Params, budgets=(0.25, 1.0)) -> dict:
@@ -321,7 +322,7 @@ def main():
         s = main_tbl[DEPLOYED][b]
         true_rate = max(0.0, s["net_detection"]) * URI_PER_PERSON_MONTH
         ppv[b] = {"true_alerts_per_person_month": true_rate, "false_alerts_per_person_month": s["fa_per_person_month"],
-                  "share_of_alerts_that_are_real": true_rate / (true_rate + s["fa_per_person_month"])}
+                  "share_of_alerts_that_are_real": true_rate / (true_rate + s["fa_per_person_month"]) if true_rate + s["fa_per_person_month"] > 0 else None}
     ppv["assumption"] = "Illness rate 0.97 per person-year (upper-respiratory symptoms on the ISS, DOMAIN ref 52b); sensitivity = detection net of luck on real data."
 
     # how far do steps fall around onset?  (median over episodes of the person's median daily steps)
@@ -359,7 +360,8 @@ def main():
             for b in ["0.25", "1.0"]:
                 sx = abl[key][DEPLOYED][b]
                 tr_ = max(0.0, sx["net_detection"]) * URI_PER_PERSON_MONTH
-                ppv[b]["with_7_day_activity"] = tr_ / (tr_ + sx["fa_per_person_month"])
+                # undefined when the configuration raised no alerts at all at this tier
+                ppv[b]["with_7_day_activity"] = tr_ / (tr_ + sx["fa_per_person_month"]) if tr_ + sx["fa_per_person_month"] > 0 else None
             # like-for-like with the simulator: symptom-dated episodes of people the simulator's
             # illness calibration never saw (validation half), same two channels as eval_sim.py
             _, val_e = realdata.split_half(realdata.event_pids(pd.read_csv(INTERIM / "stanford_events.csv")), seed=11)
