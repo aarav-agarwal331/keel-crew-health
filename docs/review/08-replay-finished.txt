@@ -1,5 +1,5 @@
 SCREEN: 08-replay-finished
-TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 121 | Simulated data
+TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 122 | Simulated data
 BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
 Mission replay
@@ -65,7 +65,7 @@ Act today: The same symptom three days running
 Tell the medical officer today. (today; medical officer)
 
 DAY 121
-Same notice (open since Day 115), read differently: Several readings have moved the way they can during an infection
+Act today: Several readings have moved the way they can during an infection
 
 Take your temperature now and tell the medical officer. No exercise until they clear you. (today; medical officer)
 
@@ -81,40 +81,15 @@ Act today: Throat or cough symptoms, and your readings are drifting
 Take your temperature now and tell the medical officer. No exercise until they clear you. (today; medical officer)
 
 DAY 119
-More serious now: Your mood has been lower than usual
-
-Book a private conversation with the medical officer. (today; self-managed)
-
-DAY 119
 LINK
 Earth link lost
 
 Scripted two-week blackout (antenna fault; the length is borrowed from the two-week command pause at solar conjunction). Keel keeps working on board.
 
-DAY 116
-Same notice (open since Day 115), read differently: Your mood has been lower than usual
-
-Book a private conversation with the medical officer. (at the next routine opportunity; self-managed)
-
-DAY 115
-Worth a look: Your sleep is short or has shifted
-
-Protect a full 8.5-hour sleep period tonight. (at the next routine opportunity; self-managed)
-
-DAY 110
-Same notice (open since Day 107), read differently: Your reactions are slower than usual
-
-Repeat the test after a ten-minute break; if it is still slow, ask for a buddy check on critical tasks today. (at the next routine opportunity; self-managed)
-
-DAY 107
-Worth a look: Exercise has dropped below your plan
-
-Do today's session, even a shortened one, and plan the next three. (at the next routine opportunity; self-managed)
-
 DAY 104
-Worth a look: Exercise has dropped below your plan
+Act today: Exercise has dropped below your plan
 
-Do today's session, even a shortened one, and plan the next three. (at the next routine opportunity; self-managed)
+Do today's session, even a shortened one, and plan the next three. (today; self-managed)
 
 RESULT OF THIS REPLAY
 
@@ -122,13 +97,11 @@ In this scripted case Keel flagged it with her check-in, on the day symptoms beg
 
 Sensors alone, or with her check-in? The flag on Day 120 came from the symptoms she ticked at check-in, combined with drifting readings. The sensors alone showed the illness pattern on Day 121, 1 day after symptoms began.
 
-On Day 119 the detector had already moved, but the readings then looked like something else ("Your mood has been lower than usual") and the advice was for that. It is not counted as flagging this event.
+Keel's log for this replay also has 1 entry that is not about the scripted event. Some are one open notice being read differently as the days pass; some reflect ordinary lapses in the simulated routine, such as a missed exercise session; some are false alerts. That is part of the picture: notices are budgeted at about one false one per person-month in simulation, and real crews would likely see more.
 
-Keel's log for this replay also has 6 entries that are not about the scripted event. Some are one open notice being read differently as the days pass; some reflect ordinary lapses in the simulated routine, such as a missed exercise session; some are false alerts. That is part of the picture: notices are budgeted at about one false one per person-month in simulation, and real crews would likely see more.
+Across all the real data, not this one script: heart rate alone (not the eleven-channel model in this replay, which is tested in simulation only) flagged 50% of 107 real illness episodes, 19 points more than luck, at about 1.0 false alerts per person-month. Useful early warning was not shown.
 
-Across all the real data, not this one script: heart rate alone (not the eleven-channel model in this replay, which is tested in simulation only) flagged 50% of 107 real illness episodes, 22 points more than luck, at about 1.0 false alerts per person-month. Useful early warning was not shown.
-
-The replay runs on past the demo's "today" (Day 121) to show how the readings evolve over the next few days; those days are simulated ahead, and the notice is still open at the end (only the medical officer closes it). One scripted event proves nothing by itself. The day of the scripted illness was chosen from a short list when the demo missions were built, by looking at the detector's output for two quiet weeks beforehand; no candidate day had them, so the first was used and earlier notices appear. This replay is not a random draw.
+The replay runs on past the demo's "today" (Day 122) to show how the readings evolve over the next few days; those days are simulated ahead, and the notice is still open at the end (only the medical officer closes it). One scripted event proves nothing by itself. The day of the scripted illness was chosen from a short list when the demo missions were built, by looking at the detector's output for two quiet weeks beforehand. This replay is not a random draw.
 
 Open that day as Lucía
 See the validation

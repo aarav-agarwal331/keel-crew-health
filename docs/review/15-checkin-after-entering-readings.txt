@@ -1,10 +1,10 @@
 SCREEN: 15-checkin-after-entering-readings
-TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 121 | Simulated data
+TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 122 | Simulated data
 BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
 Check-in
 
-Flight day 121. Four quick answers, about a minute. Stored on your tablet; anything urgent alerts the medical officer and commander ten seconds after you save, unless you cancel. Who sees what
+Flight day 122. Four quick answers, about a minute. Stored on your tablet; anything urgent alerts the medical officer and commander (the medical officer only, for items marked so) ten seconds after you save (at once if you leave this screen), unless you cancel. Who sees what
 
 1. How are you feeling?
 Medical officer sees mood: status · commander: a tier only
@@ -83,7 +83,7 @@ A rash, an eye, a wound. Up to three a day, shrunk and stored on this tablet whe
 
 The medical officer will not see this photo. Symptoms is set to "Status" for them. Show it to them, or share Symptoms in full detail.
 
-Share Symptoms in full detail with the medical officer
+Share symptoms, medicines and photos in full detail with the medical officer
 Measurements (only what you took today)
 Body temperature (thermometer) (°C)
 How to measure
@@ -102,18 +102,18 @@ How to measure
 Heart rate now, sitting at rest (spot check) (bpm)
 How to measure
 Readings today:
-Blood sugar 50 mg/dL, at 20:28 Typing mistake?
-Blood sugar 85 mg/dL, at 20:28 Typing mistake?
-Heart rate at rest 170 bpm, at 20:28 Typing mistake?
+Blood sugar 50 mg/dL, at 21:01 Typing mistake?
+Blood sugar 85 mg/dL, at 21:01 Typing mistake?
+Heart rate at rest 170 bpm, at 21:01 Typing mistake?
 Every reading is kept. The most abnormal reading of the day stays on the medical officer's list until they close it. What you are told to do follows your latest reading once a repeat counts (for blood sugar, 15 minutes after the first).
 
 Taking a reading again? Type the new value and save: the earlier one is kept with its time, and both are shown to whoever you share them with.
 
 Save check-in
 
-Act now: Take sugar now if you can swallow, and call a crewmate to you. Your readings disagree (50, then 85): treat it as low to be safe. Tell the medical officer now. Re-check at 20:43.
+Act now: Take sugar now if you can swallow, and call a crewmate to you. Your readings disagree (50, then 85): treat it as low to be safe. Tell the medical officer now. Re-check at 21:16.
 
-Blood sugar: 50 mg/dL is past a fixed safety line, so Keel saved it and is acting on it. It is past a safety line, so it is now visible on the medical officer's and the commander's Crew screens (emergency sharing), and an alert goes to them ten seconds after saving unless you cancel it below. Is that what the device showed?
+Blood sugar: 50 mg/dL is past a fixed safety line, so Keel saved it and is acting on it. It is past a safety line, so it is now visible on the medical officer's and the commander's Crew screens (emergency sharing), and an alert goes to them ten seconds after saving (at once if you leave this screen) unless you cancel it below. Is that what the device showed?
 
 Yes, that is right
 No, a typing mistake: withdraw it
@@ -122,7 +122,7 @@ If you withdraw it, it stays in the log, struck through, and the medical officer
 
 Act now: Call a crewmate to you now. Sit or strap in, count your pulse by hand for a full minute now, and tell the medical officer now.
 
-Heart rate now, sitting at rest (spot check): 170 bpm is past a fixed safety line, so Keel saved it and is acting on it. It is past a safety line, so it is now visible on the medical officer's and the commander's Crew screens (emergency sharing), and an alert goes to them ten seconds after saving unless you cancel it below. Is that what the device showed?
+Heart rate now, sitting at rest (spot check): 170 bpm is past a fixed safety line, so Keel saved it and is acting on it. It is past a safety line, so it is now visible on the medical officer's and the commander's Crew screens (emergency sharing), and an alert goes to them ten seconds after saving (at once if you leave this screen) unless you cancel it below. Is that what the device showed?
 
 Yes, that is right
 No, a typing mistake: withdraw it
@@ -135,7 +135,7 @@ Keel has re-checked your readings on this tablet with your new entries.
 
 2 items need action now. See Today for what to do.
 
-Alerting the medical officer and commander in 10 s.
+Alerting the medical officer and commander in 10 s. Leaving this screen sends it now.
 
 Cancel the alert
 Alert the medical officer and commander now

@@ -1,8 +1,8 @@
 SCREEN: 17-crew-as-medical-officer-after-readings
-TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 121 | Simulated data
+TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 122 | Simulated data
 BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
-Alert about Lucía Reyes, sent automatically after an urgent check-in at 20:28: Blood sugar reading is below 54 mg/dL (entered: 50, then 85; the 50 still counts); Heart rate reading at rest is 150 or more (entered: 170). Go to them now.
+Alert about Lucía Reyes, sent automatically after an urgent check-in at 21:01: Blood sugar reading is below 54 mg/dL (entered: 50, then 85; the 50 still counts); Heart rate reading at rest is 150 or more (entered: 170). Go to them now.
 
 Acknowledge: I am on my way
 
@@ -12,7 +12,7 @@ Crew readiness
 Commander
 Medical officer
 
-Day 121. What each crew member has chosen to share with you. Nothing is shown that they have not shared, except emergencies they agreed to share and, under that consent, the fact that an item is open in an area. Their overall status here covers only the areas they share with you; the commander's tier (a separate thing) uses all their readings.
+Day 122. What each crew member has chosen to share with you. Nothing is shown that they have not shared, except, under the emergency sharing they agreed to, every open urgent or same-day safety item with its readings. Their overall status here covers only the areas they share with you; the commander's tier (a separate thing) uses all their readings.
 
 Labels: a crew member's own "Act today" or "Act now" shows to the commander as "Talk to the medical officer first"; "Worth a look" is the same on both screens.
 
@@ -32,7 +32,7 @@ Symptoms
 Kenji Sato
 Crew medical officer
 
-Worth a look
+Steady
 
 Heart, oxygen and temperature
 Sleep and body clock
@@ -46,41 +46,42 @@ Flight engineer
 Blood sugar reading is below 54 mg/dL (entered: 50, then 85; the 50 still counts). (shared automatically: emergency sharing)
 
 Entered readings, in order:
-Blood sugar 50 mg/dL, at 20:28
-Blood sugar 85 mg/dL, at 20:28
+Blood sugar 50 mg/dL, at 21:01
+Blood sugar 85 mg/dL, at 21:01
 
-Lucía was told: "Take sugar now if you can swallow, and call a crewmate to you. Your readings disagree (50, then 85): treat it as low to be safe. Tell the medical officer now. Re-check at 20:43."
+Lucía was told: "Take sugar now if you can swallow, and call a crewmate to you. Your readings disagree (50, then 85): treat it as low to be safe. Tell the medical officer now. Re-check at 21:16."
 
 Heart rate reading at rest is 150 or more (entered: 170). (shared automatically: emergency sharing)
 
 Entered readings, in order:
-Heart rate at rest 170 bpm, at 20:28
+Heart rate at rest 170 bpm, at 21:01
 
 Lucía was told: "Call a crewmate to you now. Sit or strap in, count your pulse by hand for a full minute now, and tell the medical officer now."
 
 Act now
 
-Heart, oxygen and temperature
+Heart, oxygen and temperature (act now)
 Sleep and body clock
 Exercise
-Mind and mood
-Food and fluids
-Symptoms
-Notice from the readings in heart, oxygen and temperature (details not shared) (act today for 2 d)
+Mind and mood (worth a look)
+Food and fluids (act now)
+Symptoms (act today)
+Notice from the readings in symptoms (details not shared) (act today, 1 day)
+Notice from the readings in heart, oxygen and temperature (details not shared) (act today, 3 days)
 Note only, keep open
 Handled, restrictions stay
-Cleared after examining them in person
+Handled after examining them in person
 Open items for you to close
-Blood sugar reading is below 54 mg/dL (Day 121, needed attention at once)
+Blood sugar reading is below 54 mg/dL (Day 122, needed attention at once)
 Entered readings:
-Blood sugar 50 mg/dL, at 20:28
-Blood sugar 85 mg/dL, at 20:28
-Close: cleared for exercise and duties (lifts every restriction on them)
+Blood sugar 50 mg/dL, at 21:01
+Blood sugar 85 mg/dL, at 21:01
+Close: resolved, no restriction
 Close: resolved, not cleared
-Heart rate reading at rest is 150 or more (Day 121, needed attention at once)
+Heart rate reading at rest is 150 or more (Day 122, needed attention at once)
 Entered readings:
-Heart rate at rest 170 bpm, at 20:28
-Close: cleared for exercise and duties (lifts every restriction on them)
+Heart rate at rest 170 bpm, at 21:01
+Close: resolved, no restriction
 Close: resolved, not cleared
 
 A later normal reading does not close an item. Only a note from you does, and a new abnormal reading after your note reopens it. Consider consulting the flight surgeon at the next link for anything marked "at once".
@@ -91,7 +92,7 @@ Mission specialist
 Worth a look
 
 Heart, oxygen and temperature
-Sleep and body clock
+Sleep and body clock (worth a look)
 Exercise
 Mind and mood
 Food and fluids

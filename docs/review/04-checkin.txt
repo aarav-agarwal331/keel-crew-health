@@ -1,10 +1,10 @@
 SCREEN: 04-checkin
-TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 121 | Simulated data
+TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 122 | Simulated data
 BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
 Check-in
 
-Flight day 121. Four quick answers, about a minute. Stored on your tablet; anything urgent alerts the medical officer and commander ten seconds after you save, unless you cancel. Who sees what
+Flight day 122. Four quick answers, about a minute. Stored on your tablet; anything urgent alerts the medical officer and commander (the medical officer only, for items marked so) ten seconds after you save (at once if you leave this screen), unless you cancel. Who sees what
 
 Today's check-in in this demo came from the simulation. Anything you save here is added to it.
 

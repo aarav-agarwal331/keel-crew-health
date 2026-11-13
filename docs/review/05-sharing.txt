@@ -1,10 +1,17 @@
 SCREEN: 05-sharing
-TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 121 | Simulated data
+TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 122 | Simulated data
 BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
 Sharing and privacy
 
-Lucía Reyes, your health data is yours. You decide below what each role can see, with four exceptions: the commander always sees your readiness tier (worked out from all your readings, without the reason); with emergency sharing on, the medical officer sees every urgent or same-day safety item, and both the medical officer and the commander are alerted to urgent ones and see what they are and the value entered (the commander does not see items marked "medical officer only"); the daily ground summary carries a count of urgent items still open; and cabin readings are shared with everyone.
+Lucía Reyes, your health data is yours. You decide below what each role can see. What is shown whatever you choose:
+
+Who	Always	Your choice
+Medical officer	With emergency sharing on: every urgent or same-day safety item, with the value entered, and an alert for urgent ones. With it off: an alert that you need help, and "an item, details private".	Each area: nothing, status, trend or full detail
+Commander	Your readiness tier, without the reason. With emergency sharing on: urgent items, the value entered and an alert, as backup (never items marked "medical officer only"). With it off: an alert that you need help.	Each area
+Crew	A count when three or more crew show a change in the same area	Nothing
+Ground	A count of urgent items still open	Each area, for the flight surgeon
+Everyone	Cabin air and radiation readings	Not personal
 
 How it travels: in this demo every role is on one tablet. In a flight version your data stays on your tablet, and only the views allowed here would go over the cabin network, to the medical officer's and commander's tablets; the daily ground summary goes out when a link exists.
 
@@ -16,7 +23,7 @@ To everyone: cabin readings (air, radiation). They are not personal.
 Emergency sharing
 On
 Off
-When on, a symptom you mark as serious or an "act now" safety reading appears at once on the medical officer's and the commander's Crew screens (what it is, the value entered and the action; the commander never sees items marked "medical officer only" and never sees your reading log), an alert goes to both ten seconds after you save unless you cancel it, and it stays on the medical officer's list until they close it with a note.
+When on, a symptom you mark as serious or an "act now" safety reading appears at once on the medical officer's and the commander's Crew screens (what it is, the value entered and the action; the commander never sees items marked "medical officer only" and never sees your reading log), an alert goes to both ten seconds after you save (at once if you leave Check-in) unless you cancel it, and it stays on the medical officer's list until they close it with a note.
 More about emergency sharing
 Who are you setting this for?
 Crew medical officer
@@ -76,11 +83,12 @@ Overall: Act today
 
 Area	Level	They see
 Heart, oxygen and temperature	Status	Act today
-Sleep and body clock	Status	Worth a look
+Sleep and body clock	Status	Steady
 Exercise	Status	Steady
-Mind and mood	Status	Act today
-Food and fluids	Status	Steady
-Symptoms	Status	Worth a look
+Mind and mood	Status	Worth a look
+Food and fluids	Status	Worth a look
+Symptoms	Status	Act today
+That an alert exists in symptoms, not what it says
 That an alert exists in heart, oxygen and temperature, not what it says
 Access log
 Stored on your device

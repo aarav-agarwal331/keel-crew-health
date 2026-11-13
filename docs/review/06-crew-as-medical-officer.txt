@@ -1,12 +1,12 @@
 SCREEN: 06-crew-as-medical-officer
-TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 121 | Simulated data
+TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 122 | Simulated data
 BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
 Crew readiness
 Commander
 Medical officer
 
-Day 121. What each crew member has chosen to share with you. Nothing is shown that they have not shared, except emergencies they agreed to share and, under that consent, the fact that an item is open in an area. Their overall status here covers only the areas they share with you; the commander's tier (a separate thing) uses all their readings.
+Day 122. What each crew member has chosen to share with you. Nothing is shown that they have not shared, except, under the emergency sharing they agreed to, every open urgent or same-day safety item with its readings. Their overall status here covers only the areas they share with you; the commander's tier (a separate thing) uses all their readings.
 
 Labels: a crew member's own "Act today" or "Act now" shows to the commander as "Talk to the medical officer first"; "Worth a look" is the same on both screens.
 
@@ -26,7 +26,7 @@ Symptoms
 Kenji Sato
 Crew medical officer
 
-Worth a look
+Steady
 
 Heart, oxygen and temperature
 Sleep and body clock
@@ -39,23 +39,24 @@ Flight engineer
 
 Act today
 
-Heart, oxygen and temperature
+Heart, oxygen and temperature (act today)
 Sleep and body clock
 Exercise
-Mind and mood
-Food and fluids
-Symptoms
-Notice from the readings in heart, oxygen and temperature (details not shared) (act today for 2 d)
+Mind and mood (worth a look)
+Food and fluids (worth a look)
+Symptoms (act today)
+Notice from the readings in symptoms (details not shared) (act today, 1 day)
+Notice from the readings in heart, oxygen and temperature (details not shared) (act today, 3 days)
 Note only, keep open
 Handled, restrictions stay
-Cleared after examining them in person
+Handled after examining them in person
 Tomás Novák
 Mission specialist
 
 Worth a look
 
 Heart, oxygen and temperature
-Sleep and body clock
+Sleep and body clock (worth a look)
 Exercise
 Mind and mood
 Food and fluids

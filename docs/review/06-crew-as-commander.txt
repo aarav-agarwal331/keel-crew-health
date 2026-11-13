@@ -1,12 +1,12 @@
 SCREEN: 06-crew-as-commander
-TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 121 | Simulated data
+TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 122 | Simulated data
 BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
 Crew readiness
 Commander
 Medical officer
 
-Day 121. Whether Keel has any flags for each crew member before a demanding task tomorrow, such as a spacewalk. You see a tier for everyone; reasons appear only where a crew member has chosen to share them, and for urgent items under their emergency sharing (as their backup).
+Day 122. Whether Keel has any flags for each crew member before a demanding task tomorrow, such as a spacewalk. You see a tier for everyone; reasons appear only where a crew member has chosen to share them, and for urgent items under their emergency sharing (as their backup).
 
 Labels: a crew member's own "Act today" or "Act now" shows to the commander as "Talk to the medical officer first"; "Worth a look" is the same on both screens.
 
@@ -14,7 +14,7 @@ Demo view. On a mission each role has its own device; here you can switch roles.
 
 Task tomorrow: a critical task (a spacewalk, or robotic-arm work)
 
-1 of 4 should talk to the medical officer first. 2 have minor flags. 1 has none.
+1 of 4 should talk to the medical officer first. 1 has minor flags. 2 have none.
 
 This is not a medical clearance.
 
@@ -28,9 +28,7 @@ Steady
 Kenji Sato
 Crew medical officer
 
-Worth a look
-
- Reason not shared. Ask Kenji.
+Steady
 
 Lucía Reyes
 Flight engineer

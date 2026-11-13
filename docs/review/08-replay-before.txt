@@ -1,5 +1,5 @@
 SCREEN: 08-replay-before
-TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 121 | Simulated data
+TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 122 | Simulated data
 BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
 Mission replay
@@ -21,7 +21,7 @@ Slow
 Normal
 Fast
 Replay clock: Day 104 · Lucía Reyes
-Worth a look
+Act today
 In replay: link up
 Lucía's readings
 Your readings
@@ -51,6 +51,6 @@ Day 117
 Day 124
 What Keel did
 DAY 104
-Worth a look: Exercise has dropped below your plan
+Act today: Exercise has dropped below your plan
 
-Do today's session, even a shortened one, and plan the next three. (at the next routine opportunity; self-managed)
+Do today's session, even a shortened one, and plan the next three. (today; self-managed)

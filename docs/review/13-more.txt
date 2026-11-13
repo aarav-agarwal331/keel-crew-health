@@ -1,5 +1,5 @@
 SCREEN: 13-more
-TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 121 | Simulated data
+TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 122 | Simulated data
 BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
 More
@@ -31,7 +31,7 @@ Data set
 Mars transit (simulated)
 Lunar surface stay (simulated)
 Four crew, 30 days of pre-flight baseline, then a 180-day outbound transit to Mars.
-Mission clock: Flight day 121
+Mission clock: Flight day 122
 − 1 day
 + 1 day
 Back to the demo day
@@ -40,7 +40,7 @@ Display
 Dark (cabin night)
 Light
 
-Keel last re-checked the whole crew's readings on this tablet in 30 milliseconds. There is no server.
+Keel last re-checked the whole crew's readings on this tablet in 44 milliseconds. There is no server.
 
 Erase my data on this device
 
