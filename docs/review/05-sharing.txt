@@ -4,6 +4,8 @@ BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
 Sharing and privacy
 
+Emergency sharing is ON. Urgent readings and serious symptoms reach the medical officer with what they are (the commander: urgent readings, and for a symptom only that you need the medical officer). Change it
+
 Lucía Reyes, your health data is yours. You decide below what each role can see. What is shown whatever you choose:
 
 Who	Always	Your choice

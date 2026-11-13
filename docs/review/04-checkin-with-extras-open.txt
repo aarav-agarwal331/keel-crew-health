@@ -35,7 +35,7 @@ Vision change
 Rash or itchy skin
 Something else
 Something serious? Chest pain, fainting, trouble breathing, bleeding, vision loss, thoughts of harming yourself…
-Tell the medical officer now if you have any of these. Only the medical officer is told which one. The commander is told only that you need the medical officer urgently, the same for every item here, with two exceptions: for thoughts of harming someone else the commander is told it is a crew safety concern (still not which item), and smoke or chemical exposure goes to the whole crew. Ten seconds after you save, both are alerted unless you withdraw a typing mistake.
+Tell the medical officer now if you have any of these. Emergency sharing is on: only the medical officer is told which one. The commander is told only that you need the medical officer urgently, the same for every item here, with two exceptions: for thoughts of harming someone else the commander is told it is a crew safety concern (still not which item), and smoke or chemical exposure goes to the whole crew. Ten seconds after you save, both are alerted unless you withdraw a typing mistake.
 Chest pain or pressure
 Short of breath at rest
 Fainted, blacked out or had a seizure

@@ -39,7 +39,7 @@ Day 109
 Day 113
 Day 118
 Day 122
-Skin temperature (overnight): 34.8 °C now, back inside your usual range (around 34.1); over the last three days it ran higher than usual. Wrist skin temperature, not a fever reading.
+Skin temperature (overnight): still unusual over the last three days (it ran higher than your usual 34.1); the latest reading, 34.8 °C, is back inside your range. Wrist skin temperature, not a fever reading.
 The last three days are further from your usual than 48 of your previous 53 days were. The last three days together are still unusual, so this is not over yet.
 33
 34
@@ -52,7 +52,7 @@ Day 109
 Day 113
 Day 118
 Day 122
-Resting heart rate (overnight): 56 bpm now, back inside your usual range (around 53); over the last three days it ran higher than usual.
+Resting heart rate (overnight): still unusual over the last three days (it ran higher than your usual 53); the latest reading, 56 bpm, is back inside your range.
 The last three days are further from your usual than 50 of your previous 53 days were. The last three days together are still unusual, so this is not over yet.
 50
 60
