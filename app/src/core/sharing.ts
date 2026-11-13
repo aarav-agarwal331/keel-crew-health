@@ -28,7 +28,7 @@ const all = (l: Level): Record<ShareCategory, Level> => ({ cardio: l, sleep: l, 
 /** Defaults: the medical officer sees status only, everyone else nothing.  Mood and symptoms start private. */
 export function defaultSharing(): SharingSettings {
   return {
-    cmo: { ...all('status'), cognition: 'none', symptoms: 'status' },
+    cmo: { ...all('status'), cognition: 'status', symptoms: 'status' },
     commander: all('none'),
     ground: all('none'),
     emergency: true,

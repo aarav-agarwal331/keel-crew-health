@@ -47,7 +47,7 @@ export function delayFor(m: Mission, day: number): { delayS: number; distanceAu:
 export function scheduledBlackout(m: Mission, day: number): string | null {
   const fd = day - m.pre_days
   if (m.link?.profile === 'mars_transit') {
-    if (fd >= 118 && fd <= 131) return 'Scripted two-week blackout (antenna fault), modelled on the two-week command pause at solar conjunction'
+    if (fd >= 118 && fd <= 131) return 'Scripted two-week blackout (antenna fault; the length is borrowed from the two-week command pause at solar conjunction)'
     if (fd >= 162 && fd <= 164) return 'Scripted outage during the solar particle event'
   }
   if (m.link?.profile === 'lunar') {

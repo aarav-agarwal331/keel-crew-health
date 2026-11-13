@@ -178,7 +178,7 @@ test('every screen works with the network disabled', async ({ page }) => {
   await test.step('Crew readiness: commander and medical officer views write the access log', async () => {
     await nav(page, '#/crew')
     await expect(page.getByTestId('crew-summary')).toBeVisible()
-    await expect(page.getByTestId('crew-c0')).toContainText(/No Keel flags|Minor flags|Talk to the medical officer first|Not enough recent data/)
+    await expect(page.getByTestId('crew-c0')).toContainText(/Steady|Worth a look|Talk to the medical officer first|Not enough recent data/)
     await page.getByRole('button', { name: 'Medical officer' }).click()
     await expect(page.getByTestId('crew-c2')).toBeVisible()
     await nav(page, '#/sharing')

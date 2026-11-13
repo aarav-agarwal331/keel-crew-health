@@ -59,7 +59,7 @@ heart rate, activity and 107 dated illness episodes. We ran Keel's method on tho
 its model and thresholds fitted only on simulated people, unchanged. It flags 72 percent of episodes. Luck alone gives 40, so
 the honest number is 32 points above luck, with an interval of 22 to 41. It costs 1.4 false alerts
 per person-month against a budget of one. The stricter tier, the one that brings in the medical
-officer, is 19 points above luck. A personal baseline is not shown to beat one threshold for everyone
+officer, is 19 points above luck. Whether a personal baseline beats one threshold for everyone is mixed
 in a like-for-like test, and our detector is not shown to beat a simple personal rule. On NASA's public
 bed-rest data, handling gravity changes flagged four volunteers in fourteen instead of nine, which
 is not statistically significant.

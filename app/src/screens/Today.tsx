@@ -82,7 +82,7 @@ export function Today() {
     <>
       {intro && mission.simulated && (
         <section className="card intro" data-testid="intro">
-          <p className="small"><strong>Keel is a crew health monitor that works with no link to Earth.</strong> Dangerous readings and symptoms get an immediate, auditable next step with its source; the crew member decides who sees what; and it watches each person's readings against their own normal. Demo: {crew?.name.split(' ')[0]}'s tablet, simulated {mission.title}. A lunar base mission is under More.</p>
+          <p className="small"><strong>Keel: crew health with no link to Earth.</strong> Acts at once on dangerous readings. You choose who sees what. It also watches your readings against your own normal. Demo: {crew?.name.split(' ')[0]}'s tablet, simulated {mission.title}. A lunar base mission is under More.</p>
           <div className="row wrap">
             <a className="btn primary sm" href={href('replay')} data-testid="intro-replay">Demo: replay a scripted event (40 s)</a>
             <a className="btn sm" href={href('validation')}>The evidence</a>
@@ -109,6 +109,7 @@ export function Today() {
           <p className="do">{primary.action}</p>
           <p className="small"><strong>When:</strong> {URGENCY_LABEL[primary.urgency].toLowerCase()}. <strong>Who:</strong> {(primary.who ?? WHO_LABEL[primary.tier]).toLowerCase()}.</p>
           <p className="small">{primary.tierReason}</p>
+          {[primary, ...others].filter((x) => x.status === 'urgent').flatMap((x) => x.steps.filter((q) => /^For whoever is with you/.test(q))).slice(0, 1).map((q) => <p key={q} className="banner strong small">{q}</p>)}
           {primary.status === 'urgent' && !primary.crewWide && <p className="small"><strong>{sharing[me]?.emergency === false ? 'Emergency sharing is off: nobody else has been shown this. Tell the medical officer yourself.' : primary.cmoOnly && !primary.patientIsCmo ? 'Now visible on the medical officer\'s Crew screen (emergency sharing), not the commander\'s. They are not alerted: tell them yourself now.' : 'Now visible on the medical officer\'s and the commander\'s Crew screens (emergency sharing). They are not alerted: tell them yourself now.'}</strong></p>}
           {others.filter((x) => x.status === 'urgent').length > 0 && (
             <div className="col" data-testid="also-now">
@@ -116,6 +117,7 @@ export function Today() {
               <ol className="list steps">{others.filter((x) => x.status === 'urgent').map((x) => <li key={x.key}><span><strong>{x.title}.</strong> {x.action}</span></li>)}</ol>
             </div>
           )}
+          {(primary.also ?? []).length > 0 && <div className="col"><span className="lab">Also in your readings</span><ul className="list small">{primary.also!.map((x) => <li key={x.title}><strong>{x.title}.</strong> {x.action}</li>)}</ul></div>}
           {['R-ILL', 'R-SYM-ILL', 'R-V-TEMP', 'R-V-TEMP-HI'].includes(primary.ruleId) ? <TempEntry /> : <ReadingLog readings={primary.readings ?? []} title="Readings this is based on" />}
           <a className="btn primary block" href={href('alert', primary.key)} data-testid="open-alert">Why, and what next <Chev /></a>
           {needsCmo && <button className="btn block" onClick={() => shareCats.forEach((c) => setShare(me, 'cmo', c, 'detail'))} data-testid="today-share-cmo">Share {shareCats.map((c) => CAT[c].toLowerCase()).join(', ')} in full detail with the medical officer</button>}
@@ -146,7 +148,7 @@ export function Today() {
             <a className="change" key={c.ind} href={href('trends', c.ind)}>
               <div className="col" style={{ gap: 2 }}>
                 <span><strong>{IND[c.ind].label}</strong> <span className="num big" style={{ marginLeft: 6 }}>{Number.isNaN(c.value) ? '–' : c.value.toFixed(IND[c.ind].decimals)}</span> <span className="muted small">{IND[c.ind].unit}</span></span>
-                <span className="small">{c.ind === 'sleep_mid' ? 'Shifted from' : c.direction === 'higher' ? 'Higher than' : 'Lower than'} your usual {c.expected.toFixed(IND[c.ind].decimals)}. {unusualness(c)}{c.ind === 'temp' ? ' Wrist skin temperature, not a fever reading.' : ''}</span>
+                <span className="small">{c.ind === 'sleep_mid' ? `${Math.abs(c.value - c.expected).toFixed(1)} h ${c.value > c.expected ? 'later' : 'earlier'} than your usual sleep timing.` : `${c.direction === 'higher' ? 'Higher than' : 'Lower than'} your usual ${c.expected.toFixed(IND[c.ind].decimals)}.`} {unusualness(c)}{c.ind === 'temp' ? ' Wrist skin temperature, not a fever reading.' : ''}</span>
               </div>
               <TrendChart compact values={b.values} lo={b.lo} hi={b.hi} from={day - 20} to={day} labelFor={(t) => shortDay(mission, t)} unit={IND[c.ind].unit} decimals={IND[c.ind].decimals} concern={IND[c.ind].concern} ariaLabel={`${IND[c.ind].label}, last three weeks`} />
             </a>
@@ -193,7 +195,7 @@ export function Today() {
           </Card>
         </div>
       </div>
-      <p className="small muted">Keel opened {notices30} notice{notices30 === 1 ? '' : 's'} from your readings in the last 30 days. Keel can be wrong. {mission.kind === 'personal' ? 'For imported data the heart-rate model gave about one false notice a month on other people\'s watch data.' : 'The full-sensor thresholds on this tablet are untested on real data. Set the same way for five sensors and tried on 16 people from another real wearable dataset (no illness labels), they gave about two alerts a month.'} <a href={href('validation')}>How often it is right</a></p>
+      <p className="small muted">Keel opened {notices30} notice{notices30 === 1 ? '' : 's'} from your readings in the last 30 days. Keel can be wrong: expect one or two false notices a month, possibly more. <a href={href('validation')}>How often it is right</a></p>
       <p className="banner">Keel is decision support, not a medical device. It does not diagnose. It shows how your readings compare with your own normal and points to documented countermeasures.</p>
     </>
   )

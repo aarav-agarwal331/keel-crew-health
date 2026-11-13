@@ -4,6 +4,7 @@ import { useApp } from '../state'
 import type { Photo } from '../core/types'
 import { SPOT_KEY } from '../core/analysis'
 import { Card, go, href, ReadingLog } from '../ui/kit'
+import { LEVELS } from '../core/sharing'
 
 const MOODS = ['Very low', 'Low', 'OK', 'Good', 'Very good']
 const FOOD = [{ label: 'All of it', v: 100 }, { label: 'Most', v: 85 }, { label: 'About half', v: 55 }, { label: 'Little', v: 30 }, { label: 'None', v: 0 }]
@@ -17,7 +18,10 @@ const LABEL: Record<string, string> = { rhr: 'Heart rate now, sitting at rest (s
 const lab = (k: string) => LABEL[k] ?? IND[k].label
 
 export function CheckIn({ open }: { open?: string }) {
-  const { mission, day, me, entries, saveEntry, voidReading, sharing, today } = useApp()
+  const { mission, day, me, entries, saveEntry, voidReading, sharing, today, setShare } = useApp()
+  const symLevel = sharing[me]?.cmo.symptoms ?? 'none'
+  const symDetail = symLevel === 'detail'
+  const symLevelLabel = LEVELS.find((l) => l.id === symLevel)?.label ?? symLevel
   const sharingOn = sharing[me]?.emergency !== false
   const existing = entries.find((e) => e.mission === mission.id && e.crew === me && e.day === day)
   // start from today's recorded answers (in the demo, the simulated ones) so the form matches Today
@@ -98,19 +102,20 @@ export function CheckIn({ open }: { open?: string }) {
   const routine = SYMPTOMS.filter((x) => !x.red_flag)
   const redFlags = SYMPTOMS.filter((x) => x.red_flag)
   const toggle = (id: string) => { setNoSym(false); setSym((p) => (p.includes(id) ? p.filter((x) => x !== id) : [...p, id])) }
-  const saveBtn = (
-    <>
-      {(err || pending.length > 0) && <div className="col">{err && <p className="banner strong" role="alert">{err}</p>}
+  const prompts = (err || pending.length > 0) ? <div className="col" data-testid="checkin-prompts">{err && <p className="banner strong" role="alert">{err}</p>}
       {pending.map((q) => (
         <div className="banner strong" role="alert" key={q.k}>
           <p><strong>{lab(q.k)}: {q.v} {IND[q.k].unit}</strong> is far outside the usual range, so Keel saved it and is acting on it. {NOW_LINE[q.k]?.(q.v) ? <strong>Act now: {(today(me, day)?.findings.find((f) => (f.inds ?? []).includes(q.k) && f.kind === 'vital')?.action) ?? 'tell the medical officer now.'} </strong> : null}{NOW_LINE[q.k]?.(q.v) ? (sharingOn ? 'It is past a safety line, so it is now visible on the medical officer\'s and the commander\'s Crew screens (emergency sharing). They are not alerted.' : 'It is past a safety line. Emergency sharing is off, so nobody else has been shown it: tell the medical officer.') : (today(me, day)?.findings.some((f) => (f.inds ?? []).includes(q.k) && f.kind === 'vital') ? 'It is past a fixed line for today: it is on the medical officer\'s list; tell them today.' : q.k === 'temp_oral' && q.v < 35 ? 'Below 35.0 °C is usually a measurement problem: wait five minutes and repeat. If it repeats, tell the medical officer.' : 'It is not past a fixed safety line, so nobody else has been shown it.')} Is that what the device showed?</p>
           <div className="row wrap"><button className="btn primary" onClick={() => setPending((p) => p.filter((x) => x.k !== q.k))} data-testid={`confirm-${q.k}`}>Yes, that is right</button><button className="btn" onClick={() => void withdraw(q.k)} data-testid={`withdraw-${q.k}`}>No, a typing mistake: withdraw it</button></div>
           <p className="small">If you withdraw it, it stays in the log, struck through, and the medical officer still sees that it was entered.</p>
         </div>
-      ))}</div>}
-      <div className="sticky-save col">
+      ))}</div> : null
+  const saveBtn = (
+    <>
+      {pending.length === 0 && <div className="sticky-save col">
         <button className="btn primary block" onClick={() => void save()} data-testid="save-checkin">Save check-in</button>
-      </div>
+      </div>}
+      {pending.length > 0 && <button className="btn primary block" onClick={() => void save()} data-testid="save-checkin">Save check-in</button>}
     </>
   )
   return (
@@ -119,7 +124,7 @@ export function CheckIn({ open }: { open?: string }) {
       <p className="muted">{dayLabel(mission, day)}. Four quick answers, about a minute. Stored on your tablet; {sharingOn ? 'emergency sharing is on, so anything urgent appears at once on the medical officer\'s and, as backup, the commander\'s Crew screens; they are not notified, so tell them.' : 'emergency sharing is off, so tell the medical officer yourself about anything urgent.'} <a href={href('sharing')}>Who sees what</a></p>
       {!existing && !Number.isNaN(rawSeries(mission, me, 'mood', [])[day]) && <p className="small muted">Today's check-in in this demo came from the simulation. Anything you save here is added to it.</p>}
 
-      <Card title="1. How are you feeling?">
+      <Card title="1. How are you feeling?" right={<span className="tiny muted">Private unless you share it; the commander's tier uses it</span>}>
         <div className="choices five" role="group" aria-label="Mood, 1 very low to 5 very good">
           {MOODS.map((m, i) => <button key={m} className="choice" aria-pressed={mood === i + 1} onClick={() => setMood(i + 1)} data-testid={`mood-${i + 1}`}><span className="n">{i + 1}</span><span className="tiny">{m}</span></button>)}
         </div>
@@ -158,6 +163,7 @@ export function CheckIn({ open }: { open?: string }) {
       </div>
 
       {!more && saveBtn}
+      {prompts}
       {saved && <div className="card" role="status" ref={(el) => { if (el && justSaved.current) { justSaved.current = false; el.scrollIntoView({ block: 'center' }) } }}><strong>Saved.</strong><p className="muted">Keel has re-checked your readings on this tablet with your new entries.</p>{(() => { const n = (today(me, day)?.findings ?? []).filter((f) => f.status === 'urgent').length; return n > 0 ? <p className="banner strong"><strong>{n === 1 ? 'One item needs' : `${n} items need`} action now.</strong> See Today for what to do.</p> : null })()}<div className="row wrap"><button className="btn" onClick={() => go('today')}>See Today</button><a className="btn" href={href('sharing')}>Who can see this?</a></div></div>}
 
       <button className="btn block" aria-expanded={more} onClick={() => setMore((v) => !v)} data-testid="more-checkin">{more ? 'Hide the optional extras' : 'Add more: reaction test, exercise, measurements (optional)'}</button>
@@ -180,9 +186,9 @@ export function CheckIn({ open }: { open?: string }) {
             <div className="choices" role="group" aria-label="Medication taken today">
               {MEDS.map((x) => <button key={x} className="choice" aria-pressed={meds.includes(x)} onClick={() => setMeds((p) => (p.includes(x) ? p.filter((q) => q !== x) : [...p, x]))} data-testid={`med-${x.split(' ')[0].toLowerCase()}`}>{x}</button>)}
             </div>
-            <p className="small muted">Classes only, no doses. These can move heart rate, reaction time and sleep, so Keel shows them next to any alert. The medical officer sees them only if you share Symptoms in detail. Keel never recommends medication.</p>
+            <p className="small muted">Classes only, no doses. These can move heart rate, reaction time and sleep, so Keel shows them next to any alert. Keel never recommends medication. {symDetail ? 'The medical officer can see these.' : 'The medical officer will not see these unless you share Symptoms in full detail.'}</p>
           </Card>
-          <Card title="Photo for the medical officer (optional)">
+          <Card title="Photo (optional, kept on your tablet)">
             <div className="row wrap">
               <label className="lab small" htmlFor="photo-kind">What is it of?</label>
               <select id="photo-kind" value={photoLabel} onChange={(e) => setPhotoLabel(e.target.value)}>{PHOTO_LABELS.map((x) => <option key={x}>{x}</option>)}</select>
@@ -190,7 +196,8 @@ export function CheckIn({ open }: { open?: string }) {
               <input id="photo-in" type="file" accept="image/*" capture="environment" style={{ position: 'absolute', opacity: 0, width: 1, height: 1 }} onChange={(e) => { void addPhoto(e.target.files?.[0]); e.target.value = '' }} data-testid="photo-in" />
             </div>
             {photos.length > 0 && <div className="row wrap">{photos.map((ph) => <figure key={ph.ts} style={{ margin: 0 }}><img src={ph.data} alt={`${ph.label} photo`} style={{ width: 120, height: 120, objectFit: 'cover', borderRadius: 10 }} /><figcaption className="tiny">{ph.label} <button className="btn sm" onClick={() => setPhotos((p) => p.filter((x) => x.ts !== ph.ts))}>Remove</button></figcaption></figure>)}</div>}
-            <p className="small muted">A rash, an eye, a wound. Up to three a day, shrunk and stored on this tablet when you save. Keel does not analyse photos. The medical officer sees them only if you share Symptoms in detail.</p>
+            <p className="small muted">A rash, an eye, a wound. Up to three a day, shrunk and stored on this tablet when you save. Keel does not analyse photos.</p>
+            {symDetail ? <p className="small"><strong>The medical officer can see your photos:</strong> Symptoms is shared with them in full detail.</p> : <div className="banner"><p className="small"><strong>The medical officer will not see this photo.</strong> Symptoms is set to "{symLevelLabel}" for them. Show it to them, or share Symptoms in full detail.</p><button className="btn sm" onClick={() => setShare(me, 'cmo', 'symptoms', 'detail')} data-testid="share-symptoms-cmo">Share Symptoms in full detail with the medical officer</button></div>}
           </Card>
           <Card title="Measurements (only what you took today)" id="measurements">
             <div className="grid3 fields">

@@ -27,7 +27,7 @@ export function TempEntry() {
   if (saved !== null) {
     if (rule) msg = `${saved.toFixed(1)} °C saved. ${highest !== null && highest > saved ? `Your highest reading today was ${highest.toFixed(1)} °C, and that one still counts. ` : ''}${rule.action}`
     else if (saved < 35) msg = `${saved.toFixed(1)} °C saved. Below 35.0 °C is usually a measurement problem: wait five minutes and repeat. If it repeats, tell the medical officer.`
-    else msg = `${saved.toFixed(1)} °C saved: no fever by this reading. That alone does not clear you for exercise. Follow the steps on this card.`
+    else msg = `${saved.toFixed(1)} °C saved: no fever by this reading${(cur?.meds ?? []).some((x) => /fever/i.test(x)) ? ', but fever medicine taken in the last six hours can hide a fever' : ''}. That alone does not clear you for exercise. Follow the steps on this card.`
   }
   return (
     <div className="col" style={{ gap: 6 }}>

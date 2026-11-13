@@ -24,6 +24,19 @@ Built for the 2026 NASA Space Apps Challenge, *Create Health Monitoring Software
 Space Missions*. Keel is an independent project. It is not a NASA product, is not endorsed by NASA, and
 is decision support, not a medical device.
 
+## In one paragraph
+
+Keel works with no link to Earth, acts at once on dangerous readings and symptoms with a written next
+step and its source, and lets the crew member choose who sees what. It also watches each person's
+readings against their own normal. On 107 real illness episodes, overnight heart rate alone flagged
+50% against 28% by chance, **+22 points above luck (12 to 32)**, at about one false alert a month;
+that is the model imported watch data runs on (+19 in the wider window we started with; on Fitbit's
+own daily resting heart rate it gives about one alert a month, as budgeted, and twice its budget at the
+stricter tier). The full on-board model is tested in simulation only.
+Useful early warning was not shown, most alerts are false, and Keel's detector is not shown to beat a
+simple rule. Its main contribution is the offline safety, sharing and action loop; detection is one
+input to it.
+
 ## What is different
 
 - **No server, no link required.** Offline-first installable web app; all analysis runs in a web

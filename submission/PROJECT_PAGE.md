@@ -172,7 +172,7 @@ activity).**
   threshold is +7 (−1 to 15) and Keel's lead is +24 (11 to 36) at the notice tier and +8 (−1 to 18)
   at the alert tier. Four detectors, two tiers and several windows were compared without correction,
   and the like-for-like contrast (same rule, personal against population baseline) is +11 (−3 to 25),
-  so a personal baseline is not shown to beat a fixed threshold.
+  and +17 (7 to 28) at the alert tier: mixed evidence that a personal baseline beats a fixed threshold.
 - Keel's detector is not shown to beat a simple personal rule (two of three days outside the personal
   range). The simple rule alone is +28 (19 to 38); the detector's lead over it is +5 (−2 to 12), not
   distinguishable.

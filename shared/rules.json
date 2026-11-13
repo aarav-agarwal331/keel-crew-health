@@ -146,7 +146,7 @@
     "min": 150
    },
    "summary": "You entered a resting heart rate of 150 or more. Keel does not interpret it. The value 150 is provisional and has not been reviewed by a flight surgeon.",
-   "action": "Stop, rest, and tell the medical officer now.",
+   "action": "Sit or strap in, count your pulse by hand for a full minute now, and tell the medical officer now.",
    "steps": [
     "Stay with another crew member.",
     "Count your pulse by hand for a full minute to confirm the device.",
@@ -1240,7 +1240,7 @@
     "Switch your quarters to the warm pre-sleep light setting two hours before bed.",
     "Last caffeine at least six hours before sleep.",
     "If the schedule moved, use bright light after waking to bring your body clock along.",
-    "Keep safety-critical tasks out of your 1 to 7 AM low, or ask for a buddy check."
+    "Keep safety-critical tasks out of the end of your usual sleep period and the first hour after waking, or ask for a buddy check."
    ],
    "tier": "self",
    "tier_reason": "Usually fixed by protecting sleep for a few nights.",
@@ -1306,7 +1306,7 @@
    "summary": "You are drinking clearly less than your own usual. A faster resting heart rate, headache or dizziness often follow, and Keel lists any of them it sees below.",
    "action": "Drink one extra litre before the end of the day, spread over the next few hours.",
    "steps": [
-    "Aim for at least 2.0 to 2.5 litres a day and pale urine.",
+    "Aim for at least 2.0 to 2.5 litres a day.",
     "Log each drink bag at check-in so the trend is visible.",
     "If you have severe side or back pain, tick it as serious at check-in and tell the medical officer now."
    ],

@@ -108,9 +108,10 @@ launch into weightlessness and, for the lunar scenario, landing in one-sixth gra
    four days before it). Episodes differ a great deal: the between-episode SD of the response, after
    subtracting measurement noise, is at least 2.0 times its mean (the fit caps it at 2.0; the raw
    ratio is higher). Each simulated illness is scaled by `max(0, N(1, 2.0))`, renormalised to mean 1, so about three in ten have no heart-rate response at
-   all. The fit uses 38 episodes (the calibration half of the people with a dated illness); those 38
-   are also among the 107 episodes of the real-data evaluation, which is why section 8 reports the
-   app's configuration separately on people the simulator never saw.
+   all. The fit uses 38 episode curves with enough baseline, from the 55 people in the calibration
+   half of those with a dated illness. Those people account for 47 of the 107 episodes in the
+   real-data evaluation (counted in `real_eval.json`, `calibration_overlap`), which is why section 8
+   reports results separately on the people the simulator's fits did not use.
 5. The fits start from fixed initial values, so running `calibrate_sim.py` twice gives the same
    parameter file.
 
@@ -188,7 +189,7 @@ flipped once: it first selected the z-score rule, and after the simulator was gi
 correlation between heart rate and HRV it selected the multivariate EWMA (currently 31.7 against
 27.3 points above luck on the training missions, a difference with no interval and well inside what
 the test missions show as noise). Test missions had no vote. Real data had none directly, but the
-simulator's illness response is fitted on 38 real episodes, so the choice is not fully independent
+simulator's illness response is fitted on real episodes from people who are also evaluated, so the choice is not fully independent
 of them, and the history means it is not pre-registered. On the test missions the z-score rule was
 slightly ahead, on real data the multivariate detector was (+5 points, −2 to 12); the four personal
 detectors cannot be told apart at the notice tier (at the alert tier they spread from +15 to +33), and the choice is best read as arbitrary among equals.
@@ -354,11 +355,16 @@ the same code version). Real data: 251 people, 107 illness episodes, two sensors
   held-out group now includes the people whose only episodes are test-date-only (they were in neither
   calibration half). The hand-set 30% simulated exercise cut was chosen with some validation-half
   episodes in view, so "not used by the simulator's fits" is the accurate description, not "unseen".
+- **Original window** (−14..+7 days): heart rate alone +19 (9 to 29); the two-sensor
+  simulator-threshold version +29 (20 to 38).
 - **Imported data.** The app runs imports on a heart-rate-only model fitted and calibrated on all 251
   real people (`model_import.json`, written by `eval_real.py`); its expected performance is the
   cross-validated heart-rate-alone result below. Caveat: the model was calibrated on resting heart rate
   computed from raw night-time samples (`build_daily.py`), while imports carry the watch maker's own
-  daily resting heart rate, which is smoothed differently; false alerts on imported data may differ.
+  daily resting heart rate, which is smoothed differently. Tried on Fitbit's own daily resting heart
+  rate for 63 LifeSnaps people (120 person-months, no illness labels, so every alert counts), it gave
+  1.07 alerts per person-month at the notice tier (budget 1.00) and 0.46 at the alert tier (budget
+  0.25): close at the notice tier, nearly twice over at the alert tier.
 - **Alerts counted nowhere.** Alerts starting 11 to 21 days before an onset or 5 to 28 days after fall
   in neither the detection window nor quiet time: 56 at the notice tier (0.5 per episode) and 34 at
   the alert tier. False-alert rates therefore understate the burden for people who were ill.
@@ -371,8 +377,8 @@ the same code version). Real data: 251 people, 107 illness episodes, two sensors
   original −14..+7 window +10 (−3 to 23); counting an already-open alert +16 (3 to 29); with 7-day
   activity +24 (11 to 36) at the notice tier and +8 (−1 to 18) at the alert tier. These contrasts change
   both the baseline and the detector. The like-for-like contrast of a personal against a population
-  baseline (the same 2-of-3 rule) is +11 (−3 to 25), not distinguishable from zero, so a personal
-  baseline is not shown to beat a fixed threshold.
+  baseline (the same 2-of-3 rule) is +11 (−3 to 25) at the notice tier and +17 (7 to 28) at the alert
+  tier: mixed evidence, uncorrected for multiple comparisons.
 - **Against the simple personal rule.** Two-of-three-days z-score rule: +28 (19 to 38); its lead over
   the fixed threshold is +11 (−3 to 25). Keel's detector minus the simple rule: +5 (−2 to 12). Not
   distinguishable.
@@ -421,10 +427,12 @@ the same code version). Real data: 251 people, 107 illness episodes, two sensors
   variant is not the app's detector: it uses a pulse-only 2-of-3 rule, a 4-day adaptation constant and
   a 2.0 bpm floor (the app: multivariate EWMA, 6 days, 1.5 bpm).
 - **Simulator against reality.** The pass marks were set during review, not in advance. What passes
-  was fitted on the other half of the same datasets: four of five variabilities, four of five
-  carry-overs, all four between-indicator correlations. Every independent check fails or is off: the
+  was mostly fitted on the other half of the same datasets (variabilities, correlations; of the
+  carry-overs only heart rate's is fitted, and the ±0.15 tolerance on carry-overs near 0 to 0.25 is
+  lenient): four of five variabilities, four of five carry-overs, all four correlations. Every independent check fails or is off: the
   illness heart-rate rise over the four days from onset (2.1 bpm simulated, 4.6 real; the gap's 95% interval
-  is 0.7 to 4.4 bpm, so not only sampling noise); HRV variability
+  is 0.7 to 4.4 bpm, but it leaves out the uncertainty of the simulator's own fit from the other half,
+  whose rise was about 2.7 bpm, so much of the gap may be split-half noise); HRV variability
   (37% too high); sleep carry-over; thresholds calibrated in simulation and applied to 72 real quiet
   people (1.38 false alerts per person-month against 1.00, 0.40 against 0.25) and, with five
   indicators, to 16 LifeSnaps people of the validation half (2.04 and 0.97); nights under six hours

@@ -1,7 +1,7 @@
 {
  "script": "research/scripts/sim_realism.py",
- "commit": "fc29ae5",
- "code_version": "0bc0a39d53e4",
+ "commit": "12585e5",
+ "code_version": "999c2f562afc",
  "variability": [
   {
    "id": "rhr",

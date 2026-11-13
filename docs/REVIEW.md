@@ -433,6 +433,49 @@ Not done from round 8: a real alert to the medical officer's device or a one-tap
 sharing on for red flags; handling readings either side of midnight as one sequence; a spot heart rate
 of 100 to 119; Trends chart labels.
 
-## Round 9
+## Round 9 (2026-11-12, fresh reviewers, redeployed build)
 
-See the end of this file once the ninth round has run.
+Judge's scores: impact 7, creativity 8, validity 8, relevance 9, presentation 7 (39 of 50), "nominate:
+yes", **no high-severity issue**. The statistician found none for the fifth round running. The
+astronaut found one and the flight surgeon two, all fixed.
+
+| # | Reviewer | High-severity finding | Fix |
+|---|---|---|---|
+| 1 | Astronaut | The check-in photo card said "for the medical officer", but under default sharing the medical officer never sees photos. | The card is "Photo (kept on your tablet)" and says live whether the medical officer can see it, with one tap to share Symptoms in full detail. The same for medication classes. |
+| 2 | Flight surgeon | The repeat waiting time was measured from the day's first reading, even a normal one, so 92, then 50, then 85 a minute later stood the alarm down. | The clock starts at the first reading that met the rule, on the crew member's screen and on the medical officer's list. Unit-tested with that exact sequence. |
+| 3 | Flight surgeon | Two "act now" rules (blood pressure 220/130 twice, blood sugar 300 or more) did not hold exercise, and the more severe blood-pressure rule removed the hold the milder one had set. | Every fixed "act now" rule holds exercise. Unit-tested for four readings. |
+
+Medium-severity findings fixed in the same pass:
+
+- **Closing a notice** (flight surgeon): the medical officer either adds a note and keeps it open, or
+  closes it as "cleared for exercise and duties"; closing an illness notice works even when its
+  details are not shared.
+- **Medical officer's default view** (flight surgeon): status level in every area, including mind and
+  mood; run-based "today" rules (mood, overnight oxygen, sleep floor, heart rate on two nights) now reach
+  the list.
+- **Repeat wording** (flight surgeon, astronaut): "Re-check at 18:48"; "if you have not taken sugar,
+  take it now"; the bystander step for low blood sugar shows on Today; fever medicine logged today
+  is mentioned after a normal thermometer reading.
+- **One tier scale** (astronaut): the commander sees Steady / Worth a look / Talk to the medical
+  officer first; "Detector notice" became "Notice from the readings".
+- **Check-in prompts** sit next to the result at the top, and the sticky Save bar hides while a
+  question is open (astronaut). Mood says it is private unless shared, and that the commander's tier
+  uses it.
+- **Today** shows the other actions of an open notice; sleep timing reads "2.3 h later than usual";
+  the footer is one plain line; the landing banner is three short sentences (astronaut, judge).
+- **README** opens with one paragraph and one number (+22) (judge); the replay quotes heart rate alone.
+- **Smaller**: smoke exposure names the commander as lead; the heart-rate 150 action says to count the
+  pulse by hand; "critical task" instead of "spacewalk" during transit; the blackout no longer claims
+  to be a solar conjunction; the illness-size statement uses one number.
+- **Statistician**: the realism interval no longer claims "not only sampling noise"; the personal
+  against population-baseline contrast is reported at both tiers (mixed); predictive value leads with
+  the configurations the app runs and says the range is a spread, not an interval; simulation
+  intervals are labelled as seed variation; cabin CO2 events counted per crew member is stated; the
+  bed-rest test is described as a simpler version; lenient carry-over marks are stated. New analyses:
+  the original wider window for the two headline configurations, the import model on Fitbit's own
+  daily resting heart rate (LifeSnaps), and a count of how many calibration-half people are among
+  those analysed.
+
+## Round 10
+
+See the end of this file once the tenth round has run.

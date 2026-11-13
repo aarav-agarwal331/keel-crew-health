@@ -347,6 +347,13 @@ def main():
                     **{m: {str(b): with_net(r["outcomes"][m][b], chance_for(r, pe, m, b, w, p),
                                             (r["outcomes"]["fixed"][b], chance_for(r, pe, "fixed", b, w, p)) if m != "fixed" else None, 2000) for b in [0.25, 1.0]} for m in ["fixed", DEPLOYED]}}
         abl[key]["both_tiers"] = True
+        if key == "rhr":
+            # the original, wider detection window for the figure the app's import model rests on
+            w0 = Windows(det_pre=14, det_post=7)
+            rows0 = [{**person_outcome(r["scores"][DEPLOYED][i], r["thr_person"][DEPLOYED][1.0][i], q.onsets, w0, p.merge_gap), "pid": q.pid} for i, q in enumerate(pe)]
+            ch0 = chance_rows(pe, r["scores"][DEPLOYED], r["thr_person"][DEPLOYED][1.0], w0, p.merge_gap, 5, SEED, scored_only=False)
+            st0 = with_net(rows0, ch0, None, 1000)
+            abl[key]["original_window"] = {k: st0[k] for k in ("detection_rate", "chance_detection_rate", "net_detection", "net_detection_ci")}
         if key == "rhr_act7":
             # this is the activity feature the app itself uses (a 7-day average), so its predictive value is reported too
             for b in ["0.25", "1.0"]:
@@ -424,6 +431,12 @@ def main():
         ch = chance_rows(pe7, r_sc, [thr] * len(pe7), w, p.merge_gap, 5, SEED, scored_only=False)
         ch_by = {r["pid"]: r for r in ch}
         deployed_cfg["all"][str(b)] = with_net(rows, ch, None, 1000)
+        if b == 1.0:
+            w0 = Windows(det_pre=14, det_post=7)
+            rows0 = [{**person_outcome(sc_, thr, q.onsets, w0, p.merge_gap), "pid": q.pid} for sc_, q in zip(r_sc, pe7)]
+            ch0 = chance_rows(pe7, r_sc, [thr] * len(pe7), w0, p.merge_gap, 5, SEED, scored_only=False)
+            st0 = with_net(rows0, ch0, None, 1000)
+            deployed_cfg["original_window"] = {k: st0[k] for k in ("detection_rate", "chance_detection_rate", "net_detection", "net_detection_ci")}
         deployed_cfg["held_out"][str(b)] = with_net([rows[i] for i in held], [ch_by[pe7[i].pid] for i in held if pe7[i].pid in ch_by], None, 1000)
     for k_ in ["all", "held_out"]:
         for b_ in ["0.25", "1.0"]:
@@ -482,6 +495,27 @@ def main():
         imp_meta["expected"][b_]["share_of_alerts_that_are_real"] = ppv_at(abl["rhr"][DEPLOYED][b_])
         ppv[b_]["import_model_heart_rate_only"] = imp_meta["expected"][b_]["share_of_alerts_that_are_real"]
     write_json(APP_PUBLIC / "data" / "model_import.json", model_json(imp, p, imp_thr, imp_meta), indent=1)
+    # the input an import actually carries: the watch maker's own daily resting heart rate.  LifeSnaps has
+    # Fitbit's value; there are no illness labels, so every alert is counted (some may be real)
+    lsd = pd.read_csv(realdata.LIFESNAPS, usecols=["id", "date", "resting_hr"], low_memory=False)
+    lsd = lsd.assign(pid=lsd["id"].astype(str), date=pd.to_datetime(lsd["date"])).dropna(subset=["resting_hr"])
+    lsd = lsd[lsd["resting_hr"] > 0].sort_values(["pid", "date"]).drop_duplicates(["pid", "date"], keep="last")
+    vend = []
+    for pid_, g in lsd.groupby("pid"):
+        g = g.set_index("date").reindex(pd.date_range(g["date"].min(), g["date"].max(), freq="D"))
+        if g["resting_hr"].notna().sum() >= MIN_DAYS:
+            vend.append(Person(pid=f"ls:{pid_}", x=g[["resting_hr"]].to_numpy(float)))
+    v_sc = [x[DEPLOYED] for x in score_people(vend, imp, p)]
+    vendor = {"source": "LifeSnaps, Fitbit's own daily resting heart rate (no illness labels: every alert counted)", "n_people": len(vend)}
+    for key_, b_ in (("notice", "1.0"), ("alert", "0.25")):
+        a_ = aggregate([person_outcome(x, imp_thr[key_], [], w, p.merge_gap) for x in v_sc])
+        vendor[b_] = {"alerts_per_person_month": a_["fa_per_person_month"], "person_months": a_["quiet_person_months"]}
+    print("import model on vendor resting heart rate", vendor)
+    cal_e_, _ = realdata.split_half(realdata.event_pids(events_all), seed=11)
+    analysed_with_event = {q.pid for q in people if q.onsets}
+    calib_overlap = {"calibration_half_people": len(cal_e_), "of_them_analysed_with_an_episode": len(cal_e_ & analysed_with_event),
+                     "their_episodes": sum(len(q.onsets) for q in people if q.pid in cal_e_)}
+    print("calibration overlap", calib_overlap)
     print("import model thresholds", imp_thr)
 
     # ---------------- event-aligned resting heart rate ----------------
@@ -507,7 +541,7 @@ def main():
         "indicators": SPEC_LABELS["rhr_steps"], "windows": {"det_pre": w.det_pre, "det_post": w.det_post, "excl_pre": w.excl_pre, "excl_post": w.excl_post},
         "budgets": BUDGETS, "deployed": DEPLOYED, "methods": METHODS, "method_labels": METHOD_LABELS, "cohort": cohort, "main": main_tbl, "breakdown": breakdown,
         "leads": leads, "false_alerts_quiet": fa_dist, "false_alerts_by_group": fa_by_group, "ppv": ppv, "steps_drop": steps_drop, "ablation": abl,
-        "window_sensitivity": win, "uncounted_alerts_near_episodes": limbo, "chance_sensitivity": chance_sens, "open_alert_sensitivity": open_alert, "deployed_config": deployed_cfg, "shipped_model": shipped_cfg,
+        "window_sensitivity": win, "uncounted_alerts_near_episodes": limbo, "chance_sensitivity": chance_sens, "open_alert_sensitivity": open_alert, "deployed_config": deployed_cfg, "import_model_on_vendor_rhr": vendor, "calibration_overlap": calib_overlap, "shipped_model": shipped_cfg,
         "chance_note": "Pretend events are placed on label-quiet days with the same missing data as real windows, and weighted to the device mix of the real episodes. They cannot be matched to the calendar (dates are shifted per person), so exposure, travel, testing and isolation near a real onset are not reproduced; detection above luck is therefore an upper bound on what physiology alone explains.", "cross_phase": cross, "fold_seeds": seeds, "event_aligned_rhr": aligned,
         "published": {"source": "Mishra et al. 2020 (DOMAIN.md ref 58), phase 1 only, their own online CuSum on hourly data",
                       "presymptomatic_detection": 0.63, "false_alarms_per_month_healthy": 0.66,

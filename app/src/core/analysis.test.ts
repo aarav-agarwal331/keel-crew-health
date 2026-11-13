@@ -206,6 +206,19 @@ describe('end to end on the demo mission', () => {
     const hr: Entry = { key: 'k', mission: m.id, crew: 'c0', day: 100, values: {}, symptoms: [], ts: 0, readings: [{ ind: 'rhr_spot', v: 170, ts: 1 }, { ind: 'rhr_spot', v: 72, ts: 1 + 20 * 1000 }] }
     expect(run('c0', 100, [hr]).status).toBe('urgent')
   })
+  it('the repeat clock starts at the first abnormal reading, not an earlier normal one', () => {
+    const e: Entry = { key: 'k', mission: m.id, crew: 'c0', day: 100, values: {}, symptoms: [], ts: 0, readings: [{ ind: 'glucose', v: 92, ts: 1 }, { ind: 'glucose', v: 50, ts: 8 * 3600e3 }, { ind: 'glucose', v: 85, ts: 8 * 3600e3 + 60e3 }] }
+    const a = run('c0', 100, [e])
+    expect(a.status).toBe('urgent')
+    expect(a.findings.find((x) => x.ruleId === 'R-V-GLU-LO2')!.action).not.toMatch(/safe side/)
+    expect(a.openItems.find((x) => x.ruleId === 'R-V-GLU-LO2')!.settled).toBeFalsy()
+  })
+  it('every fixed "act now" rule holds exercise', () => {
+    for (const vals of [{ sbp: 230 }, { glucose: 350 }, { rhr_spot: 170 }, { spo2_spot: 88 }]) {
+      const e: Entry = { key: 'k', mission: m.id, crew: 'c0', day: 100, values: vals, symptoms: [], ts: 0, readings: Object.entries(vals).flatMap(([k, v]) => [{ ind: k, v, ts: 1 }, { ind: k, v, ts: 2 }]) }
+      expect(run('c0', 100, [e]).exerciseHold, JSON.stringify(vals)).toBe(true)
+    }
+  })
   it('every "act now" action starts by getting a crewmate', () => {
     const e: Entry = { key: 'k', mission: m.id, crew: 'c0', day: 100, values: { glucose: 45 }, symptoms: [], ts: 0 }
     for (const f of run('c0', 100, [e]).findings.filter((x) => x.status === 'urgent' && !x.crewWide)) expect(f.action).toMatch(/^Call a crewmate/)

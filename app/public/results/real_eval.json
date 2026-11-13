@@ -1,7 +1,7 @@
 {
  "script": "research/scripts/eval_real.py",
- "commit": "fc29ae5",
- "code_version": "0bc0a39d53e4",
+ "commit": "12585e5",
+ "code_version": "999c2f562afc",
  "seed": 20261112,
  "data": "Stanford COVID-19 wearables phase 1 (Mishra et al. 2020) and phase 2 subset (Alavi et al. 2022)",
  "indicators": "Resting heart rate + daily steps",
@@ -3018,7 +3018,16 @@
      "net_rescaled": 0.3082676508116226
     }
    },
-   "both_tiers": true
+   "both_tiers": true,
+   "original_window": {
+    "detection_rate": 0.5700934579439252,
+    "chance_detection_rate": 0.37794159494686275,
+    "net_detection": 0.19215186299706244,
+    "net_detection_ci": [
+     0.09295708347629987,
+     0.29423085499375135
+    ]
+   }
   },
   "rhr_steps": {
    "label": "Resting heart rate + daily steps",
@@ -4640,7 +4649,33 @@
     "net_rescaled": 0.5971461113618293,
     "share_of_alerts_that_are_real": 0.020041355902845875
    }
+  },
+  "original_window": {
+   "detection_rate": 0.8037383177570093,
+   "chance_detection_rate": 0.5113567870722859,
+   "net_detection": 0.2923815306847234,
+   "net_detection_ci": [
+    0.19918225730739067,
+    0.3759800948121504
+   ]
   }
+ },
+ "import_model_on_vendor_rhr": {
+  "source": "LifeSnaps, Fitbit's own daily resting heart rate (no illness labels: every alert counted)",
+  "n_people": 63,
+  "1.0": {
+   "alerts_per_person_month": 1.0689492455418381,
+   "person_months": 119.7437582128778
+  },
+  "0.25": {
+   "alerts_per_person_month": 0.45931412894375856,
+   "person_months": 119.7437582128778
+  }
+ },
+ "calibration_overlap": {
+  "calibration_half_people": 55,
+  "of_them_analysed_with_an_episode": 46,
+  "their_episodes": 47
  },
  "shipped_model": {
   "label": "The model file the app ships (11 indicators, thresholds from simulated missions), given the channels a real import shares with it: overnight heart rate and, where recorded, sleep duration",

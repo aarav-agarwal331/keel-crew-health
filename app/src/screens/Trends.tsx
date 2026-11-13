@@ -58,7 +58,7 @@ export function Trends({ focus }: { focus?: string }) {
             <Card key={def.id} id={`ind-${def.id}`} className={focus === def.id ? 'action' : ''} title={def.label} right={<span className="num"><strong style={{ fontSize: '1.25rem' }}>{last === undefined ? '–' : last.toFixed(def.decimals)}</strong> <span className="small muted">{def.unit}</span></span>}>
               <TrendChart values={b.values} expected={band ? b.expected : undefined} lo={band ? b.lo : undefined} hi={band ? b.hi : undefined} from={from} to={day}
                 labelFor={(t) => shortDay(mission, t)} unit={def.unit} decimals={def.decimals} markers={markersFor(def.id)} refLines={refLines} concern={def.concern} ariaLabel={`${def.label} over time against your usual range`} />
-              <p className="small muted">{def.plain}{std ? ` Your usual is not the standard. Standard: ${std.label}.` : ''}{def.id === 'glucose' ? ' Shown against general reference values, not a personal range.' : ''}</p>
+              <p className="small muted">{def.plain}{std ? ` Your usual is not the standard (${std.label.replace(/^Planned: /, 'planned ').replace(/^Scheduled /, 'scheduled ')}).` : ''}{def.id === 'glucose' ? ' Shown against general reference values, not a personal range.' : ''}</p>
               <details>
                 <summary>Why it matters, how to measure, and the numbers</summary>
                 <div className="col small">

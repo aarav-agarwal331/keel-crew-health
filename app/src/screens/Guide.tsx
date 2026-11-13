@@ -12,7 +12,7 @@ const HAZARDS = [
   { name: 'Hostile, closed environment', does: 'Recycled air and water, shared microbes, an immune system that behaves differently.', keel: 'Cabin carbon dioxide, with an advisory line at 2.5 mmHg, an alert at 3.0 and an urgent alert at 4.0; signs of infection in heart rate, HRV and temperature, usually visible once symptoms have started.' },
 ]
 
-const NOW = RULES.filter((r) => r.urgency === 'now' && r.id !== 'R-RED')
+const NOW = RULES.filter((r) => r.urgency === 'now' && r.id !== 'R-RED' && r.id !== 'R-RED-EXP')
 const TODAY = RULES.filter((r) => r.urgency === 'today' && r.scope !== 'personal')
 
 export function Guide({ focus }: { focus?: string }) {

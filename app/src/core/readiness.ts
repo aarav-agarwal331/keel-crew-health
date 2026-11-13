@@ -16,7 +16,7 @@ export interface Readiness {
 }
 
 export const READY_LABEL: Record<ReadyTier, string> = {
-  go: 'No Keel flags',
+  go: 'Steady',
   caution: 'Worth a look',
   hold: 'Talk to the medical officer first',
   unknown: 'Not enough recent data',

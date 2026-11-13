@@ -8,7 +8,7 @@
   "alert": 0.25
  },
  "script": "research/scripts/eval_real.py",
- "commit": "fc29ae5",
+ "commit": "12585e5",
  "adaptation_prior": {
   "shift": [
    0.0
