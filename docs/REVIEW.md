@@ -393,6 +393,46 @@ Medium-severity findings fixed in the same pass:
 Not done from round 7: a real notification between devices; locking emergency sharing on for red
 flags; original-window results for every configuration; trend-chart label clutter.
 
-## Round 8
+## Round 8 (2026-11-12, fresh reviewers, redeployed build)
 
-See the end of this file once the eighth round has run.
+Judge's scores: impact 7, creativity 8, validity 8, relevance 9, presentation 7 (39 of 50), "nominate:
+yes", and **no high-severity issue**. The statistician also found none (fourth round running). The
+astronaut and the flight surgeon each found one.
+
+| # | Reviewer | High-severity finding | Fix |
+|---|---|---|---|
+| 1 | Astronaut | With two "act now" items (blood sugar 50, heart rate 170) the top card showed only the sugar step; "stop, rest" for the heart rate sat below the fold, under a temperature card. | Every "act now" action is now listed in the top card; the temperature card moved below the other alerts. |
+| 2 | Flight surgeon | The "repeat is back on the safe side" text mentioned sugar for every kind of reading (a temperature or a high blood sugar too), relabelled "today" rules as "at once", and only blood sugar had a waiting time. | The text depends on the rule (sugar only for low blood sugar), keeps the rule's own urgency, and every measurement has a minimum time before a repeat counts (blood sugar 15 minutes, heart rate and oxygen 2, blood pressure 5, temperature 30). Unit-tested. |
+
+Medium-severity findings fixed in the same pass:
+
+- **Withdrawing a reading** (flight surgeon): the button withdraws the reading the question is about,
+  not the latest one.
+- **A thermometer or strap save erased the simulated symptoms** (flight surgeon): fixed, as at check-in.
+- **Closing a detector notice** (flight surgeon): the medical officer can close an illness notice with a
+  note on the Crew screen; that lifts the exercise hold and the readiness tier.
+- **Headline churn** (flight surgeon, astronaut, judge): once a notice has read as illness it keeps
+  that headline until it closes, and it never falls back to the generic "several readings" one.
+- **Smoke or chemical exposure** (flight surgeon): its own rule: follow the vehicle emergency procedure
+  and alert the whole crew; Keel is not the alarm. The CO2 rule says spikes are the alarm's job.
+- **"Call a crewmate to you now"** opens every personal "act now" action (flight surgeon).
+- **Commander's view** (astronaut): "Ask Lucía", not "or the medical officer". Sharing says how data
+  would travel between tablets in a flight version. The share button names the area it opens.
+- **After saving a check-in** (astronaut): the screen scrolls to the result.
+- **Presentation** (judge): the Validation screen opens with three lines: what Keel reliably does,
+  what it does not do, and the one honest number; the over-budget bar says so in its label; the
+  landing text leads with what is shown to work.
+- **Statistician**: the bed-rest plain-baseline figure is no longer called "above chance" (p about
+  0.1); the bed-rest rule's differences from the app are stated; the import card names the Fitbit
+  dependence; predictive value is quoted first for the configurations the app runs; "attributable
+  to" instead of "coincide with"; the five-sensor transfer is described as alerts in unlabelled
+  people; the replay compares like with like; a sampling interval is computed for the simulated
+  illness gap; METHOD states which constants were fixed before the first real-data run.
+
+Not done from round 8: a real alert to the medical officer's device or a one-tap call; locking emergency
+sharing on for red flags; handling readings either side of midnight as one sequence; a spot heart rate
+of 100 to 119; Trends chart labels.
+
+## Round 9
+
+See the end of this file once the ninth round has run.

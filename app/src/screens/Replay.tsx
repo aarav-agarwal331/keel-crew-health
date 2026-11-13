@@ -69,7 +69,7 @@ export function Replay() {
         const body = `${f.action} (${URGENCY_LABEL[f.urgency].toLowerCase()}; ${WHO[f.tier]})`
         const item = { day: d, kind: 'alert' as const, status: f.status as FeedItem['status'], ruleId: f.ruleId, led: f.kind }
         if (prev === undefined) out.push({ ...item, title: `${STATUS_LABEL[f.status]}: ${f.title}`, body })
-        else if (prev.rule !== f.ruleId) out.push({ ...item, title: `${STATUS_LABEL[f.status]}: ${f.title}`, body: `The notice open since ${shortDay(mission, prev.day)} now looks like this. ${body}` })
+        else if (prev.rule !== f.ruleId) out.push({ ...item, title: `Same notice (open since ${shortDay(mission, prev.day)}), read differently: ${f.title}`, body })
         else if (rank > prev.rank) out.push({ ...item, title: `More serious now: ${f.title}`, body })
         seen.set(id, { rank: prev && prev.rule === f.ruleId ? Math.max(prev.rank, rank) : rank, rule: f.ruleId, day: prev?.day ?? d })
       }

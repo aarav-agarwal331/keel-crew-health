@@ -185,4 +185,6 @@ export interface Finding {
   inds?: string[]
   /** this notice earlier looked like illness: it keeps exercise on hold */
   holdsExercise?: boolean
+  /** the medical officer closed this detector notice with a note */
+  reviewed?: boolean
 }

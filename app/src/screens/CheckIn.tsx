@@ -27,7 +27,7 @@ export function CheckIn({ open }: { open?: string }) {
   const [sym, setSym] = useState<string[]>(existing?.symptoms ?? symptomsOn(mission, me, day, []))
   const usual = rawSeries(mission, me, 'fluid', []).slice(Math.max(0, day - 14), day).filter((v) => !Number.isNaN(v))
   const fluidHint = usual.length ? usual.reduce((a, b) => a + b, 0) / usual.length : 2.25
-  const [fluid, setFluid] = useState<number>(existing?.values.fluid ?? simToday('fluid') ?? 0)
+  const [fluid, setFluid] = useState<number>(existing?.values.fluid ?? Math.round((simToday('fluid') ?? 0) * 4) / 4)
   const [serious, setSerious] = useState((existing?.symptoms ?? []).some((x) => SYMPTOMS.find((q) => q.id === x)?.red_flag))
   const [noSym, setNoSym] = useState(existing ? existing.symptoms.length === 0 : false)
   const [more, setMore] = useState(open === 'measure')
@@ -42,6 +42,7 @@ export function CheckIn({ open }: { open?: string }) {
   const [photos, setPhotos] = useState<Photo[]>(existing?.photos ?? [])
   const [photoLabel, setPhotoLabel] = useState(PHOTO_LABELS[0])
   const [saved, setSaved] = useState(false)
+  const justSaved = useRef(false)
   const [err, setErr] = useState('')
   // values far from usual, or past a fixed "act now" line, are saved at once (so nothing is lost) and then
   // checked: "Is that what the device showed?"  "No" withdraws that reading as a typing mistake.
@@ -76,11 +77,13 @@ export function CheckIn({ open }: { open?: string }) {
     setDirty([])
     // clear the typed readings so pressing Save again cannot log them twice; they are in the log below
     setSpot({})
+    justSaved.current = true
     setSaved(true)
   }
   const withdraw = async (k: string) => {
     const e = entries.find((x) => x.mission === mission.id && x.crew === me && x.day === day)
-    const last = [...(e?.readings ?? [])].reverse().find((r) => r.ind === sk(k) && !r.void)
+    const v = pending.find((x) => x.k === k)?.v
+    const last = [...(e?.readings ?? [])].reverse().find((r) => r.ind === sk(k) && !r.void && (v === undefined || r.v === v))
     if (last) await voidReading(me, day, sk(k), last.ts)
     setSpot((p) => ({ ...p, [k]: '' }))
     setPending((p) => p.filter((x) => x.k !== k))
@@ -113,7 +116,7 @@ export function CheckIn({ open }: { open?: string }) {
   return (
     <>
       <h1>Check-in</h1>
-      <p className="muted">{dayLabel(mission, day)}. Four quick answers, about a minute. Stored on your tablet; {sharingOn ? 'anything urgent appears at once on the medical officer\'s and, as backup, the commander\'s Crew screens; they are not notified, so tell them.' : 'emergency sharing is off, so tell the medical officer yourself about anything urgent.'} <a href={href('sharing')}>Who sees what</a></p>
+      <p className="muted">{dayLabel(mission, day)}. Four quick answers, about a minute. Stored on your tablet; {sharingOn ? 'emergency sharing is on, so anything urgent appears at once on the medical officer\'s and, as backup, the commander\'s Crew screens; they are not notified, so tell them.' : 'emergency sharing is off, so tell the medical officer yourself about anything urgent.'} <a href={href('sharing')}>Who sees what</a></p>
       {!existing && !Number.isNaN(rawSeries(mission, me, 'mood', [])[day]) && <p className="small muted">Today's check-in in this demo came from the simulation. Anything you save here is added to it.</p>}
 
       <Card title="1. How are you feeling?">
@@ -155,7 +158,7 @@ export function CheckIn({ open }: { open?: string }) {
       </div>
 
       {!more && saveBtn}
-      {saved && <div className="card" role="status"><strong>Saved.</strong><p className="muted">Keel has re-checked your readings on this tablet with your new entries.</p>{(() => { const n = (today(me, day)?.findings ?? []).filter((f) => f.status === 'urgent').length; return n > 0 ? <p className="banner strong"><strong>{n === 1 ? 'One item needs' : `${n} items need`} action now.</strong> See Today for what to do.</p> : null })()}<div className="row wrap"><button className="btn" onClick={() => go('today')}>See Today</button><a className="btn" href={href('sharing')}>Who can see this?</a></div></div>}
+      {saved && <div className="card" role="status" ref={(el) => { if (el && justSaved.current) { justSaved.current = false; el.scrollIntoView({ block: 'center' }) } }}><strong>Saved.</strong><p className="muted">Keel has re-checked your readings on this tablet with your new entries.</p>{(() => { const n = (today(me, day)?.findings ?? []).filter((f) => f.status === 'urgent').length; return n > 0 ? <p className="banner strong"><strong>{n === 1 ? 'One item needs' : `${n} items need`} action now.</strong> See Today for what to do.</p> : null })()}<div className="row wrap"><button className="btn" onClick={() => go('today')}>See Today</button><a className="btn" href={href('sharing')}>Who can see this?</a></div></div>}
 
       <button className="btn block" aria-expanded={more} onClick={() => setMore((v) => !v)} data-testid="more-checkin">{more ? 'Hide the optional extras' : 'Add more: reaction test, exercise, measurements (optional)'}</button>
       {more && (

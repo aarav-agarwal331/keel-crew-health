@@ -78,8 +78,8 @@ test('every screen works with the network disabled', async ({ page }) => {
     await expect(page.getByTestId('reading-log').first()).toContainText('91')
     await expect(page.getByTestId('reading-log').first()).toContainText('97')
     await nav(page, '#/today')
-    await expect(page.getByTestId('today-status')).toContainText('Act today')
-    await expect(page.getByTestId('today-action')).toContainText('back on the safe side')
+    await expect(page.getByTestId('today-status')).toContainText('Act now')
+    await expect(page.getByTestId('today-action')).toContainText('came too soon to count')
   })
 
   await test.step('A thermometer reading entered at check-in or on the action card triggers the fever rules', async () => {

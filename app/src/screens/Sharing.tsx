@@ -22,6 +22,7 @@ export function Sharing() {
     <>
       <h1>Sharing and privacy</h1>
       <p className="muted">{crew.name}, your health data is yours. You decide below what each role can see.</p>
+      <p className="small muted">How it travels: in this demo every role is on one tablet. In a flight version your data stays on your tablet, and only the views allowed here would go over the cabin network, to the medical officer's and commander's tablets; the daily ground summary goes out when a link exists.</p>
       <Card title="Always visible, whatever you choose below">
         <ul className="list small">
           <li><strong>To the commander: your readiness tier</strong> (no Keel flags / worth a look / talk to the medical officer first), without the reason, except emergencies (see below). A commander has to be able to plan a spacewalk safely. The tier is worked out from all your readings, including ones you keep private.</li>

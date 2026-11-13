@@ -3,6 +3,31 @@
  "note": "Auditable alert-to-action rules. Scopes: 'personal' rules are evaluated only while the detector has an open alert, so their false-alert rate is set by the detector's budget. 'vital', 'symptom', 'environment' and 'adaptation' rules bypass the detector: they react to a single entered value, a reported symptom or a cabin reading. u = mean deviation over the last three measured days, in robust standard deviations, in the direction of concern. Fixed thresholds are general clinical guidance or placeholders and need sign-off by a flight surgeon. A fixed rule looks at every reading taken on the most recent day that has one, so a later normal reading does not erase an abnormal one.",
  "rules": [
   {
+   "id": "R-RED-EXP",
+   "scope": "symptom",
+   "priority": 0.9,
+   "title": "Smoke or chemical exposure",
+   "when": {
+    "sym": "exposure",
+    "min": 1
+   },
+   "summary": "You reported smoke or a chemical exposure. That is a vehicle emergency for the whole crew, not only a health question. Keel is not the alarm.",
+   "action": "Follow the vehicle's emergency procedure and alert the commander and the whole crew now.",
+   "steps": [
+    "Put on the emergency mask if the procedure says so.",
+    "Then tell the medical officer about any breathing trouble, eye or skin irritation."
+   ],
+   "tier": "cmo",
+   "tier_reason": "A vehicle emergency: the commander leads; the medical officer treats.",
+   "cm": [
+    "CM-PMC"
+   ],
+   "categories": [
+    "symptoms"
+   ],
+   "urgency": "now"
+  },
+  {
    "id": "R-RED",
    "scope": "symptom",
    "priority": 1,
@@ -918,7 +943,8 @@
     "Commander or engineer: check scrubber status and fan airflow now.",
     "Stop demanding exercise until the level is falling.",
     "Anyone with a severe headache, confusion or breathlessness: tell the medical officer now.",
-    "Use buddy checks on every procedure until the level is back under 3.0."
+    "Use buddy checks on every procedure until the level is back under 3.0.",
+    "Sudden spikes are the life-support alarm's job; this rule looks at the 24-hour average."
    ],
    "tier": "cmo",
    "tier_reason": "Crew-wide cabin issue: the commander or the engineer leads the fix, and everyone on board sees it.",

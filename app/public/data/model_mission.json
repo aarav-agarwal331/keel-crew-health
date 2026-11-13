@@ -15,7 +15,7 @@
   "alert": 0.25
  },
  "script": "research/scripts/fit_mission_model.py",
- "commit": "8da198c",
+ "commit": "fc29ae5",
  "adaptation_prior": {
   "shift": [
    0.0,

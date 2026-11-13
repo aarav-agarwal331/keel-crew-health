@@ -35,7 +35,7 @@ is decision support, not a medical device.
   sourced threshold are acted on at once. Every reading is kept with its time, the worst one counts,
   and anything urgent stays on the medical officer's list until they close it with a note.
 - **Alarm fatigue treated as a hazard.** Thresholds come from an explicit false-alert budget.
-- **Auditable advice.** A fixed table of 42 rules maps patterns, entered readings and reported
+- **Auditable advice.** A fixed table of 43 rules maps patterns, entered readings and reported
   symptoms to cited countermeasures, each with how soon and who. No language model writes medical text.
 - **Crew-owned data.** Per-role, per-area sharing with an access log; the commander sees readiness,
   not reasons, and some symptoms go to the medical officer only.
@@ -70,7 +70,7 @@ Real wearable data: 251 people, 107 dated illness episodes (Stanford COVID-19 we
 |---|---|
 | Simulated missions, full sensor set, 1 false alert per person-month | 67% flagged (luck 41%): +26 above luck (19 to 33). By event type: sleep restriction +55, exercise outage +54, low fluids +26 (10 to 40), cabin CO2 +11 (1 to 21), illness +11 (−9 to 30), low mood +13 (−5 to 32) |
 | Events in the first 25 flight days, luck taken from the same flight days | +24 (14 to 33) with gravity-phase handling, +15 (6 to 25) without |
-| Gravity transitions, real NASA bed-rest pulse data, 14 volunteers | flags after getting up: 9 with a plain personal baseline, 4 with Keel's phase handling (a pulse-only 2-of-3 rule, not the full detector). The same pulse-only rule flags 35% of 14-day stretches away from any transition (11 of 31), so Keel's 4 of 14 is about chance level and the plain baseline's 9 of 14 is above it. Not significant (exact paired p = 0.06), no ground truth that those flags are false, and the gain comes from widening the band |
+| Gravity transitions, real NASA bed-rest pulse data, 14 volunteers | flags after getting up: 9 with a plain personal baseline, 4 with Keel's phase handling (a pulse-only 2-of-3 rule, not the full detector). The same rule flags 35% of 14-day stretches away from any transition (11 of 31): Keel's 4 of 14 is at about that level, and the plain baseline's 9 of 14, though higher, is not distinguishable from it either (p about 0.1). Not significant (exact paired p = 0.06), no ground truth that those flags are false, and the gain comes from widening the band |
 
 Honest reading:
 
@@ -78,8 +78,9 @@ Honest reading:
   for 46% of episodes against 28% by luck (+18, 9 to 28); at the stricter tier +1 (−5 to 7). The
   notice-tier gain is small and confounded by test dates, isolation and lower activity, so we do not
   claim early warning.
-- **Most alerts are false.** At in-flight illness rates, between one alert in 11 and one in 27 at the
-  strict tier would be a real respiratory illness.
+- **Most alerts are false.** At in-flight illness rates, about one alert in 16 at the strict tier would be
+  attributable to a real respiratory illness for the import model, and one in 27 for the two-sensor
+  simulator-threshold version (one in 11 for a daily-steps configuration the app does not run). All are upper bounds.
 - **Imported watch data uses its own model.** Because of the next point, the app runs imports on a
   heart-rate-only model calibrated on the 251 real people (expected: the "heart rate alone" row).
 - **The thresholds must match the sensors.** With simulator thresholds Keel's two-sensor method runs
@@ -184,7 +185,7 @@ statement saved in [docs/CHALLENGE.md](docs/CHALLENGE.md).
 |---|---|---|
 | A1 | Gathers health indicators | 18 indicators; wearable import, Bluetooth strap, check-in, cabin sensors (Data sources, Check-in) |
 | A2 | Astronauts evaluate their own health | Today status against a personal baseline; Trends; body map |
-| A3 | Act on it; guidance on treatments and improvements | One recommended action on Today; Alert detail with steps and cited countermeasures; Guide → "Everything Keel can recommend" (all 42 rules). Keel gives first steps (rest, fluids, a repeat reading, sugar for a low blood sugar) but deliberately no medication advice: that is left to the medical officer |
+| A3 | Act on it; guidance on treatments and improvements | One recommended action on Today; Alert detail with steps and cited countermeasures; Guide → "Everything Keel can recommend" (all 43 rules). Keel gives first steps (rest, fluids, a repeat reading, sugar for a low blood sugar) but deliberately no medication advice: that is left to the medical officer |
 | A4 | A visual tool | Charts with personal bands, clickable body map, replay |
 | A5 | Any input: keyboard, clicks, files, camera | Check-in taps and number entry; file import; live sensor; a photo taken or chosen at check-in for the medical officer (stored on the device, not analysed) |
 | A6 | Data represents a health indicator, with units | Units on every reading and entry field (for example blood sugar in mg/dL) |
@@ -205,7 +206,7 @@ statement saved in [docs/CHALLENGE.md](docs/CHALLENGE.md).
 | C4 | Dynamic charts over time | Trends: 2 weeks, 8 weeks, mission |
 | C5 | Colour coding at a glance | Four status levels, each with a colour, a shape and a label (colourblind-safe) |
 | C6 | Instructions and explanations | "How to measure" on every entry field; Guide |
-| D3 | Official Resources tab | Opens 2026-11-13; **not done**, needs a human check |
+| D3 | Official Resources tab | Opens 2026-11-13, after this build; for the team to check before submitting (FINAL_REPORT.md section 5) |
 | E1 | Works with no link, offline proven | `app/e2e/offline.spec.ts`; Link → "Cut the link now" |
 | E2 | Personal baselines; adaptation not flagged as illness | Method → Personal baselines; Validation sections 2 and 4 |
 | E3 | Detection measured on real labeled data | Validation section 1 |

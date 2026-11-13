@@ -191,7 +191,7 @@ the test missions show as noise). Test missions had no vote. Real data had none 
 simulator's illness response is fitted on 38 real episodes, so the choice is not fully independent
 of them, and the history means it is not pre-registered. On the test missions the z-score rule was
 slightly ahead, on real data the multivariate detector was (+5 points, −2 to 12); the four personal
-detectors cannot be told apart, and the choice is best read as arbitrary among equals.
+detectors cannot be told apart at the notice tier (at the alert tier they spread from +15 to +33), and the choice is best read as arbitrary among equals.
 
 **Rules outside the detector.** Some things do not depend on a personal baseline or cannot wait for
 one, and have fixed rules that are always evaluated: red-flag symptoms; a single entered reading
@@ -226,7 +226,7 @@ radiation alarm [47][48]. After two days without any reading the status is "no r
 - **Every event counts.** An event with no score in its window (no baseline yet, no data) is a miss,
   so all methods are compared on the same events.
 - **Chance level and detection above luck.** Pseudo-events are placed on random quiet days and scored
-  identically. At 1 false alert per person-month a 15-day window catches an alert by luck 30–40% of
+  identically. At 1 false alert per person-month a 15-day window catches an alert by luck about 20–40% of
   the time, and detectors that alert in more separate bursts get more lucky hits. The headline metric
   is therefore *detection above luck* = detection rate − that method's own chance rate, and methods
   are compared on it. On real data a pseudo-window only has to lie in label-quiet time, so it carries
@@ -252,6 +252,11 @@ radiation alarm [47][48]. After two days without any reading the status is "no r
   crewmates share a cabin). A person's real events and pseudo-events are resampled together; method
   differences use paired resampling. Thresholds are held fixed inside the bootstrap. No correction is
   made for the number of comparisons (four detectors, two tiers, several windows).
+- **Constants fixed before the first real-data run** (from the build plan and the first commits): the
+  per-indicator floors, the 28-night minimum, the −21/+28 exclusion zone, the merge gap, the 7-day
+  re-alert and the 2-of-3 rule. Changed afterwards, as recorded in `DECISIONS.md`: the detection
+  window, the metric (above luck), the chance estimate, the detector selection rule and the activity
+  feature used in the headline.
 - **The window.** It was narrowed from −14..+7 to −10..+4 days while the real-data evaluation was
   being written. The commit history cannot show that this preceded the first run, and of the four
   windows later tabulated it has the largest gap above luck, so the original window's results are
@@ -300,7 +305,7 @@ baseline, with the baseline restarted, with the band also widened, and with the 
 
 Keel computes, for each indicator, the mean `u` over the last three measured days; symptom counts
 over three days; the latest entered spot readings; the cabin readings; days since the last phase
-change; and days the detector's alert has been open. A fixed, ordered table of 42 rules is evaluated.
+change; and days the detector's alert has been open. A fixed, ordered table of 43 rules is evaluated.
 Rules have a scope:
 
 - **personal**: evaluated only while the detector has an alert open; the first one whose condition
@@ -411,11 +416,15 @@ the same code version). Real data: 251 people, 107 illness episodes, two sensors
   (exact paired p = 0.06), there is no ground truth that these flags are false (a faster pulse after
   bed rest is real), and the learned shift adds nothing beyond widening the band. The same pulse-only
   2-of-3 rule flags 11 of 31 (35%) 14-day stretches away from any transition, so Keel's 4 of 14 (29%)
-  is about the chance level and the plain baseline's 9 of 14 (64%) is above it.
+  is about the chance level; the plain baseline's 9 of 14 (64%) is higher but not distinguishable from
+  chance either (Fisher's exact p about 0.1, and the 31 stretches come from only 15 people). The bed-rest
+  variant is not the app's detector: it uses a pulse-only 2-of-3 rule, a 4-day adaptation constant and
+  a 2.0 bpm floor (the app: multivariate EWMA, 6 days, 1.5 bpm).
 - **Simulator against reality.** The pass marks were set during review, not in advance. What passes
   was fitted on the other half of the same datasets: four of five variabilities, four of five
   carry-overs, all four between-indicator correlations. Every independent check fails or is off: the
-  illness heart-rate rise over the four days from onset (2.1 bpm simulated, 4.6 real); HRV variability
+  illness heart-rate rise over the four days from onset (2.1 bpm simulated, 4.6 real; the gap's 95% interval
+  is 0.7 to 4.4 bpm, so not only sampling noise); HRV variability
   (37% too high); sleep carry-over; thresholds calibrated in simulation and applied to 72 real quiet
   people (1.38 false alerts per person-month against 1.00, 0.40 against 0.25) and, with five
   indicators, to 16 LifeSnaps people of the validation half (2.04 and 0.97); nights under six hours

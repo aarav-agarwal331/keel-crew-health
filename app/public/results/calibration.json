@@ -1,7 +1,7 @@
 {
  "script": "research/scripts/calibrate_sim.py",
- "commit": "8da198c",
- "code_version": "e7d7ec38e9fb",
+ "commit": "fc29ae5",
+ "code_version": "0bc0a39d53e4",
  "targets": {
   "rhr": {
    "source": "Stanford wearables, recordings with no dated illness, including phase 2 participants never confirmed healthy (calibration half)",
@@ -159,6 +159,7 @@
   ],
   "prodrome_days": 4,
   "days_to_peak": 3,
+  "fitted_curve_peak_rel_day": 2,
   "hold_days": 0,
   "duration_days": 4,
   "peak_bpm": 3.2576861806777924,

@@ -1,7 +1,7 @@
 {
  "script": "research/scripts/eval_real.py",
- "commit": "8da198c",
- "code_version": "e7d7ec38e9fb",
+ "commit": "fc29ae5",
+ "code_version": "0bc0a39d53e4",
  "seed": 20261112,
  "data": "Stanford COVID-19 wearables phase 1 (Mishra et al. 2020) and phase 2 subset (Alavi et al. 2022)",
  "indicators": "Resting heart rate + daily steps",

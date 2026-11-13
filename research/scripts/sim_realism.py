@@ -196,6 +196,14 @@ def main():
                "pre_onset_bpm_days": {"real": float(np.nansum(np.nanmean(real_c, axis=0)[on - 5:on])), "sim": float(np.nansum(np.nanmean(sim_c, axis=0)[on - 5:on]))},
                "peak_window_mean": {"real": float(np.nanmean(np.nanmean(real_c, axis=0)[on:on + 4])), "sim": float(np.nanmean(np.nanmean(sim_c, axis=0)[on:on + 4]))}}
     illness["pass"] = bool(abs(illness["peak_window_mean"]["sim"] / illness["peak_window_mean"]["real"] - 1) <= 0.25)
+    # how much of the gap could be sampling noise?  bootstrap the real episodes and the simulated ones
+    rb = np.random.default_rng(17)
+    diffs = []
+    for _ in range(1000):
+        rr = real_c[rb.integers(0, len(real_c), len(real_c))]
+        ss = sim_c[rb.integers(0, len(sim_c), len(sim_c))]
+        diffs.append(float(np.nanmean(np.nanmean(rr, axis=0)[on:on + 4]) - np.nanmean(np.nanmean(ss, axis=0)[on:on + 4])))
+    illness["real_minus_sim_ci"] = [float(np.percentile(diffs, 2.5)), float(np.percentile(diffs, 97.5))]
     print("illness real", np.round(illness["real"]["mean"][10:20], 1), "sim", np.round(illness["sim"]["mean"][10:20], 1))
 
     # ---- published in-flight anchors the simulator should reproduce ----------------------------

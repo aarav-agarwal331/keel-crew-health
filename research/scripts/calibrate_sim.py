@@ -173,7 +173,7 @@ def main():
     J["params"]["illness_temp_peak"]["value"] = round(amp / 8.5, 2)
     J["params"]["illness_temp_peak"]["note"] = "Fitted heart-rate peak divided by a second-hand 8.5 bpm per degree C (DOMAIN ref 60)"
     record["illness"] = {"source": "Stanford phases 1 and 2, dated illness episodes, calibration half of the people", "n_events": int(len(curves)), "rel_day": REL,
-                         "real_mean": mean, "fit": amp * _bump(T, on - pro, pro + after, hold, dur), "prodrome_days": pro, "days_to_peak": after, "hold_days": hold,
+                         "real_mean": mean, "fit": amp * _bump(T, on - pro, pro + after, hold, dur), "prodrome_days": pro, "days_to_peak": after, "fitted_curve_peak_rel_day": int(REL[int(np.argmax(amp * _bump(T, on - pro, pro + after, hold, dur)))]), "hold_days": hold,
                          "duration_days": dur, "peak_bpm": amp, "per_episode_quartiles": [q25, q50, q75], "per_episode_observed_sd": float(np.std(pk, ddof=1)),
                          "per_episode_noise_sd": float(np.sqrt(noise_var)), "magnitude_cv": cv}
     print(f"illness: rise from {pro} d before onset, peak {after} d after, hold {hold} d, recovery {dur} d, peak {amp:.1f} bpm, {len(curves)} episodes; "

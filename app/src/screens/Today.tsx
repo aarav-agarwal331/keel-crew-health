@@ -82,7 +82,7 @@ export function Today() {
     <>
       {intro && mission.simulated && (
         <section className="card intro" data-testid="intro">
-          <p className="small"><strong>Keel is a crew health monitor that works with no link to Earth.</strong> It learns each person's own normal and gives one action with its source. Demo: {crew?.name.split(' ')[0]}'s tablet, simulated {mission.title}. A lunar base mission is under More.</p>
+          <p className="small"><strong>Keel is a crew health monitor that works with no link to Earth.</strong> Dangerous readings and symptoms get an immediate, auditable next step with its source; the crew member decides who sees what; and it watches each person's readings against their own normal. Demo: {crew?.name.split(' ')[0]}'s tablet, simulated {mission.title}. A lunar base mission is under More.</p>
           <div className="row wrap">
             <a className="btn primary sm" href={href('replay')} data-testid="intro-replay">Demo: replay a scripted event (40 s)</a>
             <a className="btn sm" href={href('validation')}>The evidence</a>
@@ -110,16 +110,18 @@ export function Today() {
           <p className="small"><strong>When:</strong> {URGENCY_LABEL[primary.urgency].toLowerCase()}. <strong>Who:</strong> {(primary.who ?? WHO_LABEL[primary.tier]).toLowerCase()}.</p>
           <p className="small">{primary.tierReason}</p>
           {primary.status === 'urgent' && !primary.crewWide && <p className="small"><strong>{sharing[me]?.emergency === false ? 'Emergency sharing is off: nobody else has been shown this. Tell the medical officer yourself.' : primary.cmoOnly && !primary.patientIsCmo ? 'Now visible on the medical officer\'s Crew screen (emergency sharing), not the commander\'s. They are not alerted: tell them yourself now.' : 'Now visible on the medical officer\'s and the commander\'s Crew screens (emergency sharing). They are not alerted: tell them yourself now.'}</strong></p>}
-          {others.filter((x) => x.status === 'urgent').length > 0 && <p className="small"><strong>Also needs attention now:</strong> {others.filter((x) => x.status === 'urgent').map((x) => x.title).join('; ')}. Each is listed below.</p>}
+          {others.filter((x) => x.status === 'urgent').length > 0 && (
+            <div className="col" data-testid="also-now">
+              <span className="lab">Also act now</span>
+              <ol className="list steps">{others.filter((x) => x.status === 'urgent').map((x) => <li key={x.key}><span><strong>{x.title}.</strong> {x.action}</span></li>)}</ol>
+            </div>
+          )}
           {['R-ILL', 'R-SYM-ILL', 'R-V-TEMP', 'R-V-TEMP-HI'].includes(primary.ruleId) ? <TempEntry /> : <ReadingLog readings={primary.readings ?? []} title="Readings this is based on" />}
           <a className="btn primary block" href={href('alert', primary.key)} data-testid="open-alert">Why, and what next <Chev /></a>
-          {needsCmo && <button className="btn block" onClick={() => shareCats.forEach((c) => setShare(me, 'cmo', c, 'detail'))} data-testid="today-share-cmo">Show the medical officer the readings behind this alert</button>}
+          {needsCmo && <button className="btn block" onClick={() => shareCats.forEach((c) => setShare(me, 'cmo', c, 'detail'))} data-testid="today-share-cmo">Share {shareCats.map((c) => CAT[c].toLowerCase()).join(', ')} in full detail with the medical officer</button>}
           {needsCmo && <p className="small muted">This changes one setting: <strong>{shareCats.map((c) => CAT[c]).join(', ')}</strong> goes from "{LEVEL_WORD[sharing[me]?.cmo[shareCats[0]] ?? 'none']}" to "Full detail" for the medical officer, until you change it back in Sharing. Readings in other areas, such as sleep or reaction time, stay as you set them. <strong>You still need to tell them.</strong></p>}
           {primary.kind === 'personal' && primary.tier !== 'self' && !needsCmo && <p className="small muted">The medical officer can see this alert.</p>}
         </section>
-      )}
-      {askingTemp && primary && !['R-ILL', 'R-SYM-ILL', 'R-V-TEMP', 'R-V-TEMP-HI'].includes(primary.ruleId) && (
-        <Card title="Also: take your temperature"><TempEntry /></Card>
       )}
       {waiting.length > 0 && (
         <Card title="Waiting for the medical officer to close">
@@ -133,6 +135,9 @@ export function Today() {
         <LinkRow key={f.key} to={href('alert', f.key)} left={<span className={`st-${f.status}`}><Glyph status={f.status} /></span>} title={f.title} sub={f.action} />
       ))}
 
+      {askingTemp && primary && !['R-ILL', 'R-SYM-ILL', 'R-V-TEMP', 'R-V-TEMP-HI'].includes(primary.ruleId) && (
+        <Card title="Also: take your temperature"><TempEntry /></Card>
+      )}
       <Card title={changes.length ? (primary ? 'What changed' : 'Worth knowing') : 'Nothing unusual'} right={<a className="chip" href={href('trends')}>All trends</a>}>
         {!changes.length && <p className="muted">{a.learning ? 'Baselines appear after about a week of readings.' : 'Every tracked reading is within your usual range over the last three days.'}</p>}
         {changes.map((c) => {
@@ -167,7 +172,7 @@ export function Today() {
             <ul className="list">
               <li><StatusTag status={checked ? 'steady' : 'learning'} label={checkedByMe ? 'Check-in done' : checked ? 'Check-in done (simulated)' : 'Daily check-in (about a minute)'} size={18} />{!checked && <a className="btn sm" href={href('checkin')} style={{ marginLeft: 'auto', float: 'right' }}>Start</a>}</li>
               <li><StatusTag status={wearOk ? 'steady' : 'learning'} label={wearOk ? 'Sensor worn last night' : 'No sensor data last night: wear it tonight'} size={18} /></li>
-              <li><StatusTag status={exDone ? 'steady' : 'learning'} label={a.exerciseHold ? (askingTemp && tempToday === undefined && a.status !== 'urgent' ? 'Exercise: on hold until you take your temperature' : 'No exercise until the medical officer clears you') : exDone ? 'Exercise done today' : `Exercise: ${Number.isNaN(ex[day]) ? 0 : Math.round(ex[day])} of ${target} min today`} size={18} /></li>
+              <li><StatusTag status={exDone ? 'steady' : 'learning'} label={a.exerciseHold ? (askingTemp && tempToday === undefined && a.status !== 'urgent' ? 'Exercise: on hold. Take your temperature; then the medical officer decides' : 'No exercise until the medical officer clears you') : exDone ? 'Exercise done today' : `Exercise: ${Number.isNaN(ex[day]) ? 0 : Math.round(ex[day])} of ${target} min today`} size={18} /></li>
               {spotDue.length > 0 && <li><StatusTag status="learning" label={`Weekly measurement due: ${spotDue.map((k) => IND[k].label.toLowerCase()).join(', ')}`} size={18} /> <a className="btn sm" href={href('checkin', 'measure')} data-testid="enter-measurements">Enter</a></li>}
               {!Number.isNaN(sleepLast) && sleepLast < 5.5 && <li><StatusTag status="watch" label={`Sleep last night ${sleepLast.toFixed(1)} h. The scheduled sleep period is 8.5 h.`} size={18} /></li>}
             </ul>
@@ -188,7 +193,7 @@ export function Today() {
           </Card>
         </div>
       </div>
-      <p className="small muted">Keel opened {notices30} notice{notices30 === 1 ? '' : 's'} from your readings in the last 30 days. Keel can be wrong. {mission.kind === 'personal' ? 'For imported data the heart-rate model gave about one false notice a month on other people\'s watch data.' : 'The full-sensor thresholds on this tablet are untested on real data; set the same way for five sensors, they gave about two false alerts a month on real people.'} <a href={href('validation')}>How often it is right</a></p>
+      <p className="small muted">Keel opened {notices30} notice{notices30 === 1 ? '' : 's'} from your readings in the last 30 days. Keel can be wrong. {mission.kind === 'personal' ? 'For imported data the heart-rate model gave about one false notice a month on other people\'s watch data.' : 'The full-sensor thresholds on this tablet are untested on real data. Set the same way for five sensors and tried on 16 people from another real wearable dataset (no illness labels), they gave about two alerts a month.'} <a href={href('validation')}>How often it is right</a></p>
       <p className="banner">Keel is decision support, not a medical device. It does not diagnose. It shows how your readings compare with your own normal and points to documented countermeasures.</p>
     </>
   )

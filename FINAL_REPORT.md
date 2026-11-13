@@ -15,12 +15,12 @@ source, how soon and who should know. No server, no language model.
 | Area | State |
 |---|---|
 | Screens | Today, Trends, Alert detail, Check-in (with a reaction self-test), Sharing, Crew readiness, Earth link, Mission replay, Validation, How Keel works, Guide (measurements and every rule), Data sources, More |
-| Science | Phase-aware robust personal baselines; four detectors plus a fixed-threshold comparison; thresholds from a false-alert budget; 42 auditable rules with cited countermeasures; fixed safety thresholds and red-flag symptoms that bypass the detector; an append-only reading log and a medical officer's list of open items |
+| Science | Phase-aware robust personal baselines; four detectors plus a fixed-threshold comparison; thresholds from a false-alert budget; 43 auditable rules with cited countermeasures; fixed safety thresholds and red-flag symptoms that bypass the detector; an append-only reading log and a medical officer's list of open items |
 | Data in | Simulated missions (Mars transit, lunar surface); CSV, Fitbit JSON and Apple Health import; live heart-rate strap over Web Bluetooth; manual check-in with medication classes and a photo for the medical officer |
 | Real data used | Stanford COVID-19 wearables phases 1 and 2 (detection), LifeSnaps (variability), NASA Life Sciences Data Archive bed-rest campaigns (gravity transitions) |
 | Privacy | Per-role, per-area sharing at four levels, a tested privacy gate, access log, switchable emergency sharing, some symptoms shown to the medical officer only |
 | Offline | Service worker precache; automated test disables the network and uses every screen |
-| Tests | 24 Python and 52 TypeScript unit tests, including Python-to-TypeScript detector parity; 2 offline end-to-end tests; screenshot and review-capture runs |
+| Tests | 24 Python and 54 TypeScript unit tests, including Python-to-TypeScript detector parity; 2 offline end-to-end tests; screenshot and review-capture runs |
 | Reproducibility | `make all` (data → sim → model → validate → test → build). Remote range-request extraction was verified against the local copies |
 | Docs | README with traceability table, `docs/METHOD.md`, `DOMAIN.md` (69 opened sources), `DATA.md`, `REQUIREMENTS.md`, `REVIEW.md`, `DECISIONS.md`, `PLAN.md` |
 | Submission | Project page text, 30-second video storyboard, 7-slide deck (HTML), 60-second and 3-minute pitches, 15 judge questions, AI-use disclosure |

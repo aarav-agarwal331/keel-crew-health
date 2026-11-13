@@ -1,7 +1,7 @@
 {
  "script": "research/scripts/sim_realism.py",
- "commit": "8da198c",
- "code_version": "e7d7ec38e9fb",
+ "commit": "fc29ae5",
+ "code_version": "0bc0a39d53e4",
  "variability": [
   {
    "id": "rhr",
@@ -643,7 +643,11 @@
    "real": 4.646833386752136,
    "sim": 2.1169619083508113
   },
-  "pass": false
+  "pass": false,
+  "real_minus_sim_ci": [
+   0.6780682618255689,
+   4.411970641319409
+  ]
  },
  "anchors": [
   {

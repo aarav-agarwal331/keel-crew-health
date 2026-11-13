@@ -76,7 +76,7 @@ export function Crew() {
                 return shown.length
                   ? <ul className="list small">{shown.map((x, i) => <li key={i}>{x.text}</li>)}</ul>
                   : c.role === 'commander' ? <p className="small muted">This is the commander's own card. The reasons are on their own Today screen.</p>
-                  : <p className="small muted"><StatusTag status="private" label="" size={16} /> Reason not shared. Ask {c.name.split(' ')[0]}{c.role === 'cmo' ? '' : ' or the medical officer'}.</p>
+                  : <p className="small muted"><StatusTag status="private" label="" size={16} /> Reason not shared. Ask {c.name.split(' ')[0]}.</p>
               })()}
               {v.findings.filter((x) => x.emergency).map((x) => (
                 <div key={x.key} className="banner strong">
@@ -95,7 +95,7 @@ export function Crew() {
                   })}
                   {v.findings.filter((x) => !x.emergency).filter((x, i, arr) => x.title || arr.findIndex((y) => !y.title && y.category === x.category) === i).map((f) => (
                     <li key={f.key}>
-                      <strong>{f.title ?? `Open item in ${catLabel(f.category).toLowerCase()} (details not shared)`}</strong> <span className="muted">({STATUS_LABEL[f.status].toLowerCase()} for {f.days} d)</span>
+                      <strong>{f.title ?? `Detector notice in ${catLabel(f.category).toLowerCase()} (details not shared)`}</strong> <span className="muted">({STATUS_LABEL[f.status].toLowerCase()} for {f.days} d)</span>
                       {f.action && (
                         <details>
                           <summary>For the medical officer: what the crew member was told, and the basis</summary>
@@ -105,6 +105,12 @@ export function Crew() {
                             <ReadingLog readings={f.readings ?? []} title="Entered readings, in order" note={false} />
                             {(f.changes ?? []).length > 0 && <p><strong>Readings shared with you:</strong> {f.changes!.map((ch) => `${IND[ch.ind].label} ${Number.isNaN(ch.value) ? '–' : ch.value.toFixed(IND[ch.ind].decimals)} ${IND[ch.ind].unit} (usual ${ch.expected.toFixed(IND[ch.ind].decimals)})`).join('; ')}.</p>}
                             {(f.countermeasures ?? []).map((id) => CM[id]).filter(Boolean).map((cm) => <p key={cm.id} className="muted"><strong>{cm.title}.</strong> {cm.text} [{cm.refs.join(', ')}]</p>)}
+                            {f.tier !== 'self' && f.key.includes('|P|') && (
+                              <div className="row wrap">
+                                <input type="text" aria-label={`Closing note for ${f.title ?? 'this notice'}`} value={notes[f.key] ?? ''} onChange={(e) => setNotes((p) => ({ ...p, [f.key]: e.target.value }))} placeholder="Note: reviewed, and what you decided (exercise, duties)" style={{ flex: 1, minWidth: 180 }} />
+                                <button className="btn sm" disabled={!(notes[f.key] ?? '').trim()} onClick={() => void logAction({ crew: c.id, alertKey: f.key, day, did: 'Closed by the medical officer', feel: null, note: (notes[f.key] ?? '').trim() })} data-testid="close-notice">Close this notice</button>
+                              </div>
+                            )}
                             <p className="muted">Keel does not recommend medication or treatment. Those decisions are yours, with the onboard medical checklist and the flight surgeon when a link is available. If readings from other areas would help, ask the crew member to share them.</p>
                           </div>
                         </details>

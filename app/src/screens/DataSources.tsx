@@ -1,3 +1,4 @@
+import { symptomsOn } from '../core/mission'
 import { useEffect, useRef, useState } from 'react'
 import { bleSupported, connectStrap, rmssd, type StrapSession } from '../core/ble'
 import { parseAny, toMission } from '../core/importers'
@@ -53,7 +54,7 @@ export function DataSources() {
     if (!Number.isNaN(hrv)) values.hrv = Math.round(hrv)
     // merge with the day's check-in: a strap reading must never erase symptoms, mood or other entries
     const cur = entries.find((e) => e.mission === mission.id && e.crew === me && e.day === day)
-    await saveEntry({ crew: me, day, values: { ...(cur?.values ?? {}), ...values }, symptoms: cur?.symptoms ?? [], meds: cur?.meds, photos: cur?.photos }, ['rhr_spot'])
+    await saveEntry({ crew: me, day, values: { ...(cur?.values ?? {}), ...values }, symptoms: cur?.symptoms ?? symptomsOn(mission, me, day, []), meds: cur?.meds, photos: cur?.photos }, ['rhr_spot'])
     setSaved(`Saved a resting heart rate check of ${values.rhr_spot} bpm${values.hrv ? ` and HRV ${values.hrv} ms` : ''} for ${dayLabel(mission, day)}.`)
   }
 
@@ -74,7 +75,7 @@ export function DataSources() {
       </Card>
 
       <Card title="Import your own wearable data">
-        <p className="banner"><strong>Imported data uses its own detector settings.</strong> The on-board model is set for the full sensor set and, given only a watch's overnight heart rate, would almost never alert. So an import runs on a heart-rate-only model whose thresholds were calibrated on 251 real people; its expected performance is the "heart rate alone" row on the Validation screen (about one false notice a month). Activity, sleep and the other readings in the file are shown but not used for alerts. One more difference: the model was calibrated on resting heart rate computed from raw night-time samples, while an import gives the watch maker's own daily resting heart rate, which is smoothed differently, so its false-alert rate on your data may differ.</p>
+        <p className="banner"><strong>Imported data uses its own detector settings.</strong> The on-board model is set for the full sensor set and, given only a watch's overnight heart rate, would almost never alert. So an import runs on a heart-rate-only model whose thresholds were calibrated on 251 real people; its expected performance is the "heart rate alone" row on the Validation screen (about one false notice a month), measured mostly on Fitbit wearers; other watches did much worse in the real data, and many Apple Watch recordings were too sparse to use. Activity, sleep and the other readings in the file are shown but not used for alerts. One more difference: the model was calibrated on resting heart rate computed from raw night-time samples, while an import gives the watch maker's own daily resting heart rate, which is smoothed differently, so its false-alert rate on your data may differ.</p>
         <p className="small muted">Read in this browser only; the file is never uploaded. Keel then learns your baseline from it and shows the same Today and Trends screens for you. Supported: a CSV with a <code>date</code> column and any of <code>rhr, hrv, spo2, temp, sleep_h, ex_min, mood, fluid, mass, sbp, glucose</code>; Fitbit export JSON (resting heart rate, sleep); Apple Health <code>export.xml</code>.</p>
         <div className="row wrap">
           <label className="btn primary" htmlFor="file">Choose a file</label>

@@ -208,6 +208,8 @@ export const NO_EXERCISE = new Set(['R-RED', 'R-V-HR1R', 'R-V-SPO2', 'R-V-TEMP-H
 /** spot readings typed at check-in are kept apart from the wearable's overnight series, so a fingertip
  *  check never overwrites the overnight value that prompted it */
 export const SPOT_KEY: Record<string, string> = { rhr: 'rhr_spot', spo2: 'spo2_spot' }
+/** minutes before a repeat reading counts: sugar to act, a full-minute pulse count, a rest before blood pressure */
+const REPEAT_MIN: Record<string, number> = { glucose: 15, rhr: 2, spo2: 2, sbp: 5, dbp: 5, temp_oral: 30, mass: 5 }
 
 /** Closure notes by item key, with the time each was written (from the action log). */
 export type Closures = Map<string, number>
@@ -364,7 +366,7 @@ export function analyzeDay(
       const ft = t === day ? f : featAt(t)
       const skip = (q: Rule) => t === day && skipExToday && q.id === 'R-EX'
       let cur: Rule = RULES.find((q) => q.scope === 'personal' && !skip(q) && evalCond(q.when, ft)) ?? RULE['R-GEN']
-      if (prev && prev.id !== cur.id && cur.priority > prev.priority && !skip(prev) && evalCond(prev.when, ft)) cur = prev
+      if (prev && prev.id !== cur.id && cur.priority > prev.priority && !skip(prev) && (evalCond(prev.when, ft) || prev.id === 'R-ILL' || cur.id === 'R-GEN')) cur = prev
       out.push(cur.id)
       prev = cur
     }
@@ -426,6 +428,8 @@ export function analyzeDay(
     // drop a step whose conditions the person's own reports already rule out
     const ruledOut = (sym.fatigue ?? 0) > 0 || (sym.cough ?? 0) > 0 || (val.temp_oral ?? []).some((v) => v >= 38)
     if (ruledOut) out.steps = out.steps.filter((x) => !/light session is reasonable/.test(x))
+    // someone with a dangerous reading may be impaired: the first words of every "act now" are to get help to them
+    if (out.status === 'urgent' && !crewWide && !/^Call a crewmate/.test(out.action)) out.action = `Call a crewmate to you now. ${out.action}`
     // the medical officer cannot be told to see the medical officer: their backup is the commander
     return patientIsCmo && !crewWide ? forCmoAsPatient(out) : out
   }
@@ -467,14 +471,16 @@ export function analyzeDay(
       const mine = condFixed(r.when)
       const anyRuleOnLatest = RULES.some((q) => q.scope === 'vital' && condFixed(q.when).some((x) => mine.includes(x)) && evalCond(q.when, latestF))
       const firstBad = log.filter((q) => !q.void)[0]
-      const waited = !mine.includes('glucose') || (firstBad && lastLive.length > 0 && lastLive[lastLive.length - 1].ts - firstBad.ts >= 15 * 60 * 1000)
+      // a repeat counts only after the time the measurement needs: sugar to work, a full-minute pulse count, a rest
+      const waitMin = Math.max(...mine.map((x) => REPEAT_MIN[x] ?? 5))
+      const waited = !!firstBad && lastLive.length > 0 && lastLive[lastLive.length - 1].ts - firstBad.ts >= waitMin * 60 * 1000
       const repeatOk = r.scope === 'vital' && r.urgency !== 'routine' && lastLive.length > 0 && log.filter((q) => !q.void).length > 1 && !anyRuleOnLatest && !!waited
       // a repeat already back on the safe side, but taken too soon to count (blood sugar: under 15 minutes)
       const tooSoon = !repeatOk && !anyRuleOnLatest && log.filter((q) => !q.void).length > 1 && !waited
       findings.push(mk(r, r.scope, start, repeatOk ? 'act' : URGENCY_STATUS[r.urgency ?? 'routine'], changes.filter((c) => named.includes(c.ind)).slice(0, 4), {
-        ...(tooSoon ? { action: `${r.action} Your repeat (${lastLive[lastLive.length - 1].v}) came too soon to count: sugar takes about 15 minutes to work, so check again 15 minutes after the first reading.` } : {}),
+        ...(tooSoon ? { action: `${r.action} Your repeat (${lastLive[lastLive.length - 1].v}) came too soon to count: ${mine.includes('glucose') ? 'sugar takes about 15 minutes to work, so check again 15 minutes after the first reading' : `wait at least ${waitMin} minutes after the first reading, then repeat`}.` } : {}),
         ...(log.length ? { readings: log } : {}),
-        ...(repeatOk ? { urgency: 'now' as Urgency, action: `Your repeat reading (${lastLive[lastLive.length - 1].v}) is back on the safe side, so no more sugar is needed: eat a snack or your next meal now. The first reading needed the medical officer at once: if you have not told them yet, tell them now.`, tierReason: 'The first reading stays on the medical officer\'s list until they close it with a note.' } : {}),
+        ...(repeatOk ? { urgency: r.urgency, action: `${r.id.startsWith('R-V-GLU-LO') ? `Your repeat reading (${lastLive[lastLive.length - 1].v}) is back on the safe side, so no more sugar is needed: eat a snack or your next meal now.` : `Your repeat reading (${lastLive[lastLive.length - 1].v}) is back below this line.`} ${r.urgency === 'now' ? 'The first reading needed the medical officer at once: if you have not told them yet, tell them now.' : 'Tell the medical officer about the first reading today.'}`, tierReason: 'The first reading stays on the medical officer\'s list until they close it with a note.' } : {}),
         ...(stale ? { action: `This reading from ${m.day_label ? `${m.day_label} ${start + 1}` : `Day ${start + 1}`} is still open. If you have not yet told the medical officer, tell them now.`, tierReason: 'It stays open until the medical officer closes it with a note.' } : {}),
         ...(r.id === 'R-RED' ? { symptoms: redSyms.map((x) => SYM[x]?.label ?? x) } : {}),
         ...(r.id === 'R-RED' ? { cmoOnly: redSyms.every((x) => (SYM[x] as { commander?: boolean }).commander === false) } : {}),
@@ -517,11 +523,13 @@ export function analyzeDay(
     const named = condIndicators(r.when)
     const evidence = [...changes.filter((c) => named.includes(c.ind)), ...changes.filter((c) => !named.includes(c.ind) && c.notable)].slice(0, 4)
     const cats = new Set<string>([...r.categories, ...evidence.map((c) => IND[c.ind]?.category ?? 'cardio')])
-    findings.push(mk(r, 'personal', alert.start, status, evidence, {
+    const reviewed = isClosed(closed, `${m.id}|${crewId}|P|${alert.start}`, 0)
+    findings.push(mk(r, 'personal', alert.start, reviewed ? 'watch' : status, evidence, {
+      ...(reviewed ? { tier: 'self' as Tier, tierReason: 'Reviewed and closed by the medical officer. Keel keeps showing it until your readings settle.', urgency: 'routine' as Urgency, reviewed: true } : {}),
       score: alert.score, threshold: model.thresholds.notice, categories: [...cats], detectorTier: alert.tier, days: patternDays, patternStart: day - patternDays + 1,
       firstNotice: firstRule ? { day: alert.start, title: firstRule.title } : undefined, also,
       factors: ['R-ILL'].includes(r.id) ? factors.filter((x) => x.id !== 'mood') : factors, urgency: (status === 'act' ? 'today' : 'routine') as Urgency,
-      ...(wasIll ? { tier: (TIER_RANK[t.tier] < TIER_RANK.cmo ? 'cmo' : t.tier) as Tier, tierReason: 'Earlier in this notice the readings looked like illness. Keep the medical officer involved, and no exercise until they agree.', holdsExercise: true } : {}),
+      ...(wasIll && !reviewed ? { tier: (TIER_RANK[t.tier] < TIER_RANK.cmo ? 'cmo' : t.tier) as Tier, tierReason: 'Earlier in this notice the readings looked like illness. Keep the medical officer involved, and no exercise until they agree.', holdsExercise: true } : {}),
       ...(early && !wasIll ? { tier: 'self' as Tier, tierReason: 'Early signal. Keel will suggest involving the medical officer if it strengthens, lasts, or you report symptoms.', action: r.action.replace(/,? and tell the medical officer\.$/, '.').replace(/ Tell the medical officer\.$/, '') } : {}),
     }))
   }
@@ -612,7 +620,7 @@ export function analyzeDay(
   // closed items leave the list; a reading after the closure note reopens them
   for (let i = openItems.length - 1; i >= 0; i--) if (isClosed(closed, openItems[i].key, openItems[i].ts)) openItems.splice(i, 1)
 
-  const exerciseHold = findings.some((x) => NO_EXERCISE.has(x.ruleId) || (x as Finding & { holdsExercise?: boolean }).holdsExercise)
+  const exerciseHold = findings.some((x) => !(x as Finding & { reviewed?: boolean }).reviewed && (NO_EXERCISE.has(x.ruleId) || (x as Finding & { holdsExercise?: boolean }).holdsExercise))
   return { status, findings, changes, learning, baselineDays, adapting, staleDays, u3, systems, categories, alert, features: f, co2Advisory: envStatus === 'watch' ? Math.max(co2Today || 0, co23 || 0) : null, openItems, exerciseHold }
 }
 

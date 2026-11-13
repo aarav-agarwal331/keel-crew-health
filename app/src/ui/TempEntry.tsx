@@ -1,3 +1,4 @@
+import { symptomsOn } from '../core/mission'
 import { useState } from 'react'
 import { useApp } from '../state'
 import { ReadingLog } from './kit'
@@ -14,7 +15,7 @@ export function TempEntry() {
     const t = Number(v.replace(',', '.'))
     if (v.trim() === '' || Number.isNaN(t) || t < 30 || t > 45) { setErr('Enter the temperature in °C, between 30 and 45.'); return }
     setErr('')
-    await saveEntry({ crew: me, day, values: { ...(cur?.values ?? {}), temp_oral: t }, symptoms: cur?.symptoms ?? [], meds: cur?.meds }, ['temp_oral'])
+    await saveEntry({ crew: me, day, values: { ...(cur?.values ?? {}), temp_oral: t }, symptoms: cur?.symptoms ?? symptomsOn(mission, me, day, []), meds: cur?.meds }, ['temp_oral'])
     setSaved(t)
     setV('')
   }
