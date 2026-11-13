@@ -55,7 +55,7 @@ Joint pain or numbness after a spacewalk
 New swelling or pain in one leg, or on one side of the neck
 Severe tooth or jaw pain
 Thoughts of harming yourself
-(medical officer only; the commander sees your tier change, not why)
+(medical officer only; the commander is told only that you need the medical officer, not why)
 Thoughts of harming someone else
 3. Fluids today
 −

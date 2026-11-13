@@ -50,7 +50,7 @@ Throat or cough symptoms, and your readings are drifting.
 The same symptom three days running.
 Cabin carbon dioxide is elevated.
 When a link opens: anything the medical officer wants a flight surgeon to review. The daily summary contains only what you chose to share.
-If you have thoughts of harming yourself, or cannot function: tell the medical officer now. Keel tells only the medical officer what it is; the commander sees no reason, but your readiness tier for them changes to "Talk to the medical officer first".
+If you have thoughts of harming yourself, or cannot function: tell the medical officer now. Keel tells only the medical officer what it is; the commander is told only that you need the medical officer, never why, and your readiness tier for them changes to "Talk to the medical officer first".
 
 Keel gives first steps (rest, fluids, a repeat reading, sugar for a low blood sugar) but never recommends medication; that is for the medical officer with the onboard medical checklist. Some fixed thresholds come from public clinical guidance for adults on Earth; others (for example heart rate 35, 120 and 150, and the severe blood-pressure and blood-sugar lines) are provisional values we chose, marked as such in each rule. No threshold has been reviewed by a clinician; values without a cited source are marked provisional in the rule below. A fixed rule looks at every reading from the most recent day that has one, and anything needing attention now or today stays on the medical officer's list until they close it with a note. "Steady" on the Today screen means no change was detected, not that you are well.
 

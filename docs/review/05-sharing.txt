@@ -8,7 +8,7 @@ Lucía Reyes, your health data is yours. You decide below what each role can see
 
 Who	Always	Your choice
 Medical officer	With emergency sharing on: every urgent or same-day safety item, with the value entered, and an alert for urgent ones; while an urgent item is open, also whether your heart, oxygen, temperature and symptom readings are inside your usual range (not what any notice says) and today's medication classes, so they can help. With it off: an alert that you need help, and "an item, details private".	Each area: nothing, status, trend or full detail
-Commander	Your readiness tier, without the reason. It is worked out from all your readings, including private ones and items marked "medical officer only", so ticking one of those changes it. With emergency sharing on: urgent items, the value entered and an alert, as backup (never items marked "medical officer only"). With it off: an alert that you need help.	Each area
+Commander	Your readiness tier, without the reason. It is worked out from all your readings, including private ones and items marked "medical officer only", so ticking one of those changes it. With emergency sharing on: urgent items, the value entered and an alert, as backup; for an item marked "medical officer only", only that you need the medical officer urgently, never what it is. With it off: an alert that you need help.	Each area
 Crew	A count when three or more crew show a change in the same area	Nothing
 Ground	With emergency sharing on: a count of urgent items still open. With it off: nothing.	Each area, for the flight surgeon
 Everyone	Cabin air and radiation readings	Not personal
