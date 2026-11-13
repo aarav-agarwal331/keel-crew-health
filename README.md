@@ -93,7 +93,7 @@ Honest reading:
 - **No useful early warning shown.** At the notice tier an alert started in the ten days up to onset
   for 44% of episodes against 30% by luck (+14, 4 to 24) in the two-sensor linking analysis; for heart
   rate alone +14 (5 to 23). At the alert tier +6 (−1 to 13) for the linking analysis, an interval that
-  includes zero, and +7 (0 to 14) for heart
+  includes zero, and +7 (0.4 to 14) for heart
   rate alone; both windows include the day of onset itself. The
   notice-tier gain is small and confounded by test dates, isolation and lower activity, so we do not
   claim early warning.
@@ -107,14 +107,14 @@ Honest reading:
   over budget on real people (1.31 against 1.00; 0.41 against 0.25); with five sensors about 35% and
   135% over (16 people, 29 person-months). The opposite happens to the shipped 11-channel model when it only gets heart rate: it
   alerts well under budget (0.35 against 1.00; 0.12 against 0.25). A flight system needs thresholds per sensor set, calibrated on crew data.
-- **Much of the signal is behavioural.** Heart rate alone is +19 above luck and heart rate with daily steps +28 (separate intervals; the paired difference was not estimated), so activity may add part of the signal,
+- **Much of the signal may be behavioural.** Heart rate alone is +19 above luck and heart rate with daily steps +28 (separate intervals; the paired difference was not estimated), so activity may add part of the signal,
   because people move less once they feel ill, and that cannot be separated from isolating at home.
 - **Above luck is likely optimistic.** Pretend illness dates cannot be matched to the calendar, so travel,
   testing and isolation around a real onset are not reproduced. Four other ways of estimating luck
   move the gap between +27 and +30 (daily-steps configuration).
 - **Keel now deploys a simple personal rule** (two of three days outside the personal range). A review
   found that the multivariate statistic used correlations of the wrong sign; after correcting it, the
-  multivariate detector's lead on simulated training missions fell below the pre-set margin, so the
+  multivariate detector's lead on simulated training missions fell below the 3-point margin adopted in review round 1, so the
   simpler z-score rule is deployed. On real data the multivariate EWMA scored +34 (24 to 44) against
   the rule's +28 (19 to 38), a paired difference of +5 (−2 to 12): not distinguishable. The rule's lead over
   one fixed threshold is +11 (−3 to 25) in the detection window we use and +7 (−5 to 20) in the wider

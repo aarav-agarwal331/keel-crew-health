@@ -492,7 +492,9 @@ export function analyzeDay(
     return s0
   }
   for (const r of RULES) {
-    if ((r.scope === 'symptom' || r.scope === 'vital') && evalCond(r.when, f)) {
+    // "still low on a repeat" needs a real repeat: the second low at least 15 minutes after the first
+    const lowSpanOk = () => { const lows = (force.glucose?.log ?? []).filter((q) => !q.void && q.v < 70).map((q) => q.ts); return lows.length >= 2 && Math.max(...lows) - Math.min(...lows) >= (REPEAT_MIN.glucose ?? 15) * 60e3 }
+    if ((r.scope === 'symptom' || r.scope === 'vital') && evalCond(r.when, f) && (r.id !== 'R-V-GLU-LO-R' || lowSpanOk())) {
       const named = condIndicators(r.when)
       // a fixed rule dates from the day of the reading it is looking at, and carries those readings
       const vals = [...new Set(condVals(r.when))].filter((v) => force[v]?.vals.length)

@@ -397,7 +397,7 @@
     "min": 300
    },
    "summary": "The reading you entered is far above the usual range. Keel does not interpret it.",
-   "action": "Tell the medical officer now.",
+   "action": "Tell the medical officer now. If you feel shaky, sweaty, confused or drowsy, treat it as low instead: take sugar now if you can swallow.",
    "steps": [
     "Repeat the reading once with a clean fingertip.",
     "Tell them about vomiting, great thirst or confusion."
@@ -423,7 +423,7 @@
     "max": 299.99
    },
    "summary": "The reading you entered is well above the usual range. One reading proves nothing.",
-   "action": "Wash and dry your hands and repeat the reading now; if it is still 200 or more, tell the medical officer today.",
+   "action": "Wash and dry your hands and repeat the reading now; if it is still 200 or more, tell the medical officer today. If you feel shaky, sweaty, confused or drowsy, treat it as low: take sugar now.",
    "steps": [
     "Clean the fingertip and wipe away the first drop.",
     "Note when you last ate."

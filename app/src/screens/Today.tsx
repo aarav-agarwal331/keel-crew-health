@@ -95,7 +95,7 @@ export function Today() {
       <GlucoseUnit />
       {intro && mission.simulated && (
         <section className="card intro" data-testid="intro">
-          <p className="small"><strong>When Earth can't answer, Keel tells you what to do and who to tell.</strong> Responds at once to dangerous readings you enter. You choose who sees what. It also watches your readings against your own normal. Demo: {crew?.name.split(' ')[0]}'s tablet, simulated {mission.title}.</p>
+          <p className="small"><strong>When Earth can't answer, Keel tells you what to do and who to tell.</strong> Advises you at once on a dangerous reading you enter, and alerts the medical officer and commander within ten seconds. You choose who sees what. It also watches your readings against your own normal. Demo: {crew?.name.split(' ')[0]}'s tablet, simulated {mission.title}.</p>
           <div className="row wrap">
             <a className="btn primary sm" href={href('checkin', 'demo')} data-testid="intro-danger">Demo: enter a dangerous reading</a>
             <a className="btn sm" href={href('replay')} data-testid="intro-replay">Demo: replay a scripted event</a>
@@ -110,7 +110,7 @@ export function Today() {
           <div className="col" style={{ gap: 4, color: 'var(--text)' }}>
             <h1>{a.staleDays >= 2 && !primary ? 'No recent data' : STATUS_LABEL[shown]}</h1>
             <p className="muted">{primary ? primary.title : a.staleDays >= 2 ? `No readings for ${a.staleDays} days, so Keel cannot say how you are. Wear the sensor tonight and do a check-in.` : shown === 'watch' && !primary ? `No action needed yet. Keep an eye on: ${softAreas.join(', ')}.` : a.status === 'steady' && changes.length ? `Nothing needs action. ${changes.length === 1 ? 'One reading is' : `${changes.length} readings are`} a little off your usual; Keel is watching.` : HEADLINE[a.status]}</p>
-            {mission.crew.find((c) => c.id === me)?.role !== 'commander' && <p className="small muted" data-testid="commander-sees">Your commander sees: {READY_LABEL[readiness(a).tier]}{(() => { const cv = viewFor('commander', a, sharing[me] ?? defaultSharing()); const n = cv.findings.filter((f) => f.title).length; return n ? `, plus ${n === 1 ? 'one item' : `${n} items`} with what it is${cv.findings.some((f) => f.emergency) ? ', the value entered and what you were told to do (emergency sharing)' : ' (your sharing settings)'}; nothing else.` : ', with no reason given.' })()}</p>}
+            {mission.crew.find((c) => c.id === me)?.role !== 'commander' && <p className="small muted" data-testid="commander-sees">Your commander sees: {viewFor('commander', a, sharing[me] ?? defaultSharing()).findings.some((f) => f.emergency) ? 'Act now (an urgent item is open)' : READY_LABEL[readiness(a).tier]}{(() => { const cv = viewFor('commander', a, sharing[me] ?? defaultSharing()); const n = cv.findings.filter((f) => f.title).length; return n ? `, plus ${n === 1 ? 'one item' : `${n} items`} with what it is${cv.findings.some((f) => f.emergency) ? ', the value entered and what you were told to do (emergency sharing)' : ' (your sharing settings)'}; nothing else.` : ', with no reason given.' })()}</p>}
             {primary?.kind === 'personal' && <p className="small muted" data-testid="based-on">{Object.entries(a.features.sym ?? {}).some(([, v]) => v > 0) ? `Triggered by readings that drifted from your normal, together with symptoms you reported in the last three days (${Object.entries(a.features.sym ?? {}).filter(([, v]) => v > 0).map(([k]) => SYMPTOMS.find((x) => x.id === k)?.label.toLowerCase() ?? k).join(', ')}).` : 'Triggered by readings that drifted from your normal, with no symptoms reported.'}</p>}
           </div>
         </div>
@@ -140,7 +140,7 @@ export function Today() {
               {!sent && <button className="btn alert block" style={{ minHeight: 72, fontSize: '1.2rem' }} onClick={() => void logAction({ crew: me, alertKey: akey, day, did: 'Alerted the crew', feel: null, ...alertFields(urgentNow, '', contextNote(a.findings)) })} data-testid="alert-crew">{onlyCmo ? 'Alert the medical officer now' : 'Alert the medical officer and commander now'}</button>}
               {sent && !auto.escalated && !acks.some((x) => /medical officer/.test(x.note)) && Date.now() - sent.ts > 5 * 60e3 && <button className="btn alert block" onClick={() => void logAction({ crew: me, alertKey: akey, day, did: 'Alerted the crew', feel: null, ...alertFields(urgentNow, ' (no answer after 5 minutes: sent again)') })} data-testid="alert-again">No answer yet: alert them again</button>}
               {sent && <p className="banner strong" role="status"><strong>Alert sent at {new Date(sent.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}.</strong> {acks.length ? acks.map((x) => `Acknowledged ${x.note} at ${new Date(x.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}.`).join(' ') : 'Not acknowledged yet: it stays at the top of their Crew screens until the medical officer does.'}</p>}
-              {sent && <p className="small">Until it is acknowledged, Keel sends it again every five minutes while this screen is open; it cannot once the tablet is put away.</p>}
+              {sent && <p className="small"><strong>Keep this screen open until the medical officer answers.</strong> Until then Keel sends the alert again every five minutes; it cannot once the tablet is put away, so call out to a crewmate as well.</p>}
               <p className="small">{on ? sent ? 'The details are visible on their Crew screens (emergency sharing).' : 'The details are visible on their Crew screens (emergency sharing). Saving an urgent check-in alerts them after ten seconds; this button alerts them now.' : 'Emergency sharing is off: the alert says only that you need help, not why.'}</p>
             </div>
           })()}
@@ -235,7 +235,7 @@ export function Today() {
           </Card>
         </div>
       </div>
-      <p className="small muted">In the last 30 days the readings detector opened {notices30} notice{notices30 === 1 ? '' : 's'} (not counting fixed safety lines or symptoms you reported). Keel can be wrong: expect one or two false notices a month, possibly more, and most notices turn out to be nothing. <a href={href('validation')}>How often it is right</a></p>
+      <p className="small muted">In the last 30 days the readings detector opened {notices30} notice{notices30 === 1 ? '' : 's'} (not counting fixed safety lines or symptoms you reported). Keel can be wrong: expect one or two false notices a month, possibly more{['act', 'urgent'].includes(a.status) ? '; treat this one as real until the medical officer has looked' : ', and most notices turn out to be nothing'}. <a href={href('validation')}>How often it is right</a></p>
       <p className="banner">Keel is decision support, not a medical device. It does not diagnose. It shows how your readings compare with your own normal and points to documented countermeasures.</p>
     </>
   )

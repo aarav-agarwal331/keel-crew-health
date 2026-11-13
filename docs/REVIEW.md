@@ -1062,6 +1062,40 @@ earlier rounds asked for the hold; a clinical call), a sugar amount (no opened s
 boxes for blood pressure and temperature, an absorbed-dose radiation-sickness rule, the README alert-tier
 row for the import model, a luck figure for alerts strictly before onset (pipeline work).
 
-## Round 25
+## Round 25 (2026-11-12, fresh reviewers, redeployed build)
 
-See the end of this file once the twenty-fifth round has run.
+Judge's scores: impact 7, creativity 8, validity 8, relevance 9, presentation 6 (38 of 50), "nominate:
+yes", with one high-severity issue. The astronaut found the same one; the flight surgeon and the
+statistician found none.
+
+| # | Reviewer | High-severity finding | Fix |
+|---|---|---|---|
+| 1 | Judge, astronaut | During a shared emergency the commander's tile read "Act now", while the legend, Today's "Your commander sees" line and the summary ("1 of 4 should talk to the medical officer first") still said "Talk to the medical officer first". | All three now say "Act now" when an urgent item is shared; the summary counts crew with an urgent item open. |
+
+Medium-severity findings fixed in the same pass:
+
+- **Repeat low** (flight surgeon): "still below 70 on a repeat" needs the second low at least 15 minutes
+  after the first; a re-check a minute later keeps "treat as low, re-check at …".
+- **Wrong unit giving a high** (flight surgeon): the high-sugar actions say "if you feel shaky, sweaty,
+  confused or drowsy, treat it as low: take sugar now".
+- **Private items and the commander** (flight surgeon): the commander is told at once, with no content,
+  that the crew member needs the medical officer urgently (not after five minutes); the tick, Guide and
+  Sharing say so.
+- **Sleep before a spacewalk** (flight surgeon): three nights under five hours puts the commander's tier
+  on "Talk to the medical officer first".
+- **Footer and keep-open** (astronaut): "most notices turn out to be nothing" is not shown beside an open
+  act item; the alert card says "Keep this screen open until the medical officer answers … call out to a
+  crewmate as well". The banner says "advises you at once … alerts … within ten seconds" (judge).
+- **On-board model** (statistician): Validation and Method say its simulated result barely depends on
+  heart rate (removing it: 71% against 71%) and rests on assumed channels.
+- **Wording** (statistician): "may be behavioural"; "0.4 to 14"; "the 3-point margin adopted in review
+  round 1".
+
+Not done, with reasons: a paired heart-rate-versus-activity test, a larger illness-only simulation, a
+strictly-before-onset luck figure, cleaning bedrest.json fields (pipeline reruns); new red flags
+(testicular pain, sudden hearing loss, facial swelling; for a clinician); radiation projection moved off
+Today (a flight surgeon asked for it there).
+
+## Round 26
+
+See the end of this file once the twenty-sixth round has run.

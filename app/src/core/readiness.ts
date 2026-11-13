@@ -45,7 +45,8 @@ export function readiness(a: DayAnalysis): Readiness {
     if (f.cmoOnly && !f.patientIsCmo) { bump('hold'); reasons.push({ category: 'private', text: 'A private matter for the medical officer' }); continue }
     if (f.crewWide) continue
     // a self-managed item (a late night, a missed session) is worth a look, not a reason to stop someone working
-    if (f.status === 'urgent' || (f.tier !== 'self' && f.status === 'act')) bump('hold')
+    // three short nights before a demanding task is a conversation, whoever manages it
+    if (f.status === 'urgent' || (f.tier !== 'self' && f.status === 'act') || f.ruleId === 'R-V-SLEEP') bump('hold')
     else bump('caution')
     reasons.push({ category: f.categories[0] ?? 'symptoms', text: f.title })
   }
