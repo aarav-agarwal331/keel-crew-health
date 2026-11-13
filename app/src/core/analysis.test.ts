@@ -256,10 +256,13 @@ describe('end to end on the demo mission', () => {
     expect(run('c0', 101, [e]).openItems.some((q) => q.ruleId === 'R-V-GLU-LO2')).toBe(true)
   })
   it('a safe repeat of a non-sugar reading never talks about sugar, and needs its own waiting time', () => {
-    const e: Entry = { key: 'k', mission: m.id, crew: 'c0', day: 100, values: {}, symptoms: [], ts: 0, readings: [{ ind: 'temp_oral', v: 39.8, ts: 1 }, { ind: 'temp_oral', v: 36.9, ts: 1 + 40 * 60 * 1000 }] }
+    const e: Entry = { key: 'k', mission: m.id, crew: 'c0', day: 100, values: {}, symptoms: [], ts: 0, readings: [{ ind: 'temp_oral', v: 39.8, ts: 1 }, { ind: 'temp_oral', v: 36.9, ts: 1 + 65 * 60 * 1000 }] }
     const f1 = run('c0', 100, [e]).findings.find((x) => x.ruleId === 'R-V-TEMP-HI')!
     expect(f1.action).not.toMatch(/sugar/)
     expect(f1.action).toMatch(/back on the safe side of this line/)
+    // the rule asks for a repeat in an hour: 40 minutes is too soon, and fever medicine stops a lower repeat counting
+    expect(run('c0', 100, [{ ...e, readings: [{ ind: 'temp_oral', v: 39.8, ts: 1 }, { ind: 'temp_oral', v: 36.9, ts: 1 + 40 * 60 * 1000 }] }]).findings.find((x) => x.ruleId === 'R-V-TEMP-HI')!.status).toBe('urgent')
+    expect(run('c0', 100, [{ ...e, meds: ['Pain or fever medicine'] }]).findings.find((x) => x.ruleId === 'R-V-TEMP-HI')!.status).toBe('urgent')
     const hr: Entry = { key: 'k', mission: m.id, crew: 'c0', day: 100, values: {}, symptoms: [], ts: 0, readings: [{ ind: 'rhr_spot', v: 170, ts: 1 }, { ind: 'rhr_spot', v: 72, ts: 1 + 20 * 1000 }] }
     expect(run('c0', 100, [hr]).status).toBe('urgent')
   })

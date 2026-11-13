@@ -27,8 +27,9 @@ each crew member about once a week; routine vital signs are not streamed to the 
 Mars the signal takes up to about 24 minutes each way and sometimes there is no link at all, so
 medical decisions have to move on board. Keel runs entirely on the crew member's own device: it learns
 each person's own normal, notices drift, says what changed in plain language, and recommends one
-action tied to a documented countermeasure. The crew member owns the data and decides what the
-medical officer, the commander and the ground can see.
+action tied to a documented countermeasure. The crew member owns the data and decides most of what the
+medical officer, the commander and the ground can see (always shared: a readiness tier for the
+commander and, under emergency sharing, urgent safety items).
 
 Built for the 2026 NASA Space Apps Challenge, *Create Health Monitoring Software for Astronauts on
 Space Missions*. Keel is an independent project. It is not a NASA product, is not endorsed by NASA, and

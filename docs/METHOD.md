@@ -429,7 +429,9 @@ the same code version). Real data: 251 people, 107 illness episodes, two sensors
 - **Robustness.** Train on phase 1, test on phase 2: +29 above luck, 0.92 false alerts per
   person-month; the reverse: +22, 1.04. Five fold seeds: +26 to +30. Original window: +29 (20 to 38).
 - **Simulation, full sensor set.** 71%, luck 41%, +31 (25 to 36); lead over the fixed threshold +11
-  (3 to 19), an interval that now excludes zero. The multivariate EWMA: +29. By event type, above
+  (3 to 19); this contrast largely follows from the simulator's assumed between-person spread (most
+  of it assumed, heart rate from 7 astronauts), so it is not evidence that personal baselines beat a
+  fixed threshold. The multivariate EWMA: +29. By event type, above
   luck: sleep restriction +57 and exercise
   outage +51 (events whose scripted variable is itself a detector input, as are low fluids and low
   mood; sleep restriction and exercise outage are 30% of events but about half of the total), low fluids +44

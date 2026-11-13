@@ -60,7 +60,7 @@ export default function App() {
             {link.available ? (day < mission.pre_days ? 'Earth link: direct' : `Earth link: ${fmtDelay(link.delayS)} delay`) : 'No Earth link · running on board'}
           </a>
           <span className="spacer" />
-          <span className="chip num" title={crew?.role_label}>{crew?.name.split(' ')[0]} · {dayLabel(mission, day)}</span>
+          <span className="chip num" title={crew?.role_label}>{mission.kind === 'personal' ? 'You' : `${crew?.name.split(' ')[0]}'s tablet`} · {dayLabel(mission, day)}</span>
           <Simulated real={!mission.simulated} source={mission.source?.name} />
         </div>
       </header>

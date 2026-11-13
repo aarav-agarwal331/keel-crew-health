@@ -175,7 +175,8 @@ export function CheckIn({ open }: { open?: string }) {
         return u.length > 0 ? <section className="card action urgent-card" role="alert" data-testid="checkin-act-now">
           <StatusTag status="urgent" label="Act now" />
           {u.length === 1 ? <p className="do">{u[0].action}</p> : <ol className="list steps">{u.map((x) => <li key={x.key}><span className="col" style={{ gap: 4 }}><strong>{x.title}.</strong><span>{x.action}</span></span></li>)}</ol>}
-          {auto.counting && <p className="small"><strong>Alerting the medical officer and commander in {auto.autoLeft} s.</strong> A typing mistake? Withdraw it below.</p>}
+          {auto.counting && <p className="small"><strong>Alerting the medical officer and commander in {auto.autoLeft} s.</strong>{pending.some((q) => NOW_LINE[q.k]?.(q.v) || urgentFor(q.k)) ? ' A typing mistake? Withdraw it here:' : ''}</p>}
+          {auto.counting && <div className="row wrap">{pending.filter((q) => NOW_LINE[q.k]?.(q.v) || urgentFor(q.k)).map((q) => <button key={q.k} className="btn sm" onClick={() => void withdraw(q.k)} data-testid={`top-withdraw-${q.k}`}>Typing mistake: withdraw {lab(q.k).toLowerCase()} {q.v}</button>)}</div>}
         </section> : null
       })()}
       <h1>Check-in</h1>

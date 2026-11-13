@@ -18,7 +18,8 @@ must notice and act on health changes themselves. Keel is a crew health monitor 
 no connection to Earth. It runs entirely on the crew member's own tablet, learns that person's own
 normal for 18 indicators, notices when readings drift, explains what changed in plain language,
 and recommends one specific action from a fixed table of rules with cited sources. The crew member
-owns the data and chooses what the medical officer, the commander and the ground may see. Mission data
+owns the data and chooses most of what the medical officer, the commander and the ground may see
+(always shared: a readiness tier for the commander and, under emergency sharing, urgent safety items). Mission data
 in the app is simulated and labelled. We measured how well its method works on real wearable data from 251
 people and report the result with false-alert rates, uncertainty and its limits, inside the app. Keel
 is decision support, not a diagnostic device.

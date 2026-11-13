@@ -34,7 +34,7 @@ export function Method({ section }: { section?: string }) {
       <Card id="m-idea" title="The idea" open>
         <div className="prose">
           <p>On the International Space Station a flight surgeon is seconds away by voice, speaks privately with each crew member about once a week, and the ground team follows exercise and cabin-air data. On the way to Mars the signal takes minutes each way and sometimes there is no link at all, so the crew has to notice and act on health changes themselves.</p>
-          <p>Keel learns what is normal <em>for each person</em>, notices when their readings drift away from that, says what changed in plain words, and points to one documented action. All of it runs on the device. The crew member owns the data and chooses what the medical officer, the commander and the ground can see.</p>
+          <p>Keel learns what is normal <em>for each person</em>, notices when their readings drift away from that, says what changed in plain words, and points to one documented action. All of it runs on the device. The crew member owns the data and chooses most of what the medical officer, the commander and the ground can see (always shared: a readiness tier for the commander and, under emergency sharing, urgent safety items).</p>
           <p><strong>Keel is decision support, not a medical device.</strong> It never states a diagnosis. It says "this is unusual for you" and "this is what the documented countermeasure is".</p>
         </div>
       </Card>

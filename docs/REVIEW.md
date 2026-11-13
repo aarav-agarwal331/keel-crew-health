@@ -1391,6 +1391,37 @@ quiet-period rates (statistician) are pipeline work; an "unusual for you" vocabu
 same-day items and keeping detector-only notices off the commander's tier (astronaut) are design changes
 left for after the event.
 
-## Round 34
+## Round 34 (2026-11-13, fresh reviewers, redeployed build)
 
-See the end of this file once the thirty-fourth round has run.
+Judge's scores: impact 7, creativity 8, validity 7, relevance 8, presentation 5 (35 of 50), "nominate:
+yes". The flight surgeon and the statistician found no high-severity issue. The judge and the astronaut
+found one each:
+
+| # | Reviewer | High-severity finding | Fix |
+|---|---|---|---|
+| 1 | Judge | After the headline bar was added in round 33, the evidence chart's caption described every later bar one position off. | Bars are numbered 1 to 8 and the caption lists them in order. |
+| 2 | Astronaut | How Keel works (and the README, project page, pitch and video script) said the crew member "chooses what" each role sees, which the Sharing screen contradicts (the commander's tier and safety items are always shared). | Every such sentence now says "most of", and names what is always shared. |
+
+Medium-severity findings fixed in the same pass:
+
+- **Repeat waits** (flight surgeon): match the rule text (heart rate after ten minutes, thermometer after
+  an hour, low blood pressure five minutes); fever medicine stops a lower temperature counting as a safe
+  repeat (unit tests).
+- **Safety and collapse** (flight surgeon): a safety-concern alert tells the medical officer to take
+  someone too; every private urgent alert gives the commander the same collapse step.
+- **Typing mistakes** (astronaut): withdraw buttons sit inside the pinned act-now card with the countdown.
+- **Top bar** (judge): "Lucía's tablet" instead of a name that looks like the viewer.
+- **Statistics** (statistician): the lead-time caption names the pre-onset excess as likely confounding;
+  about half of flagged episodes were flagged on or after symptom onset, so sensors' added value for a
+  symptomatic person is not shown; the simulated personal-versus-fixed lead is said to follow from
+  assumed between-person spread.
+
+Not done, with reasons: a sugar amount (no opened source), new symptom-plus-reading rules for blood
+pressure and slow heart rate, and requiring a corrected value to withdraw (flight surgeon) are clinical
+calls (decision 108); lead-day luck, a window ending before onset, counting excluded episodes as misses
+and the Fisher test in the script (statistician) are pipeline work; a shorter Today and Sharing grid
+(judge, astronaut) remain the main presentation debt.
+
+## Round 35
+
+See the end of this file once the thirty-fifth round has run.

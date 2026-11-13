@@ -546,7 +546,7 @@
     "max": 89.99
    },
    "summary": "The reading you entered is below the normal adult range. Keel does not interpret it.",
-   "action": "Rest, drink, repeat the reading in ten minutes, and tell the medical officer today.",
+   "action": "Rest, drink, repeat the reading in five minutes, and tell the medical officer today.",
    "steps": [
     "If you also feel faint or dizzy, tell the medical officer now.",
     "Change posture slowly, especially after a gravity change."

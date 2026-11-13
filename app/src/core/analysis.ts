@@ -224,7 +224,8 @@ const EARLY_ACTION: Record<string, string> = {
   'R-ILL': 'Take your temperature now and skip hard exercise today. If it is 38.0 °C or more, or you feel unwell, tell the medical officer.',
 }
 /** minutes before a repeat reading counts: sugar to act, a full-minute pulse count, a rest before blood pressure */
-const REPEAT_MIN: Record<string, number> = { glucose: 15, rhr: 2, spo2: 2, sbp: 5, dbp: 5, temp_oral: 30, mass: 5 }
+// matched to what each rule's text asks for: heart rate after ten minutes' rest, a thermometer reading after an hour
+const REPEAT_MIN: Record<string, number> = { glucose: 15, rhr: 10, spo2: 2, sbp: 5, dbp: 5, temp_oral: 60, mass: 5 }
 
 /** Closure notes by item key, with the time each was written (from the action log). */
 export type Closures = Map<string, number>
@@ -569,7 +570,9 @@ export function analyzeDay(
       // a repeat is "safe" only if no fixed rule in either direction fires on it: after a low, a high repeat (200 or more,
       // often sugar on the fingertip) is not safe, and is handled by the wash-and-repeat wording
       const anyRuleEitherWay = RULES.some((q) => q.scope === 'vital' && condFixed(q.when).some((x) => mine.includes(x)) && evalCond(q.when, latestF))
-      const repeatOk = r.scope === 'vital' && r.urgency !== 'routine' && lastLive.length > 0 && !!firstBad && lastLive[lastLive.length - 1].ts > firstBad.ts && !anyRuleOnLatest && !anyRuleEitherWay && !!waited
+      // a lower temperature after fever medicine does not show the fever has gone
+      const feverMed = r.id.startsWith('R-V-TEMP') && (mineE.find((q) => q.day === day)?.meds ?? []).some((x) => /fever/i.test(x))
+      const repeatOk = !feverMed && r.scope === 'vital' && r.urgency !== 'routine' && lastLive.length > 0 && !!firstBad && lastLive[lastLive.length - 1].ts > firstBad.ts && !anyRuleOnLatest && !anyRuleEitherWay && !!waited
       // a repeat already back on the safe side, but taken too soon to count (blood sugar: under 15 minutes)
       const tooSoon = !repeatOk && !anyRuleOnLatest && !!firstBad && lastLive.length > 0 && lastLive[lastLive.length - 1].ts > firstBad.ts && !waited
       findings.push(mk(r, r.scope, start, repeatOk || stale || fromFile ? (r.urgency === 'routine' ? 'watch' : 'act') : URGENCY_STATUS[r.urgency ?? 'routine'], changes.filter((c) => named.includes(c.ind)).slice(0, 4), {

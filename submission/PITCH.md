@@ -10,7 +10,8 @@ Keel is a crew health monitor that needs no connection to Earth. It runs entirel
 tablet. It learns that person's own normal, notices when their readings drift, says what changed in
 plain words, and gives one action from a fixed table of rules with cited sources. Red-flag symptoms
 and dangerous readings are acted on at once. No diagnosis, no medication advice, no chatbot. The crew
-member owns the data and decides what the medical officer, the commander and the ground can see.
+member owns the data and decides most of what the medical officer, the commander and the ground can see;
+the commander always gets a readiness tier, and urgent safety items go to the medical officer.
 
 Watch: I cut the link. Everything still works.
 
