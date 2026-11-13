@@ -39,7 +39,7 @@ Keel works with no link to Earth, acts at once on dangerous readings and symptom
 step and its source, and lets the crew member choose who sees what. It also watches each person's
 readings against their own normal. On 107 real illness episodes, overnight heart rate alone flagged
 **+13 points above luck (4 to 24) in the detection window we set before the analysis, and +19 (9 to
-28) in the narrower window we moved to while writing it** (50% flagged against 31% by chance in the
+28) in a narrower window chosen later** (50% flagged against 31% by chance in the
 narrower one), at about one false alert a month;
 that is the model imported watch data runs on (on Fitbit's
 own daily resting heart rate it gives about one alert a month, as budgeted, and about a fifth over its
@@ -59,10 +59,11 @@ input to it.
   sourced (or marked provisional) threshold are acted on at once. Every reading is kept with its time, the worst one counts,
   and anything urgent stays on the medical officer's list until they close it with a note.
 - **Alarm fatigue treated as a hazard.** Thresholds come from an explicit false-alert budget.
-- **Auditable advice.** A fixed table of 45 rules maps patterns, entered readings and reported
+- **Auditable advice.** A fixed table of 46 rules maps patterns, entered readings and reported
   symptoms to cited countermeasures, each with how soon and who. No language model writes medical text.
 - **Crew-owned data.** Per-role, per-area sharing with an access log; the commander sees readiness,
-  not reasons, and which serious symptom someone reported goes to the medical officer only.
+  not reasons, except that under emergency sharing an urgent reading (its value and the step given) is
+  shown as backup; which serious symptom someone reported goes to the medical officer only.
 
 ## Headline results
 
@@ -95,7 +96,7 @@ Real wearable data: 251 people, 107 dated illness episodes (Stanford COVID-19 we
 |---|---|
 | Simulated missions, full sensor set, 1 false alert per person-month | 71% flagged (luck 41%): +31 above luck (25 to 36). By event type: sleep restriction +57, exercise outage +51, low fluids +44 (30 to 54), cabin CO2 +16 (6 to 24), illness +14 (−6 to 34) at the notice tier and +11 (−2 to 27) at the alert tier, both intervals including zero, low mood +17 (−3 to 36) |
 | Events in the first 25 flight days, luck taken from the same flight days | +22 (13 to 31) with gravity-phase handling, +18 (8 to 29) without |
-| Gravity transitions, real NASA bed-rest pulse data, 14 volunteers | flags after getting up: 9 with a plain personal baseline, 4 with a pulse-only rule with phase handling (a 2-of-3 rule, not the full detector). The same rule flags 35% of 14-day stretches away from any transition (11 of 31): the plain baseline's 9 of 14, though higher, is not distinguishable from it (p about 0.1); the phase-handling variant's own chance level with its widened band was not measured. Not significant (exact paired p = 0.06), no ground truth that those flags are false, and the fewer flags come from widening the band |
+| Gravity transitions, real NASA bed-rest pulse data, 14 volunteers | Uninformative about benefit: the variants were not matched for how often they flag. Flags after getting up: 9 with a plain personal baseline, 4 with a pulse-only rule with phase handling (a 2-of-3 rule, not the full detector). The same rule flags 35% of 14-day stretches away from any transition (11 of 31): the plain baseline's 9 of 14, though higher, is not distinguishable from it (p about 0.1); the phase-handling variant's own chance level with its widened band was not measured. Not significant (exact paired p = 0.06), no ground truth that those flags are false, and the fewer flags come from widening the band |
 
 Honest reading:
 
@@ -123,9 +124,10 @@ Honest reading:
   move the gap between +27 and +30 (daily-steps configuration).
 - **Keel now deploys a simple personal rule** (two of three days outside the personal range). A review
   found that the multivariate statistic used correlations of the wrong sign; after correcting it, the
-  multivariate detector's lead on simulated training missions fell below the 3-point margin adopted in review round 1, so the
+  multivariate detector's lead on simulated training missions fell below the pre-set 3-point margin, so the
   simpler z-score rule is deployed. On real data the multivariate EWMA scored +34 (24 to 44) against
-  the rule's +28 (19 to 38), a paired difference of +5 (−2 to 12): not distinguishable. The rule's lead over
+  the rule's +28 (19 to 38) (both on heart rate + daily steps with thresholds from real people, a setup
+  the app itself does not run), a paired difference of +5 (−2 to 12): not distinguishable. The rule's lead over
   one fixed threshold is +11 (−3 to 25) in the detection window we use and +7 (−5 to 20) in the wider
   window we started with, both now including zero; four detectors, two tiers and several windows were compared without
   correction. The detector was picked on simulated training missions by a rule written during review.
@@ -218,7 +220,7 @@ statement saved in [docs/CHALLENGE.md](docs/CHALLENGE.md).
 |---|---|---|
 | A1 | Gathers health indicators | 18 indicators; wearable import, Bluetooth strap, check-in, cabin sensors (Data sources, Check-in) |
 | A2 | Astronauts evaluate their own health | Today status against a personal baseline; Trends; body map |
-| A3 | Act on it; guidance on treatments and improvements | One recommended action on Today; Alert detail with steps and cited countermeasures; Guide → "Everything Keel can recommend" (all 45 rules). Keel gives first steps (rest, fluids, a repeat reading, sugar for a low blood sugar) but deliberately no medication advice: that is left to the medical officer |
+| A3 | Act on it; guidance on treatments and improvements | One recommended action on Today; Alert detail with steps and cited countermeasures; Guide → "Everything Keel can recommend" (all 46 rules). Keel gives first steps (rest, fluids, a repeat reading, sugar for a low blood sugar) but deliberately no medication advice: that is left to the medical officer |
 | A4 | A visual tool | Charts with personal bands, clickable body map, replay |
 | A5 | Any input: keyboard, clicks, files, camera | Check-in taps and number entry; file import; live sensor; a photo taken or chosen at check-in for the medical officer (stored on the device, not analysed) |
 | A6 | Data represents a health indicator, with units | Units on every reading and entry field (for example blood sugar in mg/dL) |

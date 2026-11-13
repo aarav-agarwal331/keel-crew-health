@@ -1203,6 +1203,50 @@ pipeline work, disclosed instead; a wholesale copy edit of every screen (judge, 
 where a reviewer pointed at specific text; renaming emergency sharing (astronaut) would desynchronise
 the docs and pitch for little gain.
 
-## Round 29
+## Round 29 (2026-11-13, fresh reviewers, redeployed build)
 
-See the end of this file once the twenty-ninth round has run.
+Judge's scores: impact 7, creativity 8, validity 7, relevance 8, presentation 6 (36 of 50), "nominate:
+yes", no high-severity issue. The statistician found none (every number checked matches the result files;
+every leakage path is disclosed). The astronaut and the flight surgeon found one each:
+
+| # | Reviewer | High-severity finding | Fix |
+|---|---|---|---|
+| 1 | Astronaut | After a blood sugar of 50 then 85 and a heart rate of 170, the pinned Check-in card showed only "take sugar"; the heart-rate step was a form's length below, and second on Today. | The pinned card lists every act-now item; on Today the other act-now items sit right under the first action. A low blood sugar is put first only while the latest reading is still low (unit test: after 50 then 85, the heart-rate item comes first). |
+| 2 | Flight surgeon | With every red flag private, a commander alerted about "thoughts of harming someone else" was told to "stay with" the person. | Duty to warn: that symptom tells the commander "crew safety concern: do not go alone; take another crew member and find the medical officer", still without naming it (unit test). Check-in, Sharing, METHOD and submission texts name this exception and the smoke-exposure one. |
+
+Medium-severity findings fixed in the same pass:
+
+- **Fast heart rate** (flight surgeon): new rule R-V-HR1S (120 or more with dizziness: act now); at 150 or
+  more, "put the ECG or pulse oximeter on now" replaces counting by hand.
+- **High blood sugar** (flight surgeon): wash and re-test; confused or drowsy means the medical officer
+  now; sugar only if a clean re-test is low.
+- **Sensor-only urgent items** (flight surgeon): alerted at once by the app.
+- **Escalation** (flight surgeon): after ten minutes unanswered the alert goes to the whole crew; the
+  commander's "waited more than a day" line also covers notices from the readings detector.
+- **Responders** (flight surgeon): alert cards show the "when you get there" step.
+- **Urgent styling** (astronaut): the pinned Check-in card and the Crew alert carry the red "Act now"
+  tag and a red border.
+- **Typing mistakes** (astronaut): one withdraw control on Check-in ("Yes, that is right: keep it" / "No,
+  a typing mistake"), and the reading log on Today can withdraw too.
+- **Also-today items** (astronaut): "Open the reaction test" link and "Ask for a private conversation"
+  button where the step names them.
+- **Trends markers** (astronaut): a recent notice is marked only on the charts of the readings it names.
+- **Labels** (statistician): results for heart rate + daily steps with real-data thresholds are labelled
+  as a setup the app does not run; "similar size, interval includes zero" instead of "about zero";
+  simulation caption says CUSUM is clearly lower; the README calls the bed-rest comparison uninformative
+  about benefit.
+- **README and Validation** (judge): commander privacy sentence corrected (urgent readings are shown as
+  backup); review-round references removed from user-facing text; chart label shortened.
+- Low: bystander step "awake and able to swallow when asked"; Today footer says a fixed-line item is
+  not from the detector.
+
+Not done, with reasons: rerunning the false-alert distribution, lead histogram, device split and
+cross-cohort test on the heart-rate-only model, the paired steps comparison, and a luck-adjusted
+strictly-before-onset estimate (statistician) are pipeline work; each limitation is stated where the
+number is shown. Restructuring Sharing into one table per role and a wholesale copy edit of Today (judge,
+astronaut) were done only where specific text was named. The top bar keeps naming whose tablet it is;
+the Crew screen says who is viewing.
+
+## Round 30
+
+See the end of this file once the thirtieth round has run.

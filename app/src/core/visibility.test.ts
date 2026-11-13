@@ -123,7 +123,12 @@ describe('emergency consent', () => {
     expect(cmdSelf.findings).toHaveLength(1)
     expect(cmdSelf.findings[0]).toMatchObject({ emergency: true, private: true, category: 'private' })
     expect(cmdSelf.findings[0].title).toBeUndefined()
-    for (const s of ['chest_pain', 'harm_others', 'tooth']) expect(strip(viewFor('commander', run(patient, [s]), share))).toBe(strip(cmdSelf))
+    for (const s of ['chest_pain', 'tooth', 'dcs']) expect(strip(viewFor('commander', run(patient, [s]), share))).toBe(strip(cmdSelf))
+    // duty to warn: thoughts of harming someone else tell the commander it is a crew safety concern, still not which symptom
+    const other = viewFor('commander', run(patient, ['harm_others']), share).findings
+    expect(other).toHaveLength(1)
+    expect(other[0]).toMatchObject({ private: true, safety: true })
+    expect(other[0].title).toBeUndefined()
     // the medical officer as patient: the commander is the backup and sees it
     const cmo = m.crew.find((c) => c.role === 'cmo')!.id
     expect(viewFor('commander', run(cmo, ['self_harm']), share).findings.some((f) => f.emergency)).toBe(true)

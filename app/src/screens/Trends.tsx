@@ -9,7 +9,7 @@ import { bandFor } from '../ui/series'
 type Range = '14' | '56' | 'all'
 
 export function Trends({ focus }: { focus?: string }) {
-  const { mission, model, day, me, analyses, entries, actions } = useApp()
+  const { mission, model, day, me, analyses, entries, actions, today } = useApp()
   const [range, setRange] = useState<Range>('56')
   const [cat, setCat] = useState<string>(focus && IND[focus] ? IND[focus].category : 'all')
   const mine = useMemo(() => entries.filter((e) => e.mission === mission.id && e.crew === me), [entries, mission.id, me])
@@ -17,13 +17,15 @@ export function Trends({ focus }: { focus?: string }) {
   const from = range === 'all' ? 0 : Math.max(0, day - Number(range) + 1)
   const starts = useMemo(() => (an ? episodes(deployedScore(an.scored, model), model.thresholds.notice, model.params.merge_gap, day).map(([s]) => s) : []), [an, model, day])
   // an alert is drawn only on the charts of the readings that were out of range when it opened
+  const named = new Set((today(me, day)?.findings ?? []).flatMap((f) => f.changes.map((c) => c.ind)))
   const markersFor = (ind: string): Marker[] => {
     const out: Marker[] = mission.phases.map((p) => ({ day: p.start, label: p.name, kind: 'phase' as const }))
     const j = model.indicators.indexOf(ind)
     if (an && j >= 0) for (const s of starts) {
       let hit = false
       for (let t = s; t <= Math.min(day, s + 3); t++) if (concernDev(an.scored.z[t][j], model.concern[j]) >= 1.5) hit = true
-      if (hit && s > day - 60) out.push({ day: s, label: 'Notice', kind: 'alert' })
+      // a recent notice is marked only on the charts of the readings it names, so an unaffected chart does not look flagged
+      if (hit && s > day - 60 && (s < day - 14 || named.has(ind))) out.push({ day: s, label: 'Notice', kind: 'alert' })
     }
     for (const a of actions.filter((x) => x.mission === mission.id && x.crew === me)) out.push({ day: a.day, label: 'You logged', kind: 'log' })
     return out

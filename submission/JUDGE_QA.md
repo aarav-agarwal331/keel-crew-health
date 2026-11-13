@@ -88,7 +88,7 @@ includes zero.
 
 **9. Why not use an AI model to explain alerts or answer questions?**
 Because the crew cannot check it and nobody on Earth can catch its mistakes. Advice comes from a table
-of 45 rules that a flight surgeon can read in one sitting, each tied to a NASA document, a published
+of 46 rules that a flight surgeon can read in one sitting, each tied to a NASA document, a published
 study or public clinical guidance, with an audit trail on every alert. A unit test fails the build if
 rule text reads like a diagnosis. By design Keel gives no medication advice; its actions are first steps such as rest, fluids, a repeat reading or sugar for a low blood sugar.
 
@@ -106,7 +106,9 @@ than that person's own worst reading, so nobody is assigned to a spacewalk blind
 or an "act now" reading is shown at once to the medical officer (an urgent reading also turns its
 body area and the medical officer's view red) and stays on that list until the medical officer closes it with a note; an urgent reading also
 reaches the commander as backup, while for a red-flag symptom the commander is told only that the
-person needs the medical officer urgently, the same for every symptom, so none can be inferred. Under emergency sharing the medical officer sees the
+person needs the medical officer urgently, the same for every symptom, so none can be inferred (two
+exceptions: thoughts of harming someone else are flagged as a crew safety concern, so nobody goes alone,
+and smoke or chemical exposure goes to the whole crew). Under emergency sharing the medical officer sees the
 symptom names and the readings with their times. Cabin readings are never private. What stays private
 is the reason behind an ordinary flag. Where to draw that line is a policy choice for an agency; Keel
 makes it explicit and shows each person exactly what every role sees.

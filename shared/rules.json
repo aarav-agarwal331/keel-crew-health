@@ -67,7 +67,7 @@
    "summary": "The reading you entered is in the range that general guidance says can cause unclear thinking or seizure. Keel does not interpret it.",
    "action": "If you are awake and can swallow, eat or drink something sugary now, and tell the medical officer now.",
    "steps": [
-    "For whoever is with you: if they are awake and can swallow, even if confused, give sugar; if they are drowsy, cannot follow simple instructions or cannot swallow safely, give nothing by mouth and get the medical officer now.",
+    "For whoever is with you: if they are awake and able to swallow when asked, give sugar, even if they seem confused; if they are drowsy or cannot swallow safely, give nothing by mouth and get the medical officer now.",
     "Stay with another crew member.",
     "Repeat the reading in 15 minutes; if it is still below 70, take sugar again and repeat.",
     "Do not exercise or do critical tasks until it is back above 70 and you feel normal."
@@ -146,11 +146,45 @@
     "min": 150
    },
    "summary": "You entered a resting heart rate of 150 or more. Keel does not interpret it. The value 150 is provisional and has not been reviewed by a flight surgeon.",
-   "action": "Sit or strap in, count your pulse by hand for a full minute now, and tell the medical officer now.",
+   "action": "Sit or strap in, put the ECG or pulse oximeter on now, and tell the medical officer now.",
    "steps": [
     "Stay with another crew member.",
-    "Count your pulse by hand for a full minute to confirm the device.",
-    "Note the time, and any chest pain, breathlessness or light-headedness."
+    "With the ECG or pulse oximeter on, note whether the rhythm is regular or irregular, and the time.",
+    "Note any chest pain, breathlessness or light-headedness."
+   ],
+   "tier": "cmo",
+   "tier_reason": "A fixed safety threshold, not a trend.",
+   "cm": [
+    "CM-VITALS"
+   ],
+   "categories": [
+    "cardio"
+   ]
+  },
+  {
+   "id": "R-V-HR1S",
+   "scope": "vital",
+   "priority": 1.125,
+   "urgency": "now",
+   "title": "Heart rate reading at rest is 120 or more, with dizziness",
+   "when": {
+    "all": [
+     {
+      "val": "rhr_manual",
+      "min": 120,
+      "max": 149.99
+     },
+     {
+      "sym": "dizziness",
+      "min": 1
+     }
+    ]
+   },
+   "summary": "You entered a resting heart rate of 120 or more and ticked dizziness. A fast rhythm that comes and goes needs to be recorded while it is happening. Keel does not interpret it. The value 120 is provisional and has not been reviewed by a flight surgeon.",
+   "action": "Sit or strap in, put the ECG or pulse oximeter on now, and tell the medical officer now.",
+   "steps": [
+    "Stay with another crew member.",
+    "With the ECG or pulse oximeter on, note whether the rhythm is regular or irregular, and the time."
    ],
    "tier": "cmo",
    "tier_reason": "A fixed safety threshold, not a trend.",
@@ -397,7 +431,7 @@
     "min": 300
    },
    "summary": "The reading you entered is far above the usual range. Keel does not interpret it.",
-   "action": "Tell the medical officer now. If you feel shaky, sweaty or confused, treat it as low instead: take sugar now if you are awake and can swallow.",
+   "action": "Wash and dry your hands, re-test now, and tell the medical officer now. If you feel confused or drowsy, get the medical officer to you now. Take sugar only if a clean re-test is below 70.",
    "steps": [
     "Repeat the reading once with a clean fingertip.",
     "Tell them about vomiting, great thirst or confusion."
@@ -423,7 +457,7 @@
     "max": 299.99
    },
    "summary": "The reading you entered is well above the usual range. One reading proves nothing.",
-   "action": "Wash and dry your hands and repeat the reading now; if it is still 200 or more, tell the medical officer today. If you feel shaky, sweaty or confused, treat it as low: take sugar now if you are awake and can swallow.",
+   "action": "Wash and dry your hands and repeat the reading now; if it is still 200 or more, tell the medical officer today. If you feel confused or drowsy, tell them now. Take sugar only if a clean re-test is below 70.",
    "steps": [
     "Clean the fingertip and wipe away the first drop.",
     "Note when you last ate."

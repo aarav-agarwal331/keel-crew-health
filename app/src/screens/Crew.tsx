@@ -58,7 +58,7 @@ export function Crew() {
         const open = open0.filter((x) => sends(x).every((y) => y.ts <= x.ts))
         // one line per urgent item: split on "; " outside brackets only, with the "also open" context on its own line
         const items = (note: string) => {
-          const t = note.replace(/ \((sent automatically|no answer after 5 minutes: sent again|medical officer only)\)/g, '').replace(/ \((also open, shown to the medical officer only: [^)]*)\)$/, '; $1')
+          const t = note.replace(/ \((sent automatically|sent automatically: from the overnight sensor|no answer after 5 minutes: sent again|no answer after 10 minutes: sent to the whole crew|medical officer only)\)/g, '').replace(/ \((also open, shown to the medical officer only: [^)]*)\)$/, '; $1')
           const out: string[] = []
           let depth = 0, cur = ''
           for (let i = 0; i < t.length; i++) {
@@ -72,11 +72,12 @@ export function Crew() {
           return out.filter(Boolean).map((x) => x.replace(/^also open, shown to the medical officer only: /, 'Also open (shown to you only): '))
         }
         return open.map((x) => (
-          <section key={x.ts} className="card action" role="alert" data-testid="crew-alert">
-            {role === 'commander' && (x.cmoOnly || /\(medical officer only\)/.test(x.note)) && !isCmo(x.crew) ? <p className="do">{`${mission.crew.find((c) => c.id === x.crew)?.name} needs the medical officer urgently. Find the medical officer, and stay with ${mission.crew.find((c) => c.id === x.crew)?.name.split(' ')[0]}. (What it is stays with the medical officer.)`}</p> : <p className="do">{x.did === 'Asked to be seen today' ? `${mission.crew.find((c) => c.id === x.crew)?.name} asks to be seen today` : /\(sent automatically\)/.test(x.note) ? `Alert about ${mission.crew.find((c) => c.id === x.crew)?.name}, sent automatically after an urgent check-in` : `${mission.crew.find((c) => c.id === x.crew)?.name} raised an alert`} at {new Date(x.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}{x.did === 'Asked to be seen today' ? '. See them today.' : '. Go to them now.'}</p>}
-            {!(role === 'commander' && (x.cmoOnly || /\(medical officer only\)/.test(x.note)) && !isCmo(x.crew)) && sharing[x.crew]?.emergency !== false && items(role === 'commander' && !isCmo(x.crew) && x.cmdNote !== undefined ? x.cmdNote : x.note).length > 0 && <ul className="list" data-testid="alert-items">{items(role === 'commander' && !isCmo(x.crew) && x.cmdNote !== undefined ? x.cmdNote : x.note).map((t, i) => <li key={i}><strong>{t}</strong></li>)}</ul>}
+          <section key={x.ts} className={`card action${x.did === 'Alerted the crew' ? ' urgent-card' : ''}`} role="alert" data-testid="crew-alert">
+            {x.did === 'Alerted the crew' && <StatusTag status="urgent" label="Act now" />}
+            {role === 'commander' && x.safety && !isCmo(x.crew) ? <p className="do" data-testid="safety-alert">{`Crew safety concern about ${mission.crew.find((c) => c.id === x.crew)?.name}, raised at ${new Date(x.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}. Do not go alone: take another crew member with you and find the medical officer, who has the details.`}</p> : role === 'commander' && (x.cmoOnly || /\(medical officer only\)/.test(x.note)) && !isCmo(x.crew) ? <p className="do">{`${mission.crew.find((c) => c.id === x.crew)?.name} needs the medical officer urgently. Find the medical officer, and stay with ${mission.crew.find((c) => c.id === x.crew)?.name.split(' ')[0]}. (What it is stays with the medical officer.)`}</p> : <p className="do">{x.did === 'Asked to be seen today' ? `${mission.crew.find((c) => c.id === x.crew)?.name} asks to be seen today` : /\(sent automatically\)/.test(x.note) ? `Alert about ${mission.crew.find((c) => c.id === x.crew)?.name}, sent automatically after an urgent check-in` : `${mission.crew.find((c) => c.id === x.crew)?.name} raised an alert`} at {new Date(x.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}{x.did === 'Asked to be seen today' ? '. See them today.' : '. Go to them now.'}</p>}
+            {!(role === 'commander' && (x.cmoOnly || x.safety || /\(medical officer only\)/.test(x.note)) && !isCmo(x.crew)) && sharing[x.crew]?.emergency !== false && items(role === 'commander' && !isCmo(x.crew) && x.cmdNote !== undefined ? x.cmdNote : x.note).length > 0 && <ul className="list" data-testid="alert-items">{items(role === 'commander' && !isCmo(x.crew) && x.cmdNote !== undefined ? x.cmdNote : x.note).map((t, i) => <li key={i}><strong>{t}</strong></li>)}</ul>}
             {sends(x).length > 1 && <p className="small">Sent {sends(x).length} times; first at {new Date(Math.min(...sends(x).map((y) => y.ts))).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}.</p>}
-            {!sends(x).some((y) => acksFor(y).length) && Date.now() - Math.min(...sends(x).map((y) => y.ts)) > 5 * 60e3 && <p className="banner strong"><strong>Not acknowledged for {Math.round((Date.now() - Math.min(...sends(x).map((y) => y.ts))) / 60e3)} minutes.</strong> Whoever reads this: go to them, or find the medical officer.</p>}
+            {!sends(x).some((y) => acksFor(y).length) && Date.now() - Math.min(...sends(x).map((y) => y.ts)) > 5 * 60e3 && <p className="banner strong"><strong>Not acknowledged for {Math.round((Date.now() - Math.min(...sends(x).map((y) => y.ts))) / 60e3)} minutes{sends(x).some((y) => /whole crew/.test(y.note)) ? ': sent to the whole crew (in a flight version, every tablet)' : ''}.</strong> Whoever reads this: go to them, or find the medical officer.</p>}
             {acksFor(x).map((q) => <p key={q.ts} className="small">Acknowledged {q.note} at {new Date(q.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}.</p>)}
             {!acksFor(x).some((q) => q.note.includes(role === 'cmo' ? 'medical officer' : 'commander')) && <button className="btn primary" onClick={() => void logAction({ crew: x.crew, alertKey: x.alertKey, day, did: 'Acknowledged the alert', feel: null, note: `by the ${role === 'cmo' ? 'medical officer' : 'commander'}` })} data-testid="ack-alert">Acknowledge: I am on my way</button>}
             <p className="tiny muted">In a flight version this would sound on the medical officer's and commander's tablets over the cabin network; no Earth link is needed.</p>
@@ -113,26 +114,29 @@ export function Crew() {
             <div className="card-h"><div className="col" style={{ gap: 0 }}><h2>{c.name}</h2><span className="small muted">{c.role_label}</span></div></div>
             {!a || !r || !v ? <p className="muted">No data.</p> : <>
               {role === 'commander' && (v.findings.some((x) => x.emergency) ? <p><StatusTag status="urgent" label="Act now: an urgent item is open" /></p> : <p><StatusTag status={r.tier} label={r.tier === 'hold' && c.role === 'cmo' ? 'Talk to the named backup medic first' : READY_LABEL[r.tier]} /></p>)}
-              {role === 'commander' && c.role !== 'cmo' && (a.openItems ?? []).some((x) => !x.settled && x.urgency === 'today' && day - x.day >= 1) && <p className="small" data-testid="waiting-cmo"><strong>An item has waited more than a day for the medical officer.</strong> Nothing about it is shown here; please make sure the medical officer has seen {c.name.split(' ')[0]}.</p>}
+              {role === 'commander' && c.role !== 'cmo' && ((a.openItems ?? []).some((x) => !x.settled && x.urgency === 'today' && day - x.day >= 1) || a.findings.some((f) => !f.crewWide && f.kind === 'personal' && f.status === 'act' && f.tier !== 'self' && f.days > 1)) && <p className="small" data-testid="waiting-cmo"><strong>An item has waited more than a day for the medical officer.</strong> Nothing about it is shown here; please make sure the medical officer has seen {c.name.split(' ')[0]}.</p>}
               {s.emergency === false && <p className="tiny muted">Emergency sharing is switched off for this crew member: red-flag symptoms will not appear here.</p>}
               {role === 'commander' && r.tier !== 'go' && r.tier !== 'unknown' && (() => {
                 const shown = r.reasons.filter((x) => allows((s.commander as Record<string, 'none' | 'status' | 'trend' | 'detail'>)[x.category] ?? 'none', 'trend'))
                 return shown.length
                   ? <ul className="list small">{shown.map((x, i) => <li key={i}>{x.text}</li>)}</ul>
                   : c.role === 'commander' ? <p className="small muted">This is the commander's own card. The reasons are on their own Today screen.</p>
+                  : v.findings.some((x) => x.safety) ? <p className="small"><strong>Crew safety concern: do not go to {c.name.split(' ')[0]} alone</strong> (details below).</p>
                   : v.findings.some((x) => x.emergency) ? <p className="small"><strong>Urgent: go to {c.name.split(' ')[0]} now</strong> (details below).</p>
                   : r?.reasons.some((x) => x.text === 'A private matter for the medical officer') ? <p className="small muted"><StatusTag status="private" label="" size={16} /> A private medical matter for the medical officer. Please do not ask {c.name.split(' ')[0]} about it.</p>
                   : <p className="small muted"><StatusTag status="private" label="" size={16} /> {v.findings.some((x) => x.emergency) ? 'Other reasons not shared.' : 'Reason private. The medical officer will advise if needed.'}</p>
               })()}
               {v.findings.filter((x) => x.emergency).map((x) => x.private ? (
                 <div key={x.key} className="banner strong" data-testid="private-urgent">
-                  <p><strong>An urgent item is open. What it is stays with the medical officer.</strong> Find the medical officer and stay with {c.name.split(' ')[0]}. Please do not ask {c.name.split(' ')[0]} about it.</p>
+                  {x.safety ? <p data-testid="safety-urgent"><strong>A crew safety concern is open. The medical officer has the details.</strong> Do not go to {c.name.split(' ')[0]} alone: take another crew member with you and find the medical officer.</p>
+                    : <p><strong>An urgent item is open. What it is stays with the medical officer.</strong> Find the medical officer and stay with {c.name.split(' ')[0]}. Please do not ask {c.name.split(' ')[0]} about it.</p>}
                 </div>
               ) : (
                 <div key={x.key} className="banner strong">
                   <p><strong>{x.title}{x.symptoms?.length ? `: ${x.symptoms.join('; ').toLowerCase()}` : ''}.</strong> <span className="small">(shared automatically: emergency sharing)</span></p>
                   <ReadingLog readings={x.readings ?? []} title="Entered readings, in order" note={false} />
                   <p className="small">{c.name.split(' ')[0]} was told: "{x.action}"</p>
+                  {(x.steps ?? []).filter((q) => /^For whoever is with you/.test(q)).map((q) => <p key={q} className="small" data-testid="responder-step"><strong>{q.replace(/^For whoever is with you: /, 'When you get there: ')}</strong></p>)}
                 </div>
               ))}
               {role === 'cmo' && <p>{v.overall === 'private' ? <StatusTag status="private" label="Nothing shared with you" /> : <StatusTag status={v.overall} label={STATUS_LABEL[v.overall]} />}</p>}

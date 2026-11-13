@@ -232,3 +232,4 @@ input[type='range'] { width: 100%; min-height: 44px; accent-color: var(--accent)
   .hero .glyph { width: 62px; height: 62px; }
   .hero h1 { font-size: 1.4rem; }
 }
+.urgent-card { border: 3px solid var(--critical); }

@@ -1,10 +1,11 @@
 /** What an alert carries.  Serious symptoms (medical officer only) never reach the commander: not their title,
  *  and when every item is such an item, not the alert at all. */
-export function alertFields(urgent: { title: string; cmoOnly?: boolean; patientIsCmo?: boolean }[], suffix = '', cmoContext = '') {
+export function alertFields(urgent: { title: string; cmoOnly?: boolean; patientIsCmo?: boolean; safety?: boolean }[], suffix = '', cmoContext = '') {
   const priv = (x: (typeof urgent)[number]) => !!x.cmoOnly && !x.patientIsCmo
   return {
     note: urgent.map((x) => x.title).join('; ') + cmoContext + suffix,
     cmoOnly: urgent.length > 0 && urgent.every(priv),
+    safety: urgent.some((x) => !!x.safety && !x.patientIsCmo),
     cmdNote: urgent.filter((x) => !priv(x)).map((x) => x.title).join('; ') + suffix,
   }
 }

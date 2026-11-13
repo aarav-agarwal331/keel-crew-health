@@ -7,7 +7,7 @@ import { dayLabel, IND, rawSeries, SYMPTOMS, symptomsOn } from '../core/mission'
 import { useApp } from '../state'
 import type { Photo } from '../core/types'
 import { SPOT_KEY } from '../core/analysis'
-import { Card, go, href, ReadingLog } from '../ui/kit'
+import { Card, go, href, ReadingLog, StatusTag } from '../ui/kit'
 import { LEVELS } from '../core/sharing'
 
 const MOODS = ['Very low', 'Low', 'OK', 'Good', 'Very good']
@@ -139,7 +139,7 @@ export function CheckIn({ open }: { open?: string }) {
       {pending.map((q) => (
         <div className="banner strong" role="alert" key={q.k}>
           {((NOW_LINE[q.k]?.(q.v) || urgentFor(q.k)) || urgentFor(q.k)) ? <p style={{ fontSize: '1.2rem' }}><strong>Act now: {(today(me, day)?.findings.find((f) => (f.inds ?? []).includes(q.k) && f.kind === 'vital')?.action) ?? 'tell the medical officer now.'}</strong></p> : null}<p><strong>{lab(q.k)}: {q.v} {IND[q.k].unit}</strong> {(NOW_LINE[q.k]?.(q.v) || urgentFor(q.k)) ? 'is past a fixed safety line' : 'is far outside the usual range'}, so Keel saved it and is acting on it. {(NOW_LINE[q.k]?.(q.v) || urgentFor(q.k)) ? (mission.kind === 'personal' ? 'This is your own data: nobody else is told. Call your local emergency number if you feel unwell.' : sharingOn ? 'It is now on the medical officer\'s and the commander\'s Crew screens (emergency sharing), and an alert goes to them ten seconds after saving (at once if you leave this screen) unless you withdraw it below as a typing mistake. While it is open, the medical officer also sees whether your heart, oxygen, temperature and symptom readings are in your usual range, and today\'s medication classes.' : 'It is past a safety line. Emergency sharing is off, so nobody else has been shown it: tell the medical officer.') : q.k === 'glucose' && q.v < 35 ? `Did your meter show mmol/L? ${q.v} mmol/L is ${Math.round(q.v * 18)} mg/dL. If so, withdraw this and type ${Math.round(q.v * 18)}.` : (today(me, day)?.findings.some((f) => (f.inds ?? []).includes(q.k) && f.kind === 'vital') ? 'It is past a fixed line for today: it is on the medical officer\'s list; tell them today.' : q.k === 'temp_oral' && q.v < 35 ? 'Below 35.0 °C is usually a measurement problem: wait five minutes and repeat. If it repeats, tell the medical officer.' : 'It is not past a fixed safety line, so nobody else has been shown it.')} Is that what the device showed?</p>
-          <div className="row wrap"><button className="btn primary" onClick={() => { if ((NOW_LINE[q.k]?.(q.v) || urgentFor(q.k))) setConfirmed(true); setPending((p) => p.filter((x) => x.k !== q.k)) }} data-testid={`confirm-${q.k}`}>Yes, that is right</button><button className="btn" onClick={() => void withdraw(q.k)} data-testid={`withdraw-${q.k}`}>No, a typing mistake: withdraw it</button></div>
+          <div className="row wrap"><button className="btn primary" onClick={() => { if ((NOW_LINE[q.k]?.(q.v) || urgentFor(q.k))) setConfirmed(true); setPending((p) => p.filter((x) => x.k !== q.k)) }} data-testid={`confirm-${q.k}`}>Yes, that is right: keep it</button><button className="btn" onClick={() => void withdraw(q.k)} data-testid={`withdraw-${q.k}`}>No, a typing mistake: withdraw it</button></div>
           <p className="small">If you withdraw it, it stays in the log, struck through, and the medical officer still sees that it was entered.</p>
         </div>
       ))}</div>)
@@ -157,7 +157,7 @@ export function CheckIn({ open }: { open?: string }) {
       {saved && <div className="card" role="status" ref={(el) => { if (el && justSaved.current) { justSaved.current = false; el.scrollIntoView({ block: 'center' }) } }}><strong>Saved.</strong><p className="muted">Keel has re-checked your readings on this tablet with your new entries.</p>{(() => { const n = (today(me, day)?.findings ?? []).filter((f) => f.status === 'urgent').length; const urgent = (today(me, day)?.findings ?? []).filter((f) => f.status === 'urgent')
             return n > 0 ? <div className="col"><p className="banner strong"><strong>{n === 1 ? 'One item needs' : `${n} items need`} action now.</strong> See Today for what to do.</p>
               {auto.counting && <div className="banner strong" role="alert" style={{ background: 'var(--surface-3)', fontSize: '1.05rem' }}><p><strong>Alerting the medical officer and commander in {auto.autoLeft} s.</strong> Leaving this screen sends it now.</p>{pending.filter((q) => (NOW_LINE[q.k]?.(q.v) || urgentFor(q.k))).length > 0
-                ? <div className="col" style={{ gap: 6 }}><p className="small">A typing mistake? Withdraw that reading; the alert still goes for anything else.</p>{pending.filter((q) => (NOW_LINE[q.k]?.(q.v) || urgentFor(q.k))).map((q, i) => <button key={q.k} className="btn" onClick={() => void withdraw(q.k)} data-testid={i === 0 ? 'cancel-auto-alert' : `cancel-auto-alert-${q.k}`}>Withdraw {lab(q.k).toLowerCase()} {q.v}: typing mistake</button>)}</div>
+                ? <p className="small" data-testid="cancel-auto-alert">A typing mistake? Use "No, a typing mistake: withdraw it" just above; the alert still goes for anything else.</p>
                 : confirmed ? <p className="small">You confirmed the reading, so the alert will go.</p>
                 : <p className="small">A serious symptom always alerts the medical officer. If you ticked it by mistake, tell them when they come; they close it with a note.</p>}</div>}
               {mission.kind === 'personal' ? <p className="banner strong"><strong>Call your local emergency number now, or get to urgent care.</strong> There is no crew or medical officer behind your own imported data.</p> : (() => { const akey = `alert|${urgent.map((x) => x.key).sort().join('+')}`; return !alertState(actions, me, urgent.map((x) => x.key)).sent ? <button className="btn alert block" style={{ minHeight: 72 }} onClick={() => void logAction({ crew: me, alertKey: akey, day, did: 'Alerted the crew', feel: null, ...alertFields(urgent) })} data-testid="alert-crew-checkin">Alert the medical officer and commander now</button> : <p className="small"><strong>Alert sent.</strong></p> })()}</div> : null })()}<div className="row wrap"><button className="btn" onClick={() => go('today')}>See Today</button><a className="btn" href={href('sharing')}>Who can see this?</a></div></div>}
@@ -168,10 +168,9 @@ export function CheckIn({ open }: { open?: string }) {
       {saved && (() => {
         // after an urgent save, the one thing to do sits at the top of the screen, above the form
         const u = (today(me, day)?.findings ?? []).filter((f) => f.status === 'urgent')
-        return u.length > 0 ? <section className="card action" role="alert" data-testid="checkin-act-now">
-          <span className="tag plain">Act now</span>
-          <p className="do">{u[0].action}</p>
-          {u.length > 1 && <p className="small">{u.length - 1 === 1 ? 'One more item' : `${u.length - 1} more items`} below, under "Saved".</p>}
+        return u.length > 0 ? <section className="card action urgent-card" role="alert" data-testid="checkin-act-now">
+          <StatusTag status="urgent" label="Act now" />
+          {u.length === 1 ? <p className="do">{u[0].action}</p> : <ol className="list steps">{u.map((x) => <li key={x.key}><strong>{x.title}.</strong> {x.action}</li>)}</ol>}
           {auto.counting && <p className="small"><strong>Alerting the medical officer and commander in {auto.autoLeft} s.</strong> A typing mistake? Withdraw it below.</p>}
         </section> : null
       })()}
@@ -194,10 +193,10 @@ export function CheckIn({ open }: { open?: string }) {
         <button className={`choice red ${serious ? '' : ''}`} aria-expanded={serious} onClick={() => setSerious((v) => !v)} data-testid="serious-toggle" style={{ minHeight: 56 }}>Something serious? Chest pain, fainting, trouble breathing, bleeding, vision loss, thoughts of harming yourself…</button>
         {serious && (
           <>
-            <span className="lab">Tell the medical officer now if you have any of these. {sharingOn ? 'Only the medical officer is told which one. The commander is told only that you need the medical officer urgently, the same for every item here. Ten seconds after you save, both are alerted unless you withdraw a typing mistake.' : 'Emergency sharing is off, so nobody else will see what it is; an alert that you need help, without the reason, goes ten seconds after you save (at once if you leave this screen) unless you withdraw a typing mistake. Tell the medical officer yourself.'}</span>
+            <span className="lab">Tell the medical officer now if you have any of these. {sharingOn ? 'Only the medical officer is told which one. The commander is told only that you need the medical officer urgently, the same for every item here, with two exceptions: for thoughts of harming someone else the commander is told it is a crew safety concern (still not which item), and smoke or chemical exposure goes to the whole crew. Ten seconds after you save, both are alerted unless you withdraw a typing mistake.' : 'Emergency sharing is off, so nobody else will see what it is; an alert that you need help, without the reason, goes ten seconds after you save (at once if you leave this screen) unless you withdraw a typing mistake. Tell the medical officer yourself.'}</span>
             <div className="choices wide" role="group" aria-label="Symptoms that need the medical officer now">
               {redFlags.map((s) => <button key={s.id} className="choice red" aria-pressed={sym.includes(s.id)} onClick={() => toggle(s.id)} data-testid={`sym-${s.id}`}>{s.label}</button>)}
-              {sharingOn && redFlags.some((x) => sym.includes(x.id)) && <p className="small" data-testid="cmo-only-note"><strong>Only the medical officer is told what this is.</strong> The commander sees "Act now" for you with no reason, exactly as for any other serious symptom.</p>}
+              {sharingOn && redFlags.some((x) => sym.includes(x.id)) && <p className="small" data-testid="cmo-only-note"><strong>Only the medical officer is told what this is.</strong> The commander sees "Act now" for you with no reason, as for any other serious symptom (for thoughts of harming someone else, "crew safety concern").</p>}
             </div>
           </>
         )}

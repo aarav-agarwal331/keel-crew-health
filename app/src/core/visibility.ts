@@ -15,7 +15,7 @@ import { allows, SHARE_CATEGORIES, type Level, type Role, type SharingSettings }
 import type { Finding, OpenItem, Photo, Reading, Status } from './types'
 
 export interface VisibleIndicator { ind: string; inRange: boolean; value?: number; expected?: number }
-export interface VisibleFinding { /** an urgent item the commander may know of but not see */ private?: boolean; symptoms?: string[]; readings?: Reading[]; emergency?: boolean; steps?: string[]; countermeasures?: string[]; urgency?: string; key: string; category: string; status: Status; days: number; title?: string; tier?: string; action?: string; summary?: string; changes?: Finding['changes']; factors?: Finding['factors']   /** from a fixed safety rule (a reading or a reported symptom), not from the readings detector */
+export interface VisibleFinding { /** an urgent item the commander may know of but not see */ private?: boolean; /** a crew safety concern: do not go alone */ safety?: boolean; symptoms?: string[]; readings?: Reading[]; emergency?: boolean; steps?: string[]; countermeasures?: string[]; urgency?: string; key: string; category: string; status: Status; days: number; title?: string; tier?: string; action?: string; summary?: string; changes?: Finding['changes']; factors?: Finding['factors']   /** from a fixed safety rule (a reading or a reported symptom), not from the readings detector */
   fixed?: boolean
 }
 export interface RoleView {
@@ -67,12 +67,14 @@ export function viewFor(role: Role, a: DayAnalysis, share: SharingSettings, valu
     // backup the commander is: the commander is told that an urgent item is open and nothing about it,
     // the same for every symptom, so they cannot tell which one it is.
     if (f.status === 'urgent' && share.emergency !== false && role === 'commander' && f.cmoOnly && !f.patientIsCmo) {
-      findings.push({ key: f.key, category: 'private', status: f.status, days: f.days, emergency: true, private: true })
+      findings.push({ key: f.key, category: 'private', status: f.status, days: f.days, emergency: true, private: true, ...(f.safety ? { safety: true } : {}) })
       continue
     }
     if (f.status === 'urgent' && share.emergency !== false && role !== 'ground') {
       // the medical officer is told what was reported or measured, with times; the commander only that it happened
       findings.push({ key: f.key, category: cat, status: f.status, days: f.days, title: f.title, tier: f.tier, action: f.action, emergency: true,
+        // the step for whoever is with them goes to the people who respond, not only to the patient's tablet
+        steps: f.steps.filter((q) => /^For whoever is with you/.test(q)),
         ...(role === 'cmo' || f.patientIsCmo ? { readings: f.readings, symptoms: f.symptoms } : {}) })
       if (overall === 'private' || rank[f.status] > rank[overall]) overall = f.status
       continue

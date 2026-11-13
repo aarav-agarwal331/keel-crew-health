@@ -105,6 +105,8 @@ export interface ActionLog {
   ts: number
   /** an alert about items the commander must not see */
   cmoOnly?: boolean
+  /** a crew safety concern: the commander is told not to go alone */
+  safety?: boolean
   /** the alert text the commander sees (without serious symptoms, which go to the medical officer only) */
   cmdNote?: string
 }
@@ -183,6 +185,8 @@ export interface Finding {
   readings?: Reading[]
   /** a serious (red-flag) symptom: what it is goes to the medical officer only (the commander is told what only when the patient is the medical officer) */
   cmoOnly?: boolean
+  /** "thoughts of harming someone else": the commander is told there is a crew safety concern, not which symptom */
+  safety?: boolean
   /** the patient is the crew medical officer, so the commander is the backup */
   patientIsCmo?: boolean
   /** red-flag symptom names behind an R-RED finding (shown to the medical officer under emergency sharing) */

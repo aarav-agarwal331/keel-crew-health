@@ -320,7 +320,7 @@ baseline, with the baseline restarted, with the band also widened, and with the 
 
 Keel computes, for each indicator, the mean `u` over the last three measured days; symptom counts
 over three days; the latest entered spot readings; the cabin readings; days since the last phase
-change; and days the detector's alert has been open. A fixed, ordered table of 45 rules is evaluated.
+change; and days the detector's alert has been open. A fixed, ordered table of 46 rules is evaluated.
 Rules have a scope:
 
 - **personal**: evaluated only while the detector has an alert open; the first one whose condition
@@ -397,7 +397,8 @@ the same code version). Real data: 251 people, 107 illness episodes, two sensors
   the like-for-like contrast of a personal against a population baseline, +11 (−3 to 25) at the notice
   tier and +17 (7 to 28) at the alert tier: mixed evidence, uncorrected for multiple comparisons.
 - **Against the multivariate detector.** Keel now deploys the simple two-of-three-days z-score rule
-  itself: +28 (19 to 38). The multivariate EWMA, the previously deployed detector, scores +34
+  itself: +28 (19 to 38), on heart rate + daily steps with thresholds from real people (a setup the app
+  does not run: on board it uses eleven channels with simulator thresholds, imports heart rate alone). The multivariate EWMA, the previously deployed detector, scores +34
   (24 to 44) at the notice tier and +31 (21 to 41) at the alert tier. The paired difference is +5 (−2 to 12)
   at the notice tier and +5 (−2 to 13) at the alert tier: not distinguishable.
 - **No useful early warning shown.** Alerts starting in the ten days up to onset, above luck: +14
@@ -483,7 +484,9 @@ the same code version). Real data: 251 people, 107 illness episodes, two sensors
   setting the crew member can switch off), an "act now" finding is shown to the medical officer and
   to the commander as backup, except red-flag symptoms: for every one of them the commander is told
   only that the person needs the medical officer urgently (the same text whichever symptom it is, so
-  none can be inferred), and sees which only when the patient is the medical officer. Medication classes and photos added at check-in belong to the
+  none can be inferred), and sees which only when the patient is the medical officer. Two exceptions:
+  thoughts of harming someone else are flagged to the commander as a crew safety concern ("do not go
+  alone"), and smoke or chemical exposure goes to the whole crew. Medication classes and photos added at check-in belong to the
   Symptoms area and are visible at full detail; under emergency sharing, today's medication classes are
   also shown to the medical officer while something urgent is open for that person (not for cabin alerts). Nothing is sent to the ground automatically.
   Views are logged.

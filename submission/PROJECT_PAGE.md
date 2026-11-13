@@ -50,7 +50,8 @@ is decision support, not a diagnostic device.
   findings stay on the medical officer's list until the medical officer closes them with a note.
 - **Sharing.** Per role and per body system, four levels from private to full detail, with a preview of
   exactly what each role sees and an access log. Which red-flag symptom someone reported goes to the medical officer only;
-  the commander is told only that they need the medical officer urgently, the same for every symptom. Under
+  the commander is told only that they need the medical officer urgently, the same for every symptom
+  (except a crew safety concern, flagged as such, and smoke exposure, which goes to everyone). Under
   emergency sharing the medical officer sees the symptom names and the readings with their times.
 - **Crew readiness.** Before a demanding task such as a spacewalk the commander sees whether Keel has
   flags for each crew member, without the reasons unless the crew member shares them. It is an input
@@ -75,7 +76,7 @@ Alert thresholds are not chosen by feel. They are set in simulation to a budget 
 per person-month and one mistaken alert per four person-months, because alarm fatigue is an
 operational hazard; on real people they ran over that budget (1.31 and 0.41 per person-month).
 Thresholds depend on which sensors are present: imported watch data therefore runs on a separate
-heart-rate-only model calibrated on the 251 real people (+19 above luck, 9 to 28). A fixed table of 45 rules turns a pattern, an entered reading or a reported symptom into wording, one action,
+heart-rate-only model calibrated on the 251 real people (+19 above luck, 9 to 28). A fixed table of 46 rules turns a pattern, an entered reading or a reported symptom into wording, one action,
 follow-up steps, how soon and who, each citing a NASA document, a published study or public clinical
 guidance. No language model writes any advice, and by design Keel gives no medication or treatment
 advice.

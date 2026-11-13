@@ -32,7 +32,7 @@ const HEADLINE: Record<string, string> = {
 }
 
 export function Today() {
-  const { mission, model, day, me, today, analyses, entries, link, sharing, setShare, actions, logAction } = useApp()
+  const { mission, model, day, me, today, analyses, entries, link, sharing, setShare, actions, logAction, voidReading } = useApp()
   // a reading just entered here (the thermometer box) that is "act now" alerts the crew automatically, as on Check-in
   const auto = useAutoAlert((today(me, day)?.findings ?? []).some((f) => f.status === 'urgent' && (f.readings ?? []).some((r) => Date.now() - r.ts < 120e3)))
   const [intro, setIntro] = useState(false)
@@ -123,6 +123,12 @@ export function Today() {
         <section className="card action" data-testid="today-action">
           <span className="tag plain">Recommended action</span>
           <p className="do">{primary.action}</p>
+          {others.filter((x) => x.status === 'urgent').length > 0 && (
+            <div className="col" data-testid="also-now">
+              <span className="lab">Also act now</span>
+              <ol className="list steps">{others.filter((x) => x.status === 'urgent').map((x) => <li key={x.key}><span className="col" style={{ gap: 6 }}><span><strong>{x.title}.</strong> {x.action}</span>{x.steps.filter((q) => /^For whoever is with you/.test(q)).slice(0, 1).map((q) => <span key={q} className="banner strong small">{q}</span>)}<RepeatEntry f={x} /></span></li>)}</ol>
+            </div>
+          )}
           <p className="small"><strong>When:</strong> {URGENCY_LABEL[primary.urgency].toLowerCase()}. <strong>Who:</strong> {(primary.who ?? WHO_LABEL[primary.tier]).toLowerCase()}.</p>
           <p className="small">{primary.tierReason}</p>
           <AskCmo f={primary} />
@@ -144,15 +150,13 @@ export function Today() {
               <p className="small">{on ? sent ? 'The details are visible on their Crew screens (emergency sharing).' : 'The details are visible on their Crew screens (emergency sharing). Saving an urgent check-in alerts them after ten seconds; this button alerts them now.' : 'Emergency sharing is off: the alert says only that you need help, not why.'}</p>
             </div>
           })()}
-          {others.filter((x) => x.status === 'urgent').length > 0 && (
-            <div className="col" data-testid="also-now">
-              <span className="lab">Also act now</span>
-              <ol className="list steps">{others.filter((x) => x.status === 'urgent').map((x) => <li key={x.key}><span className="col" style={{ gap: 6 }}><span><strong>{x.title}.</strong> {x.action}</span>{x.steps.filter((q) => /^For whoever is with you/.test(q)).slice(0, 1).map((q) => <span key={q} className="banner strong small">{q}</span>)}<RepeatEntry f={x} /></span></li>)}</ol>
-            </div>
-          )}
           {primary.status === 'urgent' && others.some((x) => ['R-ILL', 'R-SYM-ILL'].includes(x.ruleId)) && <div className="col" style={{ gap: 4 }}><p className="small"><strong>After the above:</strong> an infection-like notice is also open, so take your temperature when you can.</p><TempEntry secondary /></div>}
-          {(primary.also ?? []).length > 0 && <div><p className="small"><strong>Also today, from the same readings:</strong></p><ul className="list small">{primary.also!.map((x) => <li key={x.title}><strong>{x.title}.</strong> {x.action}</li>)}</ul></div>}
-          {['R-ILL', 'R-SYM-ILL', 'R-V-TEMP', 'R-V-TEMP-HI'].includes(primary.ruleId) && primary.status !== 'urgent' ? <TempEntry /> : <><ReadingLog readings={primary.readings ?? []} title={[primary, ...others].filter((x) => x.status === "urgent").length > 1 ? "Readings behind the first item" : "Readings this is based on"} /></>}
+          {(primary.also ?? []).length > 0 && <div><p className="small"><strong>Also today, from the same readings:</strong></p><ul className="list small">{primary.also!.map((x) => <li key={x.title}><strong>{x.title}.</strong> {x.action}{/reaction|test after/i.test(x.action) && <> <a href={href('checkin', 'measure')} data-testid="also-reaction">Open the reaction test</a></>}{/private conversation/i.test(x.action) && (() => {
+                  const k = `ask|private|${me}|${day}`
+                  const asked = actions.find((q) => q.crew === me && q.alertKey === k)
+                  return asked ? <span className="muted"> Asked at {new Date(asked.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}.</span> : <> <button className="btn sm" onClick={() => void logAction({ crew: me, alertKey: k, day, did: 'Asked to be seen today', feel: null, note: 'a private conversation', cmoOnly: true, cmdNote: '' })} data-testid="also-private">Ask for a private conversation</button></>
+                })()}</li>)}</ul></div>}
+          {['R-ILL', 'R-SYM-ILL', 'R-V-TEMP', 'R-V-TEMP-HI'].includes(primary.ruleId) && primary.status !== 'urgent' ? <TempEntry /> : <><ReadingLog onVoid={primary.status === 'urgent' ? (ind, ts) => void voidReading(me, day, ind, ts) : undefined} readings={primary.readings ?? []} title={[primary, ...others].filter((x) => x.status === "urgent").length > 1 ? "Readings behind the first item" : "Readings this is based on"} /></>}
           <a className="btn block" href={href('alert', primary.key)} data-testid="open-alert">Why, and what next <Chev /></a>
           {needsCmo && <button className="btn block" onClick={() => shareCats.forEach((c) => setShare(me, 'cmo', c, 'detail'))} data-testid="today-share-cmo">Share {shareCats.map((c) => CAT[c].toLowerCase()).join(', ')} in full detail with the medical officer</button>}
           {needsCmo && <p className="small muted">This changes one setting: <strong>{shareCats.map((c) => CAT[c]).join(', ')}</strong> goes from "{LEVEL_WORD[sharing[me]?.cmo[shareCats[0]] ?? 'none']}" to "Full detail" for the medical officer, until you change it back in Sharing. Readings in other areas, such as sleep or reaction time, stay as you set them. <strong>You still need to tell them.</strong></p>}
@@ -235,7 +239,7 @@ export function Today() {
           </Card>
         </div>
       </div>
-      <p className="small muted">In the last 30 days the readings detector opened {notices30} notice{notices30 === 1 ? '' : 's'} (not counting fixed safety lines or symptoms you reported). Keel can be wrong: expect one or two false notices a month, possibly more{['act', 'urgent'].includes(a.status) ? '; treat this one as real until the medical officer has looked' : ', and most notices turn out to be nothing'}. <a href={href('validation')}>How often it is right</a></p>
+      <p className="small muted">In the last 30 days the readings detector opened {notices30} notice{notices30 === 1 ? '' : 's'} (not counting fixed safety lines or symptoms you reported). Keel can be wrong: expect one or two false notices a month, possibly more{['act', 'urgent'].includes(a.status) ? (primary && primary.kind !== 'personal' ? '. The item above comes from a fixed safety line, not the detector: act on it' : '; treat this one as real until the medical officer has looked') : ', and most notices turn out to be nothing'}. <a href={href('validation')}>How often it is right</a></p>
       <p className="banner">Keel is decision support, not a medical device. It does not diagnose. It shows how your readings compare with your own normal and points to documented countermeasures.</p>
     </>
   )

@@ -213,7 +213,7 @@ export const STATUS_LABEL: Record<Status, string> = {
 
 /** Rules whose advice includes stopping or holding exercise.  While one is open, "do today's session"
  *  is never shown and the routine shows exercise on hold. */
-export const NO_EXERCISE = new Set(['R-RED', 'R-V-HR1R', 'R-V-SPO2', 'R-V-TEMP-HI', 'R-V-TEMP', 'R-V-HR0', 'R-V-HR2', 'R-V-HR1', 'R-V-HR', 'R-V-BP-LO2', 'R-V-BP-LO', 'R-V-BP-HI2', 'R-V-GLU-LO2', 'R-V-GLU-LO', 'R-SYM-ILL', 'R-ILL', 'R-CO2-HI', 'R-SPE-V', 'R-SPO2'])
+export const NO_EXERCISE = new Set(['R-RED', 'R-V-HR1S', 'R-V-HR1R', 'R-V-SPO2', 'R-V-TEMP-HI', 'R-V-TEMP', 'R-V-HR0', 'R-V-HR2', 'R-V-HR1', 'R-V-HR', 'R-V-BP-LO2', 'R-V-BP-LO', 'R-V-BP-HI2', 'R-V-GLU-LO2', 'R-V-GLU-LO', 'R-SYM-ILL', 'R-ILL', 'R-CO2-HI', 'R-SPE-V', 'R-SPO2'])
 /** spot readings typed at check-in are kept apart from the wearable's overnight series, so a fingertip
  *  check never overwrites the overnight value that prompted it */
 export const SPOT_KEY: Record<string, string> = { rhr: 'rhr_spot', spo2: 'spo2_spot' }
@@ -574,6 +574,9 @@ export function analyzeDay(
         // every serious symptom goes to the commander the same way ("needs the medical officer urgently"), so the
         // commander can never work out which one it is (marking only some private would give those away)
         ...(r.id === 'R-RED' ? { cmoOnly: true } : {}),
+        // duty to warn: "thoughts of harming someone else" tells the commander there is a crew safety concern
+        // (never which symptom), so nobody is sent to stay alone with the person
+        ...(r.id === 'R-RED' && redSyms.includes('harm_others') ? { safety: true } : {}),
       }))
     }
     const co2Hi = findings.some((x) => x.ruleId === 'R-CO2-HI')
@@ -647,7 +650,9 @@ export function analyzeDay(
   // at the same urgency, an item with operational consequences (it stops exercise) leads
   // and an unchallenged reading leads one that a later reading already disagrees with
   // a low blood sugar leads among urgent items: it is the one with a treatment the person can take at once
-  const treatNow = (x: Finding) => x.status === 'urgent' && x.ruleId.startsWith('R-V-GLU-LO')
+  // a low blood sugar goes first only while the latest reading is still low: after a disagreeing later
+  // reading (50, then 85) another urgent item, such as a fast heart rate at rest, is not pushed below it
+  const treatNow = (x: Finding) => x.status === 'urgent' && x.ruleId.startsWith('R-V-GLU-LO') && (() => { const live = (x.readings ?? []).filter((q) => !q.void); return !live.length || live[live.length - 1].v < 70 })()
   findings.sort((a, b) => rank[b.status] - rank[a.status] || Number(treatNow(b)) - Number(treatNow(a)) || Number(holdsEx(b.ruleId)) - Number(holdsEx(a.ruleId)) || Number(!!a.contested) - Number(!!b.contested))
   const status: Status = findings.length ? findings[0].status : learning || staleDays >= 2 ? 'learning' : 'steady'
 

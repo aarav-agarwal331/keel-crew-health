@@ -135,6 +135,11 @@ describe('end to end on the demo mission', () => {
     expect(run('c0', 100, [still]).findings.some((x) => /safe side/.test(x.action))).toBe(false)
     const soon: Entry = { ...e, readings: [{ ind: 'glucose', v: 50, ts: 1 }, { ind: 'glucose', v: 85, ts: 1 + 2 * 60 * 1000 }] }
     expect(run('c0', 100, [soon]).status).toBe('urgent')
+    // a disagreeing low (50, then 85) does not push a fast heart rate at rest below it
+    const both: Entry = { ...soon, values: { glucose: 85, rhr: 170 }, readings: [...soon.readings!, { ind: 'rhr', v: 170, ts: 3 }] }
+    const urgentFirst = run('c0', 100, [both]).findings.filter((x) => x.status === 'urgent')
+    expect(urgentFirst.length).toBeGreaterThanOrEqual(2)
+    expect(urgentFirst[0].ruleId.startsWith('R-V-GLU')).toBe(false)
     // a high repeat after a low is not "treat it as low", and a normal repeat after a high counts at once
     const lowHigh: Entry = { ...e, readings: [{ ind: 'glucose', v: 50, ts: 1 }, { ind: 'glucose', v: 320, ts: 1 + 2 * 60 * 1000 }] }
     const lh = run('c0', 100, [lowHigh]).findings
