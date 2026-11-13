@@ -42,7 +42,7 @@ Something serious? Chest pain, fainting, trouble breathing, bleeding, vision los
 Same as usual (2.5 L)
 + 1 L
 
-One tap on + is one 250 mL drink bag. Aim for at least 2.0 to 2.5 L a day. Left at zero, nothing is recorded.
+One tap on + is one 250 mL drink bag. Aim for at least 2.0 to 2.5 L a day. Left at zero, nothing is recorded. Filled in from the drink bags logged today (simulated); change it if that is wrong.
 
 4. How much of your planned food did you eat?
 All of it

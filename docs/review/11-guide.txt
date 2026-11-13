@@ -32,7 +32,7 @@ Thermometer reading is 39.4 °C or higher.
 Blood sugar reading is 300 mg/dL or higher.
 Vomiting after a very high radiation dose.
 Cabin carbon dioxide is above 4 mmHg.
-Today. Whenever Keel shows "Act today", and:
+Today. Whenever Keel shows "Act today" and "Who" is not "you manage this yourself", and:
 Thermometer reading is in the fever range, or well above your usual.
 Blood sugar reading is between 54 and 69 mg/dL.
 Blood sugar reading is 200 mg/dL or higher.

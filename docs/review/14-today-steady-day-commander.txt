@@ -12,7 +12,7 @@ Act today
 
 Your sleep is short or has shifted
 
-Triggered by the symptoms you reported plus readings that drifted from your normal.
+Triggered by readings that drifted from your normal, together with symptoms you reported in the last three days (unusual tiredness).
 
 Demo crew member, simulated readings.
 

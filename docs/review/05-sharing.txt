@@ -88,8 +88,8 @@ Exercise	Status	Steady
 Mind and mood	Status	Worth a look
 Food and fluids	Status	Worth a look
 Symptoms	Status	Act today
-That an alert exists in symptoms, not what it says
 That an alert exists in heart, oxygen and temperature, not what it says
+Alert in symptoms: The same symptom three days running
 Access log
 Stored on your device
 

@@ -10,41 +10,50 @@ The evidence
 Hide
 Act today
 
-The same symptom three days running
+Several readings have moved the way they can during an infection
+
+Triggered by readings that drifted from your normal, together with symptoms you reported in the last three days (headache, stuffy head or nose, sore throat, unusual tiredness).
 
 Demo crew member, simulated readings.
 
 RECOMMENDED ACTION
 
-Tell the medical officer today.
+Take your temperature now and tell the medical officer. No exercise until they clear you.
 
 When: today. Who: the crew medical officer.
 
-A symptom lasting three days.
+Possible illness in a closed cabin affects the whole crew, and early rest is cheap.
 
 Ask the medical officer to see me today
 
-Until you ask, or tell them yourself, they have not been told.
+Open for 3 days without a conversation: ask today. They may see that an item is open, but nobody has asked them to see you until you tap this or tell them.
 
+Also today, from the same readings:
+
+Your mood has been lower than usual. Book a private conversation with the medical officer.
+You are eating less than planned. Add one planned snack today and finish the main meals.
+Your reactions are slower than usual. Repeat the test after a ten-minute break; if it is still slow, ask for a buddy check on critical tasks today.
+Thermometer reading (°C)
+Save reading
 Why, and what next
+Share heart, oxygen and temperature in full detail with the medical officer
+
+This changes one setting: Heart, oxygen and temperature goes from "Status" to "Full detail" for the medical officer, until you change it back in Sharing. Readings in other areas, such as sleep or reaction time, stay as you set them. You still need to tell them.
 
 No link to Earth right now. Everything on this screen was worked out on this device.
 
-Several readings have moved the way they can during an infection
-Take your temperature now and tell the medical officer. No exercise until they clear you.
-Also: take your temperature
-Thermometer reading (°C)
-Save reading
-Other changes in your readings (not the cause of the alert above)
+The same symptom three days running
+Tell the medical officer today.
+What changed
 All trends
-Food intake 52 % of plan
-Lower than your usual 83. More unusual than 51 of your last 52 days. Out of your range for 2 days.
-Mood 2 /5
-Lower than your usual 4. Your most unusual reading in 52 days. Out of your range for 10 days.
-Reaction time 286 ms
-Higher than your usual 262. Your most unusual reading in 52 days. Out of your range for 6 days.
 Heart rate variability 28 ms
 Lower than your usual 43. More unusual than 49 of your last 53 days. Out of your range for 2 days.
+Skin temperature (overnight) 34.8 °C
+Higher than your usual 34.1. More unusual than 48 of your last 53 days. Out of your range for 3 days. Wrist skin temperature, not a fever reading.
+Resting heart rate (overnight) 56 bpm
+Higher than your usual 53. More unusual than 50 of your last 53 days.
+Blood oxygen 96 %
+Lower than your usual 97. More unusual than 38 of your last 53 days. Out of your range for 2 days.
 Your body at a glance
 Cabin
 Brain, sleep and mood
