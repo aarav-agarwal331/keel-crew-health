@@ -10,11 +10,11 @@ The short version
 By design: with no link to Earth, it answers a dangerous reading or a serious symptom at once with one sourced step and an alert to the medical officer and commander. Unit-tested; no clinician has reviewed the thresholds.
 On real illness: heart rate alone is +13 points above chance (4 to 24) in the detection window set before the analysis, and +19 (9 to 28; 50% of 107 episodes against 31% by chance) in the narrower window we moved to, at about one false notice a month. No early warning was shown, and most alerts are false. Imported watch data runs on this model.
 Everything else is simulated, including the tablet's own eleven-channel model (simulated illness +14, -6 to 34). The tiles and sections below are detail.
-+13 to +19 points
-above luck on real illness: the import model
++13 points
+above luck on real illness, heart rate alone (the import model), in the window set before the analysis (+19 in the narrower window chosen later)
 Overnight heart rate alone, thresholds from other real people (5-fold over people): 50% of 107 episodes flagged against 31% by luck, interval 9 to 28, at 0.99 false alerts per person-month. Alert tier: +19 (11 to 28). This is what imported data runs on, fitted on all of these people. In the original wider window: +13 (4 to 24). On Fitbit's own daily resting heart rate (the kind of value an import carries), for 63 LifeSnaps people without illness labels: 1.04 alerts per person-month at the notice tier and 0.30 at the stricter one (budgets 1.00 and 0.25). Caveats: 208 of the 251 people wore Fitbits (other devices did worse, in a small sample with a wide interval), and an import carries the watch maker's own smoothed resting heart rate, not the night-time value the model was calibrated on.
 Not shown
-simulated illness is not distinguishable from luck for the on-board model (+14, -6 to 34)
+simulated illness is not distinguishable from luck for the on-board model (+14, -6 to 34, from only 29 simulated illnesses: a wider interval than a larger simulation would give)
 All eleven channels, thresholds from simulated training missions, 100 simulated test missions. Illness, which it sees through physiology and through the simulator's assumed drops in exercise, food intake and sleep when ill: +14 (-6 to 34). All event types together: +31, with 71% of events flagged against 41% by luck, simulation interval 25 to 36 (seed-to-seed variation only, given assumed effect sizes; each cabin CO2 event counts once per crew member). Simulation only, with assumed effect sizes for everything except the illness heart-rate response, which is fitted but fails its own check. Most of it comes from sleep restriction and an exercise outage, whose scripted change is itself an input; illness is +14 (-6 to 34) and cabin CO2 +16 (6 to 24).
 +28 points*
 linking analysis only: at 1.31 false alerts a month, over budget, so not comparable with the tiles beside it
