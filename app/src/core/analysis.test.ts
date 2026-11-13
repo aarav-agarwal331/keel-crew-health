@@ -1,6 +1,7 @@
 import fs from 'node:fs'
 import { describe, expect, it } from 'vitest'
-import { analyzeDay, applyRule, CM, evalCond, REFS, RULE, RULES, type RuleFeatures } from './analysis'
+import { alertFields } from './alerts'
+import { analyzeDay, applyRule, closuresFrom, CM, evalCond, REFS, RULE, RULES, type RuleFeatures } from './analysis'
 import { scorePerson, type ModelJson } from './detect'
 import { features } from './mission'
 import { readiness } from './readiness'
@@ -234,6 +235,25 @@ describe('end to end on the demo mission', () => {
     expect(run('c0', 102, es.slice(0, 3)).openItems.some((x) => x.ruleId === 'R-V-MOOD' && x.day === 102)).toBe(true)
     expect(run('c0', 104, es).openItems.some((x) => x.ruleId === 'R-V-MOOD' && x.day === 102)).toBe(true)
     expect(run('c0', 104, es).findings.some((x) => x.ruleId === 'R-V-MOOD')).toBe(false)
+  })
+  it('"handled, not cleared" holds exercise and the commander\'s tier until the medical officer clears the person', () => {
+    const x = features(m, 'c0', model.indicators, [])
+    const an = (closed: Map<string, number>, d = 110) => analyzeDay(m, 'c0', { crewId: 'c0', x, scored: scorePerson(x, model, m.phases) }, model, d, [], closed)
+    const notCleared = closuresFrom([{ did: 'Closed by the medical officer: handled, not cleared for exercise or duties', alertKey: `${m.id}|c0|P|90#act#90`, ts: 5, crew: 'c0', mission: m.id }])
+    const a = an(notCleared)
+    expect(a.restricted).toBe(true)
+    expect(a.exerciseHold).toBe(true)
+    expect(readiness(a).tier).toBe('hold')
+    const cleared = closuresFrom([{ did: 'Closed by the medical officer: handled, not cleared for exercise or duties', alertKey: `${m.id}|c0|P|90#act#90`, ts: 5, crew: 'c0', mission: m.id },
+      { did: 'Closed by the medical officer: cleared for exercise and duties', alertKey: 'other', ts: 6, crew: 'c0', mission: m.id }])
+    expect(an(cleared).restricted).toBe(false)
+  })
+  it('an alert about a "medical officer only" item carries nothing the commander may not see', () => {
+    const f = alertFields([{ title: 'Serious symptom', cmoOnly: true }, { title: 'Heart rate 150 or more' }])
+    expect(f.cmoOnly).toBe(false)
+    expect(f.cmdNote).not.toContain('Serious symptom')
+    expect(alertFields([{ title: 'Serious symptom', cmoOnly: true }]).cmoOnly).toBe(true)
+    expect(alertFields([{ title: 'Serious symptom', cmoOnly: true, patientIsCmo: true }]).cmoOnly).toBe(false)
   })
   it('a red-flag symptom entered at check-in is urgent immediately', () => {
     const e: Entry = { key: 'k', mission: m.id, crew: 'c0', day: 100, values: {}, symptoms: ['chest_pain'], ts: 0 }

@@ -175,6 +175,8 @@ export interface DayAnalysis {
   co2Advisory: number | null
   /** exercise is on hold because an open finding says to stop or rest */
   exerciseHold: boolean
+  /** the medical officer closed something about this person without clearing them */
+  restricted?: boolean
   /** 'now' and 'today' findings from the crew member's own entries in the last 30 days (closing them is the medical officer's job) */
   openItems: OpenItem[]
   alert: { start: number; days: number; tier: 'notice' | 'alert'; score: number } | null
@@ -219,11 +221,13 @@ const REPEAT_MIN: Record<string, number> = { glucose: 15, rhr: 2, spo2: 2, sbp: 
 
 /** Closure notes by item key, with the time each was written (from the action log). */
 export type Closures = Map<string, number>
-export function closuresFrom(actions: { did: string; alertKey: string; ts: number }[]): Closures {
+export function closuresFrom(actions: { did: string; alertKey: string; ts: number; crew?: string; mission?: string }[]): Closures {
   const c: Closures = new Map()
   for (const a of actions) if (a.did.startsWith('Closed')) {
     c.set(a.alertKey, Math.max(c.get(a.alertKey) ?? 0, a.ts))
     if (/not cleared/.test(a.did)) c.set(`restricted|${a.alertKey}`, a.ts)   // closed, but exercise and duties stay restricted
+    // a medical clearance is about the person: it lifts every earlier restriction on them
+    else if (/cleared for exercise and duties/.test(a.did) && a.crew) c.set(`cleared|${a.mission}|${a.crew}`, Math.max(c.get(`cleared|${a.mission}|${a.crew}`) ?? 0, a.ts))
   }
   return c
 }
@@ -440,13 +444,13 @@ export function analyzeDay(
     if (kind === 'vital' && out.readings?.length) {
       const live = out.readings.filter((q) => !q.void)
       const worst = live.length ? live.reduce((a, b) => (Math.abs(b.v - live[0].v) > Math.abs(a.v - live[0].v) ? b : a), live[0]) : undefined
-      if (worst) out.title = `${r.title} (entered: ${live.length > 1 ? live.map((q) => q.v).join(', then ') : worst.v})`
+      if (worst) out.title = `${r.title} (entered: ${live.length > 1 ? `${live.map((q) => q.v).join(', then ')}; ${worst.v} still counts` : worst.v})`
     }
     // drop a step whose conditions the person's own reports already rule out
     const ruledOut = (sym.fatigue ?? 0) > 0 || (sym.cough ?? 0) > 0 || (val.temp_oral ?? []).some((v) => v >= 38)
     if (ruledOut) out.steps = out.steps.filter((x) => !/light session is reasonable/.test(x))
     // someone with a dangerous reading may be impaired: the first words of every "act now" are to get help to them
-    if (out.status === 'urgent' && !crewWide && (r.scope === 'vital' && r.id !== 'R-V-TEMP-HI' || r.id === 'R-RED') && !/^Call a crewmate|crewmate to you/.test(out.action)) out.action = r.id.startsWith('R-V-GLU-LO') ? `Take sugar now if you can swallow, and call a crewmate to you. ${out.action.replace(/^If you are awake and can swallow, eat or drink something sugary now, and t/, 'T')}` : `Call a crewmate to you now. ${out.action}`
+    if (out.status === 'urgent' && !crewWide && (r.scope === 'vital' && r.id !== 'R-V-TEMP-HI' || r.id === 'R-RED') && !/^Call a crewmate|crewmate to you/.test(out.action)) out.action = r.id.startsWith('R-V-GLU-LO') ? `Take sugar now if you can swallow, and call a crewmate to you. ${out.action.replace(/If you are awake and can swallow, eat or drink something sugary now, and t/, 'T')}` : `Call a crewmate to you now. ${out.action}`
     // the medical officer cannot be told to see the medical officer: their backup is the commander
     return patientIsCmo && !crewWide ? forCmoAsPatient(out) : out
   }
@@ -671,9 +675,11 @@ export function analyzeDay(
   // closed items leave the list; a reading after the closure note reopens them
   for (let i = openItems.length - 1; i >= 0; i--) if (isClosed(closed, openItems[i].key, openItems[i].ts)) openItems.splice(i, 1)
 
-  const restricted = [...closed.keys()].some((k) => k.startsWith(`restricted|open|${m.id}|${crewId}|`) && Number(k.split('|').pop()) >= day - 1)
+  // "handled, not cleared" holds exercise and duties until the medical officer clears the person, however long that takes
+  const restrictTs = Math.max(-Infinity, ...[...closed.entries()].filter(([k]) => k.startsWith('restricted|') && (k.includes(`|${m.id}|${crewId}|`))).map(([, t]) => t))
+  const restricted = restrictTs > (closed.get(`cleared|${m.id}|${crewId}`) ?? -Infinity)
   const exerciseHold = restricted || findings.some((x) => !(x as Finding & { reviewed?: boolean }).reviewed && (holdsEx(x.ruleId) || (x as Finding & { holdsExercise?: boolean }).holdsExercise))
-  return { status, findings, changes, learning, baselineDays, adapting, staleDays, u3, systems, categories, alert, features: f, co2Advisory: envStatus === 'watch' ? Math.max(co2Today || 0, co23 || 0) : null, openItems, exerciseHold }
+  return { status, findings, changes, learning, baselineDays, adapting, staleDays, u3, systems, categories, alert, features: f, co2Advisory: envStatus === 'watch' ? Math.max(co2Today || 0, co23 || 0) : null, openItems, exerciseHold, restricted }
 }
 
 /** Wording for a finding when the patient is the crew medical officer: the commander is the backup. */

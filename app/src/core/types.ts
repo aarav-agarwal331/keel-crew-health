@@ -101,6 +101,10 @@ export interface ActionLog {
   feel: number | null
   note: string
   ts: number
+  /** an alert about items the commander must not see */
+  cmoOnly?: boolean
+  /** the alert text the commander sees (without items marked "medical officer only") */
+  cmdNote?: string
 }
 
 export type Tier = 'self' | 'cmo' | 'ground'

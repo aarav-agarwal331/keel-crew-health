@@ -1,3 +1,5 @@
+import { alertFields } from '../core/alerts'
+import { useAutoAlert } from '../ui/useAutoAlert'
 import { STATUS_LABEL, unusualness, URGENCY_LABEL, WHO_LABEL } from '../core/analysis'
 import { deployedScore, episodes } from '../core/detect'
 import { TempEntry } from '../ui/TempEntry'
@@ -25,6 +27,8 @@ const HEADLINE: Record<string, string> = {
 
 export function Today() {
   const { mission, model, day, me, today, analyses, entries, link, sharing, setShare, actions, logAction } = useApp()
+  // a reading just entered here (the thermometer box) that is "act now" alerts the crew automatically, as on Check-in
+  const auto = useAutoAlert((today(me, day)?.findings ?? []).some((f) => f.status === 'urgent' && (f.readings ?? []).some((r) => Date.now() - r.ts < 120e3)))
   const [intro, setIntro] = useState(false)
   useEffect(() => { void store.kv<boolean>('intro-dismissed').then((v) => setIntro(!v)) }, [])
   const a = today()
@@ -120,10 +124,11 @@ export function Today() {
             const onlyCmo = urgentNow.every((x) => x.cmoOnly && !x.patientIsCmo)
             const on = sharing[me]?.emergency !== false
             return <div className="col">
-              {!sent && <button className="btn alert block" style={{ minHeight: 72, fontSize: '1.2rem' }} onClick={() => void logAction({ crew: me, alertKey: akey, day, did: 'Alerted the crew', feel: null, note: urgentNow.map((x) => x.title).join('; ') + (onlyCmo ? ' (medical officer only)' : '') })} data-testid="alert-crew">{onlyCmo ? 'Alert the medical officer now' : 'Alert the medical officer and commander now'}</button>}
-              {sent && !acks.some((x) => /medical officer/.test(x.note)) && Date.now() - sent.ts > 5 * 60e3 && <button className="btn alert block" onClick={() => void logAction({ crew: me, alertKey: akey, day, did: 'Alerted the crew', feel: null, note: `${urgentNow.map((x) => x.title).join('; ')} (no answer after 5 minutes: whole crew)` })} data-testid="alert-again">No answer yet: alert the whole crew</button>}
+              {auto.counting && <div className="banner strong" role="alert"><p><strong>Alerting the medical officer and commander in {auto.autoLeft} s.</strong></p><button className="btn" onClick={auto.cancel} data-testid="cancel-auto-alert-today">Cancel the alert</button></div>}
+              {!sent && <button className="btn alert block" style={{ minHeight: 72, fontSize: '1.2rem' }} onClick={() => void logAction({ crew: me, alertKey: akey, day, did: 'Alerted the crew', feel: null, ...alertFields(urgentNow) })} data-testid="alert-crew">{onlyCmo ? 'Alert the medical officer now' : 'Alert the medical officer and commander now'}</button>}
+              {sent && !auto.escalated && !acks.some((x) => /medical officer/.test(x.note)) && Date.now() - sent.ts > 5 * 60e3 && <button className="btn alert block" onClick={() => void logAction({ crew: me, alertKey: akey, day, did: 'Alerted the crew', feel: null, ...alertFields(urgentNow, ' (no answer after 5 minutes: whole crew)') })} data-testid="alert-again">No answer yet: alert the whole crew</button>}
               {sent && <p className="banner strong" role="status"><strong>Alert sent at {new Date(sent.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}.</strong> {acks.length ? acks.map((x) => `Acknowledged ${x.note} at ${new Date(x.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}.`).join(' ') : 'Not acknowledged yet: it stays at the top of their Crew screens until the medical officer does.'}</p>}
-              <p className="small">{on ? 'The details are visible on their Crew screens (emergency sharing). The button is what alerts them.' : 'Emergency sharing is off: the alert says only that you need help, not why.'}</p>
+              <p className="small">{on ? sent ? 'The details are visible on their Crew screens (emergency sharing).' : 'The details are visible on their Crew screens (emergency sharing). Saving an urgent check-in alerts them after ten seconds; this button alerts them now.' : 'Emergency sharing is off: the alert says only that you need help, not why.'}</p>
             </div>
           })()}
           {others.filter((x) => x.status === 'urgent').length > 0 && (
@@ -132,7 +137,7 @@ export function Today() {
               <ol className="list steps">{others.filter((x) => x.status === 'urgent').map((x) => <li key={x.key}><span><strong>{x.title}.</strong> {x.action}</span></li>)}</ol>
             </div>
           )}
-          {(primary.also ?? []).length > 0 && <details><summary className="small">When you can: {primary.also!.length} more from your readings</summary><ul className="list small">{primary.also!.map((x) => <li key={x.title}><strong>{x.title}.</strong> {x.action}</li>)}</ul></details>}
+          {(primary.also ?? []).length > 0 && <div><p className="small"><strong>Also today, from the same readings:</strong></p><ul className="list small">{primary.also!.map((x) => <li key={x.title}><strong>{x.title}.</strong> {x.action}</li>)}</ul></div>}
           {['R-ILL', 'R-SYM-ILL', 'R-V-TEMP', 'R-V-TEMP-HI'].includes(primary.ruleId) && primary.status !== 'urgent' ? <TempEntry /> : <ReadingLog readings={primary.readings ?? []} title="Readings this is based on" />}
           <a className={`btn ${primary.status === 'urgent' ? '' : 'primary '}block`} href={href('alert', primary.key)} data-testid="open-alert">Why, and what next <Chev /></a>
           {needsCmo && <button className="btn block" onClick={() => shareCats.forEach((c) => setShare(me, 'cmo', c, 'detail'))} data-testid="today-share-cmo">Share {shareCats.map((c) => CAT[c].toLowerCase()).join(', ')} in full detail with the medical officer</button>}
@@ -149,7 +154,7 @@ export function Today() {
       {mission.kind === 'personal' && <p className="banner strong">This is your own imported data. Keel's advice is written for a space crew with a medical officer on board. If a reading or symptom worries you, contact a doctor; in an emergency call your local emergency number.</p>}
       {!link.available && mission.simulated && <p className="banner" data-testid="offline-banner">No link to Earth right now. Everything on this screen was worked out on this device.</p>}
       {a.status === 'urgent' ? (others.filter((f) => f.status !== 'urgent').length > 0 && (
-        <details className="card"><summary>After the above: {others.filter((f) => f.status !== 'urgent').length} more item{others.filter((f) => f.status !== 'urgent').length === 1 ? '' : 's'} (act today or worth a look)</summary>
+        <details className="card"><summary>After the above, still to do: {others.filter((f) => f.status !== 'urgent').map((f) => `${f.title} (${f.status === 'act' ? 'act today' : 'worth a look'})`).join('; ')}</summary>
           {others.filter((f) => f.status !== 'urgent').map((f) => <LinkRow key={f.key} to={href('alert', f.key)} left={<span className={`st-${f.status}`}><Glyph status={f.status} /></span>} title={f.title} sub={f.action} />)}
         </details>
       )) : (<>

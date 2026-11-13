@@ -8,6 +8,8 @@ import { useApp } from '../state'
 import { Card, Seg, StatusTag } from '../ui/kit'
 
 const catLabel = (id: string) => CATEGORIES.find((c) => c.id === id)?.label ?? id
+// the body figure on Today is drawn by part of the body; sharing is by kind of reading. This names the link.
+const ON_FIGURE: Record<string, string> = { cardio: 'Heart and circulation, Lungs and oxygen, Whole body', sleep: 'Brain, sleep and mood', cognition: 'Brain, sleep and mood', exercise: 'Muscle and bone', nutrition: 'Food and fluids', symptoms: 'wherever the symptom is' }
 
 export function Sharing() {
   const { mission, me, sharing, setShare, setEmergency, access, today } = useApp()
@@ -21,11 +23,11 @@ export function Sharing() {
   return (
     <>
       <h1>Sharing and privacy</h1>
-      <p className="muted">{crew.name}, your health data is yours. You decide below what each role can see.</p>
+      <p className="muted">{crew.name}, your health data is yours. You decide below what each role can see, with three exceptions: the commander always sees your readiness tier (worked out from all your readings, without the reason); with emergency sharing on, the medical officer sees every urgent or same-day safety item and is alerted to urgent ones; and cabin readings are shared with everyone.</p>
       <p className="small muted">How it travels: in this demo every role is on one tablet. In a flight version your data stays on your tablet, and only the views allowed here would go over the cabin network, to the medical officer's and commander's tablets; the daily ground summary goes out when a link exists.</p>
       <Card title="Always visible, whatever you choose below">
         <ul className="list small">
-          <li><strong>To the medical officer: an overall status</strong> made only from the areas you share with them, and, under emergency sharing, that an urgent or same-day item is open (with its details only if the item is "act now" or its area is shared).</li>
+          <li><strong>To the medical officer: an overall status</strong> made only from the areas you share with them, and, under emergency sharing, every open "act now" or "act today" item from a safety rule, with what it is and the readings behind it, in any area. Notices from your readings follow the levels below.</li>
           <li><strong>To the commander: your readiness tier</strong> (steady / worth a look / talk to the medical officer first), without the reason, except emergencies (see below). A commander has to be able to plan a spacewalk safely. The tier is worked out from all your readings, including ones you keep private. An item marked "medical officer only" can make it "Talk to the medical officer first", but the commander is never shown why.</li>
           <li><strong>To the crew: counts.</strong> When three or more crew members show a change in the same area, the Crew screen shows the count, not the names. In a crew of four that is not fully anonymous.</li>
           <li><strong>To everyone: cabin readings</strong> (air, radiation). They are not personal.</li>
@@ -36,7 +38,8 @@ export function Sharing() {
             <button aria-pressed={s.emergency !== false} onClick={() => setEmergency(me, true)}>On</button>
             <button aria-pressed={s.emergency === false} onClick={() => setEmergency(me, false)}>Off</button>
           </div>
-          <span className="small muted">When on, a symptom you mark as serious or an "act now" safety reading appears at once on the medical officer's Crew screen (nobody is alerted, so tell them), and stays on their list until they close it with a note. The commander is shown it too, as backup, except the items marked "medical officer only" at check-in ({SYMPTOMS.filter((x) => (x as { commander?: boolean }).commander === false).map((x) => x.label.toLowerCase()).join('; ')}). Emergency sharing sends no details to the ground: the daily ground summary carries only what you set for the flight surgeon below, plus a count of urgent items still open, so the flight surgeon knows to call. Every fixed safety rule (a reading or a serious symptom) that needs attention now or today goes on the medical officer's list; notices from your readings follow the sharing levels below; under this consent they see what the item is and the readings behind it, even for an area you have not shared. With it off, nothing extra goes to anyone: urgent items do not reach the medical officer's list, the alert button names no reason, and the ground gets no count. Both can see that it is off.</span>
+          <span className="small muted">When on, a symptom you mark as serious or an "act now" safety reading appears at once on the medical officer's Crew screen, an alert goes to them ten seconds after you save unless you cancel it, and it stays on their list until they close it with a note.</span>
+          <details className="small muted"><summary>More about emergency sharing</summary><p>The commander is shown it too, as backup, except the items marked "medical officer only" at check-in ({SYMPTOMS.filter((x) => (x as { commander?: boolean }).commander === false).map((x) => x.label.toLowerCase()).join('; ')}). Emergency sharing sends no details to the ground: the daily ground summary carries only what you set for the flight surgeon below, plus a count of urgent items still open, so the flight surgeon knows to call. Every fixed safety rule (a reading or a serious symptom) that needs attention now or today goes on the medical officer's list; notices from your readings follow the sharing levels below; under this consent they see what the item is and the readings behind it, even for an area you have not shared. With it off, nothing extra goes to anyone: urgent items do not reach the medical officer's list, and the alert (automatic or by the button) says only that you need help, and the ground gets no count. Both can see that it is off.</p></details>
         </div>
       </Card>
 
@@ -48,7 +51,7 @@ export function Sharing() {
         <div className="col">
           {SHARE_CATEGORIES.map((c) => (
             <div key={c} className="col" style={{ gap: 6, borderTop: '1px solid var(--border)', paddingTop: 10 }}>
-              <span className="lab">{catLabel(c)}</span>
+              <span className="lab">{catLabel(c)} <span className="tiny muted">(on the body figure: {ON_FIGURE[c]})</span></span>
               <span className="tiny muted">{c === 'symptoms' ? 'What you tick at check-in, medication classes you log, and photos you add' : INDICATORS.filter((i) => i.category === c && i.source !== 'env' && i.source !== 'dosimeter').map((i) => i.label.toLowerCase()).join(', ')}</span>
               <div className="seg" role="group" aria-label={`${catLabel(c)} shared with ${role}`}>
                 {LEVELS.map((l) => <button key={l.id} aria-pressed={s[role][c] === l.id} onClick={() => setShare(me, role, c, l.id as Level)} data-testid={`share-${role}-${c}-${l.id}`}>{l.label}</button>)}

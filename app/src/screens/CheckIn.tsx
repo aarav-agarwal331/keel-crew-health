@@ -1,3 +1,5 @@
+import { alertFields } from '../core/alerts'
+import { useAutoAlert } from '../ui/useAutoAlert'
 import { GlucoseUnit } from '../ui/GlucoseUnit'
 import { useEffect, useRef, useState } from 'react'
 import { dayLabel, IND, rawSeries, SYMPTOMS, symptomsOn } from '../core/mission'
@@ -47,30 +49,8 @@ export function CheckIn({ open }: { open?: string }) {
   const [photos, setPhotos] = useState<Photo[]>(existing?.photos ?? [])
   const [photoLabel, setPhotoLabel] = useState(PHOTO_LABELS[0])
   const [saved, setSaved] = useState(false)
-  // after a save that leaves something "act now", alert the medical officer and commander automatically;
-  // the crew member has ten seconds to cancel it (a typing mistake), and can always alert by hand
-  const [autoAlert, setAutoAlert] = useState<{ key: string; ts: number } | null>(null)
-  const [, setTick] = useState(0)
-  useEffect(() => {
-    if (!saved || !sharingOn) return
-    const urgent = (today(me, day)?.findings ?? []).filter((f) => f.status === 'urgent' && !f.crewWide)
-    if (!urgent.length) return
-    const akey = `alert|${urgent.map((x) => x.key).sort().join('+')}`
-    if (autoAlert?.key === akey || actions.some((x) => x.crew === me && x.alertKey === akey && /Alerted the crew|Alert cancelled/.test(x.did))) return
-    setAutoAlert({ key: akey, ts: Date.now() })
-    const send = () => void logAction({ crew: me, alertKey: akey, day, did: 'Alerted the crew', feel: null, note: urgent.map((x) => x.title).join('; ') + ' (sent automatically)' })
-    const t = window.setTimeout(() => { flushRef.current = () => {}; send() }, 10_000)
-    const iv = window.setInterval(() => setTick((n) => n + 1), 1000)
-    cancelRef.current = () => { window.clearTimeout(t); window.clearInterval(iv); flushRef.current = () => {} }
-    // leaving the screen does not cancel it: the alert goes at once
-    flushRef.current = () => { window.clearTimeout(t); window.clearInterval(iv); send() }
-    window.setTimeout(() => window.clearInterval(iv), 11_000)
-  })
-  const cancelRef = useRef<() => void>(() => {})
-  const flushRef = useRef<() => void>(() => {})
-  useEffect(() => () => flushRef.current(), [])
-  const autoLeft = autoAlert ? Math.max(0, 10 - Math.floor((Date.now() - autoAlert.ts) / 1000)) : 0
-  const autoCancelled = autoAlert ? actions.some((x) => x.alertKey === autoAlert.key && x.did === 'Alert cancelled') : false
+  // after a save that leaves something "act now", the alert goes automatically (ten seconds to cancel)
+  const auto = useAutoAlert(saved)
   const justSaved = useRef(false)
   const [err, setErr] = useState('')
   // values far from usual, or past a fixed "act now" line, are saved at once (so nothing is lost) and then
@@ -134,7 +114,7 @@ export function CheckIn({ open }: { open?: string }) {
   const prompts = (<div className="col" data-testid="checkin-prompts">{unitPrompt}{err && <p className="banner strong" role="alert">{err}</p>}
       {pending.map((q) => (
         <div className="banner strong" role="alert" key={q.k}>
-          <p><strong>{lab(q.k)}: {q.v} {IND[q.k].unit}</strong> {NOW_LINE[q.k]?.(q.v) ? 'is past a fixed safety line' : 'is far outside the usual range'}, so Keel saved it and is acting on it. {NOW_LINE[q.k]?.(q.v) ? <strong>Act now: {(today(me, day)?.findings.find((f) => (f.inds ?? []).includes(q.k) && f.kind === 'vital')?.action) ?? 'tell the medical officer now.'} </strong> : null}{NOW_LINE[q.k]?.(q.v) ? (sharingOn ? 'It is past a safety line, so it is now visible on the medical officer\'s and the commander\'s Crew screens (emergency sharing). They are not alerted.' : 'It is past a safety line. Emergency sharing is off, so nobody else has been shown it: tell the medical officer.') : q.k === 'glucose' && q.v < 35 ? `Did your meter show mmol/L? ${q.v} mmol/L is ${Math.round(q.v * 18)} mg/dL. If so, withdraw this and type ${Math.round(q.v * 18)}.` : (today(me, day)?.findings.some((f) => (f.inds ?? []).includes(q.k) && f.kind === 'vital') ? 'It is past a fixed line for today: it is on the medical officer\'s list; tell them today.' : q.k === 'temp_oral' && q.v < 35 ? 'Below 35.0 °C is usually a measurement problem: wait five minutes and repeat. If it repeats, tell the medical officer.' : 'It is not past a fixed safety line, so nobody else has been shown it.')} Is that what the device showed?</p>
+          <p><strong>{lab(q.k)}: {q.v} {IND[q.k].unit}</strong> {NOW_LINE[q.k]?.(q.v) ? 'is past a fixed safety line' : 'is far outside the usual range'}, so Keel saved it and is acting on it. {NOW_LINE[q.k]?.(q.v) ? <strong>Act now: {(today(me, day)?.findings.find((f) => (f.inds ?? []).includes(q.k) && f.kind === 'vital')?.action) ?? 'tell the medical officer now.'} </strong> : null}{NOW_LINE[q.k]?.(q.v) ? (sharingOn ? 'It is past a safety line, so it is now visible on the medical officer\'s and the commander\'s Crew screens (emergency sharing), and an alert goes to them ten seconds after saving unless you cancel it below.' : 'It is past a safety line. Emergency sharing is off, so nobody else has been shown it: tell the medical officer.') : q.k === 'glucose' && q.v < 35 ? `Did your meter show mmol/L? ${q.v} mmol/L is ${Math.round(q.v * 18)} mg/dL. If so, withdraw this and type ${Math.round(q.v * 18)}.` : (today(me, day)?.findings.some((f) => (f.inds ?? []).includes(q.k) && f.kind === 'vital') ? 'It is past a fixed line for today: it is on the medical officer\'s list; tell them today.' : q.k === 'temp_oral' && q.v < 35 ? 'Below 35.0 °C is usually a measurement problem: wait five minutes and repeat. If it repeats, tell the medical officer.' : 'It is not past a fixed safety line, so nobody else has been shown it.')} Is that what the device showed?</p>
           <div className="row wrap"><button className="btn primary" onClick={() => setPending((p) => p.filter((x) => x.k !== q.k))} data-testid={`confirm-${q.k}`}>Yes, that is right</button><button className="btn" onClick={() => void withdraw(q.k)} data-testid={`withdraw-${q.k}`}>No, a typing mistake: withdraw it</button></div>
           <p className="small">If you withdraw it, it stays in the log, struck through, and the medical officer still sees that it was entered.</p>
         </div>
@@ -147,10 +127,19 @@ export function CheckIn({ open }: { open?: string }) {
       {pending.length > 0 && <button className="btn primary block" onClick={() => void save()} data-testid="save-checkin">Save check-in</button>}
     </>
   )
+  // what happened on save sits right under the save button that was pressed, next to the readings just typed
+  const resultBlock = (<>
+      {prompts}
+      {saved && <div className="card" role="status" ref={(el) => { if (el && justSaved.current) { justSaved.current = false; el.scrollIntoView({ block: 'center' }) } }}><strong>Saved.</strong><p className="muted">Keel has re-checked your readings on this tablet with your new entries.</p>{(() => { const n = (today(me, day)?.findings ?? []).filter((f) => f.status === 'urgent').length; const urgent = (today(me, day)?.findings ?? []).filter((f) => f.status === 'urgent')
+            return n > 0 ? <div className="col"><p className="banner strong"><strong>{n === 1 ? 'One item needs' : `${n} items need`} action now.</strong> See Today for what to do.</p>
+              {auto.counting && <div className="banner strong" role="alert"><p><strong>Alerting the medical officer and commander in {auto.autoLeft} s.</strong></p><button className="btn" onClick={auto.cancel} data-testid="cancel-auto-alert">Cancel the alert</button></div>}
+              {(() => { const akey = `alert|${urgent.map((x) => x.key).sort().join('+')}`; return !actions.some((x) => x.crew === me && x.did === 'Alerted the crew' && x.alertKey === akey) ? <button className="btn alert block" style={{ minHeight: 72 }} onClick={() => void logAction({ crew: me, alertKey: akey, day, did: 'Alerted the crew', feel: null, ...alertFields(urgent) })} data-testid="alert-crew-checkin">{urgent.every((x) => x.cmoOnly && !x.patientIsCmo) ? 'Alert the medical officer now' : 'Alert the medical officer and commander now'}</button> : <p className="small"><strong>Alert sent.</strong></p> })()}</div> : null })()}<div className="row wrap"><button className="btn" onClick={() => go('today')}>See Today</button><a className="btn" href={href('sharing')}>Who can see this?</a></div></div>}
+
+  </>)
   return (
     <>
       <h1>Check-in</h1>
-      <p className="muted">{dayLabel(mission, day)}. Four quick answers, about a minute. Stored on your tablet; {sharingOn ? 'emergency sharing is on, so anything urgent appears at once on the medical officer\'s and, as backup, the commander\'s Crew screens; they are not notified, so tell them.' : 'emergency sharing is off, so tell the medical officer yourself about anything urgent.'} <a href={href('sharing')}>Who sees what</a></p>
+      <p className="muted">{dayLabel(mission, day)}. Four quick answers, about a minute. Stored on your tablet; {sharingOn ? 'emergency sharing is on, so anything urgent appears at once on the medical officer\'s and, as backup, the commander\'s Crew screens, and ten seconds after you save it alerts them unless you cancel.' : 'emergency sharing is off: for anything urgent, an alert that you need help, without the reason, goes to the medical officer and commander ten seconds after you save unless you cancel; tell them the rest yourself.'} <a href={href('sharing')}>Who sees what</a></p>
       {!existing && !Number.isNaN(rawSeries(mission, me, 'mood', [])[day]) && <p className="small muted">Today's check-in in this demo came from the simulation. Anything you save here is added to it.</p>}
 
       <Card title="1. How are you feeling?" right={<a className="tiny" href={href('sharing')}>Medical officer sees mood: {LEVELS.find((l) => l.id === (sharing[me]?.cmo.cognition ?? 'none'))?.label.toLowerCase()} · commander: a tier only</a>}>
@@ -167,7 +156,7 @@ export function CheckIn({ open }: { open?: string }) {
         <button className={`choice red ${serious ? '' : ''}`} aria-expanded={serious} onClick={() => setSerious((v) => !v)} data-testid="serious-toggle" style={{ minHeight: 56 }}>Something serious? Chest pain, fainting, trouble breathing, bleeding, vision loss, thoughts of harming yourself…</button>
         {serious && (
           <>
-            <span className="lab">Tell the medical officer now if you have any of these. {sharingOn ? 'Ticking one and saving makes it visible on the medical officer\'s Crew screen (and the commander\'s, except items marked "medical officer only"). Nobody is notified: tell them yourself.' : 'Emergency sharing is off, so nobody else will see it: tell the medical officer yourself.'}</span>
+            <span className="lab">Tell the medical officer now if you have any of these. {sharingOn ? 'Ticking one and saving makes it visible on the medical officer\'s Crew screen (and the commander\'s, except items marked "medical officer only"), and ten seconds after you save it alerts them unless you cancel.' : 'Emergency sharing is off, so nobody else will see what it is; an alert that you need help, without the reason, goes ten seconds after you save unless you cancel. Tell the medical officer yourself.'}</span>
             <div className="choices wide" role="group" aria-label="Symptoms that need the medical officer now">
               {redFlags.map((s) => <button key={s.id} className="choice red" aria-pressed={sym.includes(s.id)} onClick={() => toggle(s.id)} data-testid={`sym-${s.id}`}>{s.label}{(s as { commander?: boolean }).commander === false ? <span className="tiny"> (medical officer only)</span> : null}</button>)}
             </div>
@@ -192,11 +181,7 @@ export function CheckIn({ open }: { open?: string }) {
       </div>
 
       {!more && saveBtn}
-      {prompts}
-      {saved && <div className="card" role="status" ref={(el) => { if (el && justSaved.current) { justSaved.current = false; el.scrollIntoView({ block: 'center' }) } }}><strong>Saved.</strong><p className="muted">Keel has re-checked your readings on this tablet with your new entries.</p>{(() => { const n = (today(me, day)?.findings ?? []).filter((f) => f.status === 'urgent').length; const urgent = (today(me, day)?.findings ?? []).filter((f) => f.status === 'urgent')
-            return n > 0 ? <div className="col"><p className="banner strong"><strong>{n === 1 ? 'One item needs' : `${n} items need`} action now.</strong> See Today for what to do.</p>
-              {autoAlert && !autoCancelled && autoLeft > 0 && <div className="banner strong" role="alert"><p><strong>Alerting the medical officer and commander in {autoLeft} s.</strong></p><button className="btn" onClick={() => { cancelRef.current(); void logAction({ crew: me, alertKey: autoAlert.key, day, did: 'Alert cancelled', feel: null, note: 'typing mistake' }) }} data-testid="cancel-auto-alert">Cancel: it was a typing mistake</button></div>}
-              {(() => { const akey = `alert|${urgent.map((x) => x.key).sort().join('+')}`; return !actions.some((x) => x.crew === me && x.did === 'Alerted the crew' && x.alertKey === akey) ? <button className="btn alert block" style={{ minHeight: 72 }} onClick={() => void logAction({ crew: me, alertKey: akey, day, did: 'Alerted the crew', feel: null, note: urgent.map((x) => x.title).join('; ') })} data-testid="alert-crew-checkin">{urgent.every((x) => x.cmoOnly && !x.patientIsCmo) ? 'Alert the medical officer now' : 'Alert the medical officer and commander now'}</button> : <p className="small"><strong>Alert sent.</strong></p> })()}</div> : null })()}<div className="row wrap"><button className="btn" onClick={() => go('today')}>See Today</button><a className="btn" href={href('sharing')}>Who can see this?</a></div></div>}
+      {!more && resultBlock}
 
       <button className="btn block" aria-expanded={more} onClick={() => setMore((v) => !v)} data-testid="more-checkin">{more ? 'Hide the optional extras' : 'Add more: reaction test, exercise, measurements (optional)'}</button>
       {more && (
@@ -245,6 +230,7 @@ export function CheckIn({ open }: { open?: string }) {
             <p className="small muted">Taking a reading again? Type the new value and save: the earlier one is kept with its time, and both are shown to whoever you share them with.</p>
           </Card>
           {saveBtn}
+          {resultBlock}
         </>
       )}
       <div aria-hidden="true" style={{ height: 96 }} />

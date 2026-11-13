@@ -13,7 +13,10 @@ const ALIASES: Record<string, string[]> = {
   rhr: ['rhr', 'resting_hr', 'restinghr', 'resting_heart_rate', 'restingheartrate', 'resting heart rate', 'hr_lowest', 'lowest_heart_rate'],
   hrv: ['hrv', 'rmssd', 'hrv_rmssd', 'average_hrv', 'hrv (ms)', 'heart_rate_variability'],
   spo2: ['spo2', 'blood_oxygen', 'oxygen_saturation', 'spo2_average', 'avg_spo2'],
-  temp: ['temp', 'temperature', 'body_temperature', 'skin_temp', 'temperature_c'],
+  // a wrist or skin sensor (a change from your usual, not a fever reading)
+  temp: ['temp', 'skin_temp', 'wrist_temp', 'skin_temperature', 'temperature_deviation'],
+  // a thermometer reading: checked against the fever lines
+  temp_oral: ['temp_oral', 'temperature', 'body_temperature', 'temperature_c', 'oral_temp', 'thermometer'],
   sleep_h: ['sleep_h', 'sleep_hours', 'sleep', 'total_sleep_hours', 'hours_asleep'],
   sleep_min: ['minutesasleep', 'minutes_asleep', 'sleep_minutes', 'total_sleep_minutes'],
   sleep_sec: ['total_sleep_duration', 'sleep_seconds'],
@@ -42,11 +45,11 @@ function splitCsvLine(line: string, sep: string): string[] {
   return out.map((s) => s.trim())
 }
 
-const isoDay = (s: string): string | null => {
+const isoDay = (s: string, dayFirst = false): string | null => {
   const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(s)
   if (m) return `${m[1]}-${m[2]}-${m[3]}`
-  const us = /^(\d{1,2})\/(\d{1,2})\/(\d{2,4})/.exec(s)
-  if (us) return `${us[3].length === 2 ? '20' + us[3] : us[3]}-${us[1].padStart(2, '0')}-${us[2].padStart(2, '0')}`
+  const us = /^(\d{1,2})[/.](\d{1,2})[/.](\d{2,4})/.exec(s)
+  if (us) { const [mo, d] = dayFirst ? [us[2], us[1]] : [us[1], us[2]]; return `${us[3].length === 2 ? '20' + us[3] : us[3]}-${mo.padStart(2, '0')}-${d.padStart(2, '0')}` }
   const d = new Date(s)
   return Number.isNaN(d.getTime()) ? null : d.toISOString().slice(0, 10)
 }
@@ -64,10 +67,15 @@ export function parseCsv(text: string): ImportResult {
   if (col.date === undefined) throw new Error('No date column found. Name it "date".')
   const mapped = Object.keys(col).filter((k) => k !== 'date')
   if (!mapped.length) throw new Error('No known indicator columns found. See the sample file for column names.')
+  // dates like 03/04/2024: decide month-first or day-first from the whole file, and refuse if it cannot be told
+  const slash = lines.slice(1).map((l) => /^(\d{1,2})[/.](\d{1,2})[/.]\d{2,4}/.exec((splitCsvLine(l, sep)[col.date] ?? '').replace(/^"|"$/g, ''))).filter((x): x is RegExpExecArray => !!x)
+  const dayFirst = slash.some((x) => Number(x[1]) > 12)
+  const monthFirst = slash.some((x) => Number(x[2]) > 12)
+  if (slash.length && dayFirst === monthFirst) throw new Error(dayFirst ? 'The dates mix day-first and month-first order.' : 'The dates (like 03/04/2024) could be day-first or month-first. Save them as YYYY-MM-DD and import again.')
   const byDay = new Map<string, Record<string, number[]>>()
   for (const line of lines.slice(1)) {
     const cells = splitCsvLine(line, sep)
-    const day = isoDay(cells[col.date] ?? '')
+    const day = isoDay((cells[col.date] ?? '').replace(/^"|"$/g, ''), dayFirst)
     if (!day) continue
     const rec = byDay.get(day) ?? {}
     for (const k of mapped) {
@@ -80,6 +88,10 @@ export function parseCsv(text: string): ImportResult {
     byDay.set(day, rec)
   }
   const notes = [`Columns used: ${mapped.join(', ')}`]
+  if (slash.length) notes.push(`Dates read as ${dayFirst ? 'day/month/year' : 'month/day/year'}.`)
+  // a day with both a low and a very high blood sugar keeps the low one; say so
+  const both = [...byDay.entries()].filter(([, r]) => r.glucose && Math.min(...r.glucose) < 70 && Math.max(...r.glucose) >= 250).map(([d]) => d)
+  if (both.length) notes.push(`On ${both.join(', ')} blood sugar was both under 70 and 250 or more; Keel keeps the low value for that day. Check those days in the file.`)
   return { rows: glucoseUnits(collapse(byDay), notes), format: 'CSV', notes }
 }
 
@@ -88,6 +100,7 @@ const EXTREME: Record<string, (v: number[]) => number> = {
   glucose: (v) => (Math.min(...v) < 70 ? Math.min(...v) : Math.max(...v)),
   sbp: (v) => (Math.min(...v) < 90 ? Math.min(...v) : Math.max(...v)),
   dbp: (v) => Math.max(...v),
+  temp_oral: (v) => Math.max(...v),
   spo2: (v) => Math.min(...v),
 }
 function collapse(byDay: Map<string, Record<string, number[]>>, sum: string[] = []): DayRow[] {
@@ -106,8 +119,9 @@ function glucoseUnits(rows: DayRow[], notes: string[]): DayRow[] {
     notes.push('Blood sugar values look like mmol/L (most are under 35), so they were converted to mg/dL (x 18).')
     return rows.map((r) => (r.values.glucose === undefined ? r : { ...r, values: { ...r.values, glucose: r.values.glucose * 18.016 } }))
   }
-  if (low > 0) notes.push(`${g.filter((v) => v < 35).length} blood sugar value(s) under 35 mg/dL were left out: check the unit in the file.`)
-  return rows.map((r) => (r.values.glucose !== undefined && r.values.glucose < 35 ? { ...r, values: Object.fromEntries(Object.entries(r.values).filter(([k]) => k !== 'glucose')) } : r))
+  // the rest of the file is in mg/dL: a value under 35 is kept and treated as a dangerous low, the safe error
+  if (low > 0) notes.push(`${g.filter((v) => v < 35).length} blood sugar value(s) under 35 mg/dL were kept and are treated as dangerously low: check the unit of those rows in the file.`)
+  return rows
 }
 
 /** Fitbit / Google Takeout: resting_heart_rate-*.json and sleep-*.json (arrays of records). */
@@ -140,7 +154,7 @@ const AH: Record<string, { id: string; scale?: number; sum?: boolean }> = {
   HKQuantityTypeIdentifierRestingHeartRate: { id: 'rhr' },
   HKQuantityTypeIdentifierHeartRateVariabilitySDNN: { id: 'hrv' },
   HKQuantityTypeIdentifierOxygenSaturation: { id: 'spo2', scale: 100 },
-  HKQuantityTypeIdentifierBodyTemperature: { id: 'temp' },
+  HKQuantityTypeIdentifierBodyTemperature: { id: 'temp_oral' },
   HKQuantityTypeIdentifierBodyMass: { id: 'mass' },
   HKQuantityTypeIdentifierBloodPressureSystolic: { id: 'sbp' },
   HKQuantityTypeIdentifierBloodGlucose: { id: 'glucose' },
@@ -178,7 +192,7 @@ export function parseAppleHealth(text: string): ImportResult {
     if (map.scale && v <= 1) v *= map.scale
     if (map.id === 'glucose' && (attr(a, 'unit') ?? '').startsWith('mmol')) v *= 18.016
     if (map.id === 'mass' && attr(a, 'unit') === 'lb') v *= 0.45359237
-    if (map.id === 'temp' && attr(a, 'unit') === 'degF') v = (v - 32) / 1.8
+    if ((map.id === 'temp' || map.id === 'temp_oral') && attr(a, 'unit') === 'degF') v = (v - 32) / 1.8
     const day = isoDay(start)
     if (!day) continue
     const rec = byDay.get(day) ?? {}

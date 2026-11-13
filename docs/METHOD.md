@@ -257,8 +257,10 @@ radiation alarm [47][48]. After two days without any reading the status is "no r
 - **Constants fixed before the first real-data run** (from the build plan and the first commits): the
   per-indicator floors, the 28-night minimum, the −21/+28 exclusion zone, the merge gap, the 7-day
   re-alert and the 2-of-3 rule. Changed afterwards, as recorded in `DECISIONS.md`: the detection
-  window, the metric (above luck), the chance estimate, the detector selection rule and the activity
-  feature used in the headline.
+  window, the metric (above luck), the chance estimate, the detector selection rule, the activity
+  feature used in the headline, and the protocol itself: `DATA.md` first proposed tuning thresholds
+  on Stanford phase 1 and reporting on phase 2; the primary analysis became pooled 5-fold
+  cross-validation over people, with the cross-phase split reported beside it.
 - **The window.** It was narrowed from −14..+7 to −10..+4 days while the real-data evaluation was
   being written. The commit history cannot show that this preceded the first run, and of the four
   windows later tabulated it has the largest gap above luck, so the original window's results are
@@ -366,7 +368,7 @@ the same code version). Real data: 251 people, 107 illness episodes, two sensors
   rate for 63 LifeSnaps people (120 person-months, no illness labels, so every alert counts), it gave
   1.07 alerts per person-month at the notice tier (budget 1.00) and 0.46 at the alert tier (budget
   0.25): close at the notice tier, nearly twice over at the alert tier. On that input the alert-tier
-  predictive value falls to about 1 in 30 (1 in 61 for notices).
+  predictive value falls to about 1 in 30 (1 in 61 for notices), assuming detection carries over unchanged to that input (not measured).
 - **Alerts counted nowhere.** Alerts starting 11 to 21 days before an onset or 5 to 28 days after fall
   in neither the detection window nor quiet time: 56 at the notice tier (0.5 per episode) and 34 at
   the alert tier. False-alert rates therefore understate the burden for people who were ill.
@@ -395,7 +397,7 @@ the same code version). Real data: 251 people, 107 illness episodes, two sensors
   (daily steps, thresholds from real people) and 1 in 27 (two sensors, simulator thresholds)
   alert-tier alerts would be such an illness; about 1 in 37 to 56 notices. For the import model, the
   configuration the app runs on real data: 1 in 16 alert-tier alerts and 1 in 56 notices on night-time
-  heart rate, 1 in 30 and 1 in 61 on the watch maker's own resting heart rate. All are upper bounds on the share that is respiratory illness: the sensitivity comes from
+  heart rate, 1 in 30 and 1 in 61 on the watch maker's own resting heart rate (assuming detection carries over unchanged, not measured). All are upper bounds on the share that is respiratory illness: the sensitivity comes from
   mostly symptomatic COVID-19, and uncounted alerts near episodes and over-budget transfers would lower
   the shares further.
 - **How luck is measured matters by a few points.** Device-weighted pseudo-events with real
@@ -427,7 +429,7 @@ the same code version). Real data: 251 people, 107 illness episodes, two sensors
   (exact paired p = 0.06), there is no ground truth that these flags are false (a faster pulse after
   bed rest is real), and the learned shift adds nothing beyond widening the band (it is only +1.0 bpm, interquartile range −1 to
   5.5, from 13 volunteers). The same pulse-only
-  2-of-3 rule flags 11 of 31 (35%) 14-day stretches away from any transition, so Keel's 4 of 14 (29%)
+  2-of-3 rule flags 11 of 31 (35%) 14-day stretches away from any transition, so the phase-handling rule's 4 of 14 (29%)
   is about the chance level; the plain baseline's 9 of 14 (64%) is higher but not distinguishable from
   chance either (Fisher's exact p about 0.1, and the 31 stretches come from only 15 people). The bed-rest
   variant is not the app's detector: it uses a pulse-only 2-of-3 rule, a 4-day adaptation constant and

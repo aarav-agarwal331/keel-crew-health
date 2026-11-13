@@ -50,10 +50,10 @@ export function Crew() {
         // when the patient is the medical officer, the commander (their backup) acknowledging is enough
         const isCmo = (crewId: string) => mission.crew.find((c) => c.id === crewId)?.role === 'cmo'
         const open = raised.filter((x) => !acksFor(x).some((q) => /medical officer/.test(q.note) || (isCmo(x.crew) && /commander/.test(q.note))))
-          .filter((x) => !(role === 'commander' && /\(medical officer only\)/.test(x.note) && !isCmo(x.crew)))
+          .filter((x) => !(role === 'commander' && (x.cmoOnly || /\(medical officer only\)/.test(x.note)) && !isCmo(x.crew)))
         return open.map((x) => (
           <section key={x.ts} className="card action" role="alert" data-testid="crew-alert">
-            <p className="do">{mission.crew.find((c) => c.id === x.crew)?.name} raised an alert at {new Date(x.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}{(sharing[x.crew]?.emergency !== false) ? `: ${x.note}` : ''}. Go to them now.</p>
+            <p className="do">{/\(sent automatically\)/.test(x.note) ? `Alert about ${mission.crew.find((c) => c.id === x.crew)?.name}, sent automatically after an urgent check-in` : `${mission.crew.find((c) => c.id === x.crew)?.name} raised an alert`} at {new Date(x.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}{(sharing[x.crew]?.emergency !== false) ? `: ${(role === 'commander' && !isCmo(x.crew) && x.cmdNote !== undefined ? x.cmdNote : x.note).replace(/ \(sent automatically\)/, '').replace(/ \(medical officer only\)/, '')}` : ''}. Go to them now.</p>
             {acksFor(x).map((q) => <p key={q.ts} className="small">Acknowledged {q.note} at {new Date(q.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}.</p>)}
             {!acksFor(x).some((q) => q.note.includes(role === 'cmo' ? 'medical officer' : 'commander')) && <button className="btn primary" onClick={() => void logAction({ crew: x.crew, alertKey: x.alertKey, day, did: 'Acknowledged the alert', feel: null, note: `by the ${role === 'cmo' ? 'medical officer' : 'commander'}` })} data-testid="ack-alert">Acknowledge: I am on my way</button>}
             <p className="tiny muted">In a flight version this would sound on the medical officer's and commander's tablets over the cabin network; no Earth link is needed.</p>

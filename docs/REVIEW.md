@@ -601,6 +601,55 @@ the diastolic CSV column. Not done, with reasons: grams of sugar and hand-washin
 listed for a clinician), removing "Same as usual" for fluids, and limiting light exercise to detector-only
 notices (both judgement calls for a clinician).
 
-## Round 13
+## Round 13 (2026-11-12, fresh reviewers, redeployed build)
 
-See the end of this file once the thirteenth round has run.
+Judge's scores: impact 7, creativity 8, validity 8, relevance 8, presentation 6 (37 of 50), "nominate:
+yes", with one high-severity issue. The astronaut found three, the flight surgeon two, the
+statistician one. Two of them (judge 1, astronaut 1) are the same finding.
+
+| # | Reviewer | High-severity finding | Fix |
+|---|---|---|---|
+| 1 | Judge, astronaut (flight surgeon medium) | Five places still said nobody is alerted, while the round-12 automatic alert did alert them. | One rule, stated the same way on Check-in, Today, Alert detail and Sharing: an urgent save alerts the medical officer and commander after ten seconds unless cancelled; with emergency sharing off the alert says only that the person needs help. |
+| 2 | Astronaut | Sharing said the medical officer sees same-day items in private areas only as "an item is open", and two paragraphs later that they see what it is. | The "always visible" list now matches the code: every open safety item, with what it is and its readings. The page opens with the three exceptions to "your data is yours". |
+| 3 | Astronaut | With the extras open, the act-now instruction and countdown appeared above the extras, far from the measurement just typed. | The save result sits directly under whichever Save button was pressed, right after the measurements. |
+| 4 | Flight surgeon | The Check-in alert button did not mark "medical officer only" alerts, so a self-harm tick could reach the commander's screen. | Alerts carry structured fields (`cmoOnly`, and the commander's text without private items) from one helper used by every alert path; unit-tested. |
+| 5 | Flight surgeon | "Handled, not cleared" did not change the commander's tier and lapsed after a day; notice closures were never checked at all; two days without data turned an open item into "Not enough recent data". | A restriction is person-level and lasts until the medical officer records a clearance; it holds exercise and puts the tier on "Talk to the medical officer first"; open safety items or a restriction override "not enough data". Unit-tested. |
+| 6 | Statistician | "Mostly on or after the first day of symptoms" was wrong for heart rate alone (30% of episodes had an alert start at least a day before). | The sentence was removed; the figure is given from the JSON where needed. |
+
+Medium-severity findings fixed in the same pass:
+
+- **One alert service** (flight surgeon): Check-in and the thermometer box on Today use the same hook;
+  it sends after ten seconds unless cancelled, sends at once if the screen is left, sends a no-reason
+  alert when sharing is off, and alerts the whole crew automatically if the medical officer has not
+  acknowledged within five minutes (while the app is open). The cancel button says "Cancel the alert".
+- **Imports** (flight surgeon): a `temperature` or `body_temperature` column and Apple Health body
+  temperature are thermometer readings checked against the fever lines (`skin_temp` stays the wrist
+  sensor); a day with both a low and a very high sugar is listed; a value under 35 in a mg/dL file is
+  kept and treated as dangerously low; ambiguous slash dates are refused, unambiguous ones read in the
+  file's own order. Unit-tested.
+- **Early warning for heart rate alone** (statistician): its by-onset results exclude zero at both tiers;
+  the text now says so and why it is still not claimed (counts the day of onset, no luck-adjusted
+  figure for alerts strictly before onset, test-date anchors). Computing that strictly-before figure
+  needs a pipeline change and is listed as not done.
+- **Vendor predictive values** (statistician): "assuming detection carries over unchanged (not measured)".
+- **Realism cause** (statistician): "mainly" became "possibly", with the smaller simulated heart-rate rise
+  and onset-date error in the spread named.
+- **Headline wording** (judge, astronaut): R-ILL is now "Readings like those often seen early in an
+  infection"; its other readings are listed openly, not folded; the "After the above" fold names its
+  items; a repeated reading says which one still counts ("50, then 85; 50 still counts").
+- **Tier names** (judge): "notice tier" and "alert tier" everywhere.
+- **Area names** (astronaut): each sharing area names the body-figure regions it covers.
+- **Text density** (judge): the duplicate lead paragraph on Validation was removed and the emergency-sharing
+  detail folded.
+
+Low-severity items fixed: duplicated sugar wording, the automatic alert named as such on the Crew screen,
+bed-rest "Keel" renamed to "pulse-only rule with phase handling" and "gain" to "fewer flags", a caption
+limited to the personal detectors, the protocol change from DATA.md listed in METHOD.md. Not done: urgent
+items ordered by clinical priority (the rule table's priority already puts low sugar first), lunar mission
+on Today, a bone note, matched operating points for the +32 comparison (needs a pipeline run), threshold
+changes the flight surgeon suggested (180/120 repeated as "now", fever line in flight), and source checks
+on two notes (the CO2 figure was checked against the PubMed abstract in round 9 and is correct).
+
+## Round 14
+
+See the end of this file once the fourteenth round has run.

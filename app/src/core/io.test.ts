@@ -22,6 +22,15 @@ describe('importers', () => {
     expect(r.rows[1].values).toEqual({ sleep_h: 6.5 })
     expect(toMission(r, 'x').days).toBe(3)
   })
+  it('reads a thermometer column as a fever-checked reading, keeps low blood sugar, and refuses ambiguous dates', () => {
+    const r = parseCsv('date,temperature,skin_temp,glucose\n2026-01-01,38.6,0.4,60\n2026-01-01,37.0,0.2,350\n2026-01-02,36.8,0.1,20\n2026-01-03,36.7,0.0,110\n')
+    expect(r.rows[0].values.temp_oral).toBe(38.6)
+    expect(r.rows[0].values.glucose).toBe(60)
+    expect(r.rows[1].values.glucose).toBe(20)
+    expect(r.notes.join(' ')).toMatch(/both under 70/)
+    expect(() => parseCsv('date,rhr\n03/04/2026,60\n05/06/2026,61\n')).toThrow(/YYYY-MM-DD/)
+    expect(parseCsv('date,rhr\n13/04/2026,60\n03/04/2026,61\n').rows.map((x) => x.date)).toEqual(['2026-04-03', '2026-04-13'])
+  })
   it('rejects files without a date or known columns', () => {
     expect(() => parseCsv('a,b\n1,2\n')).toThrow(/date/)
     expect(() => parseCsv('date,foo\n2026-01-01,2\n')).toThrow(/indicator/)

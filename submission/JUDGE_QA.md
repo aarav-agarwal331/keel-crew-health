@@ -12,7 +12,7 @@ baseline flagged 9 of 14 volunteers after getting up and Keel flagged 4, which i
 
 **2. Does it give early warning before symptoms? If not, what is the value?**
 No useful early warning shown. At the notice tier an alert started in the ten days up to symptom
-onset for 46% of episodes against 28% by luck (+18, 9 to 28). At the stricter tier, the one that
+onset for 46% of episodes against 28% by luck (+18, 9 to 28). At the alert tier, the one that
 brings in the medical officer, the gain is +1 (−5 to 7), that is, none. Those are the two-sensor linking analysis; for heart rate
 alone, the model imports run on, they are +16 (7 to 25) and +8 (2 to 15), and both windows include
 the day of onset itself. The notice-tier gain is small
@@ -30,11 +30,11 @@ The best number (+34 above luck, 24 to 44) used daily steps and thresholds set o
 Keel uses neither. Our headline is Keel's method on two sensors (overnight heart rate, 7-day activity)
 with its model and thresholds fitted only on simulated people, applied unchanged to real people: 72%
 of 107 episodes flagged against 40% by luck, +32 points (22 to 41), at 1.40 false alerts per
-person-month against a budget of 1.00. At the stricter tier, the one that brings in the medical
+person-month against a budget of 1.00. At the alert tier, the one that brings in the medical
 officer, +19 (9 to 28) at 0.39 against 0.25. On the 132 people the simulator's fits did not use,
 +35 (22 to 46). It is not what the shipped app would do with a watch import: the model file it ships
 is calibrated for all eleven on-board channels, and given only a watch's channels it flagged 12% of
-episodes (+9, 4 to 16) at 0.08 false alerts per person-month, with the stricter tier never firing.
+episodes (+9, 4 to 16) at 0.08 false alerts per person-month, with the alert tier never firing.
 Thresholds have to match the sensors, so imports now run on a separate heart-rate-only model
 calibrated on the 251 real people, whose cross-validated result is +22 above luck (12 to 32).
 

@@ -174,7 +174,7 @@ export function Replay() {
           <span className="tag">Result of this replay</span>
           {lead === null ? <p className="do">Keel did not flag this event inside the replay window.</p>
             : <p className="do">In this scripted case Keel flagged it {ev.type === 'illness' && firstAlert && firstAlert.led !== 'personal' ? 'with her check-in, ' : ''}{lead > 0 ? `${lead} day${lead === 1 ? '' : 's'} before` : lead === 0 ? 'on the day' : `${-lead} day${lead === -1 ? '' : 's'} after`} {ev.type === 'illness' ? 'symptoms began' : 'it started'}, with a specific action and no link to Earth.</p>}
-          {ev.type === 'illness' && lead !== null && lead > 0 && <p className="small"><strong>Do not read this as early warning.</strong> On real data an alert a day or two ahead is only somewhat more common than luck would give, and not at the stricter tier.</p>}
+          {ev.type === 'illness' && lead !== null && lead > 0 && <p className="small"><strong>Do not read this as early warning.</strong> On real data an alert a day or two ahead is only somewhat more common than luck would give, and not at the alert tier.</p>}
           {ev.type === 'illness' && firstAlert && (
             <p className="small"><strong>Sensors alone, or with her check-in?</strong> {firstAlert.led === 'personal'
               ? `The sensors alone showed the pattern on ${shortDay(mission, firstAlert.day)}; no symptom report was needed for this flag.`

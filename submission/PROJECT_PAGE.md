@@ -184,7 +184,7 @@ activity).**
 
 **NASA bed-rest analog data.** After getting up from head-down bed rest, a plain personal baseline
 flags the pulse of 9 of 14 volunteers; Keel flags 4. The difference is not significant (exact paired
-p = 0.06), there is no ground truth that those flags are false, and the gain comes from widening the
+p = 0.06), there is no ground truth that those flags are false, and the fewer flags come from widening the
 band. The same rule flags about a third of quiet two-week stretches, so 4 of 14 is roughly chance level.
 
 **Simulated missions (full sensor set, 1 false alert per person-month).** 67% flagged against 41% by
