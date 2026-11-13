@@ -7,7 +7,7 @@ Sharing and privacy
 Lucía Reyes, your health data is yours. You decide below what each role can see. What is shown whatever you choose:
 
 Who	Always	Your choice
-Medical officer	With emergency sharing on: every urgent or same-day safety item, with the value entered, and an alert for urgent ones; while an urgent item is open, also your heart, oxygen and temperature and your symptoms at trend level, so they can help. With it off: an alert that you need help, and "an item, details private".	Each area: nothing, status, trend or full detail
+Medical officer	With emergency sharing on: every urgent or same-day safety item, with the value entered, and an alert for urgent ones; while an urgent item is open, also whether your heart, oxygen, temperature and symptom readings are inside your usual range (not what any notice says), so they can help. With it off: an alert that you need help, and "an item, details private".	Each area: nothing, status, trend or full detail
 Commander	Your readiness tier, without the reason. With emergency sharing on: urgent items, the value entered and an alert, as backup (never items marked "medical officer only"). With it off: an alert that you need help.	Each area
 Crew	A count when three or more crew show a change in the same area	Nothing
 Ground	With emergency sharing on: a count of urgent items still open. With it off: nothing.	Each area, for the flight surgeon
@@ -23,7 +23,7 @@ To everyone: cabin readings (air, radiation). They are not personal.
 Emergency sharing
 On
 Off
-When on, a symptom you mark as serious or an "act now" safety reading appears at once on the medical officer's and the commander's Crew screens (what it is, the value entered and the action; the commander never sees items marked "medical officer only" and never sees your reading log), an alert goes to both ten seconds after you save (at once if you leave Check-in) unless you cancel it, and it stays on the medical officer's list until they close it with a note.
+When on, a symptom you mark as serious or an "act now" safety reading appears at once on the medical officer's and the commander's Crew screens (what it is, the value entered and the action; the commander never sees items marked "medical officer only" and never sees your reading log), an alert goes to both ten seconds after you save (at once if you leave Check-in) unless you withdraw a typing mistake, and it stays on the medical officer's list until they close it with a note.
 More about emergency sharing
 Who are you setting this for?
 Crew medical officer
@@ -88,7 +88,7 @@ Exercise	Status	Steady
 Mind and mood	Status	Worth a look
 Food and fluids	Status	Worth a look
 Symptoms	Status	Act today
-That an alert exists in heart, oxygen and temperature, not what it says
+Alert in heart, oxygen and temperature: Several readings have moved the way they can during an infection
 Alert in symptoms: The same symptom three days running
 Access log
 Stored on your device

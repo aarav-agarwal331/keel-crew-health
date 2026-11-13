@@ -86,7 +86,7 @@ Today. The crew medical officer.
 
 Ask the medical officer to see me today
 
-Open for 3 days without a conversation: ask today. They may see that an item is open, but nobody has asked them to see you until you tap this or tell them.
+Open for 3 days: the medical officer's screen now marks it overdue and asks them to see you today. Tap this to ask them directly as well.
 
 Possible illness in a closed cabin affects the whole crew, and early rest is cheap.
 

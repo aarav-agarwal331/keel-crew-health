@@ -10,13 +10,13 @@ The evidence
 Hide
 Act now
 
-Blood sugar reading is below 54 mg/dL (entered: 50, then 85; the 50 still counts)
+Heart rate reading at rest is 150 or more (entered: 170)
 
 Demo crew member, simulated readings.
 
 RECOMMENDED ACTION
 
-Take sugar now if you can swallow, and call a crewmate to you. Your readings disagree (50, then 85): treat it as low to be safe. Tell the medical officer now. Re-check at 21:43.
+Call a crewmate to you now. Sit or strap in, count your pulse by hand for a full minute now, and tell the medical officer now.
 
 When: now. Who: the crew medical officer.
 
@@ -24,19 +24,18 @@ A fixed safety threshold, not a trend.
 
 For whoever is with you: if they are confused, drowsy or cannot swallow safely, give nothing by mouth and get the medical officer now.
 
-Alert sent at 21:28. Not acknowledged yet: it stays at the top of their Crew screens until the medical officer does.
+Alert sent at 21:38. Not acknowledged yet: it stays at the top of their Crew screens until the medical officer does.
 
 The details are visible on their Crew screens (emergency sharing).
 
 Also act now
-Heart rate reading at rest is 150 or more (entered: 170). Call a crewmate to you now. Sit or strap in, count your pulse by hand for a full minute now, and tell the medical officer now.
-Repeat reading: heart rate now, sitting at rest (bpm)
-Save repeat
+Blood sugar reading is below 54 mg/dL (entered: 50, then 85; the 50 still counts). Take sugar now if you can swallow, and call a crewmate to you. Your readings disagree (50, then 85): treat it as low to be safe. Tell the medical officer now. Re-check at 21:53.
 Repeat reading: blood sugar (mg/dL)
 Save repeat
+Repeat reading: heart rate now, sitting at rest (bpm)
+Save repeat
 Readings behind the first item:
-Blood sugar 50 mg/dL, at 21:28
-Blood sugar 85 mg/dL, at 21:28
+Heart rate at rest 170 bpm, at 21:38
 Every reading is kept. The most abnormal reading of the day stays on the medical officer's list until they close it. What you are told to do follows your latest reading once a repeat counts (for blood sugar, 15 minutes after the first).
 Why, and what next
 
@@ -56,10 +55,10 @@ Lower than your usual 43. More unusual than 49 of your last 53 days. Outside you
 Your body at a glance
 Cabin
 Brain, sleep and mood
+Worth a look
 Heart and circulation
 Act now
 Lungs and oxygen
-Act today
 Food and fluids
 Act now
 Muscle and bone
@@ -81,8 +80,8 @@ How to measure
 Today's routine
 14-day streak
 100%
-Exercise this week
-721 of 720 planned minutes. Paused: no exercise until the medical officer clears you.
+Exercise: paused
+The plan is suspended until the medical officer clears you. Minutes logged this week, before the pause or by the exercise devices: 721.
 
 Crew goal this week: 90% of planned exercise done together. Individual numbers stay private.
 

@@ -26,7 +26,7 @@ Possible illness in a closed cabin affects the whole crew, and early rest is che
 
 Ask the medical officer to see me today
 
-Open for 3 days without a conversation: ask today. They may see that an item is open, but nobody has asked them to see you until you tap this or tell them.
+Open for 3 days: the medical officer's screen now marks it overdue and asks them to see you today. Tap this to ask them directly as well.
 
 Also today, from the same readings:
 
@@ -57,11 +57,12 @@ Lower than your usual 97. More unusual than 38 of your last 53 days. The latest 
 Your body at a glance
 Cabin
 Brain, sleep and mood
+Worth a look
 Heart and circulation
 Act today
 Lungs and oxygen
-Act today
 Food and fluids
+Worth a look
 Muscle and bone
 Whole body
 Act today
@@ -81,8 +82,8 @@ How to measure
 Today's routine
 14-day streak
 100%
-Exercise this week
-721 of 720 planned minutes. Paused: no exercise until the medical officer clears you.
+Exercise: paused
+The plan is suspended until the medical officer clears you. Minutes logged this week, before the pause or by the exercise devices: 721.
 
 Crew goal this week: 90% of planned exercise done together. Individual numbers stay private.
 

@@ -40,7 +40,7 @@ Display
 Dark (cabin night)
 Light
 
-Keel last re-checked the whole crew's readings on this tablet in 35 milliseconds. There is no server.
+Keel last re-checked the whole crew's readings on this tablet in 37 milliseconds. There is no server.
 
 Erase my data on this device
 

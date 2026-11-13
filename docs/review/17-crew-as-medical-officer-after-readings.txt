@@ -2,7 +2,7 @@ SCREEN: 17-crew-as-medical-officer-after-readings
 TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 122 | Simulated data
 BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
-Alert about Lucía Reyes, sent automatically after an urgent check-in at 21:28: Blood sugar reading is below 54 mg/dL (entered: 50, then 85; the 50 still counts); Heart rate reading at rest is 150 or more (entered: 170). Go to them now.
+Alert about Lucía Reyes, sent automatically after an urgent check-in at 21:38: Heart rate reading at rest is 150 or more (entered: 170); Blood sugar reading is below 54 mg/dL (entered: 50, then 85; the 50 still counts). Go to them now.
 
 Acknowledge: I am on my way
 
@@ -43,29 +43,30 @@ Symptoms
 Lucía Reyes
 Flight engineer
 
-Blood sugar reading is below 54 mg/dL (entered: 50, then 85; the 50 still counts). (shared automatically: emergency sharing)
-
-Entered readings, in order:
-Blood sugar 50 mg/dL, at 21:28
-Blood sugar 85 mg/dL, at 21:28
-
-Lucía was told: "Take sugar now if you can swallow, and call a crewmate to you. Your readings disagree (50, then 85): treat it as low to be safe. Tell the medical officer now. Re-check at 21:43."
-
 Heart rate reading at rest is 150 or more (entered: 170). (shared automatically: emergency sharing)
 
 Entered readings, in order:
-Heart rate at rest 170 bpm, at 21:28
+Heart rate at rest 170 bpm, at 21:38
 
 Lucía was told: "Call a crewmate to you now. Sit or strap in, count your pulse by hand for a full minute now, and tell the medical officer now."
+
+Blood sugar reading is below 54 mg/dL (entered: 50, then 85; the 50 still counts). (shared automatically: emergency sharing)
+
+Entered readings, in order:
+Blood sugar 50 mg/dL, at 21:38
+Blood sugar 85 mg/dL, at 21:38
+
+Lucía was told: "Take sugar now if you can swallow, and call a crewmate to you. Your readings disagree (50, then 85): treat it as low to be safe. Tell the medical officer now. Re-check at 21:53."
 
 Act now
 
 Heart, oxygen and temperature (act now)
-: Resting HR out of range, HRV out of range, Skin temp out of range
+: because of heart rate reading at rest is 150 or more (entered: 170); trends outside the usual range: HRV out of range
 Sleep and body clock
 Exercise
 Mind and mood (worth a look)
 Food and fluids (act now)
+: because of blood sugar reading is below 54 mg/dl (entered: 50, then 85; the 50 still counts)
 Symptoms (act today)
 Several readings have moved the way they can during an infection (act today, 3 days)
 Note only, keep open
@@ -78,13 +79,13 @@ Overdue: an item that needs you has been open for 3 days. Please see Lucía toda
 Open items for you to close
 Blood sugar reading is below 54 mg/dL (Day 122, needed attention at once)
 Entered readings:
-Blood sugar 50 mg/dL, at 21:28
-Blood sugar 85 mg/dL, at 21:28
+Blood sugar 50 mg/dL, at 21:38
+Blood sugar 85 mg/dL, at 21:38
 Close: resolved, no restriction
 Close: resolved, not cleared
 Heart rate reading at rest is 150 or more (Day 122, needed attention at once)
 Entered readings:
-Heart rate at rest 170 bpm, at 21:28
+Heart rate at rest 170 bpm, at 21:38
 Close: resolved, no restriction
 Close: resolved, not cleared
 
