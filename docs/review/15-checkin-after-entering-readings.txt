@@ -2,11 +2,11 @@ SCREEN: 15-checkin-after-entering-readings
 TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 122 | Simulated data
 BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
-ACT NOW
-
-Take sugar now if you can swallow, and call a crewmate to you. Your readings disagree (50, then 85): treat it as low to be safe. Tell the medical officer now. Re-check at 00:17.
-
-One more item below, under "Saved".
+Act now
+Heart rate reading at rest is 150 or more (entered: 170).
+Call a crewmate to you now. Sit or strap in, put the ECG or pulse oximeter on now, and tell the medical officer now.
+Blood sugar reading is below 54 mg/dL (entered: 50, then 85; the 50 still counts).
+Take sugar now if you can swallow, and call a crewmate to you. Your readings disagree (50, then 85): treat it as low to be safe. Tell the medical officer now. Re-check at 00:32.
 
 Alerting the medical officer and commander in 9 s. A typing mistake? Withdraw it below.
 
@@ -113,29 +113,29 @@ How to measure
 Heart rate now, sitting at rest (spot check) (bpm)
 How to measure
 Readings today:
-Blood sugar 50 mg/dL, at 00:02 Typing mistake?
-Blood sugar 85 mg/dL, at 00:02 (0 s after the one before) Typing mistake?
-Heart rate at rest 170 bpm, at 00:02 Typing mistake?
+Blood sugar 50 mg/dL, at 00:17 Typing mistake?
+Blood sugar 85 mg/dL, at 00:17 (0 s after the one before) Typing mistake?
+Heart rate at rest 170 bpm, at 00:17 Typing mistake?
 Every reading is kept. The most abnormal reading of the day stays on the medical officer's list until they close it. What you are told to do follows your latest reading once a repeat counts (for blood sugar, 15 minutes after the first).
 
 Taking a reading again? Type the new value and save: the earlier one is kept with its time, and both are shown to whoever you share them with.
 
 Save check-in
 
-Act now: Take sugar now if you can swallow, and call a crewmate to you. Your readings disagree (50, then 85): treat it as low to be safe. Tell the medical officer now. Re-check at 00:17.
+Act now: Take sugar now if you can swallow, and call a crewmate to you. Your readings disagree (50, then 85): treat it as low to be safe. Tell the medical officer now. Re-check at 00:32.
 
 Blood sugar: 50 mg/dL is past a fixed safety line, so Keel saved it and is acting on it. It is now on the medical officer's and the commander's Crew screens (emergency sharing), and an alert goes to them ten seconds after saving (at once if you leave this screen) unless you withdraw it below as a typing mistake. While it is open, the medical officer also sees whether your heart, oxygen, temperature and symptom readings are in your usual range, and today's medication classes. Is that what the device showed?
 
-Yes, that is right
+Yes, that is right: keep it
 No, a typing mistake: withdraw it
 
 If you withdraw it, it stays in the log, struck through, and the medical officer still sees that it was entered.
 
-Act now: Call a crewmate to you now. Sit or strap in, count your pulse by hand for a full minute now, and tell the medical officer now.
+Act now: Call a crewmate to you now. Sit or strap in, put the ECG or pulse oximeter on now, and tell the medical officer now.
 
 Heart rate now, sitting at rest (spot check): 170 bpm is past a fixed safety line, so Keel saved it and is acting on it. It is now on the medical officer's and the commander's Crew screens (emergency sharing), and an alert goes to them ten seconds after saving (at once if you leave this screen) unless you withdraw it below as a typing mistake. While it is open, the medical officer also sees whether your heart, oxygen, temperature and symptom readings are in your usual range, and today's medication classes. Is that what the device showed?
 
-Yes, that is right
+Yes, that is right: keep it
 No, a typing mistake: withdraw it
 
 If you withdraw it, it stays in the log, struck through, and the medical officer still sees that it was entered.
@@ -148,10 +148,8 @@ Keel has re-checked your readings on this tablet with your new entries.
 
 Alerting the medical officer and commander in 9 s. Leaving this screen sends it now.
 
-A typing mistake? Withdraw that reading; the alert still goes for anything else.
+A typing mistake? Use "No, a typing mistake: withdraw it" just above; the alert still goes for anything else.
 
-Withdraw blood sugar 50: typing mistake
-Withdraw heart rate now, sitting at rest (spot check) 170: typing mistake
 Alert the medical officer and commander now
 See Today
 Who can see this?

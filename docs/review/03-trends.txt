@@ -78,7 +78,6 @@ Sleep duration
 5
 10
 Scheduled sleep period 8.5 h
-Notice
 Day 67
 Day 85
 Day 104
@@ -116,7 +115,6 @@ Reaction time
 286 ms
 250
 300
-Notice
 Day 67
 Day 85
 Day 104
@@ -129,7 +127,6 @@ Mood
 2 /5
 0
 5
-Notice
 Day 67
 Day 85
 Day 104
@@ -157,7 +154,6 @@ Food intake
 75
 100
 Planned: 100%
-Notice
 Day 67
 Day 85
 Day 104

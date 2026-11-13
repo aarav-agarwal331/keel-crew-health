@@ -4,7 +4,7 @@ BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
 Does it work?
 
-Every number here was produced by a script in the repository. Real data is used wherever it exists; everything else is simulated and labelled. Intervals are 95% bootstrap intervals over people (real data) or missions (simulation), with thresholds held fixed, which makes them somewhat narrower than they should be. Analysis choices such as the metric, the detection window and the detector selection rule were revised during several of the review rounds, so this is not a pre-planned analysis; the decision log in the repository records each change.
+Every number here was produced by a script in the repository. Real data is used wherever it exists; everything else is simulated and labelled. Intervals are 95% bootstrap intervals over people (real data) or missions (simulation), with thresholds held fixed, which makes them somewhat narrower than they should be. Analysis choices such as the metric, the detection window and the detector selection rule were revised during development, so this is not a pre-registered analysis; every change is in the repository's decision log.
 
 The short version
 By design: with no link to Earth, it answers a dangerous reading or a serious symptom at once with one written step (each threshold cited or marked provisional) and an alert to the medical officer and commander. Unit-tested; no clinician has reviewed the thresholds.
@@ -23,7 +23,7 @@ The numbers behind this
 Jump to: real data · simulated missions · simulator realism · NASA bed-rest data · limitations
 
 Detection above luck on real illness, notice tier
-Heart rate alone (the import model; +13 in the p…
+Heart rate alone (imports; +13 pre-set window)
 +19
 Two sensors, simulator-set, at 1.31 false alerts…
 +28
@@ -57,7 +57,7 @@ Left out for too few nights: 21 of the 73 had a dated illness (17 of them Apple 
 
 37,234 person-days; 768 person-months of scored quiet time. Phase 1: 120 recordings from 118 people (one person has three short recordings, all excluded for length). Phase 2 is a subset of the release: all 84 positives, plus the first 60 Fitbit and first 60 other-device participant IDs in sorted order (not a random draw). Dates are shifted per person by the data owners, so pretend events cannot be matched to the calendar: lockdowns and isolation after a positive test are tangled up with onset. Every episode counts for every method: an episode Keel could not score (no baseline yet) is a miss.
 
-Keel's rule, a fixed threshold and more complex detectors, real data
+The simple rule on heart rate + daily steps (not a setup the app runs), a fixed threshold and more complex detectors, real data
 One threshold for all
 +18
 Keel's rule (2-of-3 rule…
@@ -68,13 +68,13 @@ Personal + multivariate
 +34
 Personal, fused
 +34
-Heart rate and daily steps, thresholds from other real people, one false alert per person-month. At the notice tier the four personal-baseline methods cannot be told apart: Keel now runs the simple two-of-three-days rule itself; the multivariate EWMA against it is +5 (−2 to 12, includes zero). Against one fixed threshold Keel leads by +11 (−3 to 25, includes zero) in the −10..+4 day window, by +7 (−5 to 20, includes zero) in the original −14..+7 window, and by +11 (−2 to 24, includes zero) if an alert that is already open in the window also counts. The simple rule's lead over the fixed threshold is +11 (−3 to 25, includes zero). Four detectors, two tiers and a window chosen after seeing data were compared with no correction for multiple looks, and the near like-for-like contrast of a personal against a population baseline (the same 2-of-3 rule, but personal scores are capped at 4 and the fixed one is not, and the fixed one needs no warm-up) is +11 (−3 to 25, includes zero) at the notice tier but +17 (7 to 28) at the alert tier: mixed evidence, with no correction for multiple comparisons. The app runs the simple rule because, once a sign error in the multivariate statistic was corrected (review round 15), the multivariate detector no longer led it by the pre-set margin on the simulated training missions; the real data had no direct vote (the simulator was partly fitted to it).
+Heart rate and daily steps, thresholds from other real people, one false alert per person-month. At the notice tier the four personal-baseline methods cannot be told apart: Keel now runs the simple two-of-three-days rule itself; the multivariate EWMA against it is +5 (−2 to 12, includes zero). Against one fixed threshold Keel leads by +11 (−3 to 25, includes zero) in the −10..+4 day window, by +7 (−5 to 20, includes zero) in the original −14..+7 window, and by +11 (−2 to 24, includes zero) if an alert that is already open in the window also counts. The simple rule's lead over the fixed threshold is +11 (−3 to 25, includes zero). Four detectors, two tiers and a window chosen after seeing data were compared with no correction for multiple looks, and the near like-for-like contrast of a personal against a population baseline (the same 2-of-3 rule, but personal scores are capped at 4 and the fixed one is not, and the fixed one needs no warm-up) is +11 (−3 to 25, includes zero) at the notice tier but +17 (7 to 28) at the alert tier: mixed evidence, with no correction for multiple comparisons. The app runs the simple rule because, once a sign error in the multivariate statistic was corrected, the multivariate detector no longer led it by the pre-set margin on the simulated training missions; the real data had no direct vote (the simulator was partly fitted to it).
 How this was measured
 Made by research/scripts/eval_real.py
 Show the numbers as a table
 Detection against false alerts, real data
-Keel
-Keel, by luck
+Simple rule, HR + steps (not shipped)
+Simple rule, by luck
 Fixed threshold
 Fixed, by luck
 0%

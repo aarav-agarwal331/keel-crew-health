@@ -37,6 +37,8 @@ Flight engineer
 
 Talk to the medical officer first
 
+An item has waited more than a day for the medical officer. Nothing about it is shown here; please make sure the medical officer has seen Lucía.
+
  Reason private. The medical officer will advise if needed.
 
 Tomás Novák

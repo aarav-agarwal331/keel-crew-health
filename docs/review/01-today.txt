@@ -32,9 +32,9 @@ Open for 3 days: the medical officer's screen now marks it overdue and asks them
 
 Also today, from the same readings:
 
-Your mood has been lower than usual. Book a private conversation with the medical officer.
+Your mood has been lower than usual. Book a private conversation with the medical officer. Ask for a private conversation
 You are eating less than planned. Add one planned snack today and finish the main meals.
-Your reactions are slower than usual. Repeat the test after a ten-minute break; if it is still slow, ask for a buddy check on critical tasks today.
+Your reactions are slower than usual. Repeat the test after a ten-minute break; if it is still slow, ask for a buddy check on critical tasks today. Open the reaction test
 Thermometer reading (°C)
 Save reading
 Why, and what next
