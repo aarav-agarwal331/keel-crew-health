@@ -63,7 +63,7 @@ button { font: inherit; color: inherit; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .muted { color: var(--text-2); }
 .small { font-size: 0.86rem; }
-.tiny { font-size: 0.78rem; }
+.tiny { font-size: 0.82rem; }
 .num { font-variant-numeric: tabular-nums; }
 
 /* ---- shell ---- */

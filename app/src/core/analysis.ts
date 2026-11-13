@@ -97,6 +97,13 @@ export function evalCond(c: Cond, f: RuleFeatures): boolean {
 }
 
 /** Indicators a rule's condition refers to (they are shown first as the evidence for that rule). */
+/** The value conditions inside a rule (for naming the reading that crossed the line). */
+function valConds(c: Cond): { val: string; min?: number; max?: number }[] {
+  if ('all' in c) return c.all.flatMap(valConds)
+  if ('any' in c) return c.any.flatMap(valConds)
+  if ('val' in c) return [c]
+  return []
+}
 /** Entered readings a fixed rule's condition refers to. */
 export function condVals(c: Cond): string[] {
   if ('all' in c) return c.all.flatMap(condVals)
@@ -443,8 +450,10 @@ export function analyzeDay(
     // a fixed rule names the reading itself: "you entered 170", not only the rule
     if (kind === 'vital' && out.readings?.length) {
       const live = out.readings.filter((q) => !q.void)
-      const worst = live.length ? live.reduce((a, b) => (Math.abs(b.v - live[0].v) > Math.abs(a.v - live[0].v) ? b : a), live[0]) : undefined
-      if (worst) out.title = `${r.title} (entered: ${live.length > 1 ? `${live.map((q) => q.v).join(', then ')}; ${worst.v} still counts` : worst.v})`
+      // the reading that counts is one past this rule's line (the repeat clock starts at the first such reading)
+      const pastLine = (q: Reading) => valConds(r.when).some((c) => (SPOT_KEY[c.val.replace(/_manual$|_rise$/, '')] ?? c.val.replace(/_manual$|_rise$/, '')) === q.ind && (c.min === undefined || q.v >= c.min) && (c.max === undefined || q.v <= c.max))
+      const counts = live.find(pastLine) ?? live[0]
+      if (counts) out.title = `${r.title} (entered: ${live.length > 1 ? `${live.map((q) => q.v).join(', then ')}; the ${counts.v} still counts` : counts.v})`
     }
     // drop a step whose conditions the person's own reports already rule out
     const ruledOut = (sym.fatigue ?? 0) > 0 || (sym.cough ?? 0) > 0 || (val.temp_oral ?? []).some((v) => v >= 38)
@@ -678,7 +687,7 @@ export function analyzeDay(
   // "handled, not cleared" holds exercise and duties until the medical officer clears the person, however long that takes
   const restrictTs = Math.max(-Infinity, ...[...closed.entries()].filter(([k]) => k.startsWith('restricted|') && (k.includes(`|${m.id}|${crewId}|`))).map(([, t]) => t))
   const restricted = restrictTs > (closed.get(`cleared|${m.id}|${crewId}`) ?? -Infinity)
-  const exerciseHold = restricted || findings.some((x) => !(x as Finding & { reviewed?: boolean }).reviewed && (holdsEx(x.ruleId) || (x as Finding & { holdsExercise?: boolean }).holdsExercise))
+  const exerciseHold = restricted || findings.some((x) => !(x as Finding & { reviewed?: boolean }).reviewed && ((holdsEx(x.ruleId) && !(x.kind === 'personal' && x.tier === 'self')) || (x as Finding & { holdsExercise?: boolean }).holdsExercise))
   return { status, findings, changes, learning, baselineDays, adapting, staleDays, u3, systems, categories, alert, features: f, co2Advisory: envStatus === 'watch' ? Math.max(co2Today || 0, co23 || 0) : null, openItems, exerciseHold, restricted }
 }
 

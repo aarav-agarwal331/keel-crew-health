@@ -650,6 +650,53 @@ on Today, a bone note, matched operating points for the +32 comparison (needs a 
 changes the flight surgeon suggested (180/120 repeated as "now", fever line in flight), and source checks
 on two notes (the CO2 figure was checked against the PubMed abstract in round 9 and is correct).
 
-## Round 14
+## Round 14 (2026-11-12, fresh reviewers, redeployed build)
 
-See the end of this file once the fourteenth round has run.
+Judge's scores: impact 7, creativity 8, validity 7, relevance 9, presentation 7 (38 of 50), "nominate:
+yes", with three high-severity issues. The astronaut found three, the flight surgeon one, the
+statistician none. All the highs were in the urgent-reading flow and overlapped:
+
+| # | Reviewer | High-severity finding | Fix |
+|---|---|---|---|
+| 1 | Judge, astronaut, flight surgeon | "Entered: 50, then 85; 85 still counts" named the normal repeat as the reading in force (round 13 picked the reading furthest from the first). | The title names the first reading past the rule's line ("the 50 still counts"); unit-tested. |
+| 2 | Judge, astronaut (flight surgeon medium) | Today showed a 10-second countdown and "Cancel" directly above "Alert sent", and the medical officer got the alert twice. | Leaving Check-in sends the alert; Today's countdown started before that record was in state and sent a second copy. Actions now show at once, the hook re-checks the log before sending and hides its countdown once an alert exists; an end-to-end test checks for one alert and no second countdown. |
+| 3 | Judge, astronaut | Sharing said only the medical officer is alerted and sees urgent details; the commander also is, as backup. | Sharing's summary and the emergency-sharing text say what the commander sees (what it is, the value entered, the action; never "medical officer only" items or the reading log); four exceptions listed, including the ground's count. |
+
+Medium-severity findings fixed in the same pass:
+
+- **Self-managed notices** (flight surgeon): a "worth a look" illness notice asks the person to skip hard
+  exercise but no longer sets a hold that nobody could lift.
+- **Clearance scope** (flight surgeon): the clearance buttons say they lift every restriction on the person.
+- **Escalation** (flight surgeon): renamed "alert them again", since it reaches the same two people; the
+  code comment says a flight version would escalate from the receiving tablets.
+- **Sharing off** (flight surgeon): the medical officer sees "an item, details private" so it can be
+  closed after they have talked; unit-tested.
+- **R-V-HR1 step** (flight surgeon): says a second *typed* reading escalates, which is what the rules do.
+- **Ask to be seen** (astronaut): "act today" items needing the medical officer have a one-tap request
+  that appears on the medical officer's Crew screen until acknowledged.
+- **Check-in after a dangerous reading** (astronaut): the card leads with "Act now: …" in large type;
+  the Check-in intro is one sentence.
+- **R-ILL title** (judge, flight surgeon, statistician): "Several readings have moved the way they can
+  during an infection".
+- **Illness heart-rate figures** (judge): the countermeasure text gives 4 to 5 bpm, 4.6 in the people the
+  simulator was not fitted on.
+- **Validation** (judge): the short version is three lines (by design; on real illness; everything else
+  simulated).
+- **Early-warning sentence** (statistician): no longer calls heart rate alone "the one result" above luck;
+  the two-sensor notice-tier figure also excludes zero.
+- **Bed-rest chance** (statistician): the claim that 4 of 14 is "about chance" was dropped everywhere; the
+  chance level with the widened band was never measured.
+- **Illness-rise baselines** (statistician): METHOD.md says the fit and the check use different baselines
+  (real days −14 to −9 sit 0.68 bpm above the check's baseline against 0.10 simulated).
+- **"Never saw"** (statistician): "not used by the simulator's fits", and the hand-set 30% unworn-night
+  rate for simulated ground people is disclosed.
+
+Not done, with reasons: an onset-excluded, luck-adjusted early-warning figure, a bed-rest chance level
+with the widened band, one baseline for fit and check, a heart-rate-alone device split and window
+sensitivity (all need pipeline changes and a full rerun; disclosed instead); larger body-figure regions;
+the strap countdown text and strap readings bypassing the automatic alert; a repeated sub-35 °C rule;
+the Earth–Mars delay rounding (about 4 to 24 minutes is what the cited source gives).
+
+## Round 15
+
+See the end of this file once the fifteenth round has run.

@@ -134,6 +134,8 @@ describe('end to end on the demo mission', () => {
     expect(run('c0', 100, [still]).findings.some((x) => /safe side/.test(x.action))).toBe(false)
     const soon: Entry = { ...e, readings: [{ ind: 'glucose', v: 50, ts: 1 }, { ind: 'glucose', v: 85, ts: 1 + 2 * 60 * 1000 }] }
     expect(run('c0', 100, [soon]).status).toBe('urgent')
+    // the title names the reading that crossed the line, not the later one
+    expect(run('c0', 100, [soon]).findings.find((x) => x.ruleId === 'R-V-GLU-LO2')!.title).toMatch(/50, then 85; the 50 still counts/)
     expect(f1.readings!.map((r) => r.v)).toEqual([50, 85])
     // the next day, with no new reading, it is still open and dated from the reading
     const b = run('c0', 101, [e]).findings.find((x) => x.ruleId === 'R-V-GLU-LO2')!

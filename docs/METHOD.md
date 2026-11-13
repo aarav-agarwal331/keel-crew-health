@@ -190,7 +190,8 @@ correlation between heart rate and HRV it selected the multivariate EWMA (curren
 27.3 points above luck on the training missions, a difference with no interval and well inside what
 the test missions show as noise). Test missions had no vote. Real data had none directly, but the
 simulator's illness response is fitted on real episodes from people who are also evaluated, and the
-simulated crew's 30% exercise cut when ill was set by hand with the real step drop in view, so the choice is not fully independent
+simulated crew's 30% exercise cut when ill was set by hand with the real step drop in view (as was the 30% chance of an unworn
+night for simulated ground people, `ground_people(p_wear=0.3)`, set to resemble real wear time), so the choice is not fully independent
 of them, and the history means it is not pre-registered. On the test missions the z-score rule was
 slightly ahead, on real data the multivariate detector was (+5 points, −2 to 12); the four personal
 detectors cannot be told apart at the notice tier (at the alert tier they spread from +15 to +33), and the choice is best read as arbitrary among equals.
@@ -429,9 +430,9 @@ the same code version). Real data: 251 people, 107 illness episodes, two sensors
   (exact paired p = 0.06), there is no ground truth that these flags are false (a faster pulse after
   bed rest is real), and the learned shift adds nothing beyond widening the band (it is only +1.0 bpm, interquartile range −1 to
   5.5, from 13 volunteers). The same pulse-only
-  2-of-3 rule flags 11 of 31 (35%) 14-day stretches away from any transition, so the phase-handling rule's 4 of 14 (29%)
-  is about the chance level; the plain baseline's 9 of 14 (64%) is higher but not distinguishable from
-  chance either (Fisher's exact p about 0.1, and the 31 stretches come from only 15 people). The bed-rest
+  2-of-3 rule flags 11 of 31 (35%) 14-day stretches away from any transition, the plain baseline's 9 of 14 (64%) is higher but not distinguishable from
+  that; those stretches are scored without the widened band, so the phase-handling rule's own chance level
+  was not measured and its 4 of 14 (29%) cannot be compared with chance (Fisher's exact p about 0.1, and the 31 stretches come from only 15 people). The bed-rest
   variant is not the app's detector: it uses a pulse-only 2-of-3 rule, a 4-day adaptation constant and
   a 2.0 bpm floor (the app: multivariate EWMA, 6 days, 1.5 bpm).
 - **Simulator against reality.** The pass marks were set during review, not in advance. What passes
@@ -440,7 +441,10 @@ the same code version). Real data: 251 people, 107 illness episodes, two sensors
   lenient): four of five variabilities, four of five carry-overs, all four correlations. Every independent check fails or is off: the
   illness heart-rate rise over the four days from onset (2.1 bpm simulated, 4.6 real; the gap's 95% interval
   is 0.7 to 4.4 bpm, but it leaves out the uncertainty of the simulator's own fit from the other half,
-  whose rise was about 2.7 bpm, so much of the gap may be split-half noise); HRV variability
+  whose rise was about 2.7 bpm, so much of the gap may be split-half noise. The two sides also use different
+  baselines: the fit sets days −14 to −9 to zero, while the check measures from days −49 to −22, and in the
+  validation half real days −14 to −9 already sit about 0.7 bpm above that baseline against 0.1 simulated,
+  so part of the gap is a matter of definition); HRV variability
   (37% too high); sleep carry-over; thresholds calibrated in simulation and applied to 72 real quiet
   people (1.38 false alerts per person-month against 1.00, 0.40 against 0.25) and, with five
   indicators, to 16 LifeSnaps people of the validation half (2.04 and 0.97); nights under six hours

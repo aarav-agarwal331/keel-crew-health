@@ -115,6 +115,14 @@ export function Today() {
           <p className="do">{primary.action}</p>
           <p className="small"><strong>When:</strong> {URGENCY_LABEL[primary.urgency].toLowerCase()}. <strong>Who:</strong> {(primary.who ?? WHO_LABEL[primary.tier]).toLowerCase()}.</p>
           <p className="small">{primary.tierReason}</p>
+          {primary.status === 'act' && primary.tier !== 'self' && (() => {
+            // the app can do the telling: one tap puts a request on the medical officer's Crew screen
+            const rkey = `ask|${primary.key}`
+            const asked = actions.find((x) => x.crew === me && x.alertKey === rkey && x.did === 'Asked to be seen today')
+            const seen = actions.find((x) => x.crew === me && x.alertKey === rkey && x.did === 'Acknowledged the alert')
+            return asked ? <p className="small"><strong>Asked at {new Date(asked.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}.</strong> {seen ? `Acknowledged ${seen.note}.` : 'Not acknowledged yet.'}</p>
+              : <button className="btn primary" onClick={() => void logAction({ crew: me, alertKey: rkey, day, did: 'Asked to be seen today', feel: null, ...alertFields([primary]) })} data-testid="ask-cmo">Ask the medical officer to see me today</button>
+          })()}
           {[primary, ...others].filter((x) => x.status === 'urgent').flatMap((x) => x.steps.filter((q) => /^For whoever is with you/.test(q))).slice(0, 1).map((q) => <p key={q} className="banner strong small">{q}</p>)}
           {primary.status === 'urgent' && !primary.crewWide && (() => {
             const urgentNow = [primary, ...others].filter((x) => x.status === 'urgent')
@@ -126,7 +134,7 @@ export function Today() {
             return <div className="col">
               {auto.counting && <div className="banner strong" role="alert"><p><strong>Alerting the medical officer and commander in {auto.autoLeft} s.</strong></p><button className="btn" onClick={auto.cancel} data-testid="cancel-auto-alert-today">Cancel the alert</button></div>}
               {!sent && <button className="btn alert block" style={{ minHeight: 72, fontSize: '1.2rem' }} onClick={() => void logAction({ crew: me, alertKey: akey, day, did: 'Alerted the crew', feel: null, ...alertFields(urgentNow) })} data-testid="alert-crew">{onlyCmo ? 'Alert the medical officer now' : 'Alert the medical officer and commander now'}</button>}
-              {sent && !auto.escalated && !acks.some((x) => /medical officer/.test(x.note)) && Date.now() - sent.ts > 5 * 60e3 && <button className="btn alert block" onClick={() => void logAction({ crew: me, alertKey: akey, day, did: 'Alerted the crew', feel: null, ...alertFields(urgentNow, ' (no answer after 5 minutes: whole crew)') })} data-testid="alert-again">No answer yet: alert the whole crew</button>}
+              {sent && !auto.escalated && !acks.some((x) => /medical officer/.test(x.note)) && Date.now() - sent.ts > 5 * 60e3 && <button className="btn alert block" onClick={() => void logAction({ crew: me, alertKey: akey, day, did: 'Alerted the crew', feel: null, ...alertFields(urgentNow, ' (no answer after 5 minutes: sent again)') })} data-testid="alert-again">No answer yet: alert them again</button>}
               {sent && <p className="banner strong" role="status"><strong>Alert sent at {new Date(sent.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}.</strong> {acks.length ? acks.map((x) => `Acknowledged ${x.note} at ${new Date(x.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}.`).join(' ') : 'Not acknowledged yet: it stays at the top of their Crew screens until the medical officer does.'}</p>}
               <p className="small">{on ? sent ? 'The details are visible on their Crew screens (emergency sharing).' : 'The details are visible on their Crew screens (emergency sharing). Saving an urgent check-in alerts them after ten seconds; this button alerts them now.' : 'Emergency sharing is off: the alert says only that you need help, not why.'}</p>
             </div>

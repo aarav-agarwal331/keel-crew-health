@@ -527,7 +527,7 @@
    "summary": "Your overnight resting heart rate, or one you entered at rest, was 120 or more. One such reading is enough for the medical officer to look. The value 120 is provisional and has not been reviewed by a flight surgeon.",
    "action": "Rest for ten minutes, repeat the reading, and tell the medical officer today.",
    "steps": [
-    "Rest for ten minutes and take it again: a second reading of 120 or more means telling the medical officer now.",
+    "Rest for ten minutes and take it again by hand at check-in: a second typed reading of 120 or more means telling the medical officer now.",
     "Take your temperature and drink to your fluid target.",
     "Note any chest pain, breathlessness or light-headedness: with any of them, tell the medical officer now."
    ],
@@ -1076,7 +1076,7 @@
    "id": "R-ILL",
    "scope": "personal",
    "priority": 10,
-   "title": "Readings like those often seen early in an infection",
+   "title": "Several readings have moved the way they can during an infection",
    "when": {
     "all": [
      {

@@ -44,16 +44,16 @@ export function Crew() {
   return (
     <>
       {(() => {
-        const raised = actions.filter((x) => x.did === 'Alerted the crew' && x.day <= day)
+        const isCmo = (crewId: string) => mission.crew.find((c) => c.id === crewId)?.role === 'cmo'
+        const raised = actions.filter((x) => (x.did === 'Alerted the crew' || (x.did === 'Asked to be seen today' && (role === 'cmo' || isCmo(x.crew)))) && x.day <= day)
         const acksFor = (x: { alertKey: string; crew: string }) => actions.filter((q) => q.did === 'Acknowledged the alert' && q.alertKey === x.alertKey && q.crew === x.crew)
         // an alert stays until the medical officer has acknowledged it (the commander's acknowledgement is shown, not enough)
         // when the patient is the medical officer, the commander (their backup) acknowledging is enough
-        const isCmo = (crewId: string) => mission.crew.find((c) => c.id === crewId)?.role === 'cmo'
         const open = raised.filter((x) => !acksFor(x).some((q) => /medical officer/.test(q.note) || (isCmo(x.crew) && /commander/.test(q.note))))
           .filter((x) => !(role === 'commander' && (x.cmoOnly || /\(medical officer only\)/.test(x.note)) && !isCmo(x.crew)))
         return open.map((x) => (
           <section key={x.ts} className="card action" role="alert" data-testid="crew-alert">
-            <p className="do">{/\(sent automatically\)/.test(x.note) ? `Alert about ${mission.crew.find((c) => c.id === x.crew)?.name}, sent automatically after an urgent check-in` : `${mission.crew.find((c) => c.id === x.crew)?.name} raised an alert`} at {new Date(x.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}{(sharing[x.crew]?.emergency !== false) ? `: ${(role === 'commander' && !isCmo(x.crew) && x.cmdNote !== undefined ? x.cmdNote : x.note).replace(/ \(sent automatically\)/, '').replace(/ \(medical officer only\)/, '')}` : ''}. Go to them now.</p>
+            <p className="do">{x.did === 'Asked to be seen today' ? `${mission.crew.find((c) => c.id === x.crew)?.name} asks to be seen today` : /\(sent automatically\)/.test(x.note) ? `Alert about ${mission.crew.find((c) => c.id === x.crew)?.name}, sent automatically after an urgent check-in` : `${mission.crew.find((c) => c.id === x.crew)?.name} raised an alert`} at {new Date(x.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}{(sharing[x.crew]?.emergency !== false) ? `: ${(role === 'commander' && !isCmo(x.crew) && x.cmdNote !== undefined ? x.cmdNote : x.note).replace(/ \(sent automatically\)/, '').replace(/ \(medical officer only\)/, '')}` : ''}{x.did === 'Asked to be seen today' ? '. See them today.' : '. Go to them now.'}</p>
             {acksFor(x).map((q) => <p key={q.ts} className="small">Acknowledged {q.note} at {new Date(q.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}.</p>)}
             {!acksFor(x).some((q) => q.note.includes(role === 'cmo' ? 'medical officer' : 'commander')) && <button className="btn primary" onClick={() => void logAction({ crew: x.crew, alertKey: x.alertKey, day, did: 'Acknowledged the alert', feel: null, note: `by the ${role === 'cmo' ? 'medical officer' : 'commander'}` })} data-testid="ack-alert">Acknowledge: I am on my way</button>}
             <p className="tiny muted">In a flight version this would sound on the medical officer's and commander's tablets over the cabin network; no Earth link is needed.</p>
@@ -61,7 +61,7 @@ export function Crew() {
         ))
       })()}
       <div className="card-h"><h1>Crew readiness</h1><Seg label="View as" value={role} onChange={setRole} options={[{ id: 'commander', label: 'Commander' }, { id: 'cmo', label: 'Medical officer' }]} /></div>
-      <p className="muted">{shortDay(mission, day)}. {role === 'commander' ? 'Whether Keel has any flags for each crew member before a demanding task tomorrow, such as a spacewalk. You see a tier for everyone; reasons appear only where a crew member has chosen to share them.' : 'What each crew member has chosen to share with you. Nothing is shown that they have not shared, except emergencies they agreed to share and, under that consent, the fact that an item is open in an area. Their overall status here covers only the areas they share with you; the commander\'s tier (a separate thing) uses all their readings.'}</p>
+      <p className="muted">{shortDay(mission, day)}. {role === 'commander' ? 'Whether Keel has any flags for each crew member before a demanding task tomorrow, such as a spacewalk. You see a tier for everyone; reasons appear only where a crew member has chosen to share them, and for urgent items under their emergency sharing (as their backup).' : 'What each crew member has chosen to share with you. Nothing is shown that they have not shared, except emergencies they agreed to share and, under that consent, the fact that an item is open in an area. Their overall status here covers only the areas they share with you; the commander\'s tier (a separate thing) uses all their readings.'}</p>
       <p className="small muted">Labels: a crew member's own "Act today" or "Act now" shows to the commander as "Talk to the medical officer first"; "Worth a look" is the same on both screens.</p>
       <p className="banner">Demo view. On a mission each role has its own device; here you can switch roles. Every look is written to the crew member's access log.</p>
 
@@ -123,7 +123,7 @@ export function Crew() {
                             <input type="text" aria-label={`Note on ${f.title ?? 'this notice'}`} value={notes[k] ?? ''} onChange={(e) => setNotes((p) => ({ ...p, [k]: e.target.value }))} placeholder="Note: what you found and decided" style={{ flex: 1, minWidth: 180 }} />
                             <button className="btn sm" disabled={!note} onClick={() => log('Noted by the medical officer (still open)')} data-testid="note-notice">Note only, keep open</button>
                             <button className="btn sm" disabled={!note} onClick={() => log('Closed by the medical officer: handled, not cleared for exercise or duties')} data-testid="close-notice-restricted">Handled, restrictions stay</button>
-                            {f.title ? <button className="btn sm" disabled={!note} onClick={() => log('Closed by the medical officer: cleared for exercise and duties')} data-testid="close-notice">Cleared for exercise and duties</button>
+                            {f.title ? <button className="btn sm" disabled={!note} onClick={() => log('Closed by the medical officer: cleared for exercise and duties')} data-testid="close-notice">Cleared for exercise and duties (lifts every restriction on them)</button>
                               : <button className="btn sm" disabled={!note} onClick={() => log('Closed by the medical officer: cleared for exercise and duties after an in-person exam')} data-testid="close-notice-exam">Cleared after examining them in person</button>}
                           </div>
                         )
@@ -159,7 +159,7 @@ export function Crew() {
                       {!(role === 'cmo' && c.role === 'cmo') && (
                         <div className="row wrap">
                           <input type="text" aria-label={`Closing note for ${x.title}`} value={notes[x.key] ?? ''} onChange={(e) => setNotes((p) => ({ ...p, [x.key]: e.target.value }))} placeholder="Note: what you found and did" style={{ flex: 1, minWidth: 180 }} />
-                          {role === 'cmo' && <button className="btn sm" disabled={!(notes[x.key] ?? '').trim()} onClick={() => void logAction({ crew: c.id, alertKey: x.key, day, did: `Closed by the ${role === 'cmo' ? 'medical officer' : 'commander (backup)'}: cleared for exercise and duties`, feel: null, note: (notes[x.key] ?? '').trim() })} data-testid="close-item">Close: cleared for exercise and duties</button>}
+                          {role === 'cmo' && <button className="btn sm" disabled={!(notes[x.key] ?? '').trim()} onClick={() => void logAction({ crew: c.id, alertKey: x.key, day, did: `Closed by the ${role === 'cmo' ? 'medical officer' : 'commander (backup)'}: cleared for exercise and duties`, feel: null, note: (notes[x.key] ?? '').trim() })} data-testid="close-item">Close: cleared for exercise and duties (lifts every restriction on them)</button>}
                           <button className="btn sm" disabled={!(notes[x.key] ?? '').trim()} onClick={() => void logAction({ crew: c.id, alertKey: x.key, day, did: `Closed by the ${role === 'cmo' ? 'medical officer' : 'commander (backup)'}: resolved, not cleared for exercise or duties`, feel: null, note: (notes[x.key] ?? '').trim() })} data-testid="close-item-restricted">Close: resolved, not cleared</button>
                         </div>
                       )}

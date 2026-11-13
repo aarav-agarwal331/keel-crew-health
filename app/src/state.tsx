@@ -294,8 +294,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const logAction = useCallback(async (a: Omit<ActionLog, 'id' | 'ts' | 'mission'>) => {
     if (!mission) return
     const full: ActionLog = { ...a, mission: mission.id, ts: Date.now() }
+    // shown at once (an alert sent while leaving a screen must be visible to the next one), then given its id
+    setActions((prev) => [...prev, full])
     const id = await store.addAction(full)
-    setActions((prev) => [...prev, { ...full, id }])
+    setActions((prev) => prev.map((x) => (x === full ? { ...full, id } : x)))
   }, [mission])
   const setShare = useCallback((crew: string, role: Role, cat: string, level: Level) => {
     if (!mission) return

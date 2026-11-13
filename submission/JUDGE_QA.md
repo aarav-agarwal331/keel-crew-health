@@ -8,7 +8,7 @@ on Earth above luck. What we cannot: that the simulator is a faithful stand-in. 
 realism checks fail or are off (for example nights under six hours are 50% against a published 44%).
 On NASA's public bed-rest data, the closest open stand-in for a gravity change, a plain personal
 baseline flagged 9 of 14 volunteers after getting up and Keel flagged 4, which is not significant
-(p = 0.06), has no ground truth, and 4 of 14 is about what the same rule flags in quiet stretches by chance. The next step is to request the in-flight data.
+(p = 0.06), and has no ground truth; the phase-handling variant's own chance level with its widened band was not measured. The next step is to request the in-flight data.
 
 **2. Does it give early warning before symptoms? If not, what is the value?**
 No useful early warning shown. At the notice tier an alert started in the ten days up to symptom

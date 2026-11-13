@@ -120,8 +120,11 @@ describe('emergency consent', () => {
     expect(visibleOpenItems('cmo', priv.openItems, share, false).length).toBeGreaterThan(0)
     expect(visibleOpenItems('commander', priv.openItems, share, false).length).toBe(0)
     expect(visibleOpenItems('ground', priv.openItems, { ...share, ground: { ...share.ground, symptoms: 'detail' } }, false).length).toBe(0)
-    // with emergency sharing off nothing is shown to anyone
-    expect(visibleOpenItems('cmo', priv.openItems, { ...share, emergency: false }, false).length).toBe(0)
+    // with emergency sharing off the medical officer sees only that an item is open (so it can be closed), and the commander nothing
+    const off = visibleOpenItems('cmo', priv.openItems, { ...share, emergency: false }, false)
+    expect(off.length).toBeGreaterThan(0)
+    expect(off.every((x) => x.redacted && x.title === 'An item, details private' && !x.readings && !x.symptoms)).toBe(true)
+    expect(visibleOpenItems('commander', priv.openItems, { ...share, emergency: false }, false).length).toBe(0)
     // a "today" item in a private area still reaches the medical officer under emergency sharing, without its title
     const fever = run(patient, [])
     const xx = features(m, patient, model.indicators, [])

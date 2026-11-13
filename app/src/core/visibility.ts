@@ -100,6 +100,8 @@ export function visibleOpenItems(role: Role, items: OpenItem[], share: SharingSe
     if (shared || (consent && it.urgency === 'now')) out.push(it)
     // under emergency consent the medical officer sees what the item is and its readings: they may be asked to clear it
     else if (consent) out.push(role === 'cmo' ? it : { ...it, redacted: true, readings: undefined, symptoms: undefined })
+    // without emergency consent the medical officer still sees that an item is open, with nothing about it, so it can be closed
+    else if (role === 'cmo' || patientIsCmo) out.push({ ...it, title: 'An item, details private', redacted: true, readings: undefined, symptoms: undefined })
   }
   return out
 }
