@@ -88,3 +88,5 @@ Reversible decisions made without asking, newest last.
 | 82 | 2026-11-12 | "Outside your usual range" uses the same band as the charts (expected ± 2 spreads). | Review round 17 (judge, high): text and charts disagreed. |
 | 83 | 2026-11-12 | Blood-sugar repeat logic treats low and high readings separately; a high is re-checked at once. | Review round 18 (flight surgeon, high): "treat it as low" appeared on high readings, and a low then a high kept "take sugar". |
 | 84 | 2026-11-12 | The medical officer's emergency context shows only whether readings are in range. | Review round 18 (astronaut, high): notice titles went beyond what Sharing promises. |
+| 85 | 2026-11-12 | A low blood sugar leads among urgent items. Reverses part of 83's ordering. | Review round 19 (astronaut, high; judge): it is the one item with a treatment the person can take at once. |
+| 86 | 2026-11-12 | A closure is compared with the newest abnormal reading or newly ticked symptom; pending alerts are recorded so they survive the app closing. | Review round 19 (flight surgeon): closed items reopened on unrelated saves; a closed tab lost the alert. |

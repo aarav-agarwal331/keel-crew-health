@@ -483,7 +483,8 @@ the same code version). Real data: 251 people, 107 illness episodes, two sensors
   to the commander as backup, except red-flag symptoms marked "medical officer only" (thoughts of
   harming yourself), which the commander sees only when the
   patient is the medical officer. Medication classes and photos added at check-in belong to the
-  Symptoms area and are visible only at full detail. Nothing is sent to the ground automatically.
+  Symptoms area and are visible at full detail; under emergency sharing, today's medication classes are
+  also shown to the medical officer while something urgent is open for that person (not for cabin alerts). Nothing is sent to the ground automatically.
   Views are logged.
 - **Readings and closure** (`app/src/state.tsx`, `analysis.ts`): every spot reading is appended to a
   log with its time. A fixed rule looks at all readings of the most recent day that has one, so a

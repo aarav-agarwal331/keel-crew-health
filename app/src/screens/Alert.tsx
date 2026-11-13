@@ -53,6 +53,14 @@ export function Alert({ alertKey }: { alertKey?: string }) {
         <StatusTag status={f.status} label={STATUS_LABEL[f.status]} />
         <h1>{f.title}</h1>
         <p>{f.summary}</p>
+        {f.kind === 'personal' && (() => {
+          // since yesterday: the deployed score today against yesterday's, in plain words
+          const sc = analyses[me]?.scored.scores[(model.deployed ?? 'zscore') as 'zscore']
+          const t = sc?.[day], y = sc?.[day - 1]
+          if (t === undefined || y === undefined || Number.isNaN(t) || Number.isNaN(y)) return null
+          const w = t > y * 1.1 ? 'worse' : t < y * 0.9 ? 'better' : 'about the same'
+          return <p className="do" data-testid="since-yesterday">Since yesterday: {w}.</p>
+        })()}
         <p className="small muted">{STATUS_LABEL[f.status]} since {shortDay(mission, f.patternStart ?? f.start)} ({f.days} day{f.days === 1 ? '' : 's'}).{f.firstNotice ? ` Keel first raised a notice on ${shortDay(mission, f.firstNotice.day)} for a different reason: "${f.firstNotice.title}".` : ''}{f.crewWide ? ' This affects the whole crew.' : ''}</p>
         {reviewed && <p className="banner info">Under review with the medical officer since {shortDay(mission, reviewed.day)}. Keel keeps showing this until your readings return to your range.</p>}
         {!reviewed && f.kind === 'personal' && f.tier !== 'self' && f.days > 5 && <p className="banner info">This has been open for {f.days} days. If the medical officer has reviewed it, record that below so it is shown as under review.</p>}

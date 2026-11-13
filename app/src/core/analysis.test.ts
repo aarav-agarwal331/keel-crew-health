@@ -283,6 +283,17 @@ describe('end to end on the demo mission', () => {
       }
     }
   })
+  it('a closed item stays closed after a later, unrelated save the same day', () => {
+    const e: Entry = { key: 'k', mission: m.id, crew: 'c0', day: 100, values: { fluid: 2 }, symptoms: [], redFlags: ['chest_pain'], symTs: { chest_pain: 5 }, ts: 50 }
+    const x = features(m, 'c0', model.indicators, [e])
+    const closed = new Map([[`open|${m.id}|c0|R-RED|100`, 10]])
+    const a = analyzeDay(m, 'c0', { crewId: 'c0', x, scored: scorePerson(x, model, m.phases) }, model, 100, [e], closed)
+    expect(a.openItems.some((q) => q.ruleId === 'R-RED')).toBe(false)
+    // a newly ticked red flag after the note reopens it
+    const e2: Entry = { ...e, symTs: { chest_pain: 20 } }
+    const b = analyzeDay(m, 'c0', { crewId: 'c0', x, scored: scorePerson(x, model, m.phases) }, model, 100, [e2], closed)
+    expect(b.openItems.some((q) => q.ruleId === 'R-RED')).toBe(true)
+  })
   it('a red-flag symptom entered at check-in is urgent immediately', () => {
     const e: Entry = { key: 'k', mission: m.id, crew: 'c0', day: 100, values: {}, symptoms: ['chest_pain'], ts: 0 }
     const a = run('c0', 100, [e])

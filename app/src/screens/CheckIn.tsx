@@ -35,7 +35,7 @@ export function CheckIn({ open }: { open?: string }) {
   const [sym, setSym] = useState<string[]>(existing?.symptoms ?? symptomsOn(mission, me, day, []))
   const usual = rawSeries(mission, me, 'fluid', []).slice(Math.max(0, day - 14), day).filter((v) => !Number.isNaN(v))
   const fluidHint = usual.length ? usual.reduce((a, b) => a + b, 0) / usual.length : 2.25
-  const [fluid, setFluid] = useState<number>(existing?.values.fluid ?? Math.round((simToday('fluid') ?? 0) * 4) / 4)
+  const [fluid, setFluid] = useState<number>(existing?.values.fluid ?? Math.round((simToday('fluid') ?? 0) * 10) / 10)
   const [serious, setSerious] = useState((existing?.symptoms ?? []).some((x) => SYMPTOMS.find((q) => q.id === x)?.red_flag))
   const [noSym, setNoSym] = useState(existing ? existing.symptoms.length === 0 : false)
   const [more, setMore] = useState(open === 'measure' || open === 'demo')
@@ -219,7 +219,7 @@ export function CheckIn({ open }: { open?: string }) {
             <div className="choices" role="group" aria-label="Medication taken today">
               {MEDS.map((x) => <button key={x} className="choice" aria-pressed={meds.includes(x)} onClick={() => setMeds((p) => (p.includes(x) ? p.filter((q) => q !== x) : [...p, x]))} data-testid={`med-${x.split(' ')[0].toLowerCase()}`}>{x}</button>)}
             </div>
-            <p className="small muted">Classes only, no doses. These can move heart rate, reaction time and sleep, so Keel shows them next to any alert. Keel never recommends medication. {symDetail ? 'The medical officer can see these.' : 'The medical officer will not see these unless you share Symptoms in full detail.'}</p>
+            <p className="small muted">Classes only, no doses. These can move heart rate, reaction time and sleep, so Keel shows them next to any alert. Keel never recommends medication. {symDetail ? 'The medical officer can see these.' : 'The medical officer sees these if you share Symptoms in full detail, and, under emergency sharing, while something urgent is open for you.'}</p>
           </Card>
           <Card title="Photo (optional, kept on your tablet)">
             <div className="row wrap">

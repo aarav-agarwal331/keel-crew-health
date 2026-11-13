@@ -870,6 +870,39 @@ very high blood pressure, treating "vomited more than twice" as vomiting in thre
 team's own analysis from the "published research" badge, clipping the fixed comparator (needs a rerun),
 a "what the medical officer may do next" line per rule (needs clinical input).
 
-## Round 19
+## Round 19 (2026-11-12, fresh reviewers, redeployed build)
 
-See the end of this file once the nineteenth round has run.
+Judge's scores: impact 7, creativity 8, validity 8, relevance 8, presentation 6 (37 of 50), "nominate:
+yes", with two high-severity issues. The astronaut found two (one shared with the judge); the flight
+surgeon and the statistician found none.
+
+| # | Reviewer | High-severity finding | Fix |
+|---|---|---|---|
+| 1 | Judge, astronaut | Sharing defined "Status" as levels only, yet under emergency sharing a notice carrying a reported symptom showed its title; "Trends" did not mention notice titles. | The level definitions now say exactly what each shows, including the emergency-sharing case. |
+| 2 | Judge | Check-in pre-filled fluids rounded to 2.50 L while Trends showed 2.6 L. | The pre-fill uses the same value. |
+| 3 | Astronaut (judge medium) | After the urgent readings, the low-sugar item ("take sugar now") sat under the heart-rate card, with its "give nothing by mouth" note attached to the wrong item and the repeat boxes out of place. | A low blood sugar leads among urgent items (it has a treatment the person can take at once); each item carries its own bystander note and repeat box. |
+
+Medium-severity findings fixed in the same pass:
+
+- **Closures** (flight surgeon): a closed item reopens only for a new abnormal reading or a newly ticked
+  symptom, not for any later save that day (symptom tick times are now recorded); unit-tested.
+- **Pending alerts** (flight surgeon): the countdown writes a pending record, and any later screen sends
+  an overdue one, so closing the app within the ten seconds no longer loses the alert.
+- **Escalation** (flight surgeon): an unacknowledged alert is sent again every five minutes, not once.
+- **Medication visibility** (flight surgeon): Check-in and METHOD.md say medication classes reach the
+  medical officer under emergency sharing while something urgent is open; cabin alerts no longer trigger it.
+- **Reading times** (flight surgeon): the reading log shows the gap to the previous reading ("6 s after").
+- **Since yesterday** (astronaut): Alert detail says whether the notice is better, the same or worse.
+- **Emergency routing** (astronaut): Earth link says an emergency does not go to the ground by itself.
+- **Commander tier** (astronaut): the Sharing table says medical-officer-only items change it.
+- **Pre-set window** (statistician): the replay, the limits list and the chart bar give +13 beside +19.
+- **On-board model tile** (statistician): "Not shown": simulated illness is not distinguishable from luck.
+
+Not done, with reasons: the Earth–Mars maximum delay (the cited NASA page gives about 24 minutes; kept
+with its source), time-based repeat windows for the two-reading escalation rules, a repeat box for blood
+pressure and temperature, the fever line relative to in-flight baseline (for a clinician), the
+`expected` block of `model_import.json` (needs a pipeline run; the screens give both windows).
+
+## Round 20
+
+See the end of this file once the twentieth round has run.

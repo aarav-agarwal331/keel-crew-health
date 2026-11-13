@@ -81,6 +81,8 @@ export interface Entry {
   redFlags?: string[]
   /** photos taken for the medical officer (downscaled, stored on this device only) */
   photos?: Photo[]
+  /** when each symptom was first ticked that day */
+  symTs?: Record<string, number>
 }
 
 export interface Photo { ts: number; label: string; data: string }

@@ -28,6 +28,8 @@ export function useAutoAlert(trigger: boolean) {
     if (autoAlert?.key === akey || actions.some((x) => x.crew === me && x.alertKey === akey && /Alert cancelled/.test(x.did)) || alertState(actionsRef.current, me, urgent.map((x) => x.key)).sent) return
     setAutoAlert({ key: akey, ts: Date.now() })
     counting.current = true
+    // a record that survives the app closing within the ten seconds: any later screen sends it once it is due
+    void logAction({ crew: me, alertKey: akey, day, did: 'Alert pending', feel: null, note: String(Date.now() + 10_000) })
     const send = () => {
       counting.current = false
       const u = urgentRef.current
@@ -41,6 +43,15 @@ export function useAutoAlert(trigger: boolean) {
     window.setTimeout(() => window.clearInterval(iv), 11_000)
   })
   useEffect(() => () => flushRef.current(), [])
+  // an alert left pending (the app closed during the countdown) goes as soon as any screen with this hook opens
+  useEffect(() => {
+    if (counting.current || !urgent.length) return
+    const pend = actions.filter((x) => x.crew === me && x.did === 'Alert pending' && Number(x.note) <= Date.now())
+    if (!pend.length) return
+    const resolved = (k: string) => actions.some((x) => x.crew === me && x.alertKey === k && /Alerted the crew|Alert cancelled/.test(x.did))
+    if (pend.every((p) => resolved(p.alertKey)) || alreadySent('')) return
+    void logAction({ crew: me, alertKey: akey, day, did: 'Alerted the crew', feel: null, ...alertFields(urgent, ' (sent automatically)') })
+  })
   // escalation: no acknowledgement from the medical officer (or, when the patient is the medical officer, the commander)
   const patientIsCmo = mission.crew.find((c) => c.id === me)?.role === 'cmo'
   const st = alertState(actions, me, urgent.map((x) => x.key))
@@ -48,8 +59,10 @@ export function useAutoAlert(trigger: boolean) {
   const acked = st.acks.some((x) => /medical officer/.test(x.note) || (patientIsCmo && /commander/.test(x.note)))
   const escalated = st.covering.some((x) => /sent again/.test(x.note))
   useEffect(() => {
-    if (!sent.length || acked || escalated || !urgent.length) return
-    const due = sent[0].ts + 5 * 60e3 - Date.now()
+    // repeat every five minutes until the medical officer acknowledges (not just once)
+    if (!sent.length || acked || !urgent.length) return
+    const last = Math.max(...st.covering.map((x) => x.ts))
+    const due = last + 5 * 60e3 - Date.now()
     const t = window.setTimeout(() => void logAction({ crew: me, alertKey: akey, day, did: 'Alerted the crew', feel: null, ...alertFields(urgent, ' (no answer after 5 minutes: sent again)') }), Math.max(0, due))
     return () => window.clearTimeout(t)
   })

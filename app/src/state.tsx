@@ -269,7 +269,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
     // red flags are append-only for the day: unticking one later does not take it off the medical officer's list
     const redFlags = [...new Set([...(old?.redFlags ?? []), ...(old?.symptoms ?? []), ...e.symptoms].filter((x) => SYMPTOMS.find((q) => q.id === x)?.red_flag))]
-    const full: Entry = { ...e, meds: e.meds ?? old?.meds, photos: e.photos ?? old?.photos, mission: mission.id, key, ts, readings: log, ...(redFlags.length ? { redFlags } : {}) }
+    // when each symptom was first ticked today: a closed item reopens only for a newly ticked one, not for any later save
+    const symTs: Record<string, number> = { ...(old?.symTs ?? {}) }
+    for (const x of [...e.symptoms, ...redFlags]) if (!(x in symTs)) symTs[x] = old && [...old.symptoms, ...(old.redFlags ?? [])].includes(x) ? old.ts : ts
+    const full: Entry = { ...e, meds: e.meds ?? old?.meds, photos: e.photos ?? old?.photos, mission: mission.id, key, ts, readings: log, symTs, ...(redFlags.length ? { redFlags } : {}) }
     // state first, storage second: a screen opened straight after saving must already see the entry
     entriesRef.current = [...entriesRef.current.filter((x) => x.key !== key), full]
     setEntries((prev) => [...prev.filter((x) => x.key !== full.key), full])

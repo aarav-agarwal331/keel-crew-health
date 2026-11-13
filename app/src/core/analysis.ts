@@ -501,7 +501,14 @@ export function analyzeDay(
       // on imported personal data a fixed rule looks at a value from the file, not a reading just taken
       const fromFile = m.kind === 'personal' && log.length === 0 && r.scope === 'vital'
       // the medical officer closed it: it leaves Today (the reading stays in the log)
-      const latestTs = log.length ? Math.max(...log.filter((q) => !q.void).map((q) => q.ts), 0) : mineE.find((q) => q.day === start)?.ts ?? 0
+      // a closure stands until a NEW abnormal reading (one that meets this rule) or a newly ticked symptom
+      const liveLog = log.filter((q) => !q.void)
+      const meetsOne = (q: Reading) => evalCond(r.when, { ...f, val: Object.fromEntries(Object.keys(f.val).map((k) => { const b = k.replace(/_manual$|_rise$/, ''); return [k, (SPOT_KEY[b] ?? b) === q.ind && !k.endsWith('_rise') ? [q.v] : []] })) })
+      const badLog = liveLog.filter(meetsOne)
+      const entryS = mineE.find((q) => q.day === start)
+      const symNames = (JSON.stringify(r.when).match(/"sym":"([a-z_]+)"/g) ?? []).map((x) => x.slice(7, -1))
+      const symTimes = entryS?.symTs ? Object.entries(entryS.symTs).filter(([k]) => symNames.includes(k) || (r.id === 'R-RED' && SYM[k]?.red_flag)).map(([, t]) => t) : []
+      const latestTs = log.length ? Math.max(...(badLog.length ? badLog : liveLog).map((q) => q.ts), 0) : symTimes.length ? Math.max(...symTimes) : entryS?.ts ?? 0
       if (r.urgency !== 'routine' && isClosed(closed, `open|${m.id}|${crewId}|${r.id}|${start}`, latestTs)) continue
       // an "act now" reading from an earlier day is no longer "now": it waits for the medical officer
       // an earlier day's urgent item becomes "waiting for the medical officer" only twelve hours after it
@@ -615,7 +622,9 @@ export function analyzeDay(
   }
   // at the same urgency, an item with operational consequences (it stops exercise) leads
   // and an unchallenged reading leads one that a later reading already disagrees with
-  findings.sort((a, b) => rank[b.status] - rank[a.status] || Number(holdsEx(b.ruleId)) - Number(holdsEx(a.ruleId)) || Number(!!a.contested) - Number(!!b.contested))
+  // a low blood sugar leads among urgent items: it is the one with a treatment the person can take at once
+  const treatNow = (x: Finding) => x.status === 'urgent' && x.ruleId.startsWith('R-V-GLU-LO')
+  findings.sort((a, b) => rank[b.status] - rank[a.status] || Number(treatNow(b)) - Number(treatNow(a)) || Number(holdsEx(b.ruleId)) - Number(holdsEx(a.ruleId)) || Number(!!a.contested) - Number(!!b.contested))
   const status: Status = findings.length ? findings[0].status : learning || staleDays >= 2 ? 'learning' : 'steady'
 
   // --- one status per area, used by every screen (body map, sharing preview, role views) ------
@@ -690,7 +699,7 @@ export function analyzeDay(
       const waitE = Math.max(...condFixed(r.when).map((x) => REPEAT_MIN[x] ?? 5))
       const settledInTime = !!fb && live.length > 0 && live[live.length - 1].ts - fb.ts >= (glu ? 15 : waitE) * 60 * 1000
       const settled = r.scope === 'vital' && evalCond(r.when, fLive) && !RULES.some((q) => q.scope === 'vital' && condFixed(q.when).some((x) => condFixed(r.when).includes(x)) && evalCond(q.when, lastOnly)) && settledInTime
-      openItems.push({ key: `open|${m.id}|${crewId}|${r.id}|${e.day}`, ruleId: r.id, title: r.title, day: e.day, urgency: r.urgency, category: r.categories[0], ts: rts.length ? Math.max(...rts) : e.ts,
+      openItems.push({ key: `open|${m.id}|${crewId}|${r.id}|${e.day}`, ruleId: r.id, title: r.title, day: e.day, urgency: r.urgency, category: r.categories[0], ts: live.filter(meetsE).length ? Math.max(...live.filter(meetsE).map((q) => q.ts)) : rts.length ? Math.max(...rts) : Math.max(0, ...Object.entries(e.symTs ?? {}).filter(([k]) => (JSON.stringify(r.when).includes(`"sym":"${k}"`)) || (r.id === 'R-RED' && SYM[k]?.red_flag)).map(([, t]) => t)) || e.ts,
         readings: (e.readings ?? []).filter((q) => keys.includes(q.ind)), symptoms: r.id === 'R-RED' ? [...new Set([...e.symptoms, ...(e.redFlags ?? [])])].filter((x) => SYM[x]?.red_flag).map((x) => SYM[x].label) : undefined, ...(evalCond(r.when, fLive) ? {} : { withdrawn: true }), ...(settled ? { settled: true } : {}) })
     }
   }

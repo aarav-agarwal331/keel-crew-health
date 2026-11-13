@@ -21,7 +21,7 @@ export function Crew() {
     return {
       c, a, s, r: a ? readiness(a) : null, v: a ? viewFor(role, a, s) : null,
       open: a ? visibleOpenItems(role, a.openItems, s, c.role === 'cmo') : [],
-      extras: visibleExtras(role, s, e?.meds, e?.photos, !!a?.findings.some((f) => f.status === 'urgent')),
+      extras: visibleExtras(role, s, e?.meds, e?.photos, !!a?.findings.some((f) => f.status === 'urgent' && !f.crewWide)),
     }
   }), [mission, today, sharing, role, entries, day])
 
@@ -111,7 +111,7 @@ export function Crew() {
                   {SHARE_CATEGORIES.filter((cat) => v.categories[cat].status !== undefined).map((cat) => {
                     const x = v.categories[cat]
                     const outs = x.indicators?.filter((i) => !i.inRange) ?? []
-                    return <li key={cat}><StatusTag status={x.status!} label={`${catLabel(cat)}${x.status !== 'steady' && x.status !== 'learning' ? ` (${STATUS_LABEL[x.status!].toLowerCase()})` : ''}`} size={20} />{v.findings.some((f) => f.emergency && f.category === cat) && <span>: because of {v.findings.filter((f) => f.emergency && f.category === cat).map((f) => f.title?.toLowerCase()).join('; ')}</span>}{outs.length > 0 && <span className="muted">{v.findings.some((f) => f.emergency && f.category === cat) ? '; trends outside the usual range' : ''}: {outs.map((i) => `${IND[i.ind].short}${i.value !== undefined && !Number.isNaN(i.value) ? ` ${i.value.toFixed(IND[i.ind].decimals)} ${IND[i.ind].unit}` : ' out of range'}`).join(', ')}</span>}</li>
+                    return <li key={cat}><StatusTag status={x.status!} label={`${catLabel(cat)}${x.status !== 'steady' && x.status !== 'learning' ? ` (${STATUS_LABEL[x.status!].toLowerCase()})` : ''}`} size={20} />{v.findings.some((f) => f.emergency && f.category === cat) && <span>: because of {v.findings.filter((f) => f.emergency && f.category === cat).map((f) => (f.title ? f.title[0].toLowerCase() + f.title.slice(1) : '')).join('; ')}</span>}{outs.length > 0 && <span className="muted">{v.findings.some((f) => f.emergency && f.category === cat) ? '; trends outside the usual range' : ''}: {outs.map((i) => `${IND[i.ind].short}${i.value !== undefined && !Number.isNaN(i.value) ? ` ${i.value.toFixed(IND[i.ind].decimals)} ${IND[i.ind].unit}` : ' out of range'}`).join(', ')}</span>}</li>
                   })}
                   {v.findings.filter((x) => !x.emergency).filter((x, i, arr) => x.title || arr.findIndex((y) => !y.title && y.category === x.category) === i).map((f) => (
                     <li key={f.key}>

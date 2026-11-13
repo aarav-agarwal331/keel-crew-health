@@ -121,7 +121,8 @@ export function Today() {
           <p className="small"><strong>When:</strong> {URGENCY_LABEL[primary.urgency].toLowerCase()}. <strong>Who:</strong> {(primary.who ?? WHO_LABEL[primary.tier]).toLowerCase()}.</p>
           <p className="small">{primary.tierReason}</p>
           <AskCmo f={primary} />
-          {[primary, ...others].filter((x) => x.status === 'urgent').flatMap((x) => x.steps.filter((q) => /^For whoever is with you/.test(q))).slice(0, 1).map((q) => <p key={q} className="banner strong small">{q}</p>)}
+          {primary.steps.filter((q) => /^For whoever is with you/.test(q)).slice(0, 1).map((q) => <p key={q} className="banner strong small">{q}</p>)}
+          <RepeatEntry f={primary} />
           {primary.status === 'urgent' && !primary.crewWide && (() => {
             const urgentNow = [primary, ...others].filter((x) => x.status === 'urgent')
             const akey = `alert|${urgentNow.map((x) => x.key).sort().join('+')}`
@@ -140,11 +141,11 @@ export function Today() {
           {others.filter((x) => x.status === 'urgent').length > 0 && (
             <div className="col" data-testid="also-now">
               <span className="lab">Also act now</span>
-              <ol className="list steps">{others.filter((x) => x.status === 'urgent').map((x) => <li key={x.key}><span className="col" style={{ gap: 6 }}><span><strong>{x.title}.</strong> {x.action}</span><RepeatEntry f={x} /></span></li>)}</ol>
+              <ol className="list steps">{others.filter((x) => x.status === 'urgent').map((x) => <li key={x.key}><span className="col" style={{ gap: 6 }}><span><strong>{x.title}.</strong> {x.action}</span>{x.steps.filter((q) => /^For whoever is with you/.test(q)).slice(0, 1).map((q) => <span key={q} className="banner strong small">{q}</span>)}<RepeatEntry f={x} /></span></li>)}</ol>
             </div>
           )}
           {(primary.also ?? []).length > 0 && <div><p className="small"><strong>Also today, from the same readings:</strong></p><ul className="list small">{primary.also!.map((x) => <li key={x.title}><strong>{x.title}.</strong> {x.action}</li>)}</ul></div>}
-          {['R-ILL', 'R-SYM-ILL', 'R-V-TEMP', 'R-V-TEMP-HI'].includes(primary.ruleId) && primary.status !== 'urgent' ? <TempEntry /> : <><RepeatEntry f={primary} /><ReadingLog readings={primary.readings ?? []} title={[primary, ...others].filter((x) => x.status === "urgent").length > 1 ? "Readings behind the first item" : "Readings this is based on"} /></>}
+          {['R-ILL', 'R-SYM-ILL', 'R-V-TEMP', 'R-V-TEMP-HI'].includes(primary.ruleId) && primary.status !== 'urgent' ? <TempEntry /> : <><ReadingLog readings={primary.readings ?? []} title={[primary, ...others].filter((x) => x.status === "urgent").length > 1 ? "Readings behind the first item" : "Readings this is based on"} /></>}
           <a className="btn block" href={href('alert', primary.key)} data-testid="open-alert">Why, and what next <Chev /></a>
           {needsCmo && <button className="btn block" onClick={() => shareCats.forEach((c) => setShare(me, 'cmo', c, 'detail'))} data-testid="today-share-cmo">Share {shareCats.map((c) => CAT[c].toLowerCase()).join(', ')} in full detail with the medical officer</button>}
           {needsCmo && <p className="small muted">This changes one setting: <strong>{shareCats.map((c) => CAT[c]).join(', ')}</strong> goes from "{LEVEL_WORD[sharing[me]?.cmo[shareCats[0]] ?? 'none']}" to "Full detail" for the medical officer, until you change it back in Sharing. Readings in other areas, such as sleep or reaction time, stay as you set them. <strong>You still need to tell them.</strong></p>}

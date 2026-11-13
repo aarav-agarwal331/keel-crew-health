@@ -102,9 +102,9 @@ export function Replay() {
   const pct = ((t - start) / Math.max(1, end - start)) * 100
   const lead = ev && firstAlert ? ev.onset - firstAlert.day : null
   const cur = today(crew.id, t)
-  const [val, setVal] = useState<{ det: number; net: number; n: number; fa: number } | null>(null)
+  const [val, setVal] = useState<{ det: number; net: number; net0: number; n: number; fa: number } | null>(null)
   useEffect(() => {
-    fetch(`${import.meta.env.BASE_URL}results/real_eval.json`).then((r) => r.json()).then((j) => { const s = j.ablation.rhr[j.deployed]['1.0']; setVal({ det: s.detection_rate, net: s.net_detection, n: s.n_events, fa: s.fa_per_person_month }) }).catch(() => setVal(null))
+    fetch(`${import.meta.env.BASE_URL}results/real_eval.json`).then((r) => r.json()).then((j) => { const s = j.ablation.rhr[j.deployed]['1.0']; setVal({ det: s.detection_rate, net: s.net_detection, net0: j.ablation.rhr.original_window.net_detection, n: s.n_events, fa: s.fa_per_person_month }) }).catch(() => setVal(null))
   }, [])
 
   return (
@@ -184,7 +184,7 @@ export function Replay() {
           )}
           {misread && firstAlert && <p className="small">On {shortDay(mission, misread.day)} the detector had already moved, but the readings then looked like something else ("{misread.title.replace(/^[^:]+: /, '')}") and the advice was for that. It is not counted as flagging this event.</p>}
           {unrelated.length > 0 && <p className="small">Keel's log for this replay also has {unrelated.length} {unrelated.length === 1 ? 'entry that is' : 'entries that are'} not about the scripted event. Some are one open notice being read differently as the days pass; some reflect ordinary lapses in the simulated routine, such as a missed exercise session; some are false alerts. That is part of the picture: notices are budgeted at about one false one per person-month in simulation, and real crews would likely see more.</p>}
-          {val && <p className="small"><strong>Across all the real data, not this one script:</strong> heart rate alone (not the eleven-channel model in this replay, which is tested in simulation only) flagged {Math.round(val.det * 100)}% of {val.n} real illness episodes, {Math.round(val.net * 100)} points more than luck, at about {val.fa.toFixed(1)} false alerts per person-month. Useful early warning was not shown.</p>}
+          {val && <p className="small"><strong>Across all the real data, not this one script:</strong> heart rate alone (not the eleven-channel model in this replay, which is tested in simulation only) flagged {Math.round(val.det * 100)}% of {val.n} real illness episodes, {Math.round(val.net0 * 100)} to {Math.round(val.net * 100)} points more than luck (in the detection window set before the analysis, and in the narrower one), at about {val.fa.toFixed(1)} false alerts per person-month. Useful early warning was not shown.</p>}
           <p className="small muted">The replay runs on past the demo's "today" ({shortDay(mission, mission.default_day ?? end)}) to show how the readings evolve over the next few days; those days are simulated ahead, and the notice is still open at the end (only the medical officer closes it). One scripted event proves nothing by itself. The day of the scripted illness was chosen from a short list when the demo missions were built, by looking at the detector's output for two quiet weeks beforehand{(mission as { staging?: { quiet_two_weeks_before: boolean } }).staging?.quiet_two_weeks_before === false ? '; no candidate day had them, so the first was used and earlier notices appear' : ''}. This replay is not a random draw.</p>
           <div className="row wrap">
             <button className="btn primary" onClick={() => { setMe(crew.id); setDay(firstAlert ? Math.max(firstAlert.day + 1, Math.min(end, ev.onset - 1)) : ev.onset); go('today') }} data-testid="replay-open-today">Open that day as {crew.name.split(' ')[0]}</button>
