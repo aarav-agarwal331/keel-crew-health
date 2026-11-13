@@ -85,7 +85,7 @@ Today. The crew medical officer.
 
 Possible illness in a closed cabin affects the whole crew, and early rest is cheap.
 
-Show the medical officer the readings behind this alert
+Share heart, oxygen and temperature in full detail with the medical officer
 
 This changes one setting: Heart, oxygen and temperature becomes "Full detail" for the medical officer, until you change it back in Sharing. Readings in other areas, such as sleep or reaction time, stay as you set them.
 

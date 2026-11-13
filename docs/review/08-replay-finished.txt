@@ -52,30 +52,10 @@ Day 112
 Day 121
 Day 129
 What Keel did
-DAY 128
-Act today: Several readings have drifted from your normal
-
-The notice open since Day 115 now looks like this. Do a full check-in today and repeat any reading that looks wrong. (today; medical officer)
-
-DAY 127
-Act today: Your mood has been lower than usual
-
-The notice open since Day 115 now looks like this. Book a private conversation with the medical officer. (today; medical officer)
-
-DAY 126
-Act today: Several readings have drifted from your normal
-
-The notice open since Day 115 now looks like this. Do a full check-in today and repeat any reading that looks wrong. (today; medical officer)
-
-DAY 125
-Act today: Your mood has been lower than usual
-
-The notice open since Day 115 now looks like this. Book a private conversation with the medical officer. (today; medical officer)
-
 DAY 124
-Act today: Blood oxygen is below your normal
+More serious now: Your body looks like it is under strain
 
-The notice open since Day 115 now looks like this. Take a fingertip reading now, sitting still with a warm hand. (today; medical officer)
+Take your temperature now. No exercise until you have. Tell the medical officer. (today; medical officer, flight surgeon when a link exists)
 
 DAY 122
 Act today: The same symptom three days running
@@ -83,15 +63,15 @@ Act today: The same symptom three days running
 Tell the medical officer today. (today; medical officer)
 
 DAY 121
-Act today: Your body looks like it is under strain
+Same notice (open since Day 115), read differently: Your body looks like it is under strain
 
-The notice open since Day 115 now looks like this. Take your temperature now. No exercise until you have. Tell the medical officer. (today; medical officer)
+Take your temperature now. No exercise until you have. Tell the medical officer. (today; medical officer)
 
 DAY 120
 SCRIPTED EVENT
 What was scripted: illness (infection-like strain)
 
-This is the day the scripted illness symptoms begin and the simulated crew member ticks them at check-in. An odd tired or congested day before this is ordinary simulated background, not the script. Scripted at 2.15 times the average real response: a peak resting heart rate rise of about 7 bpm. That is above the upper quartile of the real episodes (5.3 bpm) and matches the published median among cases a detector caught, so this is an easy case. The simulated rise starts up to 4 days before the symptom day. Real responses vary widely; in the simulator about three illnesses in ten have no heart-rate rise at all. On any one night, ordinary night-to-night variation of about 3.5 bpm comes on top of the scripted rise.
+This is the day the scripted illness symptoms begin and the simulated crew member ticks them at check-in. An odd tired or congested day before this is ordinary simulated background, not the script. Scripted at 2.15 times the average real response as fitted in the calibration half (a peak of 3.3 bpm): a peak resting heart rate rise of about 7 bpm. That matches the published median among cases a detector caught, so this is an easy case. The simulated rise starts up to 4 days before the symptom day. Real responses vary widely; in the simulator about three illnesses in ten have no heart-rate rise at all. On any one night, ordinary night-to-night variation of about 3.5 bpm comes on top of the scripted rise.
 
 DAY 120
 Act today: Throat or cough symptoms, and your readings are drifting
@@ -110,9 +90,9 @@ Earth link lost
 Scripted two-week blackout (antenna fault), modelled on the two-week command pause at solar conjunction. Keel keeps working on board.
 
 DAY 116
-Worth a look: Your mood has been lower than usual
+Same notice (open since Day 115), read differently: Your mood has been lower than usual
 
-The notice open since Day 115 now looks like this. Book a private conversation with the medical officer. (at the next routine opportunity; self-managed)
+Book a private conversation with the medical officer. (at the next routine opportunity; self-managed)
 
 DAY 115
 Worth a look: Your sleep is short or has shifted
@@ -120,14 +100,9 @@ Worth a look: Your sleep is short or has shifted
 Protect a full 8.5-hour sleep period tonight. (at the next routine opportunity; self-managed)
 
 DAY 110
-Worth a look: Your reactions are slower than usual
+Same notice (open since Day 107), read differently: Your reactions are slower than usual
 
-The notice open since Day 107 now looks like this. Repeat the test after a ten-minute break; if it is still slow, ask for a buddy check on critical tasks today. (at the next routine opportunity; self-managed)
-
-DAY 108
-Worth a look: Several readings have drifted from your normal
-
-The notice open since Day 107 now looks like this. Do a full check-in today and repeat any reading that looks wrong. (at the next routine opportunity; self-managed)
+Repeat the test after a ten-minute break; if it is still slow, ask for a buddy check on critical tasks today. (at the next routine opportunity; self-managed)
 
 DAY 107
 Worth a look: Exercise has dropped below your plan
@@ -147,7 +122,7 @@ Sensors alone, or with her check-in? The flag on Day 120 came from the symptoms 
 
 On Day 119 the detector had already moved, but the readings then looked like something else ("Your mood has been lower than usual") and the advice was for that. It is not counted as flagging this event.
 
-Keel's log for this replay also has 7 entries that are not about the scripted event. Some are one open notice being read differently as the days pass; some reflect ordinary lapses in the simulated routine, such as a missed exercise session; some are false alerts. That is part of the picture: notices are budgeted at about one false one per person-month in simulation, and real crews would likely see more.
+Keel's log for this replay also has 6 entries that are not about the scripted event. Some are one open notice being read differently as the days pass; some reflect ordinary lapses in the simulated routine, such as a missed exercise session; some are false alerts. That is part of the picture: notices are budgeted at about one false one per person-month in simulation, and real crews would likely see more.
 
 Across all the real data, not this one script: a two-sensor version of the method (not the eleven-channel model in this replay), with thresholds from the simulator, flagged 72% of 107 real illness episodes, 32 points more than luck, at 1.4 false alerts per person-month. Useful early warning was not shown. Everything except illness is tested in simulation only.
 

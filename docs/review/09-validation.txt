@@ -4,9 +4,12 @@ BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
 Does it work?
 
-Every number here was produced by a script in the repository. Real data is used wherever it exists; everything else is simulated and labelled. Intervals are 95% bootstrap intervals over people, with thresholds held fixed. Analysis choices such as the metric, the detection window and the detector selection rule were revised during three review rounds, so this is not a pre-planned analysis; the decision log in the repository records each change.
+Every number here was produced by a script in the repository. Real data is used wherever it exists; everything else is simulated and labelled. Intervals are 95% bootstrap intervals over people (real data) or missions (simulation), with thresholds held fixed, which makes them somewhat narrower than they should be. Analysis choices such as the metric, the detection window and the detector selection rule were revised during three review rounds, so this is not a pre-planned analysis; the decision log in the repository records each change.
 
 The short version
+What Keel reliably does: works with no link to Earth, acts at once on dangerous readings and symptoms, gives one auditable next step with its source, and lets the crew member decide who sees what.
+What it does not do: predict illness early. Most alerts are false.
+The honest number: heart rate alone, +22 points above chance (12 to 32) at about one false notice a month, on 107 real illness episodes. Everything below is detail.
 
 On real watch data (mostly Fitbit), heart rate alone caught 50% of real illness episodes, against 28% by chance, at about one false alert a month. Useful early warning was not shown, and most alerts are false.
 
@@ -26,7 +29,7 @@ What these results do not show. Useful early warning. At the notice tier an aler
 Jump to: real data · simulated missions · simulator realism · NASA bed-rest data · limitations
 
 Detection above luck on real illness, notice tier
-Keel, two sensors, simulator thresholds
+Two sensors, simulator thresholds (1.4/month: ov…
 +32
 HR + 7-day activity, real thresholds
 +31
@@ -131,7 +134,7 @@ How this was measured
 Made by research/scripts/eval_real.py
 What an alert is worth
 
-ISS crews report about one episode of upper-respiratory symptoms per person-year. At that rate, and with the detection above luck measured here, about 1 in 11 alert-tier alerts and about 1 in 37 notices would coincide with such an illness with daily steps and thresholds from real people; about 1 in 25 and about 1 in 41 with the 7-day activity average; and about 1 in 27 and about 1 in 55 with thresholds from the simulator, which run over budget; and about 1 in 16 and about 1 in 56 for the heart-rate-only model imports run on. These are upper bounds: the sensitivity comes from mostly symptomatic COVID-19, and in-flight colds are milder. The other conditions Keel watches for would raise those shares, and full-sensor thresholds running two to four times over budget (section 3) would lower them; neither can be measured on real data. The figures closest to the app are the simulator-threshold ones. This is why a notice asks for a look, not for the medical officer.
+ISS crews report about one episode of upper-respiratory symptoms per person-year. At that rate, and with the detection above luck measured here, about 1 in 11 alert-tier alerts and about 1 in 37 notices would be attributable to such an illness with daily steps and thresholds from real people; about 1 in 25 and about 1 in 41 with the 7-day activity average; and about 1 in 27 and about 1 in 55 with thresholds from the simulator, which run over budget; and about 1 in 16 and about 1 in 56 for the heart-rate-only model imports run on. These are upper bounds: the sensitivity comes from mostly symptomatic COVID-19, and in-flight colds are milder. The other conditions Keel watches for would raise those shares, and full-sensor thresholds running two to four times over budget (section 3) would lower them; neither can be measured on real data. The figures closest to the app are the simulator-threshold ones. This is why a notice asks for a look, not for the medical officer.
 
 Assumes 0.97 illnesses per person-year (upper-respiratory symptoms on the ISS, source 52b) and the detection above luck measured on real data. How this was measured · research/scripts/eval_real.py
 
@@ -189,4 +192,4 @@ The simulator's illness response was fitted on 38 of the 107 real episodes, so a
 The four personal-baseline detectors perform alike at the notice tier. Keel runs the one picked on simulated training missions by a selection rule that was itself revised during review; the choice flipped once. The simple rule is +28 above luck at the notice tier and +26 at the alert tier.
 Full limitations and what a clinician would need to review
 
-Result files, code version: real e7d7ec38e9fb, simulated e7d7ec38e9fb, realism e7d7ec38e9fb, bed rest e7d7ec38e9fb. Scripts: research/scripts/.
+Result files, code version: real 0bc0a39d53e4, simulated 0bc0a39d53e4, realism 0bc0a39d53e4, bed rest 0bc0a39d53e4. Scripts: research/scripts/.

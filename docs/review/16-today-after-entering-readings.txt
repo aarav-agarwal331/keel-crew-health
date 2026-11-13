@@ -2,7 +2,7 @@ SCREEN: 16-today-after-entering-readings
 TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 121 | Simulated data
 BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
-Keel is a crew health monitor that works with no link to Earth. It learns each person's own normal and gives one action with its source. Demo: Lucía's tablet, simulated Mars transit. A lunar base mission is under More.
+Keel is a crew health monitor that works with no link to Earth. Dangerous readings and symptoms get an immediate, auditable next step with its source; the crew member decides who sees what; and it watches each person's readings against their own normal. Demo: Lucía's tablet, simulated Mars transit. A lunar base mission is under More.
 
 Demo: replay a scripted event (40 s)
 The evidence
@@ -15,7 +15,7 @@ Demo crew member, simulated readings.
 
 RECOMMENDED ACTION
 
-If you are awake and can swallow, eat or drink something sugary now, and tell the medical officer now. Your repeat (85) came too soon to count: sugar takes about 15 minutes to work, so check again 15 minutes after the first reading.
+Call a crewmate to you now. If you are awake and can swallow, eat or drink something sugary now, and tell the medical officer now. Your repeat (85) came too soon to count: sugar takes about 15 minutes to work, so check again 15 minutes after the first reading.
 
 When: now. Who: the crew medical officer.
 
@@ -23,23 +23,23 @@ A fixed safety threshold, not a trend.
 
 Now visible on the medical officer's and the commander's Crew screens (emergency sharing). They are not alerted: tell them yourself now.
 
-Also needs attention now: Heart rate reading at rest is 150 or more (entered: 170). Each is listed below.
-
+Also act now
+Heart rate reading at rest is 150 or more (entered: 170). Call a crewmate to you now. Stop, rest, and tell the medical officer now.
 Readings this is based on:
-Blood sugar 50 mg/dL, at 18:18
-Blood sugar 85 mg/dL, at 18:18
+Blood sugar 50 mg/dL, at 18:33
+Blood sugar 85 mg/dL, at 18:33
 Every reading is kept. The most abnormal reading of the day stays on the medical officer's list until they close it. What you are told to do follows your latest reading once a repeat counts (for blood sugar, 15 minutes after the first).
 Why, and what next
-Also: take your temperature
-Thermometer reading (°C)
-Save reading
 
 No link to Earth right now. Everything on this screen was worked out on this device.
 
 Heart rate reading at rest is 150 or more (entered: 170)
-Stop, rest, and tell the medical officer now.
+Call a crewmate to you now. Stop, rest, and tell the medical officer now.
 Your body looks like it is under strain
 Take your temperature now. No exercise until you have. Tell the medical officer.
+Also: take your temperature
+Thermometer reading (°C)
+Save reading
 What changed
 All trends
 Resting heart rate (overnight) 66 bpm
@@ -96,6 +96,6 @@ Radiation dose
 216 mSv this mission (dosimeter estimate)
 Today 1.88 mSv. At this mission's average daily rate so far, about 320 mSv by flight day 180, the end of this leg; a return trip adds more. The 600 mSv career limit also counts earlier flights.
 
-Keel opened 3 notices from your readings in the last 30 days. Keel can be wrong. The full-sensor thresholds on this tablet are untested on real data; set the same way for five sensors, they gave about two false alerts a month on real people. How often it is right
+Keel opened 3 notices from your readings in the last 30 days. Keel can be wrong. The full-sensor thresholds on this tablet are untested on real data. Set the same way for five sensors and tried on 16 people from another real wearable dataset (no illness labels), they gave about two alerts a month. How often it is right
 
 Keel is decision support, not a medical device. It does not diagnose. It shows how your readings compare with your own normal and points to documented countermeasures.

@@ -4,7 +4,7 @@ BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
 Check-in
 
-Flight day 121. Four quick answers, about a minute. Stored on your tablet; anything urgent appears at once on the medical officer's and, as backup, the commander's Crew screens; they are not notified, so tell them. Who sees what
+Flight day 121. Four quick answers, about a minute. Stored on your tablet; emergency sharing is on, so anything urgent appears at once on the medical officer's and, as backup, the commander's Crew screens; they are not notified, so tell them. Who sees what
 
 Today's check-in in this demo came from the simulation. Anything you save here is added to it.
 
@@ -58,7 +58,7 @@ Thoughts of harming yourself
 Thoughts of harming someone else
 3. Fluids today
 −
-2.55 L
+2.50 L
 +
 Same as usual (2.5 L)
 + 1 L
