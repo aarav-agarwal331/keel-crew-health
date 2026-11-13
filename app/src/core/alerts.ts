@@ -20,3 +20,10 @@ export function alertState<T extends { crew: string; did: string; alertKey: stri
   const acks = actions.filter((a) => a.crew === me && a.did === 'Acknowledged the alert' && ackKeys.has(a.alertKey))
   return { sent, acks, covering }
 }
+
+/** An open infection-like notice beside an urgent reading changes what the medical officer should think of first:
+ *  the alert says so. */
+export function contextNote(findings: { ruleId: string; title: string; days: number; status: string }[]): string {
+  const inf = findings.find((f) => (f.ruleId === 'R-ILL' || f.ruleId === 'R-SYM-ILL') && f.status !== 'urgent')
+  return inf ? ` (also open: "${inf.title}", ${inf.days} day${inf.days === 1 ? '' : 's'})` : ''
+}

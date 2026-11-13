@@ -1,5 +1,5 @@
 import { SYMPTOMS } from '../core/mission'
-import { alertFields, alertState } from '../core/alerts'
+import { alertFields, alertState, contextNote } from '../core/alerts'
 import { useAutoAlert } from '../ui/useAutoAlert'
 import { STATUS_LABEL, unusualness, URGENCY_LABEL, WHO_LABEL } from '../core/analysis'
 import { deployedScore, episodes } from '../core/detect'
@@ -40,7 +40,8 @@ export function Today() {
   const primary = a.findings[0]
   const others = a.findings.slice(1)
   // the readings the recommended action rests on come first, then the largest other changes
-  const evidence = primary && !primary.crewWide ? primary.changes.map((c) => c.ind) : []
+  // only readings that actually moved enough to matter (outside the band, or notably unusual) are listed
+  const evidence = primary && !primary.crewWide ? primary.changes.filter((c) => c.notable || c.daysOut > 0).map((c) => c.ind) : []
   const changes = [...a.changes.filter((c) => evidence.includes(c.ind)), ...a.changes.filter((c) => !evidence.includes(c.ind) && c.notable)].slice(0, 4)
   // sharing an alert opens only its main area; mood and symptoms stay as the crew member set them
   const shareCats = (primary?.categories ?? []).slice(0, 1).filter((c): c is ShareCategory => (SHARE_CATEGORIES as readonly string[]).includes(c))
@@ -123,6 +124,7 @@ export function Today() {
           <AskCmo f={primary} />
           {primary.steps.filter((q) => /^For whoever is with you/.test(q)).slice(0, 1).map((q) => <p key={q} className="banner strong small">{q}</p>)}
           <RepeatEntry f={primary} />
+          {primary.status === 'urgent' && others.some((x) => ['R-ILL', 'R-SYM-ILL'].includes(x.ruleId)) && <div className="col" style={{ gap: 4 }}><p className="small"><strong>An infection-like notice is also open:</strong> take your temperature now as well.</p><TempEntry /></div>}
           {primary.status === 'urgent' && !primary.crewWide && (() => {
             const urgentNow = [primary, ...others].filter((x) => x.status === 'urgent')
             const akey = `alert|${urgentNow.map((x) => x.key).sort().join('+')}`
@@ -132,9 +134,10 @@ export function Today() {
             const on = sharing[me]?.emergency !== false
             return <div className="col">
               {auto.counting && <div className="banner strong" role="alert"><p><strong>Alerting the medical officer and commander in {auto.autoLeft} s.</strong></p><p className="small" data-testid="cancel-auto-alert-today">A typing mistake? Withdraw that reading in the list below; the alert then goes only for anything else.</p></div>}
-              {!sent && <button className="btn alert block" style={{ minHeight: 72, fontSize: '1.2rem' }} onClick={() => void logAction({ crew: me, alertKey: akey, day, did: 'Alerted the crew', feel: null, ...alertFields(urgentNow) })} data-testid="alert-crew">{onlyCmo ? 'Alert the medical officer now' : 'Alert the medical officer and commander now'}</button>}
+              {!sent && <button className="btn alert block" style={{ minHeight: 72, fontSize: '1.2rem' }} onClick={() => void logAction({ crew: me, alertKey: akey, day, did: 'Alerted the crew', feel: null, ...alertFields(urgentNow, contextNote(a.findings)) })} data-testid="alert-crew">{onlyCmo ? 'Alert the medical officer now' : 'Alert the medical officer and commander now'}</button>}
               {sent && !auto.escalated && !acks.some((x) => /medical officer/.test(x.note)) && Date.now() - sent.ts > 5 * 60e3 && <button className="btn alert block" onClick={() => void logAction({ crew: me, alertKey: akey, day, did: 'Alerted the crew', feel: null, ...alertFields(urgentNow, ' (no answer after 5 minutes: sent again)') })} data-testid="alert-again">No answer yet: alert them again</button>}
               {sent && <p className="banner strong" role="status"><strong>Alert sent at {new Date(sent.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}.</strong> {acks.length ? acks.map((x) => `Acknowledged ${x.note} at ${new Date(x.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}.`).join(' ') : 'Not acknowledged yet: it stays at the top of their Crew screens until the medical officer does.'}</p>}
+              {sent && <p className="small">Until it is acknowledged, Keel sends it again every five minutes while this screen is open; it cannot once the tablet is put away.</p>}
               <p className="small">{on ? sent ? 'The details are visible on their Crew screens (emergency sharing).' : 'The details are visible on their Crew screens (emergency sharing). Saving an urgent check-in alerts them after ten seconds; this button alerts them now.' : 'Emergency sharing is off: the alert says only that you need help, not why.'}</p>
             </div>
           })()}
@@ -196,7 +199,7 @@ export function Today() {
         <div className="col" style={{ gap: 14 }}>
           <Card id="today-routine" title="Today's routine" right={<span className="chip num" title="Days in a row with the sensor worn and a check-in done">{streak}-day streak</span>}>
             <div className="row" style={{ gap: 14 }}>
-              <Ring value={weekPct} label={`Exercise this week: ${Math.round(weekPct * 100)} percent of plan`} />
+              {!a.exerciseHold && <Ring value={weekPct} label={`Exercise this week: ${Math.round(weekPct * 100)} percent of plan`} />}
               <div className="col" style={{ gap: 2 }}>
                 <strong>{a.exerciseHold ? 'Exercise: paused' : 'Exercise this week'}</strong>
                 <span className="small muted">{a.exerciseHold ? `The plan is suspended until the medical officer clears you. Minutes logged this week, before the pause or by the exercise devices: ${Math.round(week.reduce((x, y) => x + y, 0))}.` : `${Math.round(week.reduce((x, y) => x + y, 0))} of ${target * 6} planned minutes. Every session protects bone, muscle and heart.`}</span>
@@ -228,7 +231,7 @@ export function Today() {
           </Card>
         </div>
       </div>
-      <p className="small muted">Keel opened {notices30} notice{notices30 === 1 ? '' : 's'} from your readings in the last 30 days. Keel can be wrong: expect one or two false notices a month, possibly more. <a href={href('validation')}>How often it is right</a></p>
+      <p className="small muted">In the last 30 days the readings detector opened {notices30} notice{notices30 === 1 ? '' : 's'} (not counting fixed safety lines or symptoms you reported). Keel can be wrong: expect one or two false notices a month, possibly more, and most notices turn out to be nothing. <a href={href('validation')}>How often it is right</a></p>
       <p className="banner">Keel is decision support, not a medical device. It does not diagnose. It shows how your readings compare with your own normal and points to documented countermeasures.</p>
     </>
   )

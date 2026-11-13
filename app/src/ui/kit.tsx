@@ -106,12 +106,12 @@ export function Ring({ value, size = 68, label }: { value: number; size?: number
   const c = 2 * Math.PI * r
   const v = Math.max(0, Math.min(1, value))
   return (
-    <svg width={size} height={size} role="img" aria-label={label}>
+    <svg width={size} height={size} role="img" aria-label={label} style={{ flexShrink: 0 }}>
       <g transform={`rotate(-90 ${size / 2} ${size / 2})`}>
         <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="var(--surface-3)" strokeWidth="7" />
         <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="var(--series-3)" strokeWidth="7" strokeLinecap="round" strokeDasharray={`${c * v} ${c}`} />
       </g>
-      <text x="50%" y="50%" dominantBaseline="central" textAnchor="middle" fontSize={size * (v >= 0.995 ? 0.19 : 0.22)} fontWeight="700" fill="var(--text)">{Math.round(v * 100)}%</text>
+      <text x="50%" y="50%" dominantBaseline="central" textAnchor="middle" fontSize={size * (v >= 0.995 ? 0.17 : 0.21)} fontWeight="700" fill="var(--text)">{Math.round(v * 100)}%</text>
     </svg>
   )
 }

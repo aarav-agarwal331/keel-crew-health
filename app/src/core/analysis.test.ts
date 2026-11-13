@@ -144,6 +144,11 @@ describe('end to end on the demo mission', () => {
     const hn = run('c0', 100, [highNormal]).findings.find((x) => x.ruleId === 'R-V-GLU-HI2')!
     expect(hn.action).not.toMatch(/treat it as low/)
     expect(hn.status).toBe('act')
+    // a value under 35 saved before the meter unit was known gets conditional advice, not "take sugar now"
+    const unk: Entry = { ...e, readings: [{ ind: 'glucose', v: 5.5, ts: 1, unitUnknown: true }] }
+    const uf = run('c0', 100, [unk]).findings.find((x) => x.ruleId === 'R-V-GLU-LO2')!
+    expect(uf.action).toMatch(/Confirm which unit/)
+    expect(uf.action).not.toMatch(/^Take sugar now/)
     // the title names the reading that crossed the line, not the later one
     expect(run('c0', 100, [soon]).findings.find((x) => x.ruleId === 'R-V-GLU-LO2')!.title).toMatch(/50, then 85; the 50 still counts/)
     expect(f1.readings!.map((r) => r.v)).toEqual([50, 85])

@@ -144,7 +144,8 @@ test('every screen works with the network disabled', async ({ page }) => {
     await expect(page.getByTestId('glucose-unit')).toBeVisible()
     await nav(page, '#/today')
     await expect(page.getByTestId('glucose-unit')).toBeVisible()
-    await expect(page.locator('main')).toContainText('Take sugar now')
+    // the unit is not known yet: sugar only if the person feels low, and the unit question is asked
+    await expect(page.locator('main')).toContainText(/Confirm which unit your meter shows/)
     await page.getByTestId('unit-mmol').click()
     await expect(page.getByTestId('glucose-unit')).toHaveCount(0)
     // a value withdrawn as a typing mistake stops counting, and stays visible in the log
@@ -289,4 +290,23 @@ test('the guided demo enters a dangerous reading and shows the action and the al
   await page.getByTestId('repeat-now').fill('90')
   await page.getByTestId('repeat-save').click()
   await expect(page.getByTestId('reading-log').first()).toContainText('90')
+})
+
+test('withdrawing a typing mistake never creates a reading nobody took', async ({ page }) => {
+  await goOffline(page)
+  await nav(page, '#/checkin/measure')
+  await page.getByTestId('meter-mg').click()
+  await page.getByLabel(/Blood sugar/).fill('50')
+  await page.getByTestId('save-checkin').last().click()
+  await page.waitForTimeout(400)
+  await page.getByLabel(/Blood sugar/).fill('58')
+  await page.getByTestId('save-checkin').last().click()
+  await page.waitForTimeout(400)
+  await page.getByTestId('withdraw-glucose').first().click()
+  await page.getByTestId('mood-4').click()
+  await page.getByTestId('save-checkin').last().click()
+  await expect(page.getByText('Saved.', { exact: true })).toBeVisible()
+  const log = page.getByTestId('reading-log').first()
+  await expect(log).toContainText('58')
+  await expect(log.locator('li', { hasText: 'Blood sugar 50' })).toHaveCount(1)
 })

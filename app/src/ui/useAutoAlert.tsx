@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { alertFields, alertState } from '../core/alerts'
+import { alertFields, alertState, contextNote } from '../core/alerts'
 import { useApp } from '../state'
 
 /** One alert service for every place a reading can be entered (Check-in, the thermometer box on Today).
@@ -34,7 +34,7 @@ export function useAutoAlert(trigger: boolean) {
       counting.current = false
       const u = urgentRef.current
       if (!u.length || alreadySent('')) return
-      void logAction({ crew: me, alertKey: `alert|${u.map((x) => x.key).sort().join('+')}`, day, did: 'Alerted the crew', feel: null, ...alertFields(u, ' (sent automatically)') })
+      void logAction({ crew: me, alertKey: `alert|${u.map((x) => x.key).sort().join('+')}`, day, did: 'Alerted the crew', feel: null, ...alertFields(u, contextNote(today(me, day)?.findings ?? []) + ' (sent automatically)') })
     }
     const t = window.setTimeout(() => { flushRef.current = () => {}; send() }, 10_000)
     const iv = window.setInterval(() => setTick((n) => n + 1), 1000)
@@ -50,7 +50,7 @@ export function useAutoAlert(trigger: boolean) {
     if (!pend.length) return
     const resolved = (k: string) => actions.some((x) => x.crew === me && x.alertKey === k && /Alerted the crew|Alert cancelled/.test(x.did))
     if (pend.every((p) => resolved(p.alertKey)) || alreadySent('')) return
-    void logAction({ crew: me, alertKey: akey, day, did: 'Alerted the crew', feel: null, ...alertFields(urgent, ' (sent automatically)') })
+    void logAction({ crew: me, alertKey: akey, day, did: 'Alerted the crew', feel: null, ...alertFields(urgent, contextNote(today(me, day)?.findings ?? []) + ' (sent automatically)') })
   })
   // escalation: no acknowledgement from the medical officer (or, when the patient is the medical officer, the commander)
   const patientIsCmo = mission.crew.find((c) => c.id === me)?.role === 'cmo'

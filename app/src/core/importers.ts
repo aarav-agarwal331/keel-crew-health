@@ -89,10 +89,12 @@ export function parseCsv(text: string): ImportResult {
   }
   const notes = [`Columns used: ${mapped.join(', ')}`]
   if (slash.length) notes.push(`Dates read as ${dayFirst ? 'day/month/year' : 'month/day/year'}.`)
+  // units first, on every raw reading, so the day's low and high are both judged in mg/dL
+  glucoseUnitsRaw(byDay, notes)
   // a day with both a low and a very high blood sugar keeps the low one; say so
   const both = [...byDay.entries()].filter(([, r]) => r.glucose && Math.min(...r.glucose) < 70 && Math.max(...r.glucose) >= 250).map(([d]) => d)
   if (both.length) notes.push(`On ${both.join(', ')} blood sugar was both under 70 and 250 or more; Keel keeps the low value for that day. Check those days in the file.`)
-  return { rows: glucoseUnits(collapse(byDay), notes), format: 'CSV', notes }
+  return { rows: collapse(byDay), format: 'CSV', notes }
 }
 
 // spot readings that a fixed safety rule looks at: never average them, keep the most worrying one of the day
@@ -110,18 +112,19 @@ function collapse(byDay: Map<string, Record<string, number[]>>, sum: string[] = 
   }))
 }
 
-/** A CSV gives no unit for blood sugar.  If most values are under 35 the file is in mmol/L: convert it. */
-function glucoseUnits(rows: DayRow[], notes: string[]): DayRow[] {
-  const g = rows.map((r) => r.values.glucose).filter((v) => v !== undefined && !Number.isNaN(v))
-  if (!g.length) return rows
+/** A CSV gives no unit for blood sugar.  If most readings are under 35 the file is in mmol/L: convert every
+ *  reading (before the day is reduced to one value, so a high mmol/L reading is not lost behind a low one). */
+function glucoseUnitsRaw(byDay: Map<string, Record<string, number[]>>, notes: string[]) {
+  const g = [...byDay.values()].flatMap((r) => r.glucose ?? []).filter((v) => !Number.isNaN(v))
+  if (!g.length) return
   const low = g.filter((v) => v < 35).length / g.length
   if (low > 0.5) {
     notes.push('Blood sugar values look like mmol/L (most are under 35), so they were converted to mg/dL (x 18).')
-    return rows.map((r) => (r.values.glucose === undefined ? r : { ...r, values: { ...r.values, glucose: r.values.glucose * 18.016 } }))
+    for (const r of byDay.values()) if (r.glucose) r.glucose = r.glucose.map((v) => v * 18.016)
+    return
   }
   // the rest of the file is in mg/dL: a value under 35 is kept and treated as a dangerous low, the safe error
   if (low > 0) notes.push(`${g.filter((v) => v < 35).length} blood sugar value(s) under 35 mg/dL were kept and are treated as dangerously low: check the unit of those rows in the file.`)
-  return rows
 }
 
 /** Fitbit / Google Takeout: resting_heart_rate-*.json and sleep-*.json (arrays of records). */

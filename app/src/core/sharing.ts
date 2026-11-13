@@ -10,7 +10,7 @@ export const ROLES: { id: Role; label: string; blurb: string }[] = [
 
 export const LEVELS: { id: Level; label: string; reveals: string }[] = [
   { id: 'none', label: 'Private', reveals: 'Nothing beyond the always-visible items above.' },
-  { id: 'status', label: 'Status', reveals: 'Only steady / worth a look / act today / act now. Under emergency sharing the medical officer also sees the title of a safety item, or of a notice that includes a symptom you reported.' },
+  { id: 'status', label: 'Status', reveals: 'Steady / worth a look / act today / act now. Under emergency sharing the medical officer also sees the title of a safety item, or of a notice that includes a symptom you reported.' },
   { id: 'trend', label: 'Trends', reveals: 'Status, the title of any notice from your readings, and whether each reading is inside your normal range.' },
   { id: 'detail', label: 'Full detail', reveals: 'Status, trends, the actual numbers and your notes.' },
 ]

@@ -153,7 +153,8 @@ export function Crew() {
               {/* an item that needs the medical officer and has stayed open for two days or more is overdue: say so, without its content */}
               {role === 'cmo' && c.role !== 'cmo' && a && (() => {
                 const overdue = a.findings.filter((f) => !f.crewWide && f.status === 'act' && f.tier !== 'self' && f.days >= 2)
-                return overdue.length > 0 ? <p className="banner strong small" data-testid={`overdue-${c.id}`}><strong>Overdue:</strong> {overdue.length === 1 ? 'an item that needs you has' : `${overdue.length} items that need you have`} been open for {Math.max(...overdue.map((f) => f.days))} days. Please see {c.name.split(' ')[0]} today.</p> : null
+                // while something urgent is open, the alert banner says it all
+                return overdue.length > 0 && !a.findings.some((f) => f.status === 'urgent' && !f.crewWide) ? <p className="banner strong small" data-testid={`overdue-${c.id}`}><strong>Overdue:</strong> {overdue.length === 1 ? 'an item that needs you has' : `${overdue.length} items that need you have`} been open for {Math.max(...overdue.map((f) => f.days))} days. Please see {c.name.split(' ')[0]} today.</p> : null
               })()}
               {/* clearance is about the person: one action, saying exactly what it lifts */}
               {a?.restricted && (role === 'cmo' ? c.role !== 'cmo' : c.role === 'cmo') && (

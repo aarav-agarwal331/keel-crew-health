@@ -903,6 +903,42 @@ with its source), time-based repeat windows for the two-reading escalation rules
 pressure and temperature, the fever line relative to in-flight baseline (for a clinician), the
 `expected` block of `model_import.json` (needs a pipeline run; the screens give both windows).
 
-## Round 20
+## Round 20 (2026-11-12, fresh reviewers, redeployed build)
 
-See the end of this file once the twentieth round has run.
+Judge's scores: impact 7, creativity 8, validity 7, relevance 8, presentation 6 (36 of 50), "nominate:
+yes", **no high-severity issue**. The statistician found none either. The astronaut found one and the
+flight surgeon two (both data-integrity bugs found by reading the code):
+
+| # | Reviewer | High-severity finding | Fix |
+|---|---|---|---|
+| 1 | Astronaut | The Guide said a "medical officer only" tick is shown to the medical officer only; Sharing said it changes the commander's tier. The tick itself did not warn. | The tick label and the Guide both say the commander sees the tier change, not why. |
+| 2 | Flight surgeon | Withdrawing a typing mistake could create a reading nobody took: the save compared with the last reading including withdrawn ones, so the carried-over value looked new. | The save compares with the last reading still standing and never logs a value that matches a withdrawn one; an end-to-end test enters 50, 58, withdraws 58, saves again and checks no new 50 appears. |
+| 3 | Flight surgeon | A mmol/L CSV import reduced each day to one value before converting units, so a day with 5.5 and 22 mmol/L kept only the 99 mg/dL and hid the 396. | Units are converted on every raw reading before a day is reduced; unit-tested. |
+
+Medium-severity findings fixed in the same pass:
+
+- **Unit not yet known** (flight surgeon): a blood sugar under 35 saved before the meter unit is set is
+  marked, and its card says "confirm which unit … take sugar if you feel shaky, sweaty or confused"
+  instead of an unconditional "take sugar now"; unit-tested and end-to-end tested.
+- **Infection context** (flight surgeon): with an urgent reading and an open infection-like notice, the
+  urgent card keeps the thermometer box and the alert names the open notice.
+- **Re-alerting** (flight surgeon): the alert card says re-sending happens only while the screen is open.
+- **Ring and pause** (judge, astronaut): the ring no longer shrinks; it is hidden while exercise is paused.
+- **What changed** (astronaut, judge, flight surgeon): only readings that moved enough to matter are
+  listed, matching the body figure.
+- **README results table** (judge): heart rate alone first, with the pre-set window; the over-budget
+  linking analysis last; the detector-comparison bar says it is not a shipped configuration.
+- **Predictive value, pre-set window** (statistician): notices about 1 in 94 with the pre-set window's
+  detection, computed in the app from the same result file.
+- **Apple Watch** (statistician): the import card says imports from other devices are unvalidated.
+- **Wording** (statistician, astronaut, judge): the activity feature relabelled as a stand-in; "upper
+  bound" made "likely optimistic" where the result file still says it; the replay gives the pre-set
+  window's own flagged share; the notice count says what it counts; "Status" no longer says "only".
+
+Not done, with reasons: one grouping of body areas across screens and one alert vocabulary (a redesign),
+a minor-injury split of the red-flag list (for a clinician), an erase-only-my-data button, refusing a
+fourth photo, intervals over fold seeds and pretend-date seeds (pipeline work).
+
+## Round 21
+
+See the end of this file once the twenty-first round has run.

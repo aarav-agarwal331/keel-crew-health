@@ -35,7 +35,7 @@ interface Ctx {
   today: (crewId?: string, day?: number) => DayAnalysis | null
   entries: Entry[]
   /** `repeat` names spot readings taken again on purpose, so they are logged even when the value is the same */
-  saveEntry: (e: Omit<Entry, 'key' | 'ts' | 'mission' | 'readings'>, repeat?: string[]) => Promise<void>
+  saveEntry: (e: Omit<Entry, 'key' | 'ts' | 'mission' | 'readings'>, repeat?: string[], opts?: { glucoseUnitUnknown?: boolean }) => Promise<void>
   voidReading: (crew: string, day: number, ind: string, ts: number) => Promise<void>
   actions: ActionLog[]
   logAction: (a: Omit<ActionLog, 'id' | 'ts' | 'mission'>) => Promise<void>
@@ -254,7 +254,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     lastOutDay.current = -1
     if (mission) void store.putKv(`me:${mission.id}`, id)
   }, [mission])
-  const saveEntry = useCallback(async (e: Omit<Entry, 'key' | 'ts' | 'mission' | 'readings'>, repeat: string[] = []) => {
+  const saveEntry = useCallback(async (e: Omit<Entry, 'key' | 'ts' | 'mission' | 'readings'>, repeat: string[] = [], opts: { glucoseUnitUnknown?: boolean } = {}) => {
     if (!mission) return
     const key = `${mission.id}|${e.crew}|${e.day}`
     const ts = Date.now()
@@ -264,8 +264,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const log: Reading[] = old?.readings ? [...old.readings] : old ? LOGGED.filter((k) => k in old.values).map((k) => ({ ind: k, v: old.values[k], ts: old.ts })) : []
     for (const k of LOGGED) {
       if (!(k in e.values)) continue
-      const last = [...log].reverse().find((r) => r.ind === k)
-      if (!last || last.v !== e.values[k] || repeat.includes(k)) log.push({ ind: k, v: e.values[k], ts })
+      // compare with the last reading still standing: a withdrawn typing mistake must not make the value
+      // carried over from earlier look new (that would log a reading nobody took)
+      const last = [...log].reverse().find((r) => r.ind === k && !r.void)
+      if (repeat.includes(k) || (!last && !log.some((r) => r.ind === k)) || (last && last.v !== e.values[k] && !log.some((r) => r.ind === k && r.void && r.v === e.values[k]))) log.push({ ind: k, v: e.values[k], ts, ...(k === 'glucose' && e.values[k] < 35 && opts.glucoseUnitUnknown ? { unitUnknown: true } : {}) })
     }
     // red flags are append-only for the day: unticking one later does not take it off the medical officer's list
     const redFlags = [...new Set([...(old?.redFlags ?? []), ...(old?.symptoms ?? []), ...e.symptoms].filter((x) => SYMPTOMS.find((q) => q.id === x)?.red_flag))]

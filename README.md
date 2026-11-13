@@ -65,14 +65,14 @@ Real wearable data: 251 people, 107 dated illness episodes (Stanford COVID-19 we
 
 | Configuration, notice tier | Flagged | By luck | **Above luck** (95% interval) | False alerts per person-month |
 |---|---|---|---|---|
-| Linking analysis: Keel's method on two sensors (heart rate + 7-day activity), thresholds set only in simulation | 68% | 41% | +28 (18 to 37) | 1.31 (budget 1.00, over) |
-| … on the 132 people the simulator's fits did not use (60 episodes) | 72% | 41% | +30 (17 to 42) | 1.29 |
-| Same sensors, thresholds from other real people (5-fold over people) | 64% | 34% | +30 (20 to 39) | 0.99 |
-| **… heart rate alone (the import model)** | 50% | 31% | **+19 (9 to 28)** | 0.99 |
-| … heart rate + daily steps | 63% | 34% | +28 (19 to 38) | 0.98 |
+| **Heart rate alone, thresholds from other real people (the import model)** | 50% | 31% | **+19 (9 to 28)**; +13 (4 to 24) in the pre-set window | 0.99 |
+| Heart rate + 7-day activity, thresholds from other real people (5-fold over people) | 64% | 34% | +30 (20 to 39) | 0.99 |
+| Heart rate + daily steps, thresholds from other real people | 63% | 34% | +28 (19 to 38) | 0.98 |
 | One fixed threshold for everyone, heart rate + daily steps | 41% | 23% | +18 (8 to 27) | 1.01 |
 | One fixed threshold for everyone, heart rate + 7-day activity | 26% | 19% | +7 (−1 to 15) | 1.01 |
 | The 11-channel model file the app ships, given only the channels a real import has | 29% | 13% | +16 (7 to 25) | 0.35 |
+| Linking analysis (over its false-alert budget, so not comparable with the rows above): Keel's method on two sensors (heart rate + 7-day activity), thresholds set only in simulation | 68% | 41% | +28 (18 to 37) | 1.31 (budget 1.00, over) |
+| … on the 132 people the simulator's fits did not use (60 episodes) | 72% | 41% | +30 (17 to 42) | 1.29 |
 
 | Stricter tier (the one that brings in the medical officer), budget 0.25 | Above luck | False alerts per person-month |
 |---|---|---|
@@ -229,7 +229,7 @@ statement saved in [docs/CHALLENGE.md](docs/CHALLENGE.md).
 | C4 | Dynamic charts over time | Trends: 2 weeks, 8 weeks, mission |
 | C5 | Colour coding at a glance | Four status levels, each with a colour, a shape and a label (colourblind-safe) |
 | C6 | Instructions and explanations | "How to measure" on every entry field; Guide |
-| D3 | Official Resources tab | Opens 2026-11-13, after this build; for the team to check before submitting (FINAL_REPORT.md section 5) |
+| D3 | Official Resources tab | Opened 2026-11-13, after this build |
 | E1 | Works with no link, offline proven | `app/e2e/offline.spec.ts`; Link → "Cut the link now" |
 | E2 | Personal baselines; adaptation not flagged as illness | Method → Personal baselines; Validation sections 2 and 4 |
 | E3 | Detection measured on real labeled data | Validation section 1 |

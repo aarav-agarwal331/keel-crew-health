@@ -31,6 +31,11 @@ describe('importers', () => {
     expect(() => parseCsv('date,rhr\n03/04/2026,60\n05/06/2026,61\n')).toThrow(/YYYY-MM-DD/)
     expect(parseCsv('date,rhr\n13/04/2026,60\n03/04/2026,61\n').rows.map((x) => x.date)).toEqual(['2026-04-03', '2026-04-13'])
   })
+  it('converts mmol/L per reading before reducing a day, so a high reading is not hidden by a low one', () => {
+    const r = parseCsv('date,glucose\n2026-01-01,5.5\n2026-01-01,22\n2026-01-02,5.8\n')
+    expect(r.rows[0].values.glucose).toBeGreaterThan(390)
+    expect(r.notes.join(' ')).toMatch(/mmol\/L/)
+  })
   it('rejects files without a date or known columns', () => {
     expect(() => parseCsv('a,b\n1,2\n')).toThrow(/date/)
     expect(() => parseCsv('date,foo\n2026-01-01,2\n')).toThrow(/indicator/)

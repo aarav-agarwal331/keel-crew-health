@@ -35,7 +35,7 @@ export function Guide({ focus }: { focus?: string }) {
           <li><strong>Today.</strong> Whenever Keel shows "Act today" and "Who" is not "you manage this yourself", and:
             <ul className="list">{TODAY.map((r) => <li key={r.id}>{r.title}.</li>)}</ul></li>
           <li><strong>When a link opens:</strong> anything the medical officer wants a flight surgeon to review. The daily summary contains only what you chose to share.</li>
-          <li><strong>If you have thoughts of harming yourself, or cannot function:</strong> tell the medical officer now. Keel shows that tick to the medical officer only.</li>
+          <li><strong>If you have thoughts of harming yourself, or cannot function:</strong> tell the medical officer now. Keel tells only the medical officer what it is; the commander sees no reason, but your readiness tier for them changes to "Talk to the medical officer first".</li>
         </ul>
         <p className="small muted">Keel gives first steps (rest, fluids, a repeat reading, sugar for a low blood sugar) but never recommends medication; that is for the medical officer with the onboard medical checklist. The fixed thresholds are public clinical guidance for adults on Earth. No threshold has been reviewed by a clinician; values without a cited source are marked provisional in the rule below. A fixed rule looks at every reading from the most recent day that has one, and anything needing attention now or today stays on the medical officer's list until they close it with a note. "Steady" on the Today screen means no change was detected, not that you are well.</p>
       </Card>
