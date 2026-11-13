@@ -23,6 +23,7 @@ export function Sharing() {
   return (
     <>
       <h1>Sharing and privacy</h1>
+      <p className="banner strong" data-testid="emergency-state"><strong>Emergency sharing is {s.emergency !== false ? 'ON' : 'OFF'}.</strong> {s.emergency !== false ? 'Urgent readings and serious symptoms reach the medical officer with what they are (the commander: urgent readings, and for a symptom only that you need the medical officer).' : 'Urgent items send an alert that you need help, without saying what. Say it out loud or tell the medical officer yourself.'} <button className="btn sm" onClick={() => document.getElementById('emergency-sharing')?.scrollIntoView({ block: 'center' })}>Change it</button></p>
       <p className="muted">{crew.name}, your health data is yours. You decide below what each role can see. What is shown whatever you choose:</p>
       <table className="tbl small" data-testid="who-sees-table">
         <thead><tr><th>Who</th><th>Always</th><th>Your choice</th></tr></thead>
@@ -43,7 +44,7 @@ export function Sharing() {
           <li><strong>To everyone: cabin readings</strong> (air, radiation). They are not personal.</li>
         </ul>
         <div className="row wrap">
-          <span className="lab">Emergency sharing</span>
+          <span className="lab" id="emergency-sharing">Emergency sharing</span>
           <div className="seg" role="group" aria-label="Emergency sharing" data-testid="emergency-toggle">
             <button aria-pressed={s.emergency !== false} onClick={() => setEmergency(me, true)}>On</button>
             <button aria-pressed={s.emergency === false} onClick={() => setEmergency(me, false)}>Off</button>

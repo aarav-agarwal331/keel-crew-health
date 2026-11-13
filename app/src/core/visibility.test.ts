@@ -129,6 +129,9 @@ describe('emergency consent', () => {
     expect(other).toHaveLength(1)
     expect(other[0]).toMatchObject({ private: true, safety: true })
     expect(other[0].title).toBeUndefined()
+    // and the patient is not told to call a crewmate to them or to stay with one
+    const self = run(patient, ['harm_others']).findings.find((x) => x.ruleId === 'R-RED')!
+    expect([self.action, ...self.steps].join(' ')).not.toMatch(/[Cc]all a crewmate|Stay with another crew member/)
     // the medical officer as patient: the commander is the backup and sees it
     const cmo = m.crew.find((c) => c.role === 'cmo')!.id
     expect(viewFor('commander', run(cmo, ['self_harm']), share).findings.some((f) => f.emergency)).toBe(true)

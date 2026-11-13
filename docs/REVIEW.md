@@ -1357,6 +1357,40 @@ are policy or clinical calls left for an agency or clinician (decision 108); a u
 fewer status words and a shorter Today (judge, astronaut) are larger redesigns; the statistician's
 re-referencing, Poisson interval and estimator alignment are pipeline work.
 
-## Round 33
+## Round 33 (2026-11-13, fresh reviewers, redeployed build)
 
-See the end of this file once the thirty-third round has run.
+Judge's scores: impact 7, creativity 7, validity 8, relevance 8, presentation 5 (35 of 50), "nominate:
+yes", no high-severity issue. The statistician found none. The astronaut found one and the flight surgeon
+two:
+
+| # | Reviewer | High-severity finding | Fix |
+|---|---|---|---|
+| 1 | Astronaut | Check-in and the Guide said "only the medical officer is told which one" without saying that this holds only with emergency sharing on; with it off nobody is told. | Check-in states the mode ("Emergency sharing is on: …" / "is off: nobody is told which one, so say it out loud"); the Guide says the same; Sharing opens with the current state and a button to change it. |
+| 2 | Flight surgeon | For "thoughts of harming someone else" the patient's screen said "Call a crewmate to you now" and "Stay with another crew member", while the commander was told not to go alone. | That symptom now tells the patient to tell the medical officer by voice, and that the commander knows a safety concern is open; no crewmate call, no "stay with" (unit test). |
+| 3 | Flight surgeon | A low blood sugar followed 15 or more minutes later by 250 was called "back on the safe side", beside a high-sugar card saying "take no more sugar". | A repeat counts as safe only if no fixed rule in either direction fires on it; the low's card then says the later reading is high, with no "take sugar now" prefix (unit test). |
+
+Medium-severity findings fixed in the same pass:
+
+- **Fever combination** (flight surgeon): it stands in only for the plain fever item, so a same-day blood
+  pressure, oxygen or heart rate item stays (unit test).
+- **Presentation** (judge): the landing banner is one sentence; the Validation short version is a
+  three-row table (what, how tested, result); the chart's first bar is the +13 headline; README claims
+  "Measured where data exists" and "status never depends on colour alone (not tested with colour-blind
+  users)".
+- **Change lines** (astronaut): lead with "still unusual over the last three days", then the latest
+  reading.
+- **One-tap sharing** (astronaut): "share in full detail" on Today asks for confirmation.
+- **Configurations named** (statistician): panels computed on heart rate + daily steps say so; the
+  "Not shown" tile no longer says no larger illness simulation was run.
+
+Not done, with reasons: a low-temperature rule, alert timing for 39.4 °C and the 300 mg/dL rule,
+a blood-pressure repeat box, quiet notices for same-day items, showing the medical officer readings
+behind items they close, and vomiting after a radiation event (flight surgeon) are clinical or policy
+calls for a clinician or agency (decision 108); the heart-rate-only reruns of the breakdowns, leads and
+quiet-period rates (statistician) are pipeline work; an "unusual for you" vocabulary, a seen state for
+same-day items and keeping detector-only notices off the commander's tier (astronaut) are design changes
+left for after the event.
+
+## Round 34
+
+See the end of this file once the thirty-fourth round has run.

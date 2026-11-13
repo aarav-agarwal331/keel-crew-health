@@ -33,6 +33,7 @@ const HEADLINE: Record<string, string> = {
 
 export function Today() {
   const { mission, model, day, me, today, analyses, entries, link, sharing, setShare, actions, logAction, voidReading } = useApp()
+  const [confirmShare, setConfirmShare] = useState(false)
   // a reading just entered here (the thermometer box) that is "act now" alerts the crew automatically, as on Check-in
   const auto = useAutoAlert((today(me, day)?.findings ?? []).some((f) => f.status === 'urgent' && (f.readings ?? []).some((r) => Date.now() - r.ts < 120e3)))
   const [intro, setIntro] = useState(false)
@@ -95,7 +96,7 @@ export function Today() {
       <GlucoseUnit />
       {intro && mission.simulated && (
         <section className="card intro" data-testid="intro">
-          <p className="small"><strong>When Earth can't answer, Keel tells you what to do and who to tell.</strong> Advises you at once on a dangerous reading you enter, and within ten seconds posts a silent alert on the medical officer's and commander's Crew screens (the same tablet in this demo; over the cabin network, with sound, in a flight version). You choose most of who sees what (<a href={href('sharing')}>what is always shared</a>). It also watches your readings against your own normal. Demo: {crew?.name.split(' ')[0]}'s tablet, simulated {mission.title}.</p>
+          <p className="small"><strong>When Earth can't answer, Keel tells you what to do and who to tell.</strong> One written step at once for a dangerous reading, a silent alert to the medical officer and commander, and you choose most of who sees what. Demo: {crew?.name.split(' ')[0]}'s tablet, simulated {mission.title}.</p>
           <div className="row wrap">
             <a className="btn sm" href={href('checkin', 'demo')} data-testid="intro-danger">Demo: enter a dangerous reading</a>
             <a className="btn sm" href={href('replay')} data-testid="intro-replay">Demo: replay a scripted event</a>
@@ -158,7 +159,8 @@ export function Today() {
                 })()}</li>)}</ul></div>}
           {['R-ILL', 'R-SYM-ILL', 'R-V-TEMP', 'R-V-TEMP-HI'].includes(primary.ruleId) && primary.status !== 'urgent' ? <TempEntry /> : <><ReadingLog onVoid={primary.status === 'urgent' ? (ind, ts) => void voidReading(me, day, ind, ts) : undefined} readings={primary.readings ?? []} title={[primary, ...others].filter((x) => x.status === "urgent").length > 1 ? "Readings behind the first item" : "Readings this is based on"} /></>}
           <a className="btn block" href={href('alert', primary.key)} data-testid="open-alert">Why, and what next <Chev /></a>
-          {needsCmo && <button className="btn block" onClick={() => shareCats.forEach((c) => setShare(me, 'cmo', c, 'detail'))} data-testid="today-share-cmo">Share {shareCats.map((c) => CAT[c].toLowerCase()).join(', ')} in full detail with the medical officer</button>}
+          {needsCmo && !confirmShare && <button className="btn block" onClick={() => setConfirmShare(true)} data-testid="today-share-cmo">Share {shareCats.map((c) => CAT[c].toLowerCase()).join(', ')} in full detail with the medical officer</button>}
+          {needsCmo && confirmShare && <div className="row wrap" data-testid="today-share-confirm"><span className="small"><strong>Share {shareCats.map((c) => CAT[c].toLowerCase()).join(', ')} in full detail with the medical officer?</strong></span><button className="btn primary sm" onClick={() => { shareCats.forEach((c) => setShare(me, 'cmo', c, 'detail')); setConfirmShare(false) }} data-testid="today-share-yes">Yes, share</button><button className="btn sm" onClick={() => setConfirmShare(false)}>Cancel</button></div>}
           {needsCmo && <p className="small muted">This changes one setting: <strong>{shareCats.map((c) => CAT[c]).join(', ')}</strong> goes from "{LEVEL_WORD[sharing[me]?.cmo[shareCats[0]] ?? 'none']}" to "Full detail" for the medical officer, until you change it back in Sharing. Readings in other areas, such as sleep or reaction time, stay as you set them. <strong>You still need to tell them.</strong></p>}
           {primary.kind === 'personal' && primary.tier !== 'self' && !needsCmo && <p className="small muted">The medical officer can see this alert.</p>}
         </section>
@@ -192,7 +194,7 @@ export function Today() {
             <a className="change" key={c.ind} href={href('trends', c.ind)}>
               <div className="col" style={{ gap: 2 }}>
                 <span><strong>{IND[c.ind].label}</strong> <span className="num big" style={{ marginLeft: 6 }}>{Number.isNaN(c.value) ? '–' : c.value.toFixed(IND[c.ind].decimals)}</span> <span className="muted small">{IND[c.ind].unit}</span></span>
-                <span className="small">{c.ind === 'sleep_mid' ? `The middle of your sleep was ${Math.abs(c.value).toFixed(1)} h ${c.value >= 0 ? 'after' : 'before'} the schedule; you usually sleep ${Math.abs(c.expected).toFixed(1)} h ${c.expected >= 0 ? 'after' : 'before'} it.` : (c.latestInside && c.daysOut <= 1 ? `Now back inside your usual range (around ${c.expected.toFixed(IND[c.ind].decimals)}); over the last three days it ran ${c.direction === 'higher' ? 'higher' : 'lower'}.` : `${c.direction === 'higher' ? 'Higher than' : 'Lower than'} your usual ${c.expected.toFixed(IND[c.ind].decimals)}.`)} {unusualness(c)}{c.ind === 'temp' ? ' Wrist skin temperature, not a fever reading.' : ''}</span>
+                <span className="small">{c.ind === 'sleep_mid' ? `The middle of your sleep was ${Math.abs(c.value).toFixed(1)} h ${c.value >= 0 ? 'after' : 'before'} the schedule; you usually sleep ${Math.abs(c.expected).toFixed(1)} h ${c.expected >= 0 ? 'after' : 'before'} it.` : (c.latestInside && c.daysOut <= 1 ? `Still unusual over the last three days (it ran ${c.direction === 'higher' ? 'higher' : 'lower'} than your usual ${c.expected.toFixed(IND[c.ind].decimals)}); the latest reading is back inside your range.` : `${c.direction === 'higher' ? 'Higher than' : 'Lower than'} your usual ${c.expected.toFixed(IND[c.ind].decimals)}.`)} {unusualness(c)}{c.ind === 'temp' ? ' Wrist skin temperature, not a fever reading.' : ''}</span>
               </div>
               <TrendChart compact values={b.values} lo={b.lo} hi={b.hi} from={day - 20} to={day} labelFor={(t) => shortDay(mission, t)} unit={IND[c.ind].unit} decimals={IND[c.ind].decimals} concern={IND[c.ind].concern} ariaLabel={`${IND[c.ind].label}, last three weeks`} />
             </a>

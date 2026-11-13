@@ -49,7 +49,7 @@ tested in simulation only, so the main contribution is the offline safety, shari
 
 - **No server, no link required.** Offline-first installable web app; all analysis runs in a web
   worker on the device. An automated test cuts the network and uses every screen.
-- **Measured, not asserted.** Detection is evaluated on real wearable data with dated illness
+- **Measured where data exists.** Detection is evaluated on real wearable data with dated illness
   (251 people, 107 episodes), with false-alert rates, intervals, a chance level and held-out people.
   The app shows the results, including where a simple method does as well and what is *not* shown.
 - **Safety rules that do not wait for a trend.** Red-flag symptoms and single readings beyond a
@@ -236,7 +236,7 @@ statement saved in [docs/CHALLENGE.md](docs/CHALLENGE.md).
 | C2 | Prompts to measure as part of routine | Today → "Today's routine" with due measurements |
 | C3 | Gamification | Streak, weekly exercise ring, shared crew exercise goal (deliberately light) |
 | C4 | Dynamic charts over time | Trends: 2 weeks, 8 weeks, mission |
-| C5 | Colour coding at a glance | Four status levels, each with a colour, a shape and a label (colourblind-safe) |
+| C5 | Colour coding at a glance | Four status levels, each with a colour, a shape and a label, so status never depends on colour alone (not tested with colour-blind users) |
 | C6 | Instructions and explanations | "How to measure" on every entry field; Guide |
 | D3 | Official Resources tab | Not yet checked: it opens 2026-11-13, after this build (a step for the team) |
 | E1 | Works with no link, offline proven | `app/e2e/offline.spec.ts`; Link → "Cut the link now" |

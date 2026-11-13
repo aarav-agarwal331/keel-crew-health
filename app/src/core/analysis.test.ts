@@ -151,6 +151,11 @@ describe('end to end on the demo mission', () => {
     const sepsis: Entry = { key: 'k', mission: m.id, crew: 'c0', day: 100, values: { temp_oral: 38.6, rhr_spot: 130 }, symptoms: [], ts: 2, readings: [{ ind: 'temp_oral', v: 38.6, ts: 1 }, { ind: 'rhr_spot', v: 130, ts: 2 }] }
     const fp = run('c0', 100, [sepsis]).findings.find((x) => x.ruleId === 'R-V-FEVER-PLUS')
     expect(fp?.status).toBe('urgent')
+    // the combination does not swallow a separate same-day blood pressure item
+    const withBp: Entry = { ...sepsis, values: { ...sepsis.values, sbp: 190, dbp: 125 }, readings: [...sepsis.readings!, { ind: 'sbp', v: 190, ts: 3 }, { ind: 'dbp', v: 125, ts: 3 }] }
+    const fb = run('c0', 100, [withBp]).findings
+    expect(fb.some((x) => x.ruleId === 'R-V-FEVER-PLUS')).toBe(true)
+    expect(fb.some((x) => x.ruleId.startsWith('R-V-BP-HI'))).toBe(true)
     expect(run('c0', 100, []).findings.some((x) => x.ruleId === 'R-V-FEVER-PLUS')).toBe(false)
     // when the medical officer is the patient, nobody is told to fetch the medical officer
     const cmoId = m.crew.find((c) => c.role === 'cmo')!.id
@@ -164,6 +169,12 @@ describe('end to end on the demo mission', () => {
     expect(urgentFirst.some((x) => x.ruleId.startsWith('R-V-HR'))).toBe(true)
     // a high repeat after a low is not "treat it as low", and a normal repeat after a high counts at once
     const lowHigh: Entry = { ...e, readings: [{ ind: 'glucose', v: 50, ts: 1 }, { ind: 'glucose', v: 320, ts: 1 + 2 * 60 * 1000 }] }
+    // a high repeat 16 minutes after a low is never called "safe", and no card says to take sugar while another says not to
+    const lowHighLate: Entry = { ...e, readings: [{ ind: 'glucose', v: 50, ts: 1 }, { ind: 'glucose', v: 250, ts: 1 + 16 * 60 * 1000 }] }
+    const lhl = run('c0', 100, [lowHighLate]).findings.filter((x) => x.ruleId.startsWith('R-V-GLU'))
+    expect(lhl.some((x) => /safe side/.test(x.action))).toBe(false)
+    expect(lhl.find((x) => x.ruleId === 'R-V-GLU-LO2')!.action).toMatch(/take no more sugar/)
+    expect(lhl.find((x) => x.ruleId === 'R-V-GLU-LO2')!.action).not.toMatch(/^Take sugar now/)
     const lh = run('c0', 100, [lowHigh]).findings
     expect(lh.find((x) => x.ruleId === 'R-V-GLU-LO2')!.action).toMatch(/take no more sugar/)
     expect(lh.find((x) => x.ruleId === 'R-V-GLU-HI2')!.action).toMatch(/fingertip/)

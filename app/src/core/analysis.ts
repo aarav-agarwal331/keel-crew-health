@@ -474,7 +474,12 @@ export function analyzeDay(
     const ruledOut = (sym.fatigue ?? 0) > 0 || (sym.cough ?? 0) > 0 || (val.temp_oral ?? []).some((v) => v >= 38)
     if (ruledOut) out.steps = out.steps.filter((x) => !/light session is reasonable/.test(x))
     // someone with a dangerous reading may be impaired: the first words of every "act now" are to get help to them
-    if (out.status === 'urgent' && !crewWide && (r.scope === 'vital' && r.id !== 'R-V-TEMP-HI' || r.id === 'R-RED') && !/^Call a crewmate|crewmate to you/.test(out.action)) out.action = r.id.startsWith('R-V-GLU-LO') && !/^Confirm which unit/.test(out.action) ? `Take sugar now if you can swallow, and call a crewmate to you. ${out.action.replace(/If you are awake and can swallow, eat or drink something sugary now, and t/, 'T')}` : `Call a crewmate to you now. ${out.action}`
+    if (out.status === 'urgent' && !crewWide && (r.scope === 'vital' && r.id !== 'R-V-TEMP-HI' || r.id === 'R-RED') && !/^Call a crewmate|crewmate to you/.test(out.action)) out.action = r.id.startsWith('R-V-GLU-LO') && !/^Confirm which unit/.test(out.action) && !/take no more sugar/.test(out.action) ? `Take sugar now if you can swallow, and call a crewmate to you. ${out.action.replace(/If you are awake and can swallow, eat or drink something sugary now, and t/, 'T')}` : `Call a crewmate to you now. ${out.action}`
+    // duty to warn: for thoughts of harming someone else nobody is called to the person alone; the commander knows
+    if (out.safety && !patientIsCmo) {
+      out.action = 'Tell the medical officer now, by voice if you can. The commander has been told that a crew safety concern is open, not what it is.'
+      out.steps = out.steps.filter((x) => !/Stay with another crew member|For whoever is with you/.test(x))
+    }
     // the medical officer cannot be told to see the medical officer: their backup is the commander
     // imported personal data: there is no crew, no medical officer and no commander. Urgent and same-day items
     // send the person to real care instead.
@@ -561,11 +566,14 @@ export function analyzeDay(
       // a high sugar is re-checked at once with a clean, dry finger; a low needs 15 minutes for the sugar to work
       const waitMin = gluHigh ? 0 : Math.max(...mine.map((x) => REPEAT_MIN[x] ?? 5))
       const waited = !!firstBad && lastLive.length > 0 && lastLive[lastLive.length - 1].ts - firstBad.ts >= waitMin * 60 * 1000
-      const repeatOk = r.scope === 'vital' && r.urgency !== 'routine' && lastLive.length > 0 && !!firstBad && lastLive[lastLive.length - 1].ts > firstBad.ts && !anyRuleOnLatest && !!waited
+      // a repeat is "safe" only if no fixed rule in either direction fires on it: after a low, a high repeat (200 or more,
+      // often sugar on the fingertip) is not safe, and is handled by the wash-and-repeat wording
+      const anyRuleEitherWay = RULES.some((q) => q.scope === 'vital' && condFixed(q.when).some((x) => mine.includes(x)) && evalCond(q.when, latestF))
+      const repeatOk = r.scope === 'vital' && r.urgency !== 'routine' && lastLive.length > 0 && !!firstBad && lastLive[lastLive.length - 1].ts > firstBad.ts && !anyRuleOnLatest && !anyRuleEitherWay && !!waited
       // a repeat already back on the safe side, but taken too soon to count (blood sugar: under 15 minutes)
       const tooSoon = !repeatOk && !anyRuleOnLatest && !!firstBad && lastLive.length > 0 && lastLive[lastLive.length - 1].ts > firstBad.ts && !waited
       findings.push(mk(r, r.scope, start, repeatOk || stale || fromFile ? (r.urgency === 'routine' ? 'watch' : 'act') : URGENCY_STATUS[r.urgency ?? 'routine'], changes.filter((c) => named.includes(c.ind)).slice(0, 4), {
-        ...(tooSoon && gluLow && lastLive[lastLive.length - 1].v >= 200 ? { contested: true, action: `Your later reading is high (${lastLive[lastLive.length - 1].v}): take no more sugar unless you feel shaky, sweaty or confused, in which case take sugar anyway. Wash and dry your hands and repeat now; tell the medical officer.` } : tooSoon ? { contested: true, action: `${gluLow ? `Your readings disagree (${firstBad!.v}, then ${lastLive[lastLive.length - 1].v}): treat it as low to be safe. ` : ''}${r.action} Re-check at ${new Date(firstBad!.ts + waitMin * 60 * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}${mine.includes('glucose') ? '' : `: your repeat (${lastLive[lastLive.length - 1].v}) came too soon to count`}.` } : {}),
+        ...(gluLow && !!firstBad && lastLive.length > 0 && lastLive[lastLive.length - 1].ts > firstBad.ts && lastLive[lastLive.length - 1].v >= 200 ? { contested: true, action: `Your later reading is high (${lastLive[lastLive.length - 1].v}): take no more sugar unless you feel shaky, sweaty or confused, in which case take sugar anyway. Wash and dry your hands and repeat now; tell the medical officer.` } : tooSoon ? { contested: true, action: `${gluLow ? `Your readings disagree (${firstBad!.v}, then ${lastLive[lastLive.length - 1].v}): treat it as low to be safe. ` : ''}${r.action} Re-check at ${new Date(firstBad!.ts + waitMin * 60 * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}${mine.includes('glucose') ? '' : `: your repeat (${lastLive[lastLive.length - 1].v}) came too soon to count`}.` } : {}),
         ...(log.length ? { readings: log } : {}),
         ...(repeatOk ? { urgency: r.urgency, action: `${r.id.startsWith('R-V-GLU-LO') ? `Your repeat reading (${lastLive[lastLive.length - 1].v}) is back on the safe side, so no more sugar is needed: eat a snack or your next meal now.` : gluHigh ? `Your repeat reading (${lastLive[lastLive.length - 1].v}) is below this line: the first may have been sugar on your fingertip. Keep your hands clean for readings, and tell the medical officer today.` : `Your repeat reading (${lastLive[lastLive.length - 1].v}) is back on the safe side of this line.`} ${r.urgency === 'now' ? 'The first reading needed the medical officer at once: if you have not told them yet, tell them now.' : 'Tell the medical officer about the first reading today.'}`, tierReason: 'The first reading stays on the medical officer\'s list until they close it with a note.' } : {}),
         // a value under 35 saved before the meter's unit was known may be mmol/L: sugar only if the person feels low
@@ -599,7 +607,9 @@ export function analyzeDay(
   // one finding per reading: when two fixed rules fire on the same indicator, the more urgent one stands
   for (let i = findings.length - 1; i >= 0; i--) {
     const a = findings[i]
-    if (a.kind === 'vital' && findings.some((b) => b !== a && b.kind === 'vital' && rank[b.status] > rank[a.status] && (b.inds ?? []).some((x) => (a.inds ?? []).includes(x)))) findings.splice(i, 1)
+    // the fever combination stands only for the plain fever item: a separate blood pressure, oxygen or heart rate item stays
+    const covers = (b: Finding) => b.ruleId === 'R-V-FEVER-PLUS' ? a.ruleId === 'R-V-TEMP' : (b.inds ?? []).some((x) => (a.inds ?? []).includes(x))
+    if (a.kind === 'vital' && findings.some((b) => b !== a && b.kind === 'vital' && rank[b.status] > rank[a.status] && covers(b))) findings.splice(i, 1)
   }
   if (alert && !learning) {
     // while an illness or fever finding is open, "do today's session" must not appear beside "no exercise"
@@ -721,7 +731,7 @@ export function analyzeDay(
     for (const r of fired) {
       // one item per reading: a more urgent rule on the same indicator stands for the lesser one
       const mine = condAll(r.when)
-      if (mine.length && fired.some((q) => q !== r && q.urgency === 'now' && r.urgency !== 'now' && condAll(q.when).some((x) => mine.includes(x)))) continue
+      if (mine.length && fired.some((q) => q !== r && q.urgency === 'now' && r.urgency !== 'now' && (q.id === 'R-V-FEVER-PLUS' ? r.id === 'R-V-TEMP' : condAll(q.when).some((x) => mine.includes(x))))) continue
       const keys = condFixed(r.when).map((x) => SPOT_KEY[x] ?? x)
       const rts = (e.readings ?? []).filter((q) => keys.includes(q.ind)).map((q) => q.ts)
       // the latest live reading of each indicator: is it back on the safe side?
@@ -788,7 +798,7 @@ export function describeChange(c: Change): string {
   const v = Number.isNaN(c.value) ? '–' : c.value.toFixed(d)
   if (Number.isNaN(c.u3)) return `${def.label} is ${v} ${def.unit}.`
   const dir = c.ind === 'sleep_mid' ? 'shifted from' : c.direction === 'higher' ? 'higher than' : 'lower than'
-  if (c.latestInside && c.daysOut <= 1) return `${def.label}: ${v} ${def.unit} now, back inside your usual range (around ${c.expected.toFixed(d)}); over the last three days it ran ${c.ind === 'sleep_mid' ? 'away from' : c.direction === 'higher' ? 'higher than' : 'lower than'} usual.${c.ind === 'temp' ? ' Wrist skin temperature, not a fever reading.' : ''}`
+  if (c.latestInside && c.daysOut <= 1) return `${def.label}: still unusual over the last three days (it ran ${c.ind === 'sleep_mid' ? 'away from' : c.direction === 'higher' ? 'higher than' : 'lower than'} your usual ${c.expected.toFixed(d)}); the latest reading, ${v} ${def.unit}, is back inside your range.${c.ind === 'temp' ? ' Wrist skin temperature, not a fever reading.' : ''}`
   return `${def.label}: ${v} ${def.unit}, ${dir} your usual ${c.expected.toFixed(d)}.${c.ind === 'temp' ? ' Wrist skin temperature, not a fever reading.' : ''}`
 }
 
