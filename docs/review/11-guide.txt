@@ -42,7 +42,7 @@ Blood sugar reading is between 54 and 69 mg/dL.
 Blood sugar reading is 200 mg/dL or higher.
 Upper blood pressure reading is below 90 mmHg.
 Blood pressure reading is 180 upper or 120 lower, or higher.
-Resting heart rate of 120 or more.
+Heart rate reading at rest is 120 or more (one reading).
 Overnight blood oxygen of 90% or lower.
 Resting heart rate above 100 on two nights.
 Your mood has been very low for days.
@@ -81,7 +81,7 @@ Upper blood pressure reading is below 90 mmHg
 Blood pressure reading is 180 upper or 120 lower, or higher
 Blood pressure reading is 140 upper or 90 lower, or higher
 Overnight resting heart rate of 120 or more
-Resting heart rate of 120 or more
+Heart rate reading at rest is 120 or more (one reading)
 Overnight blood oxygen of 90% or lower
 Resting heart rate above 100 on two nights
 Your mood has been very low for days

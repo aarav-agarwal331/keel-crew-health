@@ -4,7 +4,7 @@ BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
 Act now
 
-Alert about Lucía Reyes, sent automatically after an urgent check-in at 00:43. Go to them now.
+Alert about Lucía Reyes, sent automatically after an urgent check-in at 00:56. Go to them now.
 
 Blood sugar reading is below 54 mg/dL (entered: 50, then 85; the 50 still counts)
 Heart rate reading at rest is 150 or more (entered: 170)
@@ -29,17 +29,17 @@ Flight engineer
 Blood sugar reading is below 54 mg/dL (entered: 50, then 85; the 50 still counts). (shared automatically: emergency sharing)
 
 Entered readings, in order:
-Blood sugar 50 mg/dL, at 00:43
-Blood sugar 85 mg/dL, at 00:43 (seconds after the one before)
+Blood sugar 50 mg/dL, at 00:56
+Blood sugar 85 mg/dL, at 00:56 (seconds after the one before)
 
-Lucía was told: "Take sugar now if you can swallow, and call a crewmate to you. Your readings disagree (50, then 85): treat it as low to be safe. Tell the medical officer now. Re-check at 00:58."
+Lucía was told: "Take sugar now if you can swallow, and call a crewmate to you. Your readings disagree (50, then 85): treat it as low to be safe. Tell the medical officer now. Re-check at 01:11."
 
 When you get there: if they are awake and able to swallow when asked, give sugar, even if they seem confused; if they are drowsy or cannot swallow safely, give nothing by mouth, and treat from the onboard checklist for a low blood sugar in someone who cannot swallow.
 
 Heart rate reading at rest is 150 or more (entered: 170). (shared automatically: emergency sharing)
 
 Entered readings, in order:
-Heart rate at rest 170 bpm, at 00:43
+Heart rate at rest 170 bpm, at 00:56
 
 Lucía was told: "Call a crewmate to you now. Sit or strap in, put the ECG on now (or the pulse oximeter if there is none), and tell the medical officer now."
 
@@ -66,13 +66,13 @@ Exercise is on hold for Lucía until you clear them; minutes logged by the devic
 Open items for you to close
 Blood sugar reading is below 54 mg/dL (Day 122, needed attention at once)
 Entered readings:
-Blood sugar 50 mg/dL, at 00:43
-Blood sugar 85 mg/dL, at 00:43 (seconds after the one before)
+Blood sugar 50 mg/dL, at 00:56
+Blood sugar 85 mg/dL, at 00:56 (seconds after the one before)
 Close: resolved, no restriction
 Close: resolved, not cleared
 Heart rate reading at rest is 150 or more (Day 122, needed attention at once)
 Entered readings:
-Heart rate at rest 170 bpm, at 00:43
+Heart rate at rest 170 bpm, at 00:56
 Close: resolved, no restriction
 Close: resolved, not cleared
 The same symptom three days running (Day 122, needed attention the same day)

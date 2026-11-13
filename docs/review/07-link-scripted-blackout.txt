@@ -11,7 +11,7 @@ Keel does not use the link to work. Detection, explanations and recommended acti
 
 Day 4 of a 14-day blackout. The link is expected back on Day 133. No flight surgeon can be reached; the medical officer decides on board. Every screen you have used so far was running without it, and 4 daily summaries are waiting to go.
 
-Go to a day with a working link and cut it yourself
+Move the demo back to Day 101, when the link was up, and cut it yourself
 Queued for the ground
 4 waiting
 
