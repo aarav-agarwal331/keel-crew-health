@@ -29,8 +29,9 @@ is decision support, not a medical device.
 Keel works with no link to Earth, acts at once on dangerous readings and symptoms with a written next
 step and its source, and lets the crew member choose who sees what. It also watches each person's
 readings against their own normal. On 107 real illness episodes, overnight heart rate alone flagged
-50% against 31% by chance, **+19 points above luck (9 to 28)** (+13 in the wider window we started with),
-at about one false alert a month;
+**+13 points above luck (4 to 24) in the detection window we set before the analysis, and +19 (9 to
+28) in the narrower window we moved to while writing it** (50% flagged against 31% by chance in the
+narrower one), at about one false alert a month;
 that is the model imported watch data runs on (on Fitbit's
 own daily resting heart rate it gives about one alert a month, as budgeted, and about a fifth over its
 budget at the alert tier). The full on-board model is tested in simulation only.

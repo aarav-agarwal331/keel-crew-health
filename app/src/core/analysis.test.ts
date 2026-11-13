@@ -264,6 +264,16 @@ describe('end to end on the demo mission', () => {
     expect(alertFields([{ title: 'Serious symptom', cmoOnly: true }]).cmoOnly).toBe(true)
     expect(alertFields([{ title: 'Serious symptom', cmoOnly: true, patientIsCmo: true }]).cmoOnly).toBe(false)
   })
+  it('"outside your usual range" uses the band the charts draw', () => {
+    for (const c of m.crew) for (let d = m.pre_days + 20; d < m.days; d += 7) for (const ch of run(c.id, d).changes) {
+      if (ch.daysOut > 0) expect(ch.latestInside).toBe(false)
+      if (ch.daysOut > 0 && !Number.isNaN(ch.value)) {
+        const j = model.indicators.indexOf(ch.ind)
+        const inBand = ch.value >= Math.min(ch.lo, ch.hi) && ch.value <= Math.max(ch.lo, ch.hi)
+        if (j >= 0 && model.concern[j] !== 0) expect(inBand).toBe(false)
+      }
+    }
+  })
   it('a red-flag symptom entered at check-in is urgent immediately', () => {
     const e: Entry = { key: 'k', mission: m.id, crew: 'c0', day: 100, values: {}, symptoms: ['chest_pain'], ts: 0 }
     const a = run('c0', 100, [e])

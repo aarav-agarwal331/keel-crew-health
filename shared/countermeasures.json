@@ -189,5 +189,16 @@
    "68"
   ],
   "text": "Resting core body temperature rose by about 1 °C over the first two and a half months on the ISS. That is core temperature, not the same measurement as a mouth thermometer, but it suggests a fever line set on Earth should be read against the person's own in-flight readings."
+ },
+ {
+  "id": "CM-ORTHO",
+  "title": "Standing up after a gravity change",
+  "type": "literature",
+  "refs": [
+   "6",
+   "51c",
+   "51d"
+  ],
+  "text": "Feeling faint or dizzy on standing (orthostatic intolerance) is a known problem after a gravity change. The documented countermeasures are graded compression garments, slow changes of posture and fluids."
  }
 ]

@@ -150,6 +150,11 @@ export function Crew() {
               )}
               {role === 'cmo' && extras.meds.length > 0 && <p className="small"><strong>Medication logged today:</strong> {extras.meds.join(', ').toLowerCase()}.</p>}
               {role === 'cmo' && extras.photos.length > 0 && <div className="row wrap">{extras.photos.map((ph) => <figure key={ph.ts} style={{ margin: 0 }}><img src={ph.data} alt={`${ph.label} photo from ${c.name}`} style={{ width: 140, height: 140, objectFit: 'cover', borderRadius: 10 }} /><figcaption className="tiny">{ph.label}</figcaption></figure>)}</div>}
+              {/* an item that needs the medical officer and has stayed open for two days or more is overdue: say so, without its content */}
+              {role === 'cmo' && c.role !== 'cmo' && a && (() => {
+                const overdue = a.findings.filter((f) => !f.crewWide && f.status === 'act' && f.tier !== 'self' && f.days >= 2)
+                return overdue.length > 0 ? <p className="banner strong small" data-testid={`overdue-${c.id}`}><strong>Overdue:</strong> {overdue.length === 1 ? 'an item that needs you has' : `${overdue.length} items that need you have`} been open for {Math.max(...overdue.map((f) => f.days))} days. Please see {c.name.split(' ')[0]} today.</p> : null
+              })()}
               {/* clearance is about the person: one action, saying exactly what it lifts */}
               {a?.restricted && (role === 'cmo' ? c.role !== 'cmo' : c.role === 'cmo') && (
                 <div className="col" data-testid={`clearance-${c.id}`} style={{ gap: 6 }}>

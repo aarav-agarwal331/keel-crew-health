@@ -133,6 +133,8 @@ export interface Change {
   /** share of this person's last 60 scored days that were less unusual than today */
   percentile: number
   daysOut: number
+  /** the latest reading is inside the usual band (the 3-day mean may still be unusual) */
+  latestInside?: boolean
   /** history used for the comparison: measured days, and how many of them were less unusual */
   nHist?: number
   nLess?: number

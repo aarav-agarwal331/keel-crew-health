@@ -140,7 +140,7 @@ export function Today() {
           {others.filter((x) => x.status === 'urgent').length > 0 && (
             <div className="col" data-testid="also-now">
               <span className="lab">Also act now</span>
-              <ol className="list steps">{others.filter((x) => x.status === 'urgent').map((x) => <li key={x.key}><span><strong>{x.title}.</strong> {x.action}</span></li>)}</ol>
+              <ol className="list steps">{others.filter((x) => x.status === 'urgent').map((x) => <li key={x.key}><span className="col" style={{ gap: 6 }}><span><strong>{x.title}.</strong> {x.action}</span><RepeatEntry f={x} /></span></li>)}</ol>
             </div>
           )}
           {(primary.also ?? []).length > 0 && <div><p className="small"><strong>Also today, from the same readings:</strong></p><ul className="list small">{primary.also!.map((x) => <li key={x.title}><strong>{x.title}.</strong> {x.action}</li>)}</ul></div>}

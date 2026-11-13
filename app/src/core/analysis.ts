@@ -6,7 +6,7 @@
 import rulesJson from '../../../shared/rules.json'
 import cmJson from '../../../shared/countermeasures.json'
 import refsJson from '../../../shared/references.json'
-import { concernDev, deployedScore, episodes, inverseTransform, type ModelJson } from './detect'
+import { concernDev, deployedScore, episodes, inverseTransform, transformCol, type ModelJson } from './detect'
 import { IND, phaseAt, rawSeries, SYM, symptomsOn } from './mission'
 import type { Change, CrewAnalysis, Entry, Factor, Finding, Mission, OpenItem, Reading, Status, Tier, Urgency } from './types'
 
@@ -274,13 +274,22 @@ export function analyzeDay(
     const mt = sc.m[tLast][j]
     const st = sc.s[tLast][j]
     const tr = model.transform[j]
+    // the same test the charts draw: a day is out of range when the reading is outside the usual band
+    // (expected ± 2 spreads) in the direction of concern; days without a reading are skipped
+    const outside = (t: number) => {
+      const x = transformCol([raw[t]], tr)[0], mm = sc.m[t][j], ss = sc.s[t][j]
+      if ([x, mm, ss].some(Number.isNaN)) return null
+      const zz = (x - mm) / ss, cc = model.concern[j]
+      return cc === 0 ? Math.abs(zz) > 2 : zz * cc > 2
+    }
     let daysOut = 0
-    for (let t = day; t >= 0; t--) {
-      const q = uAt(t, j)
-      if (Number.isNaN(q)) continue
-      if (q >= 1.2) daysOut++
+    for (let t = day; t >= 0 && t > day - 60; t--) {
+      const o = outside(t)
+      if (o === null) continue
+      if (o) daysOut++
       else break
     }
+    const latestInside = outside(tLast) === false
     const notable = uu >= 1.2 || uToday >= 2
     const hist: number[] = []
     for (let t = Math.max(0, day - 60); t < day - 2; t++) if (!Number.isNaN(uAt(t, j))) hist.push(uAt(t, j))
@@ -288,7 +297,7 @@ export function analyzeDay(
     changes.push({
       ind: id, value: raw[tLast], expected: inverseTransform(mt, tr),
       lo: inverseTransform(mt - 2 * st, tr), hi: inverseTransform(mt + 2 * st, tr),
-      u3: uu, z: sc.z[tLast][j], direction: sc.z[tLast][j] >= 0 ? 'higher' : 'lower', percentile: pct, daysOut,
+      u3: uu, z: sc.z[tLast][j], direction: sc.z[tLast][j] >= 0 ? 'higher' : 'lower', percentile: pct, daysOut, latestInside,
       nHist: hist.length, nLess: hist.filter((h) => h < uu).length, uToday: Number.isNaN(uToday) ? uu : uToday, notable,
     })
   }
@@ -416,17 +425,18 @@ export function analyzeDay(
     return j < 0 ? NaN : inverseTransform(sc.m[day]?.[j] ?? NaN, model.transform[j])
   }
   const f1 = (v: number, dgt = 1) => (Number.isNaN(v) ? '–' : v.toFixed(dgt))
-  if (u3.sleep_h >= 1) factors.push({ id: 'sleep', text: 'Short sleep', evidence: `Sleep averaged ${f1(val3('sleep_h'))} h over the last three nights; your normal is ${f1(exp('sleep_h'))} h.` })
+  // a contributor is listed only when the difference is large enough to matter, not just unusual for the person
+  if (u3.sleep_h >= 1 && exp('sleep_h') - val3('sleep_h') >= 0.5) factors.push({ id: 'sleep', text: 'Short sleep', evidence: `Sleep averaged ${f1(val3('sleep_h'))} h over the last three nights; your normal is ${f1(exp('sleep_h'))} h.` })
   if (u3.sleep_mid >= 1.5) factors.push({ id: 'timing', text: 'Sleep timing moved', evidence: `Your sleep period has shifted about ${f1(Math.abs(val3('sleep_mid') - exp('sleep_mid')))} h from where it usually sits.` })
-  if (u3.fluid >= 1) factors.push({ id: 'fluid', text: 'Low fluid intake', evidence: `You logged ${f1(val3('fluid'))} L a day over the last three days; your normal is ${f1(exp('fluid'))} L.` })
-  if (u3.ex7 >= 1) factors.push({ id: 'exercise', text: 'Less exercise than usual', evidence: `Seven-day average ${f1(lastValid(rawSeries(m, crewId, 'ex7', entries), day), 0)} min a day against your usual ${f1(exp('ex7'), 0)}.` })
+  if (u3.fluid >= 1 && exp('fluid') - val3('fluid') >= 0.3) factors.push({ id: 'fluid', text: 'Low fluid intake', evidence: `You logged ${f1(val3('fluid'))} L a day over the last three days; your normal is ${f1(exp('fluid'))} L.` })
+  if (u3.ex7 >= 1 && lastValid(rawSeries(m, crewId, 'ex7', entries), day) <= 0.85 * exp('ex7')) factors.push({ id: 'exercise', text: 'Less exercise than usual', evidence: `Seven-day average ${f1(lastValid(rawSeries(m, crewId, 'ex7', entries), day), 0)} min a day against your usual ${f1(exp('ex7'), 0)}.` })
   {
     const ex = rawSeries(m, crewId, 'ex_min', entries)
     const y = ex[day - 1]
     const usual = exp('ex7')
     if (!Number.isNaN(y) && !Number.isNaN(usual) && y > usual * 1.4 + 20) factors.push({ id: 'load', text: 'Hard session yesterday', evidence: `Yesterday's exercise was ${f1(y, 0)} min, well above your usual ${f1(usual, 0)}. Heart rate often runs higher the night after.` })
   }
-  if (u3.energy >= 1) factors.push({ id: 'food', text: 'Eating less than planned', evidence: `About ${f1(val3('energy'), 0)}% of plan over the last three days; your normal is ${f1(exp('energy'), 0)}%.` })
+  if (u3.energy >= 1 && exp('energy') - val3('energy') >= 10) factors.push({ id: 'food', text: 'Eating less than planned', evidence: `About ${f1(val3('energy'), 0)}% of plan over the last three days; your normal is ${f1(exp('energy'), 0)}%.` })
   if (u3.mood >= 1) factors.push({ id: 'mood', text: 'Lower mood', evidence: `Mood check-ins averaged ${f1(val3('mood'))} of 5; your normal is ${f1(exp('mood'))}.` })
   if (co23 >= 2.5) factors.push({ id: 'co2', text: 'Cabin carbon dioxide', evidence: `Cabin CO2 averaged ${f1(co23)} mmHg over three days. Headaches become more likely the higher it goes.` })
   const symList = Object.keys(sym).filter((s) => s in SYM)
@@ -722,7 +732,7 @@ export function describeChange(c: Change): string {
 
 export function unusualness(c: Change): string {
   if (Number.isNaN(c.percentile) || !c.nHist) return 'Not enough history yet to say how unusual this is for you.'
-  const days = c.daysOut > 1 ? ` Out of your range for ${c.daysOut} days.` : ''
+  const days = c.daysOut > 1 ? ` Outside your usual range on each of the last ${c.daysOut} days with a reading.` : c.latestInside ? ' The latest reading is back inside your usual range; the last three days together are still unusual.' : ''
   if ((c.nLess ?? 0) >= c.nHist) return `Your most unusual reading in ${c.nHist} days.${days}`
   return `More unusual than ${c.nLess} of your last ${c.nHist} days.${days}`
 }

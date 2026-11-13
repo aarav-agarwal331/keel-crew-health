@@ -795,6 +795,45 @@ Not done, with reasons: one status vocabulary and one set of areas across body f
 (a redesign); a repeat box for every urgent item and for blood pressure and temperature; sudden-vision
 red flags and a ketone step (indicator and rule changes for a clinician); a nested bootstrap.
 
-## Round 17
+## Round 17 (2026-11-12, fresh reviewers, redeployed build)
 
-See the end of this file once the seventeenth round has run.
+Judge's scores: impact 7, creativity 8, validity 7, relevance 8, presentation 6 (36 of 50), "nominate:
+yes", with one high-severity issue. The astronaut found three, the flight surgeon one, the statistician
+one.
+
+| # | Reviewer | High-severity finding | Fix |
+|---|---|---|---|
+| 1 | Judge (astronaut medium) | "Out of your range for N days" disagreed with the charts: the text counted a day at 1.2 robust spreads, the chart's band is 2. | The text uses the chart's own band, counts consecutive days with a reading, and says when the latest reading is back inside; a unit test checks text and band agree. |
+| 2 | Astronaut, flight surgeon | One "Cancel" withdrew every dangerous reading (sugar 50 and heart rate 170) and cancelled the alert. | One "Withdraw … : typing mistake" button per reading; the alert still goes for what remains, built from the urgent items as they are when it fires (so a unit correction or a withdrawal is respected). |
+| 3 | Astronaut | Ticking a "medical officer only" item did not say the commander's tier would change. | The tick shows: only the medical officer is told what it is; the commander's tier shows "Talk to the medical officer first" with no reason. |
+| 4 | Astronaut | Sharing said the ground always gets a count of open urgent items; Earth link said only under emergency sharing. | Sharing now says "with emergency sharing on". |
+| 5 | Statistician | The heart rate + 7-day activity alert tier never fires (its threshold sits on the z-score cap), but Validation reported its +0 and −4 as findings about the activity feature. | The screen detects a tier with no alerts at all and says it could not be calibrated, naming the cap; the like-for-like alert-tier comparison is withheld. |
+
+Medium-severity findings fixed in the same pass:
+
+- **Emergency context** (flight surgeon): while an urgent item is open under emergency sharing, the
+  medical officer sees heart, oxygen and temperature and symptoms at trend level; Sharing says so.
+- **Overdue items** (flight surgeon, astronaut): an item that needs the medical officer and has been open
+  two days or more is flagged "Overdue … please see them today" on the medical officer's card.
+- **Repeat boxes** (flight surgeon, astronaut): every urgent item on Today has its own repeat box.
+- **Dizziness after landing** (flight surgeon): R-SMS leads with sit or lie down, do not stand alone,
+  compression garment, fluids, blood pressure, tell the medical officer today; new sourced countermeasure
+  CM-ORTHO (refs 6, 51c, 51d).
+- **Trivial contributors** (judge, astronaut, flight surgeon): sleep, fluids, exercise and food are listed
+  as contributors only when the difference is large enough to matter.
+- **Pre-specified window first** (judge, statistician): the README and the Validation short version lead
+  with heart rate alone in the window set before the analysis (+13, 4 to 24), then the narrower +19.
+- **False-alert concentration** (statistician): both tiers given; the follow-on sentence no longer
+  contradicts it.
+- **Data sources** (flight surgeon, statistician): the import and strap texts say exactly what is kept,
+  what feeds the detector and what is checked against fixed lines.
+- **Meter unit control** (astronaut): aligned, and says when the unit is not set yet.
+
+Not done, with reasons: a clinician's review (needs a person; FINAL_REPORT lists it), ranking contested
+readings below unchallenged ones, one status vocabulary across screens, a crew challenge for gamification,
+fixing the calibration cap in the research code (needs a rerun; disclosed on screen and in METHOD.md),
+rendering the Method screen's few typed figures from the JSON, a dispersion test for false alerts.
+
+## Round 18
+
+See the end of this file once the eighteenth round has run.

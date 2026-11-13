@@ -35,8 +35,11 @@ export function viewFor(role: Role, a: DayAnalysis, share: SharingSettings, valu
   const s = share[role]
   const categories: RoleView['categories'] = {}
   let overall: Status | 'private' = 'private'
+  // while something urgent is open under emergency sharing, the medical officer who is called to the patient
+  // also sees heart, oxygen and temperature and symptoms at trend level (every look is in the access log)
+  const emergencyOpen = role === 'cmo' && share.emergency !== false && a.findings.some((f) => f.status === 'urgent' && !f.crewWide)
   for (const cat of SHARE_CATEGORIES) {
-    const level = s[cat]
+    const level: Level = emergencyOpen && (cat === 'cardio' || cat === 'symptoms') && !allows(s[cat], 'trend') ? 'trend' : s[cat]
     categories[cat] = { level }
     if (!allows(level, 'status')) continue
     const st = categoryStatus(a, cat)
@@ -68,7 +71,8 @@ export function viewFor(role: Role, a: DayAnalysis, share: SharingSettings, valu
       if (overall === 'private' || rank[f.status] > rank[overall]) overall = f.status
       continue
     }
-    const level = (s as Record<string, Level>)[cat] ?? 'none'
+    const level0 = (s as Record<string, Level>)[cat] ?? 'none'
+    const level: Level = emergencyOpen && (cat === 'cardio' || cat === 'symptoms') && !allows(level0, 'trend') ? 'trend' : level0
     // a fixed safety rule that needs attention today (a reading or a reported symptom) reaches the medical officer
     // with its title under emergency consent, whatever the area's level, as the Sharing screen promises
     const fixedToday = role === 'cmo' && share.emergency !== false && f.kind !== 'personal' && f.urgency === 'today' && f.status === 'act'

@@ -18,15 +18,25 @@ export function useAutoAlert(trigger: boolean) {
   // the latest action log, read when the timer fires: another screen may have sent this alert meanwhile
   const actionsRef = useRef(actions)
   actionsRef.current = actions
-  const alreadySent = (_k: string) => !!alertState(actionsRef.current, me, urgent.map((x) => x.key)).sent
+  // the urgent items as they are when the alert goes: a reading withdrawn during the countdown is left out
+  const urgentRef = useRef(urgent)
+  urgentRef.current = urgent
+  const counting = useRef(false)
+  const alreadySent = (_k: string) => !!alertState(actionsRef.current, me, urgentRef.current.map((x) => x.key)).sent
   useEffect(() => {
-    if (!trigger || !urgent.length) return
+    if (!trigger || !urgent.length || counting.current) return
     if (autoAlert?.key === akey || actions.some((x) => x.crew === me && x.alertKey === akey && /Alert cancelled/.test(x.did)) || alertState(actionsRef.current, me, urgent.map((x) => x.key)).sent) return
     setAutoAlert({ key: akey, ts: Date.now() })
-    const send = () => alreadySent(akey) ? undefined : void logAction({ crew: me, alertKey: akey, day, did: 'Alerted the crew', feel: null, ...alertFields(urgent, ' (sent automatically)') })
+    counting.current = true
+    const send = () => {
+      counting.current = false
+      const u = urgentRef.current
+      if (!u.length || alreadySent('')) return
+      void logAction({ crew: me, alertKey: `alert|${u.map((x) => x.key).sort().join('+')}`, day, did: 'Alerted the crew', feel: null, ...alertFields(u, ' (sent automatically)') })
+    }
     const t = window.setTimeout(() => { flushRef.current = () => {}; send() }, 10_000)
     const iv = window.setInterval(() => setTick((n) => n + 1), 1000)
-    cancelRef.current = () => { window.clearTimeout(t); window.clearInterval(iv); flushRef.current = () => {} }
+    cancelRef.current = () => { counting.current = false; window.clearTimeout(t); window.clearInterval(iv); flushRef.current = () => {} }
     flushRef.current = () => { window.clearTimeout(t); window.clearInterval(iv); send() }
     window.setTimeout(() => window.clearInterval(iv), 11_000)
   })
@@ -46,5 +56,5 @@ export function useAutoAlert(trigger: boolean) {
   const autoLeft = autoAlert ? Math.max(0, 10 - Math.floor((Date.now() - autoAlert.ts) / 1000)) : 0
   const autoCancelled = autoAlert ? actions.some((x) => x.alertKey === autoAlert.key && x.did === 'Alert cancelled') : false
   const cancel = () => { if (!autoAlert) return; cancelRef.current(); void logAction({ crew: me, alertKey: autoAlert.key, day, did: 'Alert cancelled', feel: null, note: 'cancelled by the crew member' }) }
-  return { counting: !!autoAlert && !autoCancelled && autoLeft > 0 && !alreadySent(autoAlert.key), autoLeft, cancel, escalated }
+  return { counting: !!autoAlert && !autoCancelled && autoLeft > 0 && !alreadySent(autoAlert.key) && urgent.length > 0, autoLeft, cancel, escalated }
 }

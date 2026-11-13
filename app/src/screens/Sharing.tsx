@@ -27,10 +27,10 @@ export function Sharing() {
       <table className="tbl small" data-testid="who-sees-table">
         <thead><tr><th>Who</th><th>Always</th><th>Your choice</th></tr></thead>
         <tbody>
-          <tr><td>Medical officer</td><td>With emergency sharing on: every urgent or same-day safety item, with the value entered, and an alert for urgent ones. With it off: an alert that you need help, and "an item, details private".</td><td>Each area: nothing, status, trend or full detail</td></tr>
+          <tr><td>Medical officer</td><td>With emergency sharing on: every urgent or same-day safety item, with the value entered, and an alert for urgent ones; while an urgent item is open, also your heart, oxygen and temperature and your symptoms at trend level, so they can help. With it off: an alert that you need help, and "an item, details private".</td><td>Each area: nothing, status, trend or full detail</td></tr>
           <tr><td>Commander</td><td>Your readiness tier, without the reason. With emergency sharing on: urgent items, the value entered and an alert, as backup (never items marked "medical officer only"). With it off: an alert that you need help.</td><td>Each area</td></tr>
           <tr><td>Crew</td><td>A count when three or more crew show a change in the same area</td><td>Nothing</td></tr>
-          <tr><td>Ground</td><td>A count of urgent items still open</td><td>Each area, for the flight surgeon</td></tr>
+          <tr><td>Ground</td><td>With emergency sharing on: a count of urgent items still open. With it off: nothing.</td><td>Each area, for the flight surgeon</td></tr>
           <tr><td>Everyone</td><td>Cabin air and radiation readings</td><td>Not personal</td></tr>
         </tbody>
       </table>

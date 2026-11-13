@@ -1041,6 +1041,7 @@
    "summary": "Common in most crew in the first two to three days after a gravity change. Keel cannot tell whether that is the cause: cabin air, low fluids and other problems can feel the same.",
    "action": "Light duty today: slow head movements, small sips and snacks, and tell the medical officer before any suited work.",
    "steps": [
+    "After landing, if you feel faint or dizzy when you stand up: sit or lie down at once, do not stand up alone, wear the compression garment, drink, take a blood pressure reading and tell the medical officer today.",
     "If you vomit more than twice or cannot keep fluids down, tick it as serious at check-in and tell the medical officer now.",
     "Check the cabin carbon dioxide reading on the Today screen.",
     "If it lasts beyond day 4, the medical officer should review it."
@@ -1048,7 +1049,8 @@
    "tier": "self",
    "tier_reason": "Usually passes within a few days.",
    "cm": [
-    "CM-SMS"
+    "CM-SMS",
+    "CM-ORTHO"
    ],
    "categories": [
     "symptoms"
