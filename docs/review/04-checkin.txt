@@ -9,6 +9,7 @@ Flight day 121. Four quick answers, about a minute. Stored on your tablet; emerg
 Today's check-in in this demo came from the simulation. Anything you save here is added to it.
 
 1. How are you feeling?
+Private unless you share it; the commander's tier uses it
 1
 Very low
 2

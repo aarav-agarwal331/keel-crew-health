@@ -85,7 +85,7 @@ Day 84
 Day 103
 Day 121
 
-Hours actually asleep in the last sleep period. Your usual is not the standard. Standard: Scheduled sleep period 8.5 h.
+Hours actually asleep in the last sleep period. Your usual is not the standard (scheduled sleep period 8.5 h).
 
 Why it matters, how to measure, and the numbers
 Sleep timing shift
@@ -153,7 +153,7 @@ Day 84
 Day 103
 Day 121
 
-How much you drank today. Your usual is not the standard. Standard: At least 2.0 L.
+How much you drank today. Your usual is not the standard (At least 2.0 L).
 
 Why it matters, how to measure, and the numbers
 Food intake
@@ -167,7 +167,7 @@ Day 84
 Day 103
 Day 121
 
-How much of your planned food you ate today. Your usual is not the standard. Standard: Planned: 100%.
+How much of your planned food you ate today. Your usual is not the standard (planned 100%).
 
 Why it matters, how to measure, and the numbers
 Body mass

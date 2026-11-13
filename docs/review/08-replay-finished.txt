@@ -87,7 +87,7 @@ DAY 119
 LINK
 Earth link lost
 
-Scripted two-week blackout (antenna fault), modelled on the two-week command pause at solar conjunction. Keel keeps working on board.
+Scripted two-week blackout (antenna fault; the length is borrowed from the two-week command pause at solar conjunction). Keel keeps working on board.
 
 DAY 116
 Same notice (open since Day 115), read differently: Your mood has been lower than usual
@@ -124,7 +124,7 @@ On Day 119 the detector had already moved, but the readings then looked like som
 
 Keel's log for this replay also has 6 entries that are not about the scripted event. Some are one open notice being read differently as the days pass; some reflect ordinary lapses in the simulated routine, such as a missed exercise session; some are false alerts. That is part of the picture: notices are budgeted at about one false one per person-month in simulation, and real crews would likely see more.
 
-Across all the real data, not this one script: a two-sensor version of the method (not the eleven-channel model in this replay), with thresholds from the simulator, flagged 72% of 107 real illness episodes, 32 points more than luck, at 1.4 false alerts per person-month. Useful early warning was not shown. Everything except illness is tested in simulation only.
+Across all the real data, not this one script: heart rate alone (not the eleven-channel model in this replay, which is tested in simulation only) flagged 50% of 107 real illness episodes, 22 points more than luck, at about 1.0 false alerts per person-month. Useful early warning was not shown.
 
 One scripted event proves nothing by itself. The day of the scripted illness was chosen from a short list when the demo missions were built, by looking at the detector's output for two quiet weeks beforehand; no candidate day had them, so the first was used and earlier notices appear. This replay is not a random draw.
 

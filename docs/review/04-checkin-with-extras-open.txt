@@ -9,6 +9,7 @@ Flight day 121. Four quick answers, about a minute. Stored on your tablet; emerg
 Today's check-in in this demo came from the simulation. Anything you save here is added to it.
 
 1. How are you feeling?
+Private unless you share it; the commander's tier uses it
 1
 Very low
 2
@@ -91,9 +92,9 @@ Decongestant or antihistamine
 Anti-nausea medicine
 Other medicine
 
-Classes only, no doses. These can move heart rate, reaction time and sleep, so Keel shows them next to any alert. The medical officer sees them only if you share Symptoms in detail. Keel never recommends medication.
+Classes only, no doses. These can move heart rate, reaction time and sleep, so Keel shows them next to any alert. Keel never recommends medication. The medical officer will not see these unless you share Symptoms in full detail.
 
-Photo for the medical officer (optional)
+Photo (optional, kept on your tablet)
 What is it of?
 Skin
 Eye
@@ -102,8 +103,11 @@ Wound
 Other
 Take or choose a photo
 
-A rash, an eye, a wound. Up to three a day, shrunk and stored on this tablet when you save. Keel does not analyse photos. The medical officer sees them only if you share Symptoms in detail.
+A rash, an eye, a wound. Up to three a day, shrunk and stored on this tablet when you save. Keel does not analyse photos.
 
+The medical officer will not see this photo. Symptoms is set to "Status" for them. Show it to them, or share Symptoms in full detail.
+
+Share Symptoms in full detail with the medical officer
 Measurements (only what you took today)
 Body temperature (thermometer) (°C)
 How to measure

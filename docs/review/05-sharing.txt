@@ -9,7 +9,7 @@ Lucía Reyes, your health data is yours. You decide below what each role can see
 How it travels: in this demo every role is on one tablet. In a flight version your data stays on your tablet, and only the views allowed here would go over the cabin network, to the medical officer's and commander's tablets; the daily ground summary goes out when a link exists.
 
 Always visible, whatever you choose below
-To the commander: your readiness tier (no Keel flags / worth a look / talk to the medical officer first), without the reason, except emergencies (see below). A commander has to be able to plan a spacewalk safely. The tier is worked out from all your readings, including ones you keep private.
+To the commander: your readiness tier (steady / worth a look / talk to the medical officer first), without the reason, except emergencies (see below). A commander has to be able to plan a spacewalk safely. The tier is worked out from all your readings, including ones you keep private.
 To the crew: counts. When three or more crew members show a change in the same area, the Crew screen shows the count, not the names. In a crew of four that is not fully anonymous.
 To everyone: cabin readings (air, radiation). They are not personal.
 Emergency sharing
@@ -76,7 +76,7 @@ Area	Level	They see
 Heart, oxygen and temperature	Status	Act today
 Sleep and body clock	Status	Worth a look
 Exercise	Status	Steady
-Mind and mood	Private	Nothing
+Mind and mood	Status	Act today
 Food and fluids	Status	Steady
 Symptoms	Status	Worth a look
 That an alert exists in heart, oxygen and temperature, not what it says

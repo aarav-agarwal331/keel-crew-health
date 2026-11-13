@@ -18,6 +18,7 @@ Steady
 Heart, oxygen and temperature
 Sleep and body clock
 Exercise
+Mind and mood
 Food and fluids
 Symptoms
 Kenji Sato
@@ -28,6 +29,7 @@ Worth a look
 Heart, oxygen and temperature
 Sleep and body clock
 Exercise
+Mind and mood
 Food and fluids
 Symptoms
 Lucía Reyes
@@ -38,9 +40,12 @@ Act today
 Heart, oxygen and temperature
 Sleep and body clock
 Exercise
+Mind and mood
 Food and fluids
 Symptoms
-Detector notice in heart, oxygen and temperature (details not shared) (act today for 2 d)
+Notice from the readings in heart, oxygen and temperature (details not shared) (act today for 2 d)
+Note only, keep open
+Close: cleared for exercise and duties
 Tomás Novák
 Mission specialist
 
@@ -49,6 +54,7 @@ Worth a look
 Heart, oxygen and temperature
 Sleep and body clock
 Exercise
+Mind and mood
 Food and fluids
 Symptoms
 

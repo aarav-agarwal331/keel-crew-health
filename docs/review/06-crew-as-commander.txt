@@ -10,7 +10,7 @@ Day 121. Whether Keel has any flags for each crew member before a demanding task
 
 Demo view. On a mission each role has its own device; here you can switch roles. Every look is written to the crew member's access log.
 
-Task tomorrow: spacewalk
+Task tomorrow: a critical task (a spacewalk, or robotic-arm work)
 
 1 of 4 should talk to the medical officer first. 2 have minor flags. 1 has none.
 
@@ -21,7 +21,7 @@ NASA's medical operations standard requires medical clearance before every space
 Amara Okafor
 Commander
 
-No Keel flags
+Steady
 
 Kenji Sato
 Crew medical officer
