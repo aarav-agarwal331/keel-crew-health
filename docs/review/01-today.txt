@@ -2,7 +2,7 @@ SCREEN: 01-today
 TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 122 | Simulated data
 BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
-When Earth can't answer, Keel tells you what to do and who to tell. Advises you at once on a dangerous reading you enter, and alerts the medical officer and commander within ten seconds. You choose who sees what. It also watches your readings against your own normal. Demo: Lucía's tablet, simulated Mars transit.
+When Earth can't answer, Keel tells you what to do and who to tell. Advises you at once on a dangerous reading you enter, and alerts the medical officer and commander within ten seconds (on their Crew screens; over the cabin network in a flight version). You choose who sees what. It also watches your readings against your own normal. Demo: Lucía's tablet, simulated Mars transit.
 
 Demo: enter a dangerous reading
 Demo: replay a scripted event

@@ -2,7 +2,7 @@ SCREEN: 18-crew-as-commander-after-readings
 TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 122 | Simulated data
 BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
-Alert about Lucía Reyes, sent automatically after an urgent check-in at 23:17: Blood sugar reading is below 54 mg/dL (entered: 50, then 85; the 50 still counts); Heart rate reading at rest is 150 or more (entered: 170). Go to them now.
+Alert about Lucía Reyes, sent automatically after an urgent check-in at 23:32: Blood sugar reading is below 54 mg/dL (entered: 50, then 85; the 50 still counts); Heart rate reading at rest is 150 or more (entered: 170). Go to them now.
 
 Acknowledge: I am on my way
 
@@ -22,7 +22,7 @@ Demo view. On a mission each role has its own device; here you can switch roles.
 
 Task tomorrow: a critical task (a spacewalk, or robotic-arm work)
 
-1 with an urgent item open now. 1 of 4 should talk to the medical officer first. 1 has minor flags. 2 have none.
+1 urgent now. 0 need a talk with the medical officer first. 1 has minor flags. 2 have none.
 
 This is not a medical clearance.
 
@@ -37,7 +37,7 @@ Urgent: go to Lucía now (details below).
 
 Blood sugar reading is below 54 mg/dL (entered: 50, then 85; the 50 still counts). (shared automatically: emergency sharing)
 
-Lucía was told: "Take sugar now if you can swallow, and call a crewmate to you. Your readings disagree (50, then 85): treat it as low to be safe. Tell the medical officer now. Re-check at 23:32."
+Lucía was told: "Take sugar now if you can swallow, and call a crewmate to you. Your readings disagree (50, then 85): treat it as low to be safe. Tell the medical officer now. Re-check at 23:46."
 
 Heart rate reading at rest is 150 or more (entered: 170). (shared automatically: emergency sharing)
 

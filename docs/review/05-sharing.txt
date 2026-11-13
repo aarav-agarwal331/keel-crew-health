@@ -17,13 +17,13 @@ How it travels: in this demo every role is on one tablet. In a flight version yo
 
 Always visible, whatever you choose below
 To the medical officer: an overall status made only from the areas you share with them, and, under emergency sharing, every open "act now" or "act today" item from a safety rule, with what it is and the readings behind it, in any area. Notices from your readings follow the levels below.
-To the commander: your readiness tier (steady / worth a look / talk to the medical officer first), without the reason, except emergencies (see below). A commander has to be able to plan a spacewalk safely. The tier is worked out from all your readings, including ones you keep private. An item marked "medical officer only" can make it "Talk to the medical officer first", but the commander is never shown why.
+To the commander: your readiness tier (steady / worth a look / talk to the medical officer first, or "act now" while an urgent item is shared under emergency sharing), without the reason, except emergencies (see below). A commander has to be able to plan a spacewalk safely. The tier is worked out from all your readings, including ones you keep private. An item marked "medical officer only" can make it "Talk to the medical officer first", but the commander is never shown why.
 To the crew: counts. When three or more crew members show a change in the same area, the Crew screen shows the count, not the names. In a crew of four that is not fully anonymous.
 To everyone: cabin readings (air, radiation). They are not personal.
 Emergency sharing
 On
 Off
-When on, a symptom you mark as serious or an "act now" safety reading appears at once on the medical officer's and the commander's Crew screens (what it is, the value entered and the action; the commander never sees items marked "medical officer only" and never sees your reading log), an alert goes to both ten seconds after you save (at once if you leave Check-in) unless you withdraw a typing mistake, and it stays on the medical officer's list until they close it with a note.
+When on, a symptom you mark as serious or an "act now" safety reading appears at once on the medical officer's and the commander's Crew screens (what it is, the value entered and the action; for an urgent item the commander sees every value you entered and what you were told, never items marked "medical officer only"), an alert goes to both ten seconds after you save (at once if you leave Check-in) unless you withdraw a typing mistake, and it stays on the medical officer's list until they close it with a note.
 More about emergency sharing
 Who are you setting this for?
 Crew medical officer

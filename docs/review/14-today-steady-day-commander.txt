@@ -2,7 +2,7 @@ SCREEN: 14-today-steady-day-commander
 TOP BAR: Keel | Earth link: 1 min 34 s delay | Amara · Flight day 66 | Simulated data
 BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
-When Earth can't answer, Keel tells you what to do and who to tell. Advises you at once on a dangerous reading you enter, and alerts the medical officer and commander within ten seconds. You choose who sees what. It also watches your readings against your own normal. Demo: Amara's tablet, simulated Mars transit.
+When Earth can't answer, Keel tells you what to do and who to tell. Advises you at once on a dangerous reading you enter, and alerts the medical officer and commander within ten seconds (on their Crew screens; over the cabin network in a flight version). You choose who sees what. It also watches your readings against your own normal. Demo: Amara's tablet, simulated Mars transit.
 
 Demo: enter a dangerous reading
 Demo: replay a scripted event

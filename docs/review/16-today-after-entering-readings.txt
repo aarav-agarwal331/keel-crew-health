@@ -2,7 +2,7 @@ SCREEN: 16-today-after-entering-readings
 TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 122 | Simulated data
 BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
-When Earth can't answer, Keel tells you what to do and who to tell. Advises you at once on a dangerous reading you enter, and alerts the medical officer and commander within ten seconds. You choose who sees what. It also watches your readings against your own normal. Demo: Lucía's tablet, simulated Mars transit.
+When Earth can't answer, Keel tells you what to do and who to tell. Advises you at once on a dangerous reading you enter, and alerts the medical officer and commander within ten seconds (on their Crew screens; over the cabin network in a flight version). You choose who sees what. It also watches your readings against your own normal. Demo: Lucía's tablet, simulated Mars transit.
 
 Demo: enter a dangerous reading
 Demo: replay a scripted event
@@ -18,18 +18,18 @@ Demo crew member, simulated readings.
 
 RECOMMENDED ACTION
 
-Take sugar now if you can swallow, and call a crewmate to you. Your readings disagree (50, then 85): treat it as low to be safe. Tell the medical officer now. Re-check at 23:32.
+Take sugar now if you can swallow, and call a crewmate to you. Your readings disagree (50, then 85): treat it as low to be safe. Tell the medical officer now. Re-check at 23:46.
 
 When: now. Who: the crew medical officer.
 
 A fixed safety threshold, not a trend.
 
-For whoever is with you: if they are confused, drowsy or cannot swallow safely, give nothing by mouth and get the medical officer now.
+For whoever is with you: if they are awake and can swallow, even if confused, give sugar; if they are drowsy, cannot follow simple instructions or cannot swallow safely, give nothing by mouth and get the medical officer now.
 
 Repeat reading: blood sugar (mg/dL)
 Save repeat
 
-Alert sent at 23:17. Not acknowledged yet: it stays at the top of their Crew screens until the medical officer does.
+Alert sent at 23:32. Not acknowledged yet: it stays at the top of their Crew screens until the medical officer does.
 
 Keep this screen open until the medical officer answers. Until then Keel sends the alert again every five minutes; it cannot once the tablet is put away, so call out to a crewmate as well.
 
@@ -45,8 +45,8 @@ After the above: an infection-like notice is also open, so take your temperature
 Thermometer reading (°C)
 Save reading
 Readings behind the first item:
-Blood sugar 50 mg/dL, at 23:17
-Blood sugar 85 mg/dL, at 23:17 (0 s after the one before)
+Blood sugar 50 mg/dL, at 23:31
+Blood sugar 85 mg/dL, at 23:31 (0 s after the one before)
 Every reading is kept. The most abnormal reading of the day stays on the medical officer's list until they close it. What you are told to do follows your latest reading once a repeat counts (for blood sugar, 15 minutes after the first).
 Why, and what next
 

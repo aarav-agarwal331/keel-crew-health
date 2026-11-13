@@ -16,7 +16,7 @@ Demo view. On a mission each role has its own device; here you can switch roles.
 
 Task tomorrow: a critical task (a spacewalk, or robotic-arm work)
 
-1 of 4 should talk to the medical officer first. 1 has minor flags. 2 have none.
+1 needs a talk with the medical officer first. 1 has minor flags. 2 have none.
 
 This is not a medical clearance.
 
