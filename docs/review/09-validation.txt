@@ -9,12 +9,12 @@ Every number here was produced by a script in the repository. Real data is used 
 The short version
 What	How it was tested	Result
 Dangerous readings and serious symptoms	Unit and end-to-end tests (by design, not on patients)	One written step at once and an alert to the medical officer and commander, with no Earth link. No clinician has reviewed the thresholds.
-Illness, from heart rate alone (what imports run on)	Real data: 107 illness episodes, people not used for fitting	+13 points above chance (4 to 24) at about one false notice a month. No useful early warning; most alerts are false.
-The tablet's own eleven-channel model	Simulation only	Simulated illness +14 (−6 to 34, includes zero): not distinguishable from chance.
+Illness, from heart rate alone (what imports run on)	Real data: 107 illness episodes, thresholds set on other people (5-fold)	+13 points above chance (4 to 24) at about one false notice a month. No useful early warning; most alerts are false.
+The tablet's own eleven-channel model	Full sensor set: simulation only. Real data only with heart-rate inputs	Simulated illness +14 (−6 to 34, includes zero): not distinguishable from chance. On real data, fed heart rate only: +16 (7 to 25), while under-alerting.
 Which window, and what was planned in advance
 The numbers in full
 The two-sensor linking analysis (+28 points, but over the false-alert budget, so not comparable with the tiles above)
-What these results do not show. Useful early warning. Most alerts are false. A tested on-board model: the tablet's own model is tested in simulation only.
+What these results do not show. Useful early warning. Most alerts are false. A tested on-board model: the tablet's full eleven-channel model is tested in simulation only.
 The numbers behind this
 
 Jump to: real data · simulated missions · simulator realism · NASA bed-rest data · limitations
