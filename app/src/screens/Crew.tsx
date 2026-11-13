@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { CM, STATUS_LABEL, URGENCY_LABEL } from '../core/analysis'
 import { CATEGORIES, IND, shortDay } from '../core/mission'
-import { readiness, READY_LABEL } from '../core/readiness'
+import { overdueForCommander, readiness, READY_LABEL } from '../core/readiness'
 import { allows, defaultSharing, SHARE_CATEGORIES, type Role } from '../core/sharing'
 import { categoryStatus, viewFor, visibleExtras, visibleOpenItems } from '../core/visibility'
 import { useApp } from '../state'
@@ -114,7 +114,7 @@ export function Crew() {
             <div className="card-h"><div className="col" style={{ gap: 0 }}><h2>{c.name}</h2><span className="small muted">{c.role_label}</span></div></div>
             {!a || !r || !v ? <p className="muted">No data.</p> : <>
               {role === 'commander' && (v.findings.some((x) => x.emergency) ? <p><StatusTag status="urgent" label="Act now: an urgent item is open" /></p> : <p><StatusTag status={r.tier} label={r.tier === 'hold' && c.role === 'cmo' ? 'Talk to the named backup medic first' : READY_LABEL[r.tier]} /></p>)}
-              {role === 'commander' && c.role !== 'cmo' && ((a.openItems ?? []).some((x) => !x.settled && x.urgency === 'today' && day - x.day >= 1) || a.findings.some((f) => !f.crewWide && f.kind === 'personal' && f.status === 'act' && f.tier !== 'self' && f.days > 1)) && <p className="small" data-testid="waiting-cmo"><strong>An item has waited more than a day for the medical officer.</strong> Nothing about it is shown here; please make sure the medical officer has seen {c.name.split(' ')[0]}.</p>}
+              {role === 'commander' && overdueForCommander(a, day, c.role === 'cmo') && <p className="small" data-testid="waiting-cmo"><strong>An item has waited more than a day for the medical officer.</strong> Nothing about it is shown here; please make sure the medical officer has seen {c.name.split(' ')[0]}.</p>}
               {s.emergency === false && <p className="tiny muted">Emergency sharing is switched off for this crew member: red-flag symptoms will not appear here.</p>}
               {role === 'commander' && r.tier !== 'go' && r.tier !== 'unknown' && (() => {
                 const shown = r.reasons.filter((x) => allows((s.commander as Record<string, 'none' | 'status' | 'trend' | 'detail'>)[x.category] ?? 'none', 'trend'))

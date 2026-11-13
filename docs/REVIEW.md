@@ -1247,6 +1247,45 @@ number is shown. Restructuring Sharing into one table per role and a wholesale c
 astronaut) were done only where specific text was named. The top bar keeps naming whose tablet it is;
 the Crew screen says who is viewing.
 
-## Round 30
+## Round 30 (2026-11-13, fresh reviewers, redeployed build)
 
-See the end of this file once the thirtieth round has run.
+Judge's scores: impact 8, creativity 8, validity 7, relevance 8, presentation 6 (37 of 50), "nominate:
+yes". The flight surgeon and the statistician found no high-severity issue. The judge and the astronaut
+found the same two:
+
+| # | Reviewer | High-severity finding | Fix |
+|---|---|---|---|
+| 1 | Judge, astronaut | The pinned Check-in "Act now" card printed each instruction one word per line when two items were urgent (a text node fell into the 30-pixel number column of the list grid). | Each list item's content is wrapped in one block, as on Today; recaptured. |
+| 2 | Judge, astronaut | Today said the commander sees the tier "and nothing else", but the commander's card also said an item had waited more than a day. | One shared function decides that notice; "Your commander sees" and the Sharing table now state it; it is hidden while an urgent item is open. |
+
+Medium-severity findings fixed in the same pass:
+
+- **Order of act-now items** (flight surgeon, judge): a low blood sugar that still counts is first again;
+  on Today every act-now item is its own numbered block with its own repeat box, and "when / who" once.
+- **Alerts from every entry point** (flight surgeon): a typed urgent reading saved anywhere (the
+  thermometer on an alert, a chest strap) is alerted by the app if no countdown is running.
+- **Responders** (flight surgeon): heart rate 150 or more, 120 or more with dizziness, under 40, and
+  chest pain, fainting, breathlessness or a racing heart give a CPR and defibrillator step; "put the ECG
+  on; if there is none, count by hand" replaces judging rhythm from a pulse oximeter.
+- **Treatment hand-off** (judge): Alert detail says the medical officer treats from the onboard checklist
+  and kit; Keel stops at first steps.
+- **README** (judge): the paragraph is three sentences led by +13; the loop says it is simulated on one
+  tablet with no sound.
+- **Glucose unit** (astronaut): the field shows no unit until the meter's unit is chosen.
+- **Radiation projection** (astronaut): says it is a straight line, not a forecast, and that there is
+  nothing for the crew member to do.
+- **Statistics** (statistician): "1 in N" shares now carry the range implied by the detection interval
+  (heart rate alone: 1 in 11 to 1 in 29 alert-tier alerts, 1 in 44 to 1 in 133 notices); "about half
+  as large" for early alerts at the alert tier; "part of the gap … (not quantified)"; 34% and 134%; the
+  bed-rest wording and the on-board model's real-data test corrected.
+- Low: escalation text says "while Keel is open on this tablet".
+
+Not done, with reasons: recalibrating inside each bootstrap replicate, a strictly-before-onset luck
+estimate, the paired steps comparison, refitting the simulator template and a larger illness-only
+simulation (statistician) are pipeline work, each disclosed where the number is shown. A low temperature
+rule and changing R-CO2-HI to "today" (flight surgeon) are clinical calls left for a clinician. A
+wholesale copy cut (judge, astronaut) was done only where text was named.
+
+## Round 31
+
+See the end of this file once the thirty-first round has run.

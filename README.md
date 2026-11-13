@@ -8,7 +8,8 @@
 
 **The loop, with no Earth link:** a crew member enters a dangerous reading → Keel shows one written
 step at once → ten seconds later the medical officer and commander are alerted on their Crew screens,
-and the alert repeats every five minutes until the medical officer acknowledges.
+and the alert repeats every five minutes until the medical officer acknowledges. (In this demo every
+role is on one tablet and nothing makes a sound; a flight version would send it over the cabin network.)
 
 | Crew member, right after entering it | Medical officer's Crew screen |
 |---|---|
@@ -35,18 +36,13 @@ is decision support, not a medical device.
 
 ## In one paragraph
 
-Keel works with no link to Earth, acts at once on dangerous readings and symptoms with a written next
-step and its source, and lets the crew member choose who sees what. It also watches each person's
-readings against their own normal. On 107 real illness episodes, overnight heart rate alone flagged
-**+13 points above luck (4 to 24) in the detection window we set before the analysis, and +19 (9 to
-28) in a narrower window chosen later** (50% flagged against 31% by chance in the
-narrower one), at about one false alert a month;
-that is the model imported watch data runs on (on Fitbit's
-own daily resting heart rate it gives about one alert a month, as budgeted, and about a fifth over its
-budget at the alert tier). The full on-board model is tested in simulation only.
-Useful early warning was not shown, most alerts are false, and Keel's detector is itself a simple
-personal rule, because a more complex one did not earn its place on the simulated training missions. Its main contribution is the offline safety, sharing and action loop; detection is one
-input to it.
+Keel works with no link to Earth: it acts at once on dangerous readings and symptoms with a written
+next step and its source, alerts the medical officer and commander, and lets the crew member choose who
+sees what. It also watches each person's readings against their own normal: on 107 real illness
+episodes, overnight heart rate alone flagged **+13 points above luck (4 to 24)** in the detection window
+set before the analysis, at about one false alert a month (+19 in a narrower window chosen later; details
+under Headline results). Useful early warning was not shown, most alerts are false, and the full on-board model is
+tested in simulation only, so the main contribution is the offline safety, sharing and action loop.
 
 ## What is different
 
@@ -114,8 +110,8 @@ Honest reading:
 - **Imported watch data uses its own model.** Because of the next point, the app runs imports on a
   heart-rate-only model calibrated on the 251 real people (expected: the "heart rate alone" row).
 - **The thresholds must match the sensors.** With simulator thresholds Keel's two-sensor method runs
-  over budget on real people (1.31 against 1.00; 0.41 against 0.25); with five sensors about 35% and
-  135% over (16 people, 29 person-months). The opposite happens to the shipped 11-channel model when it only gets heart rate: it
+  over budget on real people (1.31 against 1.00; 0.41 against 0.25); with five sensors about 34% and
+  134% over (16 people, 29 person-months). The opposite happens to the shipped 11-channel model when it only gets heart rate: it
   alerts well under budget (0.35 against 1.00; 0.12 against 0.25). A flight system needs thresholds per sensor set, calibrated on crew data.
 - **Much of the signal may be behavioural.** Heart rate alone is +19 above luck and heart rate with daily steps +28 (separate intervals; the paired difference was not estimated), so activity may add part of the signal,
   because people move less once they feel ill, and that cannot be separated from isolating at home.

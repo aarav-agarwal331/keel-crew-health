@@ -170,7 +170,7 @@ export function CheckIn({ open }: { open?: string }) {
         const u = (today(me, day)?.findings ?? []).filter((f) => f.status === 'urgent')
         return u.length > 0 ? <section className="card action urgent-card" role="alert" data-testid="checkin-act-now">
           <StatusTag status="urgent" label="Act now" />
-          {u.length === 1 ? <p className="do">{u[0].action}</p> : <ol className="list steps">{u.map((x) => <li key={x.key}><strong>{x.title}.</strong> {x.action}</li>)}</ol>}
+          {u.length === 1 ? <p className="do">{u[0].action}</p> : <ol className="list steps">{u.map((x) => <li key={x.key}><span className="col" style={{ gap: 4 }}><strong>{x.title}.</strong><span>{x.action}</span></span></li>)}</ol>}
           {auto.counting && <p className="small"><strong>Alerting the medical officer and commander in {auto.autoLeft} s.</strong> A typing mistake? Withdraw it below.</p>}
         </section> : null
       })()}
@@ -259,7 +259,7 @@ export function CheckIn({ open }: { open?: string }) {
             <div className="grid3 fields">
               {SPOT.map((k) => (
                 <div className="field" key={k}>
-                  <label htmlFor={`f-${k}`}>{lab(k)} <span className="muted small">({k === 'glucose' && meterUnit === 'mmol' ? 'mmol/L' : IND[k].unit})</span></label>
+                  <label htmlFor={`f-${k}`}>{lab(k)} <span className="muted small">({k === 'glucose' ? (meterUnit === 'mmol' ? 'mmol/L' : meterUnit === 'mg' ? 'mg/dL' : 'pick your meter\'s unit above first') : IND[k].unit})</span></label>
                   {k === 'glucose' && <div className="row wrap" style={{ gap: 6, alignItems: 'center' }}><span className="small muted">My meter shows{meterUnit === null ? ' (not set yet)' : ''}:</span><div className="seg" role="group" aria-label="Unit my meter shows"><button aria-pressed={meterUnit === 'mg'} onClick={() => setMeterUnit('mg')} data-testid="meter-mg">mg/dL</button><button aria-pressed={meterUnit === 'mmol'} onClick={() => setMeterUnit('mmol')} data-testid="meter-mmol">mmol/L</button></div></div>}
                   {k === 'glucose' && meterUnit === 'mmol' && <p className="tiny muted">Type the mmol/L value; Keel stores it in mg/dL. LO and HI can be typed as shown.</p>}
                   <input id={`f-${k}`} type={k === 'glucose' ? 'text' : 'number'} inputMode="decimal" step="any" value={spot[k] ?? ''} onChange={(e) => { const v = e.target.value; setSpot((p) => ({ ...p, [k]: v })); setDirty((p) => (p.includes(k) ? p : [...p, k])) }} />

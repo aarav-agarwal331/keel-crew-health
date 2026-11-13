@@ -12,7 +12,7 @@ export function useEscalation() {
   const [tick, setTick] = useState(0)
   const sentAt = useRef(new Map<string, number>())
   useEffect(() => {
-    const iv = window.setInterval(() => setTick((n) => n + 1), 30_000)
+    const iv = window.setInterval(() => setTick((n) => n + 1), 10_000)
     return () => window.clearInterval(iv)
   }, [])
   useEffect(() => {
@@ -28,6 +28,18 @@ export function useEscalation() {
       if (!st.sent && sensorOnly.length && !sentAt.current.has(c.id)) {
         sentAt.current.set(c.id, now)
         void logAction({ crew: c.id, alertKey: `alert|${urgent.map((x) => x.key).sort().join('+')}`, day, did: 'Alerted the crew', feel: null, ...alertFields(urgent, ' (sent automatically: from the overnight sensor)') })
+        continue
+      }
+      // a typed reading saved somewhere without its own countdown (the thermometer on an alert, a chest strap):
+      // sent once fifteen seconds have passed with no countdown running and no cancel, so no entry point is missed
+      const akey = `alert|${urgent.map((x) => x.key).sort().join('+')}`
+      const live = urgent.flatMap((f) => (f.readings ?? []).filter((q) => !q.void))
+      const newest = live.length ? Math.max(...live.map((q) => q.ts)) : 0
+      const countdown = actions.some((x) => x.crew === c.id && x.did === 'Alert pending' && Number(x.note) > now)
+      const cancelled = actions.some((x) => x.crew === c.id && x.alertKey === akey && /Alert cancelled/.test(x.did))
+      if (!st.sent && newest && now - newest > 15e3 && now - newest < 30 * 60e3 && !countdown && !cancelled && !sentAt.current.has(c.id)) {
+        sentAt.current.set(c.id, now)
+        void logAction({ crew: c.id, alertKey: akey, day, did: 'Alerted the crew', feel: null, ...alertFields(urgent, ' (sent automatically)') })
         continue
       }
       if (!st.sent) continue

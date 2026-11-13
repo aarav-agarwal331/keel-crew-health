@@ -1,6 +1,6 @@
 import { defaultSharing } from '../core/sharing'
 import { viewFor } from '../core/visibility'
-import { readiness, READY_LABEL } from '../core/readiness'
+import { overdueForCommander, readiness, READY_LABEL } from '../core/readiness'
 import { SYMPTOMS } from '../core/mission'
 import { alertFields, alertState, contextNote } from '../core/alerts'
 import { useAutoAlert } from '../ui/useAutoAlert'
@@ -110,7 +110,7 @@ export function Today() {
           <div className="col" style={{ gap: 4, color: 'var(--text)' }}>
             <h1>{a.staleDays >= 2 && !primary ? 'No recent data' : STATUS_LABEL[shown]}</h1>
             <p className="muted">{primary ? primary.title : a.staleDays >= 2 ? `No readings for ${a.staleDays} days, so Keel cannot say how you are. Wear the sensor tonight and do a check-in.` : shown === 'watch' && !primary ? `No action needed yet. Keep an eye on: ${softAreas.join(', ')}.` : a.status === 'steady' && changes.length ? `Nothing needs action. ${changes.length === 1 ? 'One reading is' : `${changes.length} readings are`} a little off your usual; Keel is watching.` : HEADLINE[a.status]}</p>
-            {mission.crew.find((c) => c.id === me)?.role !== 'commander' && <p className="small muted" data-testid="commander-sees">Your commander sees: {viewFor('commander', a, sharing[me] ?? defaultSharing()).findings.some((f) => f.emergency) ? 'Act now (an urgent item is open)' : READY_LABEL[readiness(a).tier]}{(() => { const cv = viewFor('commander', a, sharing[me] ?? defaultSharing()); const n = cv.findings.filter((f) => f.title).length; return n ? `, plus ${n === 1 ? 'one item' : `${n} items`} with what it is${cv.findings.some((f) => f.emergency) ? ', the value entered and what you were told to do (emergency sharing)' : ' (your sharing settings)'}; nothing else.` : ', with no reason given.' })()}</p>}
+            {mission.crew.find((c) => c.id === me)?.role !== 'commander' && <p className="small muted" data-testid="commander-sees">Your commander sees: {viewFor('commander', a, sharing[me] ?? defaultSharing()).findings.some((f) => f.emergency) ? 'Act now (an urgent item is open)' : READY_LABEL[readiness(a).tier]}{(() => { const cv = viewFor('commander', a, sharing[me] ?? defaultSharing()); const n = cv.findings.filter((f) => f.title).length; const od = overdueForCommander(a, day, mission.crew.find((c) => c.id === me)?.role === 'cmo') ? ', and that an item has waited more than a day for the medical officer (nothing about it)' : ''; return n ? `, plus ${n === 1 ? 'one item' : `${n} items`} with what it is${cv.findings.some((f) => f.emergency) ? ', the value entered and what you were told to do (emergency sharing)' : ' (your sharing settings)'}${od}; nothing else.` : `, with no reason given${od}.` })()}</p>}
             {primary?.kind === 'personal' && <p className="small muted" data-testid="based-on">{Object.entries(a.features.sym ?? {}).some(([, v]) => v > 0) ? `Triggered by readings that drifted from your normal, together with symptoms you reported in the last three days (${Object.entries(a.features.sym ?? {}).filter(([, v]) => v > 0).map(([k]) => SYMPTOMS.find((x) => x.id === k)?.label.toLowerCase() ?? k).join(', ')}).` : 'Triggered by readings that drifted from your normal, with no symptoms reported.'}</p>}
           </div>
         </div>
@@ -122,18 +122,18 @@ export function Today() {
       {primary && (
         <section className="card action" data-testid="today-action">
           <span className="tag plain">Recommended action</span>
-          <p className="do">{primary.action}</p>
-          {others.filter((x) => x.status === 'urgent').length > 0 && (
-            <div className="col" data-testid="also-now">
-              <span className="lab">Also act now</span>
-              <ol className="list steps">{others.filter((x) => x.status === 'urgent').map((x) => <li key={x.key}><span className="col" style={{ gap: 6 }}><span><strong>{x.title}.</strong> {x.action}</span>{x.steps.filter((q) => /^For whoever is with you/.test(q)).slice(0, 1).map((q) => <span key={q} className="banner strong small">{q}</span>)}<RepeatEntry f={x} /></span></li>)}</ol>
-            </div>
-          )}
-          <p className="small"><strong>When:</strong> {URGENCY_LABEL[primary.urgency].toLowerCase()}. <strong>Who:</strong> {(primary.who ?? WHO_LABEL[primary.tier]).toLowerCase()}.</p>
+          {(() => {
+            // several act-now items: one numbered block each, with its own action, bystander step and repeat box
+            const many = primary.status === 'urgent' ? [primary, ...others.filter((x) => x.status === 'urgent')] : [primary]
+            const block = (x: typeof primary) => <>{x.steps.filter((q) => /^For whoever is with you/.test(q)).slice(0, 1).map((q) => <span key={q} className="banner strong small">{q}</span>)}<RepeatEntry f={x} /></>
+            return many.length > 1
+              ? <ol className="list steps" data-testid="also-now">{many.map((x) => <li key={x.key}><span className="col" style={{ gap: 6 }}><strong>{x.title}.</strong><span className="do" style={{ fontSize: '1.1rem' }}>{x.action}</span>{block(x)}</span></li>)}</ol>
+              : <><p className="do">{primary.action}</p></>
+          })()}
+          <p className="small"><strong>When:</strong> {URGENCY_LABEL[primary.urgency].toLowerCase()}. <strong>Who:</strong> {(primary.who ?? WHO_LABEL[primary.tier]).toLowerCase()}.{primary.status === 'urgent' && others.some((x) => x.status === 'urgent') ? ' For every item above.' : ''}</p>
           <p className="small">{primary.tierReason}</p>
           <AskCmo f={primary} />
-          {primary.steps.filter((q) => /^For whoever is with you/.test(q)).slice(0, 1).map((q) => <p key={q} className="banner strong small">{q}</p>)}
-          <RepeatEntry f={primary} />
+          {!(primary.status === 'urgent' && others.some((x) => x.status === 'urgent')) && <>{primary.steps.filter((q) => /^For whoever is with you/.test(q)).slice(0, 1).map((q) => <p key={q} className="banner strong small">{q}</p>)}<RepeatEntry f={primary} /></>}
           {primary.status === 'urgent' && mission.kind === 'personal' && <p className="banner strong" data-testid="personal-emergency"><strong>Call your local emergency number now, or get to urgent care.</strong> This is your own imported data: there is no crew or medical officer behind this app.</p>}
           {primary.status === 'urgent' && !primary.crewWide && mission.kind !== 'personal' && (() => {
             const urgentNow = [primary, ...others].filter((x) => x.status === 'urgent')
@@ -146,7 +146,7 @@ export function Today() {
               {!sent && <button className="btn alert block" style={{ minHeight: 72, fontSize: '1.2rem' }} onClick={() => void logAction({ crew: me, alertKey: akey, day, did: 'Alerted the crew', feel: null, ...alertFields(urgentNow, '', contextNote(a.findings)) })} data-testid="alert-crew">Alert the medical officer and commander now</button>}
               {sent && !auto.escalated && !acks.some((x) => /medical officer/.test(x.note)) && Date.now() - sent.ts > 5 * 60e3 && <button className="btn alert block" onClick={() => void logAction({ crew: me, alertKey: akey, day, did: 'Alerted the crew', feel: null, ...alertFields(urgentNow, ' (no answer after 5 minutes: sent again)') })} data-testid="alert-again">No answer yet: alert them again</button>}
               {sent && <p className="banner strong" role="status"><strong>Alert sent at {new Date(sent.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}.</strong> {acks.length ? acks.map((x) => `Acknowledged ${x.note.replace(/^by the (medical officer|commander)$/, (_m, r) => `by ${mission.crew.find((c) => c.role === (r === 'commander' ? 'commander' : 'cmo'))?.name ?? `the ${r}`} (${r})`)} at ${new Date(x.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}.`).join(' ') : 'Not acknowledged yet: it stays at the top of their Crew screens until the medical officer does.'}</p>}
-              {sent && !acks.some((x) => /medical officer/.test(x.note)) && <p className="small" data-testid="help-coming"><strong>Do the step above, and call out to a crewmate now.</strong> In this prototype nothing makes a sound: the alert sits at the top of the medical officer's and commander's Crew screens. You do not need to keep this screen open; Keel sends it again every five minutes until the medical officer answers.</p>}
+              {sent && !acks.some((x) => /medical officer/.test(x.note)) && <p className="small" data-testid="help-coming"><strong>Do the step above, and call out to a crewmate now.</strong> In this prototype nothing makes a sound: the alert sits at the top of the medical officer's and commander's Crew screens. You do not need to keep this screen open: while Keel is open on this tablet it sends the alert again every five minutes until the medical officer answers.</p>}
               <p className="small">{on ? sent ? 'The details are visible on their Crew screens (emergency sharing).' : 'The details are visible on their Crew screens (emergency sharing). Saving an urgent check-in alerts them after ten seconds; this button alerts them now.' : 'Emergency sharing is off: the alert says only that you need help, not why.'}</p>
             </div>
           })()}

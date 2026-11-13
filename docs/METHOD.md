@@ -457,7 +457,7 @@ the same code version). Real data: 251 people, 107 illness episodes, two sensors
   lenient): four of five variabilities, four of five carry-overs, all four correlations. Every independent check fails or is off: the
   illness heart-rate rise over the four days from onset (2.1 bpm simulated, 4.6 real; the gap's 95% interval
   is 0.7 to 4.4 bpm, but it leaves out the uncertainty of the simulator's own fit from the other half,
-  whose rise was about 2.7 bpm, so much of the gap may be split-half noise. The two sides also use different
+  whose rise was about 2.7 bpm, so part of the gap may be split-half noise (not quantified). The two sides also use different
   baselines: the fit sets days −14 to −9 to zero, while the check measures from days −49 to −22, and in the
   validation half real days −14 to −9 already sit about 0.7 bpm above that baseline against 0.1 simulated,
   so part of the gap is a matter of definition, and it biases the fitted rise low by roughly that

@@ -23,6 +23,15 @@ export const READY_LABEL: Record<ReadyTier, string> = {
   unknown: 'Not enough recent data',
 }
 
+/** Whether the commander is told, without content, that an item has waited more than a day for the medical
+ *  officer.  Not while an urgent item is open (the commander is already sent to them), and never for the
+ *  medical officer's own items (the commander sees those as their backup). */
+export function overdueForCommander(a: DayAnalysis, day: number, patientIsCmo: boolean): boolean {
+  if (patientIsCmo || a.findings.some((f) => f.status === 'urgent' && !f.crewWide)) return false
+  return (a.openItems ?? []).some((x) => !x.settled && x.urgency === 'today' && day - x.day >= 1)
+    || a.findings.some((f) => !f.crewWide && f.kind === 'personal' && f.status === 'act' && f.tier !== 'self' && f.days > 1)
+}
+
 export function readiness(a: DayAnalysis): Readiness {
   const reasons: Readiness['reasons'] = []
   // the medical officer's "not cleared" and any open safety item outrank everything, including missing data

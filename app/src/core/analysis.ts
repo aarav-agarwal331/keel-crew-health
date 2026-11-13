@@ -571,6 +571,8 @@ export function analyzeDay(
         ...(fromFile ? { urgency: 'today' as Urgency, action: `A value in your imported file (${m.day_label ? `${m.day_label} ${start + 1}` : `day ${start + 1}`}) is past this line. If it is recent and you feel unwell, contact a doctor; in an emergency call your local emergency number.`, tierReason: 'From imported data, not a reading just taken.' } : {}),
         ...(stale && !fromFile ? { urgency: 'today' as Urgency, action: `This ${r.scope === 'symptom' ? 'item' : 'reading'} from ${m.day_label ? `${m.day_label} ${start + 1}` : `Day ${start + 1}`} still waits for the medical officer. If you have not told them yet, tell them today; at once if you feel unwell.${r.scope === 'symptom' ? '' : ' Take a new reading now: the advice for this one was for that moment.'}`, tierReason: 'It stays open until the medical officer closes it with a note.' } : {}),
         ...(r.id === 'R-RED' ? { symptoms: redSyms.map((x) => SYM[x]?.label ?? x) } : {}),
+        // chest pain, fainting, breathlessness or a racing heart: whoever comes is told what to do if the person collapses
+        ...(r.id === 'R-RED' && redSyms.some((x) => ['chest_pain', 'fainting', 'breathless', 'palpitations'].includes(x)) ? { steps: ['For whoever is with you: if they stop responding or are not breathing normally, shout for the whole crew, start CPR and get the defibrillator.', ...r.steps] } : {}),
         // every serious symptom goes to the commander the same way ("needs the medical officer urgently"), so the
         // commander can never work out which one it is (marking only some private would give those away)
         ...(r.id === 'R-RED' ? { cmoOnly: true } : {}),
@@ -650,9 +652,9 @@ export function analyzeDay(
   // at the same urgency, an item with operational consequences (it stops exercise) leads
   // and an unchallenged reading leads one that a later reading already disagrees with
   // a low blood sugar leads among urgent items: it is the one with a treatment the person can take at once
-  // a low blood sugar goes first only while the latest reading is still low: after a disagreeing later
-  // reading (50, then 85) another urgent item, such as a fast heart rate at rest, is not pushed below it
-  const treatNow = (x: Finding) => x.status === 'urgent' && x.ruleId.startsWith('R-V-GLU-LO') && (() => { const live = (x.readings ?? []).filter((q) => !q.void); return !live.length || live[live.length - 1].v < 70 })()
+  // a low blood sugar that still counts goes first: sugar is the one quick, harmless step, and a low can itself
+  // raise the heart rate (every other act-now item is listed right beside it)
+  const treatNow = (x: Finding) => x.status === 'urgent' && x.ruleId.startsWith('R-V-GLU-LO')
   findings.sort((a, b) => rank[b.status] - rank[a.status] || Number(treatNow(b)) - Number(treatNow(a)) || Number(holdsEx(b.ruleId)) - Number(holdsEx(a.ruleId)) || Number(!!a.contested) - Number(!!b.contested))
   const status: Status = findings.length ? findings[0].status : learning || staleDays >= 2 ? 'learning' : 'steady'
 

@@ -67,7 +67,7 @@ export function Trends({ focus }: { focus?: string }) {
                 const cum = rad.slice(mission.pre_days, day + 1).filter((v) => !Number.isNaN(v)).reduce((x, y) => x + y, 0)
                 if (fd <= 20 || !mission.flight_days) return null
                 const leg = Math.round((cum / (fd + 1)) * mission.flight_days / 10) * 10
-                return <p className="small muted" data-testid="rad-projection">{Math.round(cum)} mSv so far. At this mission's average daily rate, about {leg} mSv by flight day {mission.flight_days}, the end of this leg; a return trip at the same rate would bring the total to about {leg * 2} mSv{leg * 2 > 600 ? ', past the 600 mSv career limit (which also counts earlier flights)' : ' (the 600 mSv career limit also counts earlier flights)'}. Dose planning is for the flight surgeon and commander.</p>
+                return <p className="small muted" data-testid="rad-projection">{Math.round(cum)} mSv so far. At this mission's average daily rate, about {leg} mSv by flight day {mission.flight_days}, the end of this leg; a return trip at the same rate would bring the total to about {leg * 2} mSv{leg * 2 > 600 ? ', past the 600 mSv career limit (which also counts earlier flights)' : ' (the 600 mSv career limit also counts earlier flights)'}. This is a straight-line projection, not a forecast: it ignores shielding changes and solar activity, and Keel does not know the mission's dose plan. Dose planning is for the flight surgeon and commander; there is nothing for you to do.</p>
               })()}
               <details>
                 <summary>Why it matters, how to measure, and the numbers</summary>

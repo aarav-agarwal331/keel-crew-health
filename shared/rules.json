@@ -146,10 +146,11 @@
     "min": 150
    },
    "summary": "You entered a resting heart rate of 150 or more. Keel does not interpret it. The value 150 is provisional and has not been reviewed by a flight surgeon.",
-   "action": "Sit or strap in, put the ECG or pulse oximeter on now, and tell the medical officer now.",
+   "action": "Sit or strap in, put the ECG on now (or the pulse oximeter if there is none), and tell the medical officer now.",
    "steps": [
+    "For whoever is with you: if they stop responding or are not breathing normally, shout for the whole crew, start CPR and get the defibrillator.",
     "Stay with another crew member.",
-    "With the ECG or pulse oximeter on, note whether the rhythm is regular or irregular, and the time.",
+    "Put the ECG on; if there is none, count the pulse by hand for a full minute and note any irregularity, and the time.",
     "Note any chest pain, breathlessness or light-headedness."
    ],
    "tier": "cmo",
@@ -181,10 +182,11 @@
     ]
    },
    "summary": "You entered a resting heart rate of 120 or more and ticked dizziness. A fast rhythm that comes and goes needs to be recorded while it is happening. Keel does not interpret it. The value 120 is provisional and has not been reviewed by a flight surgeon.",
-   "action": "Sit or strap in, put the ECG or pulse oximeter on now, and tell the medical officer now.",
+   "action": "Sit or strap in, put the ECG on now (or the pulse oximeter if there is none), and tell the medical officer now.",
    "steps": [
+    "For whoever is with you: if they stop responding or are not breathing normally, shout for the whole crew, start CPR and get the defibrillator.",
     "Stay with another crew member.",
-    "With the ECG or pulse oximeter on, note whether the rhythm is regular or irregular, and the time."
+    "Put the ECG on; if there is none, count the pulse by hand for a full minute and note any irregularity, and the time."
    ],
    "tier": "cmo",
    "tier_reason": "A fixed safety threshold, not a trend.",
@@ -208,6 +210,7 @@
    "summary": "You entered a resting heart rate of 35 or less. Keel does not interpret it. The value 35 is provisional and has not been reviewed by a flight surgeon.",
    "action": "Stop, rest, and tell the medical officer now.",
    "steps": [
+    "For whoever is with you: if they stop responding or are not breathing normally, shout for the whole crew, start CPR and get the defibrillator.",
     "Stay with another crew member.",
     "Count your pulse by hand for a full minute to confirm the device.",
     "Note the time, and any chest pain, breathlessness or light-headedness."
