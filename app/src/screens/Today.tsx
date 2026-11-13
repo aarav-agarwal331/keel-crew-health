@@ -81,7 +81,7 @@ export function Today() {
     <>
       {intro && mission.simulated && (
         <section className="card intro" data-testid="intro">
-          <p className="small"><strong>Keel: crew health with no link to Earth.</strong> Responds at once to dangerous readings you enter. You choose who sees what. It also watches your readings against your own normal. Demo: {crew?.name.split(' ')[0]}'s tablet, simulated {mission.title}. A lunar base mission is under More.</p>
+          <p className="small"><strong>When Earth can't answer, Keel tells you what to do and who to tell.</strong> Responds at once to dangerous readings you enter. You choose who sees what. It also watches your readings against your own normal. Demo: {crew?.name.split(' ')[0]}'s tablet, simulated {mission.title}. A lunar base mission is under More.</p>
           <div className="row wrap">
             <a className="btn primary sm" href={href('replay')} data-testid="intro-replay">Demo: replay a scripted event (40 s)</a>
             <a className="btn sm" href={href('validation')}>The evidence</a>
@@ -110,11 +110,15 @@ export function Today() {
           <p className="small">{primary.tierReason}</p>
           {[primary, ...others].filter((x) => x.status === 'urgent').flatMap((x) => x.steps.filter((q) => /^For whoever is with you/.test(q))).slice(0, 1).map((q) => <p key={q} className="banner strong small">{q}</p>)}
           {primary.status === 'urgent' && !primary.crewWide && (() => {
-            const sent = actions.filter((x) => x.crew === me && x.did === 'Alerted the crew' && x.day === day).sort((x, y) => y.ts - x.ts)[0]
+            const urgentNow = [primary, ...others].filter((x) => x.status === 'urgent')
+            const akey = `alert|${urgentNow.map((x) => x.key).sort().join('+')}`
+            const sent = actions.filter((x) => x.crew === me && x.did === 'Alerted the crew' && x.alertKey === akey).sort((x, y) => y.ts - x.ts)[0]
+            const acks = actions.filter((x) => x.did === 'Acknowledged the alert' && x.alertKey === akey && x.crew === me)
+            const onlyCmo = urgentNow.every((x) => x.cmoOnly && !x.patientIsCmo)
             const on = sharing[me]?.emergency !== false
             return <div className="col">
-              {!sent && <button className="btn danger block" style={{ minHeight: 64, fontSize: '1.1rem' }} onClick={() => void logAction({ crew: me, alertKey: `alert|${primary.key}`, day, did: 'Alerted the crew', feel: null, note: primary.title })} data-testid="alert-crew">Alert the medical officer and commander now</button>}
-              {sent && <p className="banner strong" role="status"><strong>Alert sent at {new Date(sent.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}.</strong> It shows at the top of their Crew screens until they acknowledge it.</p>}
+              {!sent && <button className="btn alert block" style={{ minHeight: 72, fontSize: '1.2rem' }} onClick={() => void logAction({ crew: me, alertKey: akey, day, did: 'Alerted the crew', feel: null, note: urgentNow.map((x) => x.title).join('; ') })} data-testid="alert-crew">{onlyCmo ? 'Alert the medical officer now' : 'Alert the medical officer and commander now'}</button>}
+              {sent && <p className="banner strong" role="status"><strong>Alert sent at {new Date(sent.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}.</strong> {acks.length ? acks.map((x) => `Acknowledged ${x.note} at ${new Date(x.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}.`).join(' ') : 'Not acknowledged yet: it stays at the top of their Crew screens until the medical officer does.'}</p>}
               <p className="small">{on ? 'The details are visible on their Crew screens (emergency sharing). The button is what alerts them.' : 'Emergency sharing is off: the alert says only that you need help, not why.'}</p>
             </div>
           })()}
@@ -125,8 +129,8 @@ export function Today() {
             </div>
           )}
           {(primary.also ?? []).length > 0 && <details><summary className="small">When you can: {primary.also!.length} more from your readings</summary><ul className="list small">{primary.also!.map((x) => <li key={x.title}><strong>{x.title}.</strong> {x.action}</li>)}</ul></details>}
-          {['R-ILL', 'R-SYM-ILL', 'R-V-TEMP', 'R-V-TEMP-HI'].includes(primary.ruleId) ? <TempEntry /> : <ReadingLog readings={primary.readings ?? []} title="Readings this is based on" />}
-          <a className="btn primary block" href={href('alert', primary.key)} data-testid="open-alert">Why, and what next <Chev /></a>
+          {['R-ILL', 'R-SYM-ILL', 'R-V-TEMP', 'R-V-TEMP-HI'].includes(primary.ruleId) && primary.status !== 'urgent' ? <TempEntry /> : <ReadingLog readings={primary.readings ?? []} title="Readings this is based on" />}
+          <a className={`btn ${primary.status === 'urgent' ? '' : 'primary '}block`} href={href('alert', primary.key)} data-testid="open-alert">Why, and what next <Chev /></a>
           {needsCmo && <button className="btn block" onClick={() => shareCats.forEach((c) => setShare(me, 'cmo', c, 'detail'))} data-testid="today-share-cmo">Share {shareCats.map((c) => CAT[c].toLowerCase()).join(', ')} in full detail with the medical officer</button>}
           {needsCmo && <p className="small muted">This changes one setting: <strong>{shareCats.map((c) => CAT[c]).join(', ')}</strong> goes from "{LEVEL_WORD[sharing[me]?.cmo[shareCats[0]] ?? 'none']}" to "Full detail" for the medical officer, until you change it back in Sharing. Readings in other areas, such as sleep or reaction time, stay as you set them. <strong>You still need to tell them.</strong></p>}
           {primary.kind === 'personal' && primary.tier !== 'self' && !needsCmo && <p className="small muted">The medical officer can see this alert.</p>}
@@ -140,11 +144,17 @@ export function Today() {
       )}
       {mission.kind === 'personal' && <p className="banner strong">This is your own imported data. Keel's advice is written for a space crew with a medical officer on board. If a reading or symptom worries you, contact a doctor; in an emergency call your local emergency number.</p>}
       {!link.available && mission.simulated && <p className="banner" data-testid="offline-banner">No link to Earth right now. Everything on this screen was worked out on this device.</p>}
-      {others.map((f) => (
+      {a.status === 'urgent' ? (others.filter((f) => f.status !== 'urgent').length > 0 && (
+        <details className="card"><summary>Not urgent: {others.filter((f) => f.status !== 'urgent').length} more item{others.filter((f) => f.status !== 'urgent').length === 1 ? '' : 's'} for after the above</summary>
+          {others.filter((f) => f.status !== 'urgent').map((f) => <LinkRow key={f.key} to={href('alert', f.key)} left={<span className={`st-${f.status}`}><Glyph status={f.status} /></span>} title={f.title} sub={f.action} />)}
+        </details>
+      )) : (<>
+        {others.map((f) => (
         <LinkRow key={f.key} to={href('alert', f.key)} left={<span className={`st-${f.status}`}><Glyph status={f.status} /></span>} title={f.title} sub={f.action} />
       ))}
+      </>)}
 
-      {askingTemp && primary && !['R-ILL', 'R-SYM-ILL', 'R-V-TEMP', 'R-V-TEMP-HI'].includes(primary.ruleId) && (
+      {askingTemp && primary && primary.status !== 'urgent' && !['R-ILL', 'R-SYM-ILL', 'R-V-TEMP', 'R-V-TEMP-HI'].includes(primary.ruleId) && (
         <Card title="Also: take your temperature"><TempEntry /></Card>
       )}
       <Card title={changes.length ? (primary ? 'What changed' : 'Worth knowing') : 'Nothing unusual'} right={<a className="chip" href={href('trends')}>All trends</a>}>
@@ -173,7 +183,7 @@ export function Today() {
               <Ring value={weekPct} label={`Exercise this week: ${Math.round(weekPct * 100)} percent of plan`} />
               <div className="col" style={{ gap: 2 }}>
                 <strong>Exercise this week</strong>
-                <span className="small muted">{Math.round(week.reduce((x, y) => x + y, 0))} of {target * 6} planned minutes. Every session protects bone, muscle and heart.</span>
+                <span className="small muted">{Math.round(week.reduce((x, y) => x + y, 0))} of {target * 6} planned minutes. {a.exerciseHold ? 'Paused: no exercise until the medical officer clears you.' : 'Every session protects bone, muscle and heart.'}</span>
               </div>
             </div>
             {mission.crew.length > 1 && <p className="small muted">Crew goal this week: <strong className="num" style={{ color: 'var(--text)' }}>{Math.round(crewPct * 100)}%</strong> of planned exercise done together. Individual numbers stay private.</p>}

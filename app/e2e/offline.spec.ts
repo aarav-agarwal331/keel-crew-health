@@ -90,6 +90,9 @@ test('every screen works with the network disabled', async ({ page }) => {
     await nav(page, '#/today')
     await expect(page.locator('main')).toContainText('Thermometer reading is in the fever range')
     // the thermometer box sits on the fever alert itself
+    // while an "act now" item is open, other items are folded under "Not urgent"
+    const fold = page.locator('summary', { hasText: 'Not urgent' })
+    if (await fold.count()) await fold.first().click()
     await page.locator('a', { hasText: 'Thermometer reading is in the fever range' }).first().click()
     await expect(page.getByTestId('temp-now').first()).toBeVisible()
     await page.waitForTimeout(400)
@@ -113,7 +116,7 @@ test('every screen works with the network disabled', async ({ page }) => {
     await page.getByTestId('save-checkin').first().click()
     await expect(page.getByText('Saved.', { exact: true })).toBeVisible()
     await expect(page.locator('main')).toContainText('was not saved')
-    await expect(page.locator('main')).toContainText('far outside the usual range')
+    await expect(page.locator('main')).toContainText(/past a fixed safety line|far outside the usual range/)
     await page.getByTestId('confirm-rhr').first().click()
     await page.getByLabel(/Blood sugar/).fill('')
     await page.getByTestId('sym-headache').click()

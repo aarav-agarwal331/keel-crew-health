@@ -135,7 +135,7 @@ export function TrendChart(p: TrendProps) {
         {days.map((t) => {
           if (!ok(p.values[t])) return null
           const out = isOut(t)
-          if (out) return <rect key={t} x={x(t) - 4.5} y={y(p.values[t]) - 4.5} width="9" height="9" transform={`rotate(45 ${x(t)} ${y(p.values[t])})`} fill="var(--serious)" stroke="var(--surface)" strokeWidth="1.5" />
+          if (out) return <circle key={t} cx={x(t)} cy={y(p.values[t])} r="4.5" fill="var(--surface)" stroke="var(--serious)" strokeWidth="2.5" />
           return showDots ? <circle key={t} cx={x(t)} cy={y(p.values[t])} r="2.6" fill="var(--series)" /> : null
         })}
         {/* labels are drawn last, over the data line, so nothing strikes through them */}

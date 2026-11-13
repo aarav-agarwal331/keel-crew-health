@@ -44,18 +44,18 @@ export function DataSources() {
       setBleErr(e instanceof Error ? e.message : String(e))
     }
   }
-  const stable = hr.slice(-60)
-  const restHr = stable.length >= 30 ? [...stable].sort((a, b) => a - b)[Math.floor(stable.length * 0.2)] : NaN
+  const stable = hr.slice(-120)
+  const restHr = stable.length >= 120 ? [...stable].sort((a, b) => a - b)[Math.floor(stable.length * 0.2)] : NaN
   const hrv = rmssd(rr.slice(-150))
   const saveReading = async () => {
     // a strap reading is a spot check: it is logged and checked against the fixed safety lines, and it does
     // not overwrite the wearable's overnight resting heart rate
     const values: Record<string, number> = { rhr_spot: Math.round(restHr) }
-    if (!Number.isNaN(hrv)) values.hrv = Math.round(hrv)
+    if (!Number.isNaN(hrv)) values.hrv_spot = Math.round(hrv)   // a short strap reading is not the overnight HRV the detector uses
     // merge with the day's check-in: a strap reading must never erase symptoms, mood or other entries
     const cur = entries.find((e) => e.mission === mission.id && e.crew === me && e.day === day)
     await saveEntry({ crew: me, day, values: { ...(cur?.values ?? {}), ...values }, symptoms: cur?.symptoms ?? symptomsOn(mission, me, day, []), meds: cur?.meds, photos: cur?.photos }, ['rhr_spot'])
-    setSaved(`Saved a resting heart rate check of ${values.rhr_spot} bpm${values.hrv ? ` and HRV ${values.hrv} ms` : ''} for ${dayLabel(mission, day)}.`)
+    setSaved(`Saved a resting heart rate check of ${values.rhr_spot} bpm${values.hrv_spot ? ` and a short HRV reading of ${values.hrv_spot} ms` : ''} for ${dayLabel(mission, day)}.${values.rhr_spot >= 150 || values.rhr_spot <= 35 ? ' Act now: this is past a fixed safety line. Open Today.' : values.rhr_spot >= 120 ? ' This is past a fixed line: tell the medical officer today.' : ''}`)
   }
 
   return (

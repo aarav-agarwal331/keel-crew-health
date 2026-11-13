@@ -21,7 +21,7 @@ export function Crew() {
     return {
       c, a, s, r: a ? readiness(a) : null, v: a ? viewFor(role, a, s) : null,
       open: a ? visibleOpenItems(role, a.openItems, s, c.role === 'cmo') : [],
-      extras: visibleExtras(role, s, e?.meds, e?.photos),
+      extras: visibleExtras(role, s, e?.meds, e?.photos, !!a?.findings.some((f) => f.status === 'urgent')),
     }
   }), [mission, today, sharing, role, entries, day])
 
@@ -44,19 +44,22 @@ export function Crew() {
   return (
     <>
       {(() => {
-        const raised = actions.filter((x) => x.did === 'Alerted the crew' && x.day >= day - 1)
-        const acked = new Set(actions.filter((x) => x.did === 'Acknowledged the alert').map((x) => x.alertKey + '|' + x.crew))
-        const open = raised.filter((x) => !acked.has(x.alertKey + '|' + x.crew))
+        const raised = actions.filter((x) => x.did === 'Alerted the crew' && x.day <= day)
+        const acksFor = (x: { alertKey: string; crew: string }) => actions.filter((q) => q.did === 'Acknowledged the alert' && q.alertKey === x.alertKey && q.crew === x.crew)
+        // an alert stays until the medical officer has acknowledged it (the commander's acknowledgement is shown, not enough)
+        const open = raised.filter((x) => !acksFor(x).some((q) => /medical officer/.test(q.note)))
         return open.map((x) => (
           <section key={x.ts} className="card action" role="alert" data-testid="crew-alert">
             <p className="do">{mission.crew.find((c) => c.id === x.crew)?.name} raised an alert at {new Date(x.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}{(sharing[x.crew]?.emergency !== false) ? `: ${x.note}` : ''}. Go to them now.</p>
-            <button className="btn primary" onClick={() => void logAction({ crew: x.crew, alertKey: x.alertKey, day, did: 'Acknowledged the alert', feel: null, note: `by the ${role === 'cmo' ? 'medical officer' : 'commander'}` })} data-testid="ack-alert">Acknowledge: I am on my way</button>
+            {acksFor(x).map((q) => <p key={q.ts} className="small">Acknowledged {q.note} at {new Date(q.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}.</p>)}
+            {!acksFor(x).some((q) => q.note.includes(role === 'cmo' ? 'medical officer' : 'commander')) && <button className="btn primary" onClick={() => void logAction({ crew: x.crew, alertKey: x.alertKey, day, did: 'Acknowledged the alert', feel: null, note: `by the ${role === 'cmo' ? 'medical officer' : 'commander'}` })} data-testid="ack-alert">Acknowledge: I am on my way</button>}
             <p className="tiny muted">In a flight version this would sound on the medical officer's and commander's tablets over the cabin network; no Earth link is needed.</p>
           </section>
         ))
       })()}
       <div className="card-h"><h1>Crew readiness</h1><Seg label="View as" value={role} onChange={setRole} options={[{ id: 'commander', label: 'Commander' }, { id: 'cmo', label: 'Medical officer' }]} /></div>
       <p className="muted">{shortDay(mission, day)}. {role === 'commander' ? 'Whether Keel has any flags for each crew member before a demanding task tomorrow, such as a spacewalk. You see a tier for everyone; reasons appear only where a crew member has chosen to share them.' : 'What each crew member has chosen to share with you. Nothing is shown that they have not shared, except emergencies they agreed to share and, under that consent, the fact that an item is open in an area. Their overall tier is worked out from all their readings.'}</p>
+      <p className="small muted">Labels: a crew member's own "Act today" or "Act now" shows to the commander as "Talk to the medical officer first"; "Worth a look" is the same on both screens.</p>
       <p className="banner">Demo view. On a mission each role has its own device; here you can switch roles. Every look is written to the crew member's access log.</p>
 
       {role === 'commander' && (
@@ -118,7 +121,7 @@ export function Crew() {
                             <button className="btn sm" disabled={!note} onClick={() => log('Noted by the medical officer (still open)')} data-testid="note-notice">Note only, keep open</button>
                             <button className="btn sm" disabled={!note} onClick={() => log('Closed by the medical officer: handled, not cleared for exercise or duties')} data-testid="close-notice-restricted">Handled, restrictions stay</button>
                             {f.title ? <button className="btn sm" disabled={!note} onClick={() => log('Closed by the medical officer: cleared for exercise and duties')} data-testid="close-notice">Cleared for exercise and duties</button>
-                              : <span className="tiny muted">To clear for exercise, ask {c.name.split(' ')[0]} to share this area first.</span>}
+                              : <button className="btn sm" disabled={!note} onClick={() => log('Closed by the medical officer: cleared for exercise and duties after an in-person exam')} data-testid="close-notice-exam">Cleared after examining them in person</button>}
                           </div>
                         )
                       })()}

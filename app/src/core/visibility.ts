@@ -104,9 +104,11 @@ export function visibleOpenItems(role: Role, items: OpenItem[], share: SharingSe
 }
 
 /** Medication classes and photos are part of Symptoms, and are shown only when that area is shared in detail. */
-export function visibleExtras(role: Role, share: SharingSettings, meds: string[] | undefined, photos: Photo[] | undefined): { meds: string[]; photos: Photo[] } {
+export function visibleExtras(role: Role, share: SharingSettings, meds: string[] | undefined, photos: Photo[] | undefined, emergencyOpen = false): { meds: string[]; photos: Photo[] } {
   const ok = role !== 'ground' && allows((share[role] as Record<string, Level>).symptoms ?? 'none', 'detail')
-  return ok ? { meds: meds ?? [], photos: photos ?? [] } : { meds: [], photos: [] }
+  // during an emergency the medical officer sees today's medication classes (they explain a fast pulse or confusion)
+  const medsOk = ok || (role === 'cmo' && emergencyOpen && share.emergency !== false)
+  return { meds: medsOk ? meds ?? [] : [], photos: ok ? photos ?? [] : [] }
 }
 
 const FACTOR_CATEGORY: Record<string, string> = {

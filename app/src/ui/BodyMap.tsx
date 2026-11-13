@@ -33,6 +33,7 @@ export function BodyMap({ systems }: { systems: Record<string, Status> }) {
       <div className="bodymap">
         <svg viewBox="0 0 150 300" role="group" aria-label="Body map. Select a region.">
           <rect className={cls('environment')} x="4" y="4" width="142" height="292" rx="26" {...pick('environment')} style={{ fillOpacity: 0.35 }} />
+          <text x="12" y="20" className="axis" style={{ fontSize: 11 }}>Cabin</text>
           {/* limbs = muscle and bone */}
           <g className={cls('muscle')} {...pick('muscle')}>
             <path d="M40 92 L24 160 L33 163 L52 104 Z" /><path d="M110 92 L126 160 L117 163 L98 104 Z" />

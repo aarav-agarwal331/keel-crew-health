@@ -30,6 +30,8 @@ export function readiness(a: DayAnalysis): Readiness {
     if (t === 'hold' || (t === 'caution' && tier === 'go')) tier = t
   }
   for (const f of a.findings) {
+    // a symptom marked "medical officer only" must not be readable from the commander's tier
+    if (f.cmoOnly && !f.patientIsCmo) continue
     if (f.crewWide) continue
     if (f.status === 'urgent' || f.status === 'act' || f.tier !== 'self') bump('hold')
     else bump('caution')

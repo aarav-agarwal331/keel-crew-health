@@ -210,6 +210,10 @@ export const NO_EXERCISE = new Set(['R-RED', 'R-V-HR1R', 'R-V-SPO2', 'R-V-TEMP-H
 export const SPOT_KEY: Record<string, string> = { rhr: 'rhr_spot', spo2: 'spo2_spot' }
 /** a rule holds exercise if it is listed, or if it is a fixed rule that needs attention now */
 export const holdsEx = (id: string) => NO_EXERCISE.has(id) || (RULE[id]?.scope === 'vital' && RULE[id]?.urgency === 'now') || RULE[id]?.scope === 'symptom' && RULE[id]?.urgency === 'now'
+/** wording for a detector notice that is still an early signal (no symptom, notice tier) */
+const EARLY_ACTION: Record<string, string> = {
+  'R-ILL': 'Take your temperature now and skip hard exercise today. If it is 38.0 °C or more, or you feel unwell, tell the medical officer.',
+}
 /** minutes before a repeat reading counts: sugar to act, a full-minute pulse count, a rest before blood pressure */
 const REPEAT_MIN: Record<string, number> = { glucose: 15, rhr: 2, spo2: 2, sbp: 5, dbp: 5, temp_oral: 30, mass: 5 }
 
@@ -338,7 +342,8 @@ export function analyzeDay(
   const redFlag = redSyms.length > 0
   const patientIsCmo = m.crew.find((c) => c.id === crewId)?.role === 'cmo'
   const tOral = rawSeries(m, crewId, 'temp_oral', entries)
-  const tPrev = tOral.slice(0, Math.max(0, day - 6)).filter((v) => !Number.isNaN(v)).sort((x, y) => x - y)
+  // "usual" thermometer reading: in-flight readings only (core temperature rises in flight), last 30 days before a week ago
+  const tPrev = tOral.slice(Math.max(m.pre_days, day - 36), Math.max(0, day - 6)).filter((v) => !Number.isNaN(v)).sort((x, y) => x - y)
   const tUsual = tPrev.length >= 3 ? tPrev[Math.floor(tPrev.length / 2)] : NaN
   const force: Record<string, ReturnType<typeof inForce>> = {
     temp_oral: inForce('temp_oral'), glucose: inForce('glucose'), sbp: inForce('sbp'), dbp: inForce('dbp'), spo2: inForce('spo2_spot', true), rhr: inForce('rhr_spot', true),
@@ -434,7 +439,7 @@ export function analyzeDay(
     const ruledOut = (sym.fatigue ?? 0) > 0 || (sym.cough ?? 0) > 0 || (val.temp_oral ?? []).some((v) => v >= 38)
     if (ruledOut) out.steps = out.steps.filter((x) => !/light session is reasonable/.test(x))
     // someone with a dangerous reading may be impaired: the first words of every "act now" are to get help to them
-    if (out.status === 'urgent' && !crewWide && !/^Call a crewmate|crewmate to you/.test(out.action)) out.action = r.id.startsWith('R-V-GLU-LO') ? `Take sugar now if you can swallow, and call a crewmate to you. ${out.action.replace(/^If you are awake and can swallow, eat or drink something sugary now, and /, '')}` : `Call a crewmate to you now. ${out.action}`
+    if (out.status === 'urgent' && !crewWide && (r.scope === 'vital' && r.id !== 'R-V-TEMP-HI' || r.id === 'R-RED') && !/^Call a crewmate|crewmate to you/.test(out.action)) out.action = r.id.startsWith('R-V-GLU-LO') ? `Take sugar now if you can swallow, and call a crewmate to you. ${out.action.replace(/^If you are awake and can swallow, eat or drink something sugary now, and t/, 'T')}` : `Call a crewmate to you now. ${out.action}`
     // the medical officer cannot be told to see the medical officer: their backup is the commander
     return patientIsCmo && !crewWide ? forCmoAsPatient(out) : out
   }
@@ -544,7 +549,7 @@ export function analyzeDay(
       firstNotice: firstRule ? { day: alert.start, title: firstRule.title } : undefined, also,
       factors: ['R-ILL'].includes(r.id) ? factors.filter((x) => x.id !== 'mood') : factors, urgency: (status === 'act' ? 'today' : 'routine') as Urgency,
       ...(wasIll && !reviewed ? { tier: (TIER_RANK[t.tier] < TIER_RANK.cmo ? 'cmo' : t.tier) as Tier, tierReason: 'Earlier in this notice the readings looked like illness. Keep the medical officer involved, and no exercise until they agree.', holdsExercise: true } : {}),
-      ...(early && !wasIll ? { tier: 'self' as Tier, tierReason: 'Early signal. Keel will suggest involving the medical officer if it strengthens, lasts, or you report symptoms.', action: r.action.replace(/,? and tell the medical officer\.$/, '.').replace(/ Tell the medical officer\.$/, '') } : {}),
+      ...(early && !wasIll ? { tier: 'self' as Tier, tierReason: 'Early signal. Keel will suggest involving the medical officer if it strengthens, lasts, or you report symptoms.', action: EARLY_ACTION[r.id] ?? r.action.replace(/,? and tell the medical officer\.$/, '.').replace(/ Tell the medical officer\.$/, '') } : {}),
     }))
   }
   // one illness finding, not two: when the detector's own illness pattern is open it replaces the symptom-led one

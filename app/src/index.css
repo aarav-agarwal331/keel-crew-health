@@ -108,6 +108,7 @@ main { flex: 1; width: 100%; max-width: 980px; margin: 0 auto; padding: 16px 16p
 .btn.block { width: 100%; }
 .btn.sm { min-height: 44px; padding: 6px 14px; font-size: 0.9rem; border-radius: 12px; }
 .btn.danger { border-color: var(--serious); }
+.btn.alert { background: var(--critical); border-color: var(--critical); color: #fff; font-weight: 800; }
 .btn[aria-pressed='true'], .btn.on { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
 .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 .seg { display: inline-flex; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: var(--surface-2); flex-wrap: wrap; }
@@ -165,7 +166,7 @@ td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; }
 .legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 0.8rem; color: var(--text-2); align-items: center; }
 .legend i { display: inline-block; width: 14px; height: 3px; border-radius: 2px; background: var(--series); margin-right: 5px; vertical-align: middle; }
 .legend i.band { height: 10px; background: var(--band); border: 1px solid var(--grid); }
-.legend i.out { width: 9px; height: 9px; background: var(--serious); transform: rotate(45deg); border-radius: 1px; }
+.legend i.out { width: 9px; height: 9px; background: var(--surface); border: 2.5px solid var(--serious); border-radius: 50%; }
 .fig { display: flex; flex-direction: column; gap: 8px; }
 .fig figcaption, .figcap { font-size: 0.8rem; color: var(--text-3); }
 figure { margin: 0; }

@@ -189,7 +189,8 @@ flipped once: it first selected the z-score rule, and after the simulator was gi
 correlation between heart rate and HRV it selected the multivariate EWMA (currently 31.7 against
 27.3 points above luck on the training missions, a difference with no interval and well inside what
 the test missions show as noise). Test missions had no vote. Real data had none directly, but the
-simulator's illness response is fitted on real episodes from people who are also evaluated, so the choice is not fully independent
+simulator's illness response is fitted on real episodes from people who are also evaluated, and the
+simulated crew's 30% exercise cut when ill was set by hand with the real step drop in view, so the choice is not fully independent
 of them, and the history means it is not pre-registered. On the test missions the z-score rule was
 slightly ahead, on real data the multivariate detector was (+5 points, −2 to 12); the four personal
 detectors cannot be told apart at the notice tier (at the alert tier they spread from +15 to +33), and the choice is best read as arbitrary among equals.
@@ -392,8 +393,11 @@ the same code version). Real data: 251 people, 107 illness episodes, two sensors
   cases), so it is not claimed as early warning.
 - **Most alerts are false.** At 0.97 upper-respiratory episodes per person-year [52b], between 1 in 11
   (daily steps, thresholds from real people) and 1 in 27 (two sensors, simulator thresholds)
-  alert-tier alerts would be such an illness; about 1 in 37 to 56 notices (the import model: 1 in 16 alert-tier
-  alerts, 1 in 56 notices). All are upper bounds: the sensitivity comes from mostly symptomatic COVID-19.
+  alert-tier alerts would be such an illness; about 1 in 37 to 56 notices. For the import model, the
+  configuration the app runs on real data: 1 in 16 alert-tier alerts and 1 in 56 notices on night-time
+  heart rate, 1 in 30 and 1 in 61 on the watch maker's own resting heart rate. All are upper bounds only if false-alert rates hold as measured on Earth: the sensitivity comes from
+  mostly symptomatic COVID-19, but uncounted alerts near episodes and over-budget transfers push the
+  other way.
 - **How luck is measured matters by a few points.** Device-weighted pseudo-events with real
   missingness: luck 33%, gap +34. Only people who had an episode: 32%, +34. Matched to how far into
   the recording real onsets fall: 31%, +35. Requiring a score on every day of a pseudo-window (our

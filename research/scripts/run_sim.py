@@ -47,7 +47,7 @@ def build(sc: Scenario, seed: int, extra: dict) -> dict:
     for e in j["truth"]:
         e["label"] = EVENT_LABELS[e["type"]]
         if e["type"] == "illness":
-            e["detail"] = (f"Scripted at {e['magnitude']:g} times the simulator's illness template (fitted to real data; template peak {P['illness_rhr_peak']:.1f} bpm, while real episodes rose about 4.6 bpm on average over the four days from onset): "
+            e["detail"] = (f"Scripted at {e['magnitude']:g} times the simulator's illness template (fitted to real data; its peak is {P['illness_rhr_peak']:.1f} bpm): "
                            f"a peak resting heart rate rise of about {e['magnitude'] * P['illness_rhr_peak']:.0f} bpm. That matches the published median among cases a detector caught, "
                            f"so this is an easy case. The simulated rise starts up to {P['illness_prodrome_days']:.0f} days before the symptom day. "
                            "Real responses vary widely; in the simulator about three illnesses in ten have no heart-rate rise at all.")

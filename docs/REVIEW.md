@@ -514,6 +514,44 @@ Medium-severity findings fixed in the same pass:
   or given their sample size; night-to-night variation read from the results; cohort column renamed
   "Recordings"; METHOD wording and the bed-rest learned shift (+1.0 bpm) stated.
 
-## Round 11
+## Round 11 (2026-11-12, fresh reviewers, redeployed build)
 
-See the end of this file once the eleventh round has run.
+Judge's scores: impact 7, creativity 8, validity 8, relevance 8, presentation 7 (38 of 50), "nominate:
+yes", **no high-severity issue**. The statistician found none (seventh round running). The astronaut
+found one, the flight surgeon two.
+
+| # | Reviewer | High-severity finding | Fix |
+|---|---|---|---|
+| 1 | Astronaut (judge similar, medium) | The alert button was not on the check-in result, and on Today it looked weaker than "Why, and what next". | A large filled red alert button on the check-in result and at the top of the Today card; "Why" is no longer the primary button while anything is "act now"; the thermometer and non-urgent items fold away until the urgent ones are dealt with. |
+| 2 | Flight surgeon | The alert worked once per day; either role's acknowledgement cleared it for both; an unacknowledged alert expired after a day; the banner named only one of two urgent items. | An alert belongs to the set of urgent items, so a new emergency can be raised; each role's acknowledgement is shown with its time; the banner stays until the medical officer acknowledges it, with no expiry; it lists every urgent item; the button names only the medical officer when the item is theirs alone. |
+| 3 | Flight surgeon | The smoke or chemical exposure rule began "Call a crewmate to you now", bringing a second person into the hazard. | The crewmate prefix applies only to fixed vital-sign rules (not a fever reading) and serious-symptom ticks, never to exposure. |
+
+Medium-severity findings fixed in the same pass:
+
+- **Blood sugar units** (flight surgeon): a value under 35 is not saved or acted on until the crew
+  member says which unit the meter showed; mmol/L is converted.
+- **Early illness notice** (flight surgeon): its own wording ("take your temperature, skip hard
+  exercise, tell the medical officer if 38.0 °C or you feel unwell"), not a failed text edit.
+- **Clearance after an in-person exam** (flight surgeon, astronaut): the medical officer can clear a
+  notice whose readings are not shared, by recording an examination.
+- **Medication during an emergency** (flight surgeon): today's medication classes reach the medical
+  officer's emergency view.
+- **Thermometer baseline** (flight surgeon): in-flight readings only, last 30 days.
+- **Heart-rate strap** (flight surgeon): needs two minutes; the short HRV reading is stored apart from
+  the overnight value; the save message says when a fixed line is crossed.
+- **Body figure and charts** (astronaut): the outer frame is labelled "Cabin"; out-of-range chart points
+  are rings, so the diamond means only "act today".
+- **Commander's tier** (astronaut): items marked "medical officer only" never change it, and Sharing says so.
+- **Exercise ring** (astronaut): paused while exercise is on hold.
+- **Presentation** (judge): "When Earth can't answer, Keel tells you what to do and who to tell"; a
+  label legend on the Crew screen; Check-in says "past a fixed safety line" when it is.
+- **Statistician**: the short version gives the tablet model's own figures (simulation illness +11;
+  +9 on a watch's heart rate) and states +19 to +22 for the window; the simulation tile leads with
+  illness, not the all-event figure; predictive value for the import model on both inputs, unknown for
+  the tablet model, and "upper bound" conditional on Earth false-alert rates; METHOD names the
+  hand-set exercise cut as a second route from real data into the on-board thresholds; the replay no
+  longer compares a template peak with a four-day mean.
+
+## Round 12
+
+See the end of this file once the twelfth round has run.
