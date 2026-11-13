@@ -1126,6 +1126,32 @@ Not done, with reasons: a full-screen urgent card on Check-in, one set of body a
 "now" band at 130 and a single-reading 220/130 "now" (for a clinician), uncapped scoring (needs a rerun),
 a blood-pressure repeat box, a low-temperature rule.
 
-## Round 27
+## Round 27 (2026-11-12, fresh reviewers, redeployed build)
 
-See the end of this file once the twenty-seventh round has run.
+Judge's scores: impact 7, creativity 8, validity 7, relevance 9, presentation 7 (38 of 50), "nominate:
+yes", **no high-severity issue**. The astronaut and the statistician found none either. The flight
+surgeon found one:
+
+| # | Reviewer | High-severity finding | Fix |
+|---|---|---|---|
+| 1 | Flight surgeon | In "import your own data" mode (a member of the public, no crew), an urgent reading or red flag said "Call a crewmate … tell the crew medical officer now" and sent an alert to a medical officer and commander who do not exist. | In that mode urgent items say "Call your local emergency number now, or get to urgent care now"; same-day items say "See a doctor today"; crew steps are removed; no alert is sent and the alert buttons are hidden; Check-in says nobody else is told. Unit-tested. |
+
+Medium- and low-severity findings fixed in the same pass:
+
+- **Medical-officer-only wording** (judge): Check-in uses the same sentence as Sharing and the Guide (the
+  commander is told only that the person needs the medical officer, never what it is).
+- **Replay** (judge): says the simulator's illness rise is about half the real one.
+- **R-ILL summary** (judge): "has been up over the last few days".
+- **Streak** (astronaut): hidden while exercise is paused.
+- **Shipped model, held-out people** (statistician): shown beside the all-people figure.
+- **Import card** (statistician): gives +13 (planned window) and +19, and says the alert tier was only
+  computed in the narrower window.
+
+Not done, with reasons: keeping unacknowledged "now" items at "now" past 12 hours (an earlier flight
+surgeon asked for the 12-hour change), automatic alerts for sensor-derived "now" items, a sugar amount (no
+opened source), splitting the injury red flag (a clinical call), a three-group device split and the
+planned window at the alert tier (pipeline work).
+
+## Round 28
+
+See the end of this file once the twenty-eighth round has run.

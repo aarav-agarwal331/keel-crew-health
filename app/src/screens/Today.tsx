@@ -128,7 +128,8 @@ export function Today() {
           <AskCmo f={primary} />
           {primary.steps.filter((q) => /^For whoever is with you/.test(q)).slice(0, 1).map((q) => <p key={q} className="banner strong small">{q}</p>)}
           <RepeatEntry f={primary} />
-          {primary.status === 'urgent' && !primary.crewWide && (() => {
+          {primary.status === 'urgent' && mission.kind === 'personal' && <p className="banner strong" data-testid="personal-emergency"><strong>Call your local emergency number now, or get to urgent care.</strong> This is your own imported data: there is no crew or medical officer behind this app.</p>}
+          {primary.status === 'urgent' && !primary.crewWide && mission.kind !== 'personal' && (() => {
             const urgentNow = [primary, ...others].filter((x) => x.status === 'urgent')
             const akey = `alert|${urgentNow.map((x) => x.key).sort().join('+')}`
             // an item counts as alerted, and acknowledged, if any earlier alert covered it
@@ -201,7 +202,7 @@ export function Today() {
           <BodyMap systems={a.systems} key={`${me}-${day}`} />
         </Card>
         <div className="col" style={{ gap: 14 }}>
-          <Card id="today-routine" title="Today's routine" right={<span className="chip num" title="Days in a row with the sensor worn and a check-in done">{streak}-day streak</span>}>
+          <Card id="today-routine" title="Today's routine" right={a.exerciseHold ? undefined : <span className="chip num" title="Days in a row with the sensor worn and a check-in done">{streak}-day streak</span>}>
             <div className="row" style={{ gap: 14 }}>
               {!a.exerciseHold && <Ring value={weekPct} label={`Exercise this week: ${Math.round(weekPct * 100)} percent of plan`} />}
               <div className="col" style={{ gap: 2 }}>

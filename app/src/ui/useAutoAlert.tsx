@@ -24,7 +24,7 @@ export function useAutoAlert(trigger: boolean) {
   const counting = useRef(false)
   const alreadySent = (_k: string) => !!alertState(actionsRef.current, me, urgentRef.current.map((x) => x.key)).sent
   useEffect(() => {
-    if (!trigger || !urgent.length || counting.current) return
+    if (!trigger || !urgent.length || counting.current || mission.kind === 'personal') return
     if (autoAlert?.key === akey || actions.some((x) => x.crew === me && x.alertKey === akey && /Alert cancelled/.test(x.did)) || alertState(actionsRef.current, me, urgent.map((x) => x.key)).sent) return
     setAutoAlert({ key: akey, ts: Date.now() })
     counting.current = true

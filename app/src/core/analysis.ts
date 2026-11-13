@@ -476,6 +476,13 @@ export function analyzeDay(
     // someone with a dangerous reading may be impaired: the first words of every "act now" are to get help to them
     if (out.status === 'urgent' && !crewWide && (r.scope === 'vital' && r.id !== 'R-V-TEMP-HI' || r.id === 'R-RED') && !/^Call a crewmate|crewmate to you/.test(out.action)) out.action = r.id.startsWith('R-V-GLU-LO') && !/^Confirm which unit/.test(out.action) ? `Take sugar now if you can swallow, and call a crewmate to you. ${out.action.replace(/If you are awake and can swallow, eat or drink something sugary now, and t/, 'T')}` : `Call a crewmate to you now. ${out.action}`
     // the medical officer cannot be told to see the medical officer: their backup is the commander
+    // imported personal data: there is no crew, no medical officer and no commander. Urgent and same-day items
+    // send the person to real care instead.
+    if (m.kind === 'personal' && (out.kind === 'vital' || out.kind === 'symptom') && (out.status === 'urgent' || out.status === 'act')) {
+      out.action = out.status === 'urgent' ? 'Call your local emergency number now, or get to urgent care now. Do not wait for this app.' : 'See a doctor today, and sooner if you feel worse.'
+      out.steps = out.steps.filter((x) => !/medical officer|crewmate|commander|whoever is with you/i.test(x))
+      out.who = 'A doctor, or your local emergency number'
+    }
     return patientIsCmo && !crewWide ? forCmoAsPatient(out) : out
   }
   const firstDay = (test: (t: number) => boolean) => {

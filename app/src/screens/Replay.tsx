@@ -74,7 +74,7 @@ export function Replay() {
         else if (rank > prev.rank) out.push({ ...item, title: `More serious now: ${f.title}`, body })
         seen.set(id, { rank: prev && prev.rule === f.ruleId ? Math.max(prev.rank, rank) : rank, rule: f.ruleId, day: prev?.day ?? d })
       }
-      for (const e of events) if (e.onset === d && (e.crew === crewIdx || e.crew < 0)) out.push({ day: d, kind: 'truth', title: `What was scripted: ${e.label.replace(/^Scripted /, '')}`, body: e.type === 'illness' ? `This is the day the scripted illness symptoms begin and the simulated crew member ticks them at check-in. An odd tired or congested day before this is ordinary simulated background, not the script. ${e.detail ?? ''} On any one night, ordinary night-to-night variation of about 3.3 bpm comes on top of the scripted rise.` : 'This is the day the scripted event starts.' })
+      for (const e of events) if (e.onset === d && (e.crew === crewIdx || e.crew < 0)) out.push({ day: d, kind: 'truth', title: `What was scripted: ${e.label.replace(/^Scripted /, '')}`, body: e.type === 'illness' ? `This is the day the scripted illness symptoms begin and the simulated crew member ticks them at check-in. An odd tired or congested day before this is ordinary simulated background, not the script. ${e.detail ?? ''} The simulator's illness rise is about half the rise seen in real episodes it was not fitted on, so real illnesses may show more clearly than this one. On any one night, ordinary night-to-night variation comes on top of the scripted rise.` : 'This is the day the scripted event starts.' })
     }
     return out
   }, [t, start, mission, today, crew.id, events, crewIdx])
