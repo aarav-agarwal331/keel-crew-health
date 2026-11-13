@@ -20,13 +20,17 @@ export function TempEntry({ secondary = false }: { secondary?: boolean } = {}) {
     setV('')
   }
   const a = today(me, day)
-  const rule = a?.findings.find((f) => f.ruleId === 'R-V-TEMP-HI') ?? a?.findings.find((f) => f.ruleId === 'R-V-TEMP')
+  // whichever fixed rule now covers a thermometer reading, most urgent first (a fever combined with a fast heart
+  // rate is R-V-FEVER-PLUS, which replaces the plain fever item): never "no fever" while one does
+  const rank: Record<string, number> = { urgent: 4, act: 3, watch: 2, steady: 1, learning: 0 }
+  const rule = (a?.findings ?? []).filter((f) => f.kind === 'vital' && (f.readings ?? []).some((r) => r.ind === 'temp_oral') || ['R-V-TEMP-HI', 'R-V-TEMP', 'R-V-FEVER-PLUS'].includes(f.ruleId)).sort((x, y) => rank[y.status] - rank[x.status])[0]
   const log = (cur?.readings ?? []).filter((r) => r.ind === 'temp_oral')
   const highest = log.length ? Math.max(...log.map((r) => r.v)) : null
   let msg = ''
   if (saved !== null) {
     if (rule) msg = `${saved.toFixed(1)} °C saved. ${highest !== null && highest > saved ? `Your highest reading today was ${highest.toFixed(1)} °C, and that one still counts. ` : ''}${rule.action}`
     else if (saved < 35) msg = `${saved.toFixed(1)} °C saved. Below 35.0 °C is usually a measurement problem: wait five minutes and repeat. If it repeats, tell the medical officer.`
+    else if (saved >= 38) msg = `${saved.toFixed(1)} °C saved: that is a fever. Tell the medical officer today, and now if you feel unwell.`
     else msg = `${saved.toFixed(1)} °C saved: no fever by this reading${(cur?.meds ?? []).some((x) => /fever/i.test(x)) ? ', but fever medicine taken in the last six hours can hide a fever' : ''}. That alone does not clear you for exercise. Follow the steps on this card.`
   }
   return (

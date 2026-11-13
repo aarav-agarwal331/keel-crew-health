@@ -160,7 +160,7 @@ td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; }
 /* ---- charts ---- */
 .chart { position: relative; width: 100%; touch-action: pan-y; }
 .chart svg { display: block; width: 100%; overflow: visible; }
-.chart .tip { position: absolute; pointer-events: none; background: var(--surface-3); border: 1px solid var(--border); border-radius: 10px; padding: 6px 10px; font-size: 0.8rem; white-space: nowrap; transform: translate(-50%, 0); z-index: 5; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3); }
+.chart .tip { position: absolute; pointer-events: none; background: var(--surface-3); border: 1px solid var(--border); border-radius: 10px; padding: 6px 10px; font-size: 0.8rem; white-space: normal; max-width: min(300px, 90%); width: max-content; transform: translate(-50%, 0); z-index: 5; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3); }
 .axis { fill: var(--text-2); font-size: 12px; }
 .axis.halo { paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round; }
 .legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 0.8rem; color: var(--text-2); align-items: center; }

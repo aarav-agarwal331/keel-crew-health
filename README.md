@@ -40,7 +40,8 @@ Keel works with no link to Earth: it acts at once on dangerous readings and symp
 next step and its source, alerts the medical officer and commander, and lets the crew member choose who
 sees what. It also watches each person's readings against their own normal: on 107 real illness
 episodes, overnight heart rate alone flagged **+13 points above luck (4 to 24)** in the detection window
-set before the analysis, at about one false alert a month (+19 in a narrower window chosen later; details
+set before the analysis (only the window was planned; the metric and this configuration were chosen
+after first results), at about one false alert a month (+19 in a narrower window chosen later; details
 under Headline results). Useful early warning was not shown, most alerts are false, and the full on-board model is
 tested in simulation only, so the main contribution is the offline safety, sharing and action loop.
 
@@ -120,7 +121,7 @@ Honest reading:
   move the gap between +27 and +30 (daily-steps configuration).
 - **Keel now deploys a simple personal rule** (two of three days outside the personal range). A review
   found that the multivariate statistic used correlations of the wrong sign; after correcting it, the
-  multivariate detector's lead on simulated training missions fell below the pre-set 3-point margin, so the
+  multivariate detector's lead on simulated training missions fell below the 3-point margin adopted during review, so the
   simpler z-score rule is deployed. On real data the multivariate EWMA scored +34 (24 to 44) against
   the rule's +28 (19 to 38) (both on heart rate + daily steps with thresholds from real people, a setup
   the app itself does not run), a paired difference of +5 (−2 to 12): not distinguishable. The rule's lead over

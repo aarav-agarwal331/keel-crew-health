@@ -107,9 +107,16 @@ test('every screen works with the network disabled', async ({ page }) => {
     await page.getByTestId('open-alert').first().click()
     await expect(page.getByTestId('temp-now').first()).toBeVisible()
     await page.waitForTimeout(400)
+    // a fever covered by the combination rule is never reported as "no fever"
+    await page.getByTestId('temp-now').first().fill('38.5')
+    await page.getByTestId('temp-save').first().click()
+    await expect(page.getByTestId('temp-msg').first()).not.toContainText('no fever')
+    await expect(page.getByTestId('temp-msg').first()).toContainText('medical officer now')
+    await page.waitForTimeout(400)
     await page.getByTestId('temp-now').first().fill('39.6')
     await page.getByTestId('temp-save').first().click()
-    await expect(page.getByTestId('temp-msg').first()).toContainText('medical officer now')
+    await expect(page.getByTestId('temp-msg').first()).toContainText('39.6 °C saved')
+    await page.waitForTimeout(400)
     await page.getByTestId('temp-now').first().fill('36.8')
     await page.getByTestId('temp-save').first().click()
     // a normal repeat reading is saved, but it neither clears the person nor erases the high one

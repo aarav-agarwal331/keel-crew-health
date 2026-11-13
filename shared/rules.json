@@ -632,7 +632,7 @@
    "scope": "vital",
    "priority": 1.75,
    "urgency": "today",
-   "title": "Resting heart rate of 120 or more",
+   "title": "Heart rate reading at rest is 120 or more (one reading)",
    "when": {
     "val": "rhr_manual",
     "min": 120,

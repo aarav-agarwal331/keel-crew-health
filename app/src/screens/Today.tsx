@@ -95,7 +95,7 @@ export function Today() {
       <GlucoseUnit />
       {intro && mission.simulated && (
         <section className="card intro" data-testid="intro">
-          <p className="small"><strong>When Earth can't answer, Keel tells you what to do and who to tell.</strong> Advises you at once on a dangerous reading you enter, and within ten seconds posts a silent alert on the medical officer's and commander's Crew screens (the same tablet in this demo; over the cabin network, with sound, in a flight version). You choose who sees what. It also watches your readings against your own normal. Demo: {crew?.name.split(' ')[0]}'s tablet, simulated {mission.title}.</p>
+          <p className="small"><strong>When Earth can't answer, Keel tells you what to do and who to tell.</strong> Advises you at once on a dangerous reading you enter, and within ten seconds posts a silent alert on the medical officer's and commander's Crew screens (the same tablet in this demo; over the cabin network, with sound, in a flight version). You choose most of who sees what (<a href={href('sharing')}>what is always shared</a>). It also watches your readings against your own normal. Demo: {crew?.name.split(' ')[0]}'s tablet, simulated {mission.title}.</p>
           <div className="row wrap">
             <a className="btn sm" href={href('checkin', 'demo')} data-testid="intro-danger">Demo: enter a dangerous reading</a>
             <a className="btn sm" href={href('replay')} data-testid="intro-replay">Demo: replay a scripted event</a>
@@ -192,7 +192,7 @@ export function Today() {
             <a className="change" key={c.ind} href={href('trends', c.ind)}>
               <div className="col" style={{ gap: 2 }}>
                 <span><strong>{IND[c.ind].label}</strong> <span className="num big" style={{ marginLeft: 6 }}>{Number.isNaN(c.value) ? '–' : c.value.toFixed(IND[c.ind].decimals)}</span> <span className="muted small">{IND[c.ind].unit}</span></span>
-                <span className="small">{c.ind === 'sleep_mid' ? `The middle of your sleep was ${Math.abs(c.value).toFixed(1)} h ${c.value >= 0 ? 'after' : 'before'} the schedule; you usually sleep ${Math.abs(c.expected).toFixed(1)} h ${c.expected >= 0 ? 'after' : 'before'} it.` : `${c.direction === 'higher' ? 'Higher than' : 'Lower than'} your usual ${c.expected.toFixed(IND[c.ind].decimals)}.`} {unusualness(c)}{c.ind === 'temp' ? ' Wrist skin temperature, not a fever reading.' : ''}</span>
+                <span className="small">{c.ind === 'sleep_mid' ? `The middle of your sleep was ${Math.abs(c.value).toFixed(1)} h ${c.value >= 0 ? 'after' : 'before'} the schedule; you usually sleep ${Math.abs(c.expected).toFixed(1)} h ${c.expected >= 0 ? 'after' : 'before'} it.` : (c.latestInside && c.daysOut <= 1 ? `Now back inside your usual range (around ${c.expected.toFixed(IND[c.ind].decimals)}); over the last three days it ran ${c.direction === 'higher' ? 'higher' : 'lower'}.` : `${c.direction === 'higher' ? 'Higher than' : 'Lower than'} your usual ${c.expected.toFixed(IND[c.ind].decimals)}.`)} {unusualness(c)}{c.ind === 'temp' ? ' Wrist skin temperature, not a fever reading.' : ''}</span>
               </div>
               <TrendChart compact values={b.values} lo={b.lo} hi={b.hi} from={day - 20} to={day} labelFor={(t) => shortDay(mission, t)} unit={IND[c.ind].unit} decimals={IND[c.ind].decimals} concern={IND[c.ind].concern} ariaLabel={`${IND[c.ind].label}, last three weeks`} />
             </a>

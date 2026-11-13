@@ -192,7 +192,7 @@ above luck on the training missions). A later statistical review found that the 
 statistic used a correlation matrix estimated on unflipped z-scores while scoring flipped
 (direction-of-concern) scores, so some correlations had the wrong sign. After correcting it the
 multivariate EWMA scores 29.5 against the z-score rule's 27.3 on the training missions, a lead below
-the pre-set 3-point margin, so the simpler **personal z-score 2-of-3-days rule is deployed**. Either
+the 3-point margin adopted during review (after first results), so the simpler **personal z-score 2-of-3-days rule is deployed**. Either
 way the difference has no interval and is well inside what the test missions show as noise. Test
 missions had no vote. Real data had none directly, but the
 simulator's illness response is fitted on real episodes from people who are also evaluated, and the
@@ -246,7 +246,7 @@ radiation alarm [47][48]. After two days without any reading the status is "no r
   missing data and device are unrelated to events, pseudo-windows must be fully scored and are pooled.
   **Remaining bias.** Dates are shifted per person, so pseudo-events cannot be matched to the calendar:
   exposure, travel, testing, isolation and (for prospective phase 2 cases) the original study's own
-  alerts all cluster near real onsets and are not reproduced. Detection above luck is therefore an
+  alerts all cluster near real onsets and are not reproduced. Detection above luck is therefore a
   likely optimistic estimate of what physiology alone explains; heart rate alone is the more transferable figure.
   The subtraction is not rescaled by 1 − chance; the rescaled value is in the result file.
 - **Sensitivity analyses** (`eval_real.py`): four other ways of estimating luck; an alert that is

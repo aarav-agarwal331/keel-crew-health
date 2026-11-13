@@ -1325,6 +1325,38 @@ pipeline work, disclosed where shown; a "seen by the medical officer" state on s
 vocabulary for every status word, and a second replay with a typical illness (astronaut, judge) are
 larger changes left for after the event.
 
-## Round 32
+## Round 32 (2026-11-13, fresh reviewers, redeployed build)
 
-See the end of this file once the thirty-second round has run.
+Judge's scores: impact 7, creativity 8, validity 8, relevance 8, presentation 6 (37 of 50), "nominate:
+yes", no high-severity issue. The astronaut and the statistician found none either. The flight surgeon
+found one:
+
+| # | Reviewer | High-severity finding | Fix |
+|---|---|---|---|
+| 1 | Flight surgeon | The thermometer box looked only for the plain fever rules; when a fever with a fast heart rate fired the new combination rule (which replaces the plain fever item), it said "no fever by this reading" while an act-now alert went out. | It reports whichever fixed rule covers a thermometer reading, most urgent first, and never says "no fever" at 38.0 °C or more; an end-to-end test enters 38.5 °C beside the combination and checks. |
+
+Medium-severity findings fixed in the same pass:
+
+- **Same reading, two descriptions** (judge, astronaut, flight surgeon low): Today now uses the Alert
+  detail's framing ("now back inside your usual range; over the last three days it ran higher").
+- **Sharing off** (flight surgeon): Check-in says an alert without the reading goes, not "nobody has been
+  shown it".
+- **Ticking nausea** (astronaut): Check-in says the commander's tier will become "Talk to the medical
+  officer first".
+- **Statistics wording** (statistician): the Method screen's on-board "1 in N" carries the under-alerting
+  caveat; the +13 headline says only the window was planned; "the 3-point margin adopted during review"
+  replaces "pre-set"; a METHOD grammar slip fixed.
+- Low: chart tooltips wrap inside the card; the link-cut demo says it moves the day; banner says "you
+  choose most of who sees what"; glucose label no longer says "above"; "take sugar anyway" kept after a
+  disputed low; R-V-HR1 titled "(one reading)".
+
+Not done, with reasons: changing the default sharing so the medical officer sees full detail, making a
+confirmed 180/120 act-now with a blood-pressure repeat box, auto-posting "see me today" for fixed
+same-day items, and requiring a corrected value before withdrawing an act-now reading (flight surgeon)
+are policy or clinical calls left for an agency or clinician (decision 108); a unified open-items list,
+fewer status words and a shorter Today (judge, astronaut) are larger redesigns; the statistician's
+re-referencing, Poisson interval and estimator alignment are pipeline work.
+
+## Round 33
+
+See the end of this file once the thirty-third round has run.

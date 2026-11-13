@@ -38,7 +38,7 @@ export function LinkScreen() {
         {hasLink && (link.scheduledBlackout && !linkCut ? (
           <div className="col">
             <p className="banner info"><strong>Day {day - b0 + 1} of a {b1 - b0 + 1}-day blackout.</strong> The link is expected back on {shortDay(mission, b1 + 1)}. No flight surgeon can be reached; the medical officer decides on board. Every screen you have used so far was running without it, and {queued.length} daily {queued.length === 1 ? 'summary is' : 'summaries are'} waiting to go.</p>
-            <div className="row wrap"><button className="btn" onClick={() => setDay(mission.pre_days + 100)} data-testid="jump-link-up">Go to a day with a working link and cut it yourself</button></div>
+            <div className="row wrap"><button className="btn" onClick={() => setDay(mission.pre_days + 100)} data-testid="jump-link-up">Move the demo back to {shortDay(mission, mission.pre_days + 100)}, when the link was up, and cut it yourself</button></div>
           </div>
         ) : (
           <div className="row wrap">
