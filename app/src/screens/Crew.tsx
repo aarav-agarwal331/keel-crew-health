@@ -90,17 +90,17 @@ export function Crew() {
           <section className="card" key={c.id} data-testid={`crew-${c.id}`}>
             <div className="card-h"><div className="col" style={{ gap: 0 }}><h2>{c.name}</h2><span className="small muted">{c.role_label}</span></div></div>
             {!a || !r || !v ? <p className="muted">No data.</p> : <>
-              {role === 'commander' && <p><StatusTag status={r.tier} label={r.tier === 'hold' && c.role === 'cmo' ? 'Talk to the flight surgeon or a backup first' : READY_LABEL[r.tier]} /></p>}
+              {role === 'commander' && (v.findings.some((x) => x.emergency) ? <p><StatusTag status="urgent" label="Act now: an urgent item is open" /></p> : <p><StatusTag status={r.tier} label={r.tier === 'hold' && c.role === 'cmo' ? 'Talk to the named backup medic first' : READY_LABEL[r.tier]} /></p>)}
               {s.emergency === false && <p className="tiny muted">Emergency sharing is switched off for this crew member: red-flag symptoms will not appear here.</p>}
               {role === 'commander' && r.tier !== 'go' && r.tier !== 'unknown' && (() => {
                 const shown = r.reasons.filter((x) => allows((s.commander as Record<string, 'none' | 'status' | 'trend' | 'detail'>)[x.category] ?? 'none', 'trend'))
                 return shown.length
                   ? <ul className="list small">{shown.map((x, i) => <li key={i}>{x.text}</li>)}</ul>
                   : c.role === 'commander' ? <p className="small muted">This is the commander's own card. The reasons are on their own Today screen.</p>
-                  : r?.reasons.some((x) => x.category === 'private') ? <p className="small muted"><StatusTag status="private" label="" size={16} /> A private medical matter; the medical officer is handling it. Please do not ask {c.name.split(' ')[0]} about it.</p>
-                  : <p className="small muted"><StatusTag status="private" label="" size={16} /> {v.findings.some((x) => x.emergency) ? 'Other reasons not shared.' : `Reason not shared. Ask ${c.name.split(' ')[0]}.`}</p>
+                  : v.findings.some((x) => x.emergency) ? <p className="small"><strong>Urgent: go to {c.name.split(' ')[0]} now</strong> (details below).</p>
+                  : r?.reasons.some((x) => x.text === 'A private matter for the medical officer') ? <p className="small muted"><StatusTag status="private" label="" size={16} /> A private medical matter for the medical officer. Please do not ask {c.name.split(' ')[0]} about it.</p>
+                  : <p className="small muted"><StatusTag status="private" label="" size={16} /> {v.findings.some((x) => x.emergency) ? 'Other reasons not shared.' : 'Reason private. The medical officer will advise if needed.'}</p>
               })()}
-              {role === 'commander' && v.findings.some((x) => x.emergency) && <p><StatusTag status="urgent" label="Act now: an urgent item is open" /></p>}
               {v.findings.filter((x) => x.emergency).map((x) => (
                 <div key={x.key} className="banner strong">
                   <p><strong>{x.title}{x.symptoms?.length ? `: ${x.symptoms.join('; ').toLowerCase()}` : ''}.</strong> <span className="small">(shared automatically: emergency sharing)</span></p>

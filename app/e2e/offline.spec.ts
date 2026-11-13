@@ -139,15 +139,14 @@ test('every screen works with the network disabled', async ({ page }) => {
     await expect(page.locator('#today-routine')).toContainText(/Exercise: on hold|No exercise until/)
     // a blood sugar under 35 is saved at once as a dangerous low; the unit question stays on Today until answered
     await nav(page, '#/checkin/measure')
-    // no blood sugar is saved until the meter's unit is chosen; then mmol/L is converted
+    // a value under 35 with no unit chosen is saved at once as a possible low (sugar only if the person feels low),
+    // and the unit is asked after saving; answering mmol/L converts it
     await page.getByLabel(/Blood sugar/).fill('5.5')
     await page.getByTestId('save-checkin').first().click()
-    await expect(page.locator('main')).toContainText('Choose which unit your meter shows')
-    await page.getByTestId('meter-mmol').click()
-    await page.getByLabel(/Blood sugar/).fill('5.5')
-    await page.getByTestId('save-checkin').first().click()
-    await expect(page.getByTestId('reading-log').first()).toContainText('99')
+    await expect(page.getByTestId('glucose-unit')).toBeVisible()
     await nav(page, '#/today')
+    await expect(page.locator('main')).toContainText(/Confirm which unit your meter shows/)
+    await page.getByTestId('unit-mmol').click()
     await expect(page.getByTestId('glucose-unit')).toHaveCount(0)
     // a value withdrawn as a typing mistake stops counting, and stays visible in the log
     await nav(page, '#/checkin/measure')

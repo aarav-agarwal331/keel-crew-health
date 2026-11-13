@@ -94,3 +94,4 @@ Reversible decisions made without asking, newest last.
 | 88 | 2026-11-12 | The blood-sugar meter unit is per crew member, shown on the field, and impossible converted values are refused. | Review round 21 (flight surgeon, high): a typed 50 under a stale mmol/L setting became 901. |
 | 89 | 2026-11-12 | A self-managed readings notice shows as "Worth a look"; a sleeping heart rate of 120 or more is "now". | Review round 22 (astronaut, flight surgeon): one loud label for very different things; an overnight 120 is not a "today" matter. |
 | 90 | 2026-11-12 | No blood sugar is saved before the meter unit is chosen; the "commander sees" line is built from the commander's actual view. | Review round 23 (astronaut, judge, flight surgeon, high). |
+| 91 | 2026-11-12 | A typed blood sugar is never discarded: with no unit chosen, 35 or more is mg/dL and under 35 is a flagged possible low. Supersedes the save refusal in 90. | Review round 24 (flight surgeon, high). |

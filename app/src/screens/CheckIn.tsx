@@ -81,9 +81,9 @@ export function CheckIn({ open }: { open?: string }) {
       let v = Number(String(raw).replace(',', '.'))
       if (k === 'glucose') {
         // a meter's own out-of-range readouts are the most dangerous readings: keep them, past the lines
-        // the unit is chosen once, before the first blood sugar is saved: no guessing between mg/dL and mmol/L
-        if (meterUnit === null) { bad.push(`Blood sugar: ${raw} was not saved. Choose which unit your meter shows (just above the field), then save again.`); continue }
-        const mg = toMgdl(String(raw), meterUnit)
+        // nothing typed is ever thrown away: with no unit chosen yet, 35 or more can only be mg/dL (mmol/L meters stop
+        // near 33); under 35 is saved as a possible low, with sugar advised only if the person feels low, and the unit is asked
+        const mg = toMgdl(String(raw), meterUnit ?? 'mg')
         if (mg === null) { bad.push(`Blood sugar: ${raw} was not saved. That is more than a meter can show in ${meterUnit === 'mmol' ? 'mmol/L' : 'mg/dL'}: check which unit your meter shows.`); continue }
         v = mg
       }
@@ -172,6 +172,7 @@ export function CheckIn({ open }: { open?: string }) {
         <div className="choices five" role="group" aria-label="Mood, 1 very low to 5 very good">
           {MOODS.map((m, i) => <button key={m} className="choice" aria-pressed={mood === i + 1} onClick={() => setMood(i + 1)} data-testid={`mood-${i + 1}`}><span className="n">{i + 1}</span><span className="tiny">{m}</span></button>)}
         </div>
+        {mood === 1 && <p className="small" data-testid="mood-safety">Any thoughts of harming yourself? Tick it under "Something serious?" below, or tell the medical officer now.</p>}
       </Card>
 
       <Card title="2. Any symptoms today?">

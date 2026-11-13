@@ -1034,6 +1034,34 @@ Not done, with reasons: a free-text "something else" note, a private "request a 
 self-managed items, °F detection on imports, receiving-side re-alerting, a paired activity-versus-heart
 -rate test and the `chance_note` string (pipeline reruns).
 
-## Round 24
+## Round 24 (2026-11-12, fresh reviewers, redeployed build)
 
-See the end of this file once the twenty-fourth round has run.
+Judge's scores: impact 7, creativity 8, validity 7, relevance 9, presentation 6 (37 of 50), "nominate:
+yes", with one high-severity issue. The astronaut found two, the flight surgeon two (one shared), the
+statistician none.
+
+| # | Reviewer | High-severity finding | Fix |
+|---|---|---|---|
+| 1 | Judge, astronaut, flight surgeon | During an emergency the commander's card said "A private medical matter; the medical officer is handling it. Please do not ask Lucía" (a round-23 tier reason was filed as private), above the readings and "Go to them now". | While an urgent item is visible the card says "Urgent: go to Lucía now (details below)" and the tier reads "Act now"; the private wording appears only for medical-officer-only items and no longer claims anyone is handling it; "Ask Lucía" became "Reason private. The medical officer will advise if needed." |
+| 2 | Astronaut | Today's "Your commander sees … nothing else" left out that the commander also sees what the person was told to do. | The line includes it. |
+| 3 | Flight surgeon | The round-23 rule "no blood sugar until the unit is chosen" threw a typed low away, with no advice. | Nothing typed is discarded: with no unit chosen, 35 or more is saved as mg/dL (mmol/L meters stop near 33); under 35 is saved as a possible low with conditional advice and the unit is asked after saving; end-to-end tested. |
+
+Medium-severity findings fixed in the same pass:
+
+- **Intervals near zero** (statistician): a bound that would round to 0 keeps one decimal and its sign,
+  and an interval spanning zero says so.
+- **Tile body** (judge): the import tile's text leads with the originally planned window.
+- **Very low mood** (flight surgeon): choosing 1 shows a one-line prompt about thoughts of self-harm.
+- **Disclosures** (statistician): the simulator's noise fit on quiet real people is named; the
+  "never saw one" share names its 140-person group.
+- **Backup wording** (flight surgeon): "Talk to the named backup medic first" when the patient is the
+  medical officer.
+
+Not done, with reasons: light exercise instead of a full hold for illness notices (the flight surgeons in
+earlier rounds asked for the hold; a clinical call), a sugar amount (no opened source gives one), repeat
+boxes for blood pressure and temperature, an absorbed-dose radiation-sickness rule, the README alert-tier
+row for the import model, a luck figure for alerts strictly before onset (pipeline work).
+
+## Round 25
+
+See the end of this file once the twenty-fifth round has run.
