@@ -105,7 +105,7 @@ launch into weightlessness and, for the lunar scenario, landing in one-sixth gra
 4. Illness response. The mean resting-heart-rate change around dated illness onsets is fitted with the
    event template by least squares over days of rise before onset, days to the peak, hold and
    recovery; the amplitude is the fitted peak (3.3 bpm, about two days after onset, with a rise that starts
-   four days before it). Episodes differ a great deal: the between-episode SD of the response, after
+   four days before onset). Episodes differ a great deal: the between-episode SD of the response, after
    subtracting measurement noise, is at least 2.0 times its mean (the fit caps it at 2.0; the raw
    ratio is higher). Each simulated illness is scaled by `max(0, N(1, 2.0))`, renormalised to mean 1, so about three in ten have no heart-rate response at
    all. The fit uses 38 episode curves with enough baseline, from the 55 people in the calibration
@@ -364,7 +364,8 @@ the same code version). Real data: 251 people, 107 illness episodes, two sensors
   daily resting heart rate, which is smoothed differently. Tried on Fitbit's own daily resting heart
   rate for 63 LifeSnaps people (120 person-months, no illness labels, so every alert counts), it gave
   1.07 alerts per person-month at the notice tier (budget 1.00) and 0.46 at the alert tier (budget
-  0.25): close at the notice tier, nearly twice over at the alert tier.
+  0.25): close at the notice tier, nearly twice over at the alert tier. On that input the alert-tier
+  predictive value falls to about 1 in 30 (1 in 61 for notices).
 - **Alerts counted nowhere.** Alerts starting 11 to 21 days before an onset or 5 to 28 days after fall
   in neither the detection window nor quiet time: 56 at the notice tier (0.5 per episode) and 34 at
   the alert tier. False-alert rates therefore understate the burden for people who were ill.
@@ -420,7 +421,8 @@ the same code version). Real data: 251 people, 107 illness episodes, two sensors
 - **NASA bed-rest data.** After getting up, a plain baseline flags 9 of 14 volunteers; restarting the
   baseline, 8; widening the band, 4; adding the learned shift, 4. The difference is not significant
   (exact paired p = 0.06), there is no ground truth that these flags are false (a faster pulse after
-  bed rest is real), and the learned shift adds nothing beyond widening the band. The same pulse-only
+  bed rest is real), and the learned shift adds nothing beyond widening the band (it is only +1.0 bpm, interquartile range −1 to
+  5.5, from 13 volunteers). The same pulse-only
   2-of-3 rule flags 11 of 31 (35%) 14-day stretches away from any transition, so Keel's 4 of 14 (29%)
   is about the chance level; the plain baseline's 9 of 14 (64%) is higher but not distinguishable from
   chance either (Fisher's exact p about 0.1, and the 31 stretches come from only 15 people). The bed-rest

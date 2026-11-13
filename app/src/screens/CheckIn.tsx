@@ -70,7 +70,7 @@ export function CheckIn({ open }: { open?: string }) {
       const [hardLo, hardHi] = IND[k].limits ?? IND[k].range
       if (Number.isNaN(v) || v < hardLo || v > hardHi) { bad.push(`${lab(k)}: ${raw} was not saved. Enter a value between ${hardLo} and ${hardHi} ${IND[k].unit}.`); continue }
       values[sk(k)] = v
-      if (dirty.includes(k) && (v < lo || v > hi || NOW_LINE[k]?.(v) || (k === 'temp_oral' && v < 35))) check.push(k)
+      if (dirty.includes(k) && (v < lo || v > hi || NOW_LINE[k]?.(v) || (k === 'temp_oral' && v < 35) || (k === 'glucose' && v < 35))) check.push(k)
     }
     // symptoms and every valid value are always saved, whatever is wrong with one number
     await saveEntry({ crew: me, day, values, symptoms: sym, meds, photos }, dirty.map(sk))
@@ -105,8 +105,9 @@ export function CheckIn({ open }: { open?: string }) {
   const prompts = (err || pending.length > 0) ? <div className="col" data-testid="checkin-prompts">{err && <p className="banner strong" role="alert">{err}</p>}
       {pending.map((q) => (
         <div className="banner strong" role="alert" key={q.k}>
-          <p><strong>{lab(q.k)}: {q.v} {IND[q.k].unit}</strong> is far outside the usual range, so Keel saved it and is acting on it. {NOW_LINE[q.k]?.(q.v) ? <strong>Act now: {(today(me, day)?.findings.find((f) => (f.inds ?? []).includes(q.k) && f.kind === 'vital')?.action) ?? 'tell the medical officer now.'} </strong> : null}{NOW_LINE[q.k]?.(q.v) ? (sharingOn ? 'It is past a safety line, so it is now visible on the medical officer\'s and the commander\'s Crew screens (emergency sharing). They are not alerted.' : 'It is past a safety line. Emergency sharing is off, so nobody else has been shown it: tell the medical officer.') : (today(me, day)?.findings.some((f) => (f.inds ?? []).includes(q.k) && f.kind === 'vital') ? 'It is past a fixed line for today: it is on the medical officer\'s list; tell them today.' : q.k === 'temp_oral' && q.v < 35 ? 'Below 35.0 °C is usually a measurement problem: wait five minutes and repeat. If it repeats, tell the medical officer.' : 'It is not past a fixed safety line, so nobody else has been shown it.')} Is that what the device showed?</p>
+          <p><strong>{lab(q.k)}: {q.v} {IND[q.k].unit}</strong> is far outside the usual range, so Keel saved it and is acting on it. {NOW_LINE[q.k]?.(q.v) ? <strong>Act now: {(today(me, day)?.findings.find((f) => (f.inds ?? []).includes(q.k) && f.kind === 'vital')?.action) ?? 'tell the medical officer now.'} </strong> : null}{NOW_LINE[q.k]?.(q.v) ? (sharingOn ? 'It is past a safety line, so it is now visible on the medical officer\'s and the commander\'s Crew screens (emergency sharing). They are not alerted.' : 'It is past a safety line. Emergency sharing is off, so nobody else has been shown it: tell the medical officer.') : q.k === 'glucose' && q.v < 35 ? `Did your meter show mmol/L? ${q.v} mmol/L is ${Math.round(q.v * 18)} mg/dL. If so, withdraw this and type ${Math.round(q.v * 18)}.` : (today(me, day)?.findings.some((f) => (f.inds ?? []).includes(q.k) && f.kind === 'vital') ? 'It is past a fixed line for today: it is on the medical officer\'s list; tell them today.' : q.k === 'temp_oral' && q.v < 35 ? 'Below 35.0 °C is usually a measurement problem: wait five minutes and repeat. If it repeats, tell the medical officer.' : 'It is not past a fixed safety line, so nobody else has been shown it.')} Is that what the device showed?</p>
           <div className="row wrap"><button className="btn primary" onClick={() => setPending((p) => p.filter((x) => x.k !== q.k))} data-testid={`confirm-${q.k}`}>Yes, that is right</button><button className="btn" onClick={() => void withdraw(q.k)} data-testid={`withdraw-${q.k}`}>No, a typing mistake: withdraw it</button></div>
+          {q.k === 'glucose' && q.v < 35 && <p className="banner strong"><strong>Did your meter show mmol/L?</strong> {q.v} mmol/L is {Math.round(q.v * 18)} mg/dL. If so, withdraw this reading and type {Math.round(q.v * 18)} instead.</p>}
           <p className="small">If you withdraw it, it stays in the log, struck through, and the medical officer still sees that it was entered.</p>
         </div>
       ))}</div> : null
@@ -124,7 +125,7 @@ export function CheckIn({ open }: { open?: string }) {
       <p className="muted">{dayLabel(mission, day)}. Four quick answers, about a minute. Stored on your tablet; {sharingOn ? 'emergency sharing is on, so anything urgent appears at once on the medical officer\'s and, as backup, the commander\'s Crew screens; they are not notified, so tell them.' : 'emergency sharing is off, so tell the medical officer yourself about anything urgent.'} <a href={href('sharing')}>Who sees what</a></p>
       {!existing && !Number.isNaN(rawSeries(mission, me, 'mood', [])[day]) && <p className="small muted">Today's check-in in this demo came from the simulation. Anything you save here is added to it.</p>}
 
-      <Card title="1. How are you feeling?" right={<span className="tiny muted">Private unless you share it; the commander's tier uses it</span>}>
+      <Card title="1. How are you feeling?" right={<a className="tiny" href={href('sharing')}>Medical officer sees mood: {LEVELS.find((l) => l.id === (sharing[me]?.cmo.cognition ?? 'none'))?.label.toLowerCase()} · commander: a tier only</a>}>
         <div className="choices five" role="group" aria-label="Mood, 1 very low to 5 very good">
           {MOODS.map((m, i) => <button key={m} className="choice" aria-pressed={mood === i + 1} onClick={() => setMood(i + 1)} data-testid={`mood-${i + 1}`}><span className="n">{i + 1}</span><span className="tiny">{m}</span></button>)}
         </div>

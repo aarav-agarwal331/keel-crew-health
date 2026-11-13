@@ -217,7 +217,10 @@ const REPEAT_MIN: Record<string, number> = { glucose: 15, rhr: 2, spo2: 2, sbp: 
 export type Closures = Map<string, number>
 export function closuresFrom(actions: { did: string; alertKey: string; ts: number }[]): Closures {
   const c: Closures = new Map()
-  for (const a of actions) if (a.did.startsWith('Closed')) c.set(a.alertKey, Math.max(c.get(a.alertKey) ?? 0, a.ts))
+  for (const a of actions) if (a.did.startsWith('Closed')) {
+    c.set(a.alertKey, Math.max(c.get(a.alertKey) ?? 0, a.ts))
+    if (/not cleared/.test(a.did)) c.set(`restricted|${a.alertKey}`, a.ts)   // closed, but exercise and duties stay restricted
+  }
   return c
 }
 /** An item is closed only by a note written after the latest reading or check-in behind it:
@@ -431,7 +434,7 @@ export function analyzeDay(
     const ruledOut = (sym.fatigue ?? 0) > 0 || (sym.cough ?? 0) > 0 || (val.temp_oral ?? []).some((v) => v >= 38)
     if (ruledOut) out.steps = out.steps.filter((x) => !/light session is reasonable/.test(x))
     // someone with a dangerous reading may be impaired: the first words of every "act now" are to get help to them
-    if (out.status === 'urgent' && !crewWide && !/^Call a crewmate/.test(out.action)) out.action = `Call a crewmate to you now. ${out.action}`
+    if (out.status === 'urgent' && !crewWide && !/^Call a crewmate|crewmate to you/.test(out.action)) out.action = r.id.startsWith('R-V-GLU-LO') ? `Take sugar now if you can swallow, and call a crewmate to you. ${out.action.replace(/^If you are awake and can swallow, eat or drink something sugary now, and /, '')}` : `Call a crewmate to you now. ${out.action}`
     // the medical officer cannot be told to see the medical officer: their backup is the commander
     return patientIsCmo && !crewWide ? forCmoAsPatient(out) : out
   }
@@ -459,7 +462,7 @@ export function analyzeDay(
       const latestTs = log.length ? Math.max(...log.filter((q) => !q.void).map((q) => q.ts), 0) : mineE.find((q) => q.day === start)?.ts ?? 0
       if (r.urgency !== 'routine' && isClosed(closed, `open|${m.id}|${crewId}|${r.id}|${start}`, latestTs)) continue
       // an "act now" reading from an earlier day is no longer "now": it waits for the medical officer
-      const stale = r.urgency === 'now' && start < day
+      const stale = r.urgency === 'now' && start < day   // an earlier day's reading: waiting for the medical officer, not an emergency now
       // a later reading the same day is back on the safe side of this rule: say so, but keep it for the medical officer
       const lastLive = vals.map((v) => { const live = force[v].log.filter((q) => !q.void); return live.length ? live[live.length - 1] : undefined }).filter((q): q is Reading => !!q)
       // The latest reading the same day is "back on the safe side" only if it triggers NO fixed rule on that
@@ -484,11 +487,11 @@ export function analyzeDay(
       const repeatOk = r.scope === 'vital' && r.urgency !== 'routine' && lastLive.length > 0 && !!firstBad && lastLive[lastLive.length - 1].ts > firstBad.ts && !anyRuleOnLatest && !!waited
       // a repeat already back on the safe side, but taken too soon to count (blood sugar: under 15 minutes)
       const tooSoon = !repeatOk && !anyRuleOnLatest && !!firstBad && lastLive.length > 0 && lastLive[lastLive.length - 1].ts > firstBad.ts && !waited
-      findings.push(mk(r, r.scope, start, repeatOk ? 'act' : URGENCY_STATUS[r.urgency ?? 'routine'], changes.filter((c) => named.includes(c.ind)).slice(0, 4), {
-        ...(tooSoon ? { action: `${r.action} Your repeat (${lastLive[lastLive.length - 1].v}) came too soon to count: ${mine.includes('glucose') ? 'if you have not taken sugar yet, take it now; sugar takes about 15 minutes to work' : `wait at least ${waitMin} minutes after the first reading`}. Re-check at ${new Date(firstBad!.ts + waitMin * 60 * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}.` } : {}),
+      findings.push(mk(r, r.scope, start, repeatOk || stale ? 'act' : URGENCY_STATUS[r.urgency ?? 'routine'], changes.filter((c) => named.includes(c.ind)).slice(0, 4), {
+        ...(tooSoon ? { action: `${r.action} Re-check at ${new Date(firstBad!.ts + waitMin * 60 * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}: your repeat (${lastLive[lastLive.length - 1].v}) came too soon to count.` } : {}),
         ...(log.length ? { readings: log } : {}),
         ...(repeatOk ? { urgency: r.urgency, action: `${r.id.startsWith('R-V-GLU-LO') ? `Your repeat reading (${lastLive[lastLive.length - 1].v}) is back on the safe side, so no more sugar is needed: eat a snack or your next meal now.` : `Your repeat reading (${lastLive[lastLive.length - 1].v}) is back below this line.`} ${r.urgency === 'now' ? 'The first reading needed the medical officer at once: if you have not told them yet, tell them now.' : 'Tell the medical officer about the first reading today.'}`, tierReason: 'The first reading stays on the medical officer\'s list until they close it with a note.' } : {}),
-        ...(stale ? { action: `This reading from ${m.day_label ? `${m.day_label} ${start + 1}` : `Day ${start + 1}`} is still open. If you have not yet told the medical officer, tell them now.`, tierReason: 'It stays open until the medical officer closes it with a note.' } : {}),
+        ...(stale ? { urgency: 'today' as Urgency, action: `This reading from ${m.day_label ? `${m.day_label} ${start + 1}` : `Day ${start + 1}`} still waits for the medical officer. If you have not told them yet, tell them today; at once if you feel unwell.`, tierReason: 'It stays open until the medical officer closes it with a note.' } : {}),
         ...(r.id === 'R-RED' ? { symptoms: redSyms.map((x) => SYM[x]?.label ?? x) } : {}),
         ...(r.id === 'R-RED' ? { cmoOnly: redSyms.every((x) => (SYM[x] as { commander?: boolean }).commander === false) } : {}),
       }))
@@ -530,9 +533,13 @@ export function analyzeDay(
     const named = condIndicators(r.when)
     const evidence = [...changes.filter((c) => named.includes(c.ind)), ...changes.filter((c) => !named.includes(c.ind) && c.notable)].slice(0, 4)
     const cats = new Set<string>([...r.categories, ...evidence.map((c) => IND[c.ind]?.category ?? 'cardio')])
-    const reviewed = isClosed(closed, `${m.id}|${crewId}|P|${alert.start}`, 0)   // closed = cleared by the medical officer
+    // a closure applies to the notice as it stood when closed (its status and the start of its current
+    // pattern): if it worsens or turns into a different pattern, it reopens
+    const noticeKey = `${m.id}|${crewId}|P|${alert.start}#${status}#${day - patternDays + 1}`
+    const reviewed = isClosed(closed, noticeKey, 0)
+    const restrictedNotice = closed.has(`restricted|${noticeKey}`)
     findings.push(mk(r, 'personal', alert.start, reviewed ? 'watch' : status, evidence, {
-      ...(reviewed ? { tier: 'self' as Tier, tierReason: 'Reviewed and closed by the medical officer. Keel keeps showing it until your readings settle.', urgency: 'routine' as Urgency, reviewed: true } : {}),
+      ...(reviewed ? { tier: 'self' as Tier, tierReason: restrictedNotice ? 'Handled by the medical officer; exercise and duties stay restricted until they clear you.' : 'Reviewed and cleared by the medical officer. Keel keeps showing it until your readings settle, and reopens it if it worsens.', urgency: 'routine' as Urgency, reviewed: !restrictedNotice, holdsExercise: restrictedNotice } : {}),
       score: alert.score, threshold: model.thresholds.notice, categories: [...cats], detectorTier: alert.tier, days: patternDays, patternStart: day - patternDays + 1,
       firstNotice: firstRule ? { day: alert.start, title: firstRule.title } : undefined, also,
       factors: ['R-ILL'].includes(r.id) ? factors.filter((x) => x.id !== 'mood') : factors, urgency: (status === 'act' ? 'today' : 'routine') as Urgency,
@@ -637,7 +644,8 @@ export function analyzeDay(
   // closed items leave the list; a reading after the closure note reopens them
   for (let i = openItems.length - 1; i >= 0; i--) if (isClosed(closed, openItems[i].key, openItems[i].ts)) openItems.splice(i, 1)
 
-  const exerciseHold = findings.some((x) => !(x as Finding & { reviewed?: boolean }).reviewed && (holdsEx(x.ruleId) || (x as Finding & { holdsExercise?: boolean }).holdsExercise))
+  const restricted = [...closed.keys()].some((k) => k.startsWith(`restricted|open|${m.id}|${crewId}|`) && Number(k.split('|').pop()) >= day - 1)
+  const exerciseHold = restricted || findings.some((x) => !(x as Finding & { reviewed?: boolean }).reviewed && (holdsEx(x.ruleId) || (x as Finding & { holdsExercise?: boolean }).holdsExercise))
   return { status, findings, changes, learning, baselineDays, adapting, staleDays, u3, systems, categories, alert, features: f, co2Advisory: envStatus === 'watch' ? Math.max(co2Today || 0, co23 || 0) : null, openItems, exerciseHold }
 }
 

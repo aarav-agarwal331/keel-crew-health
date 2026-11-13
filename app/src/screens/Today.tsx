@@ -23,7 +23,7 @@ const HEADLINE: Record<string, string> = {
 }
 
 export function Today() {
-  const { mission, model, day, me, today, analyses, entries, link, sharing, setShare } = useApp()
+  const { mission, model, day, me, today, analyses, entries, link, sharing, setShare, actions, logAction } = useApp()
   const [intro, setIntro] = useState(false)
   useEffect(() => { void store.kv<boolean>('intro-dismissed').then((v) => setIntro(!v)) }, [])
   const a = today()
@@ -47,7 +47,6 @@ export function Today() {
   // routine: what the mission day asks of this person
   const checkedByMe = mine.some((e) => e.day === day)
   const checked = checkedByMe || !Number.isNaN(rawSeries(mission, me, 'mood', mine)[day])
-  const tempToday = mine.find((e) => e.day === day)?.values.temp_oral
   const an = analyses[me]
   const notices30 = an ? episodes(deployedScore(an.scored, model), model.thresholds.notice, model.params.merge_gap, day).filter(([s0]) => s0 > day - 30).length : 0
   const sleepLast = rawSeries(mission, me, 'sleep_h', mine)[day]
@@ -82,7 +81,7 @@ export function Today() {
     <>
       {intro && mission.simulated && (
         <section className="card intro" data-testid="intro">
-          <p className="small"><strong>Keel: crew health with no link to Earth.</strong> Acts at once on dangerous readings. You choose who sees what. It also watches your readings against your own normal. Demo: {crew?.name.split(' ')[0]}'s tablet, simulated {mission.title}. A lunar base mission is under More.</p>
+          <p className="small"><strong>Keel: crew health with no link to Earth.</strong> Responds at once to dangerous readings you enter. You choose who sees what. It also watches your readings against your own normal. Demo: {crew?.name.split(' ')[0]}'s tablet, simulated {mission.title}. A lunar base mission is under More.</p>
           <div className="row wrap">
             <a className="btn primary sm" href={href('replay')} data-testid="intro-replay">Demo: replay a scripted event (40 s)</a>
             <a className="btn sm" href={href('validation')}>The evidence</a>
@@ -110,14 +109,22 @@ export function Today() {
           <p className="small"><strong>When:</strong> {URGENCY_LABEL[primary.urgency].toLowerCase()}. <strong>Who:</strong> {(primary.who ?? WHO_LABEL[primary.tier]).toLowerCase()}.</p>
           <p className="small">{primary.tierReason}</p>
           {[primary, ...others].filter((x) => x.status === 'urgent').flatMap((x) => x.steps.filter((q) => /^For whoever is with you/.test(q))).slice(0, 1).map((q) => <p key={q} className="banner strong small">{q}</p>)}
-          {primary.status === 'urgent' && !primary.crewWide && <p className="small"><strong>{sharing[me]?.emergency === false ? 'Emergency sharing is off: nobody else has been shown this. Tell the medical officer yourself.' : primary.cmoOnly && !primary.patientIsCmo ? 'Now visible on the medical officer\'s Crew screen (emergency sharing), not the commander\'s. They are not alerted: tell them yourself now.' : 'Now visible on the medical officer\'s and the commander\'s Crew screens (emergency sharing). They are not alerted: tell them yourself now.'}</strong></p>}
+          {primary.status === 'urgent' && !primary.crewWide && (() => {
+            const sent = actions.filter((x) => x.crew === me && x.did === 'Alerted the crew' && x.day === day).sort((x, y) => y.ts - x.ts)[0]
+            const on = sharing[me]?.emergency !== false
+            return <div className="col">
+              {!sent && <button className="btn danger block" style={{ minHeight: 64, fontSize: '1.1rem' }} onClick={() => void logAction({ crew: me, alertKey: `alert|${primary.key}`, day, did: 'Alerted the crew', feel: null, note: primary.title })} data-testid="alert-crew">Alert the medical officer and commander now</button>}
+              {sent && <p className="banner strong" role="status"><strong>Alert sent at {new Date(sent.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}.</strong> It shows at the top of their Crew screens until they acknowledge it.</p>}
+              <p className="small">{on ? 'The details are visible on their Crew screens (emergency sharing). The button is what alerts them.' : 'Emergency sharing is off: the alert says only that you need help, not why.'}</p>
+            </div>
+          })()}
           {others.filter((x) => x.status === 'urgent').length > 0 && (
             <div className="col" data-testid="also-now">
               <span className="lab">Also act now</span>
               <ol className="list steps">{others.filter((x) => x.status === 'urgent').map((x) => <li key={x.key}><span><strong>{x.title}.</strong> {x.action}</span></li>)}</ol>
             </div>
           )}
-          {(primary.also ?? []).length > 0 && <div className="col"><span className="lab">Also in your readings</span><ul className="list small">{primary.also!.map((x) => <li key={x.title}><strong>{x.title}.</strong> {x.action}</li>)}</ul></div>}
+          {(primary.also ?? []).length > 0 && <details><summary className="small">When you can: {primary.also!.length} more from your readings</summary><ul className="list small">{primary.also!.map((x) => <li key={x.title}><strong>{x.title}.</strong> {x.action}</li>)}</ul></details>}
           {['R-ILL', 'R-SYM-ILL', 'R-V-TEMP', 'R-V-TEMP-HI'].includes(primary.ruleId) ? <TempEntry /> : <ReadingLog readings={primary.readings ?? []} title="Readings this is based on" />}
           <a className="btn primary block" href={href('alert', primary.key)} data-testid="open-alert">Why, and what next <Chev /></a>
           {needsCmo && <button className="btn block" onClick={() => shareCats.forEach((c) => setShare(me, 'cmo', c, 'detail'))} data-testid="today-share-cmo">Share {shareCats.map((c) => CAT[c].toLowerCase()).join(', ')} in full detail with the medical officer</button>}
@@ -148,7 +155,7 @@ export function Today() {
             <a className="change" key={c.ind} href={href('trends', c.ind)}>
               <div className="col" style={{ gap: 2 }}>
                 <span><strong>{IND[c.ind].label}</strong> <span className="num big" style={{ marginLeft: 6 }}>{Number.isNaN(c.value) ? '–' : c.value.toFixed(IND[c.ind].decimals)}</span> <span className="muted small">{IND[c.ind].unit}</span></span>
-                <span className="small">{c.ind === 'sleep_mid' ? `${Math.abs(c.value - c.expected).toFixed(1)} h ${c.value > c.expected ? 'later' : 'earlier'} than your usual sleep timing.` : `${c.direction === 'higher' ? 'Higher than' : 'Lower than'} your usual ${c.expected.toFixed(IND[c.ind].decimals)}.`} {unusualness(c)}{c.ind === 'temp' ? ' Wrist skin temperature, not a fever reading.' : ''}</span>
+                <span className="small">{c.ind === 'sleep_mid' ? `The middle of your sleep was ${Math.abs(c.value).toFixed(1)} h ${c.value >= 0 ? 'after' : 'before'} the schedule; you usually sleep ${Math.abs(c.expected).toFixed(1)} h ${c.expected >= 0 ? 'after' : 'before'} it.` : `${c.direction === 'higher' ? 'Higher than' : 'Lower than'} your usual ${c.expected.toFixed(IND[c.ind].decimals)}.`} {unusualness(c)}{c.ind === 'temp' ? ' Wrist skin temperature, not a fever reading.' : ''}</span>
               </div>
               <TrendChart compact values={b.values} lo={b.lo} hi={b.hi} from={day - 20} to={day} labelFor={(t) => shortDay(mission, t)} unit={IND[c.ind].unit} decimals={IND[c.ind].decimals} concern={IND[c.ind].concern} ariaLabel={`${IND[c.ind].label}, last three weeks`} />
             </a>
@@ -174,7 +181,7 @@ export function Today() {
             <ul className="list">
               <li><StatusTag status={checked ? 'steady' : 'learning'} label={checkedByMe ? 'Check-in done' : checked ? 'Check-in done (simulated)' : 'Daily check-in (about a minute)'} size={18} />{!checked && <a className="btn sm" href={href('checkin')} style={{ marginLeft: 'auto', float: 'right' }}>Start</a>}</li>
               <li><StatusTag status={wearOk ? 'steady' : 'learning'} label={wearOk ? 'Sensor worn last night' : 'No sensor data last night: wear it tonight'} size={18} /></li>
-              <li><StatusTag status={exDone ? 'steady' : 'learning'} label={a.exerciseHold ? (askingTemp && tempToday === undefined && a.status !== 'urgent' ? 'Exercise: on hold. Take your temperature; then the medical officer decides' : 'No exercise until the medical officer clears you') : exDone ? 'Exercise done today' : `Exercise: ${Number.isNaN(ex[day]) ? 0 : Math.round(ex[day])} of ${target} min today`} size={18} /></li>
+              <li><StatusTag status={exDone ? 'steady' : 'learning'} label={a.exerciseHold ? 'No exercise until the medical officer clears you' : exDone ? 'Exercise done today' : `Exercise: ${Number.isNaN(ex[day]) ? 0 : Math.round(ex[day])} of ${target} min today`} size={18} /></li>
               {spotDue.length > 0 && <li><StatusTag status="learning" label={`Weekly measurement due: ${spotDue.map((k) => IND[k].label.toLowerCase()).join(', ')}`} size={18} /> <a className="btn sm" href={href('checkin', 'measure')} data-testid="enter-measurements">Enter</a></li>}
               {!Number.isNaN(sleepLast) && sleepLast < 5.5 && <li><StatusTag status="watch" label={`Sleep last night ${sleepLast.toFixed(1)} h. The scheduled sleep period is 8.5 h.`} size={18} /></li>}
             </ul>

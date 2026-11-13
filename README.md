@@ -63,10 +63,10 @@ Real wearable data: 251 people, 107 dated illness episodes (Stanford COVID-19 we
 
 | Configuration, notice tier | Flagged | By luck | **Above luck** (95% interval) | False alerts per person-month |
 |---|---|---|---|---|
-| **Keel's method, two sensors (heart rate + 7-day activity), model and thresholds fitted only on simulated people** | 72% | 40% | **+32 points** (22 to 41) | 1.40 (budget 1.00) |
+| Linking analysis: Keel's method on two sensors (heart rate + 7-day activity), thresholds set only in simulation | 72% | 40% | +32 (22 to 41) | 1.40 (budget 1.00, over) |
 | … on the 132 people the simulator's fits did not use (60 episodes) | 77% | 42% | +35 (22 to 46) | 1.37 |
 | Same sensors, thresholds from other real people (5-fold over people) | 62% | 31% | +31 (21 to 41) | 1.00 |
-| … heart rate alone | 50% | 28% | +22 (12 to 32) | 0.99 |
+| **… heart rate alone (the import model)** | 50% | 28% | **+22 (12 to 32)** | 0.99 |
 | … heart rate + daily steps | 66% | 33% | +34 (24 to 44) | 0.99 |
 | One fixed threshold for everyone, heart rate + daily steps | 41% | 23% | +18 (8 to 27) | 1.01 |
 | One fixed threshold for everyone, heart rate + 7-day activity | 26% | 19% | +7 (−1 to 15) | 1.01 |
@@ -88,17 +88,19 @@ Real wearable data: 251 people, 107 dated illness episodes (Stanford COVID-19 we
 Honest reading:
 
 - **No useful early warning shown.** At the notice tier an alert started in the ten days up to onset
-  for 46% of episodes against 28% by luck (+18, 9 to 28); at the stricter tier +1 (−5 to 7). The
+  for 46% of episodes against 28% by luck (+18, 9 to 28) in the two-sensor linking analysis; for heart
+  rate alone +16 (7 to 25); at the stricter tier +1 (−5 to 7). The
   notice-tier gain is small and confounded by test dates, isolation and lower activity, so we do not
   claim early warning.
 - **Most alerts are false.** At in-flight illness rates, about one alert in 16 at the strict tier would be
-  attributable to a real respiratory illness for the import model, and one in 27 for the two-sensor
+  attributable to a real respiratory illness for the import model (about 1 in 30 on the watch maker's
+  own resting heart rate), and one in 27 for the two-sensor
   simulator-threshold version (one in 11 for a daily-steps configuration the app does not run). All are upper bounds.
 - **Imported watch data uses its own model.** Because of the next point, the app runs imports on a
   heart-rate-only model calibrated on the 251 real people (expected: the "heart rate alone" row).
 - **The thresholds must match the sensors.** With simulator thresholds Keel's two-sensor method runs
   over budget on real people (1.40 against 1.00; 0.39 against 0.25); with five sensors two to four
-  times over. The opposite happens to the shipped 11-channel model when it only gets heart rate: it
+  times over (16 people, 28 person-months). The opposite happens to the shipped 11-channel model when it only gets heart rate: it
   almost never alerts. A flight system needs thresholds per sensor set, calibrated on crew data.
 - **Much of the signal is behavioural.** Heart rate alone is +22 above luck; activity adds the rest,
   because people move less once they feel ill, and that cannot be separated from isolating at home.

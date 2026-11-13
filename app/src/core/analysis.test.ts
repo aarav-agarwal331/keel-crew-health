@@ -193,10 +193,11 @@ describe('end to end on the demo mission', () => {
     // a reading withdrawn as a typing mistake is not used
     const w: Entry = { ...e, values: {}, readings: [{ ind: 'glucose', v: 50, ts: 1, void: true }] }
     expect(run('c0', 100, [w]).findings.some((q) => q.ruleId === 'R-V-GLU-LO2')).toBe(false)
-    // an urgent reading from an earlier day stays "now" until the medical officer closes it
+    // an urgent reading from an earlier day waits for the medical officer: "act today", still listed for them
     const later = run('c0', 101, [e]).findings.find((q) => q.ruleId === 'R-V-GLU-LO2')!
-    expect(later.status).toBe('urgent')
-    expect(later.action).toMatch(/still open/)
+    expect(later.status).toBe('act')
+    expect(later.action).toMatch(/waits for the medical officer/)
+    expect(run('c0', 101, [e]).openItems.some((q) => q.ruleId === 'R-V-GLU-LO2')).toBe(true)
   })
   it('a safe repeat of a non-sugar reading never talks about sugar, and needs its own waiting time', () => {
     const e: Entry = { key: 'k', mission: m.id, crew: 'c0', day: 100, values: {}, symptoms: [], ts: 0, readings: [{ ind: 'temp_oral', v: 39.8, ts: 1 }, { ind: 'temp_oral', v: 36.9, ts: 1 + 40 * 60 * 1000 }] }
@@ -221,7 +222,7 @@ describe('end to end on the demo mission', () => {
   })
   it('every "act now" action starts by getting a crewmate', () => {
     const e: Entry = { key: 'k', mission: m.id, crew: 'c0', day: 100, values: { glucose: 45 }, symptoms: [], ts: 0 }
-    for (const f of run('c0', 100, [e]).findings.filter((x) => x.status === 'urgent' && !x.crewWide)) expect(f.action).toMatch(/^Call a crewmate/)
+    for (const f of run('c0', 100, [e]).findings.filter((x) => x.status === 'urgent' && !x.crewWide)) expect(f.action).toMatch(/crewmate to you/)
   })
   it('a red flag unticked later stays on the medical officer list', () => {
     const e: Entry = { key: 'k', mission: m.id, crew: 'c0', day: 100, values: {}, symptoms: [], redFlags: ['chest_pain'], ts: 0 }

@@ -1,7 +1,7 @@
 {
  "script": "research/scripts/calibrate_sim.py",
- "commit": "12585e5",
- "code_version": "999c2f562afc",
+ "commit": "d74748d",
+ "code_version": "ab5742cc9d6e",
  "targets": {
   "rhr": {
    "source": "Stanford wearables, recordings with no dated illness, including phase 2 participants never confirmed healthy (calibration half)",

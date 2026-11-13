@@ -10,7 +10,7 @@ import { Card, Glyph, href, ReadingLog, Seg, StatusTag } from '../ui/kit'
 const catLabel = (id: string) => CATEGORIES.find((c) => c.id === id)?.label ?? id
 
 export function Crew() {
-  const { mission, day, today, sharing, logAccess, me, entries, logAction } = useApp()
+  const { mission, day, today, sharing, logAccess, me, entries, logAction, actions } = useApp()
   const [notes, setNotes] = useState<Record<string, string>>({})
   const meRole = mission.crew.find((c) => c.id === me)?.role
   const [role, setRole] = useState<Role>(meRole === 'cmo' ? 'cmo' : 'commander')
@@ -43,6 +43,18 @@ export function Crew() {
 
   return (
     <>
+      {(() => {
+        const raised = actions.filter((x) => x.did === 'Alerted the crew' && x.day >= day - 1)
+        const acked = new Set(actions.filter((x) => x.did === 'Acknowledged the alert').map((x) => x.alertKey + '|' + x.crew))
+        const open = raised.filter((x) => !acked.has(x.alertKey + '|' + x.crew))
+        return open.map((x) => (
+          <section key={x.ts} className="card action" role="alert" data-testid="crew-alert">
+            <p className="do">{mission.crew.find((c) => c.id === x.crew)?.name} raised an alert at {new Date(x.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}{(sharing[x.crew]?.emergency !== false) ? `: ${x.note}` : ''}. Go to them now.</p>
+            <button className="btn primary" onClick={() => void logAction({ crew: x.crew, alertKey: x.alertKey, day, did: 'Acknowledged the alert', feel: null, note: `by the ${role === 'cmo' ? 'medical officer' : 'commander'}` })} data-testid="ack-alert">Acknowledge: I am on my way</button>
+            <p className="tiny muted">In a flight version this would sound on the medical officer's and commander's tablets over the cabin network; no Earth link is needed.</p>
+          </section>
+        ))
+      })()}
       <div className="card-h"><h1>Crew readiness</h1><Seg label="View as" value={role} onChange={setRole} options={[{ id: 'commander', label: 'Commander' }, { id: 'cmo', label: 'Medical officer' }]} /></div>
       <p className="muted">{shortDay(mission, day)}. {role === 'commander' ? 'Whether Keel has any flags for each crew member before a demanding task tomorrow, such as a spacewalk. You see a tier for everyone; reasons appear only where a crew member has chosen to share them.' : 'What each crew member has chosen to share with you. Nothing is shown that they have not shared, except emergencies they agreed to share and, under that consent, the fact that an item is open in an area. Their overall tier is worked out from all their readings.'}</p>
       <p className="banner">Demo view. On a mission each role has its own device; here you can switch roles. Every look is written to the crew member's access log.</p>
@@ -96,13 +108,20 @@ export function Crew() {
                   {v.findings.filter((x) => !x.emergency).filter((x, i, arr) => x.title || arr.findIndex((y) => !y.title && y.category === x.category) === i).map((f) => (
                     <li key={f.key}>
                       <strong>{f.title ?? `Notice from the readings in ${catLabel(f.category).toLowerCase()} (details not shared)`}</strong> <span className="muted">({STATUS_LABEL[f.status].toLowerCase()} for {f.days} d)</span>
-                      {role === 'cmo' && f.key.includes('|P|') && ['act', 'urgent'].includes(f.status) && (
-                        <div className="row wrap">
-                          <input type="text" aria-label={`Note on ${f.title ?? 'this notice'}`} value={notes[f.key] ?? ''} onChange={(e) => setNotes((p) => ({ ...p, [f.key]: e.target.value }))} placeholder="Note: what you found and decided" style={{ flex: 1, minWidth: 180 }} />
-                          <button className="btn sm" disabled={!(notes[f.key] ?? '').trim()} onClick={() => void logAction({ crew: c.id, alertKey: f.key, day, did: 'Noted by the medical officer (still open)', feel: null, note: (notes[f.key] ?? '').trim() })} data-testid="note-notice">Note only, keep open</button>
-                          <button className="btn sm" disabled={!(notes[f.key] ?? '').trim()} onClick={() => void logAction({ crew: c.id, alertKey: f.key, day, did: 'Closed by the medical officer: cleared for exercise and duties', feel: null, note: (notes[f.key] ?? '').trim() })} data-testid="close-notice">Close: cleared for exercise and duties</button>
-                        </div>
-                      )}
+                      {role === 'cmo' && f.key.includes('|P|') && ['act', 'urgent'].includes(f.status) && (() => {
+                        const k = `${f.key}#${f.status}#${day - f.days + 1}`
+                        const note = (notes[k] ?? '').trim()
+                        const log = (did: string) => void logAction({ crew: c.id, alertKey: k, day, did, feel: null, note })
+                        return (
+                          <div className="row wrap">
+                            <input type="text" aria-label={`Note on ${f.title ?? 'this notice'}`} value={notes[k] ?? ''} onChange={(e) => setNotes((p) => ({ ...p, [k]: e.target.value }))} placeholder="Note: what you found and decided" style={{ flex: 1, minWidth: 180 }} />
+                            <button className="btn sm" disabled={!note} onClick={() => log('Noted by the medical officer (still open)')} data-testid="note-notice">Note only, keep open</button>
+                            <button className="btn sm" disabled={!note} onClick={() => log('Closed by the medical officer: handled, not cleared for exercise or duties')} data-testid="close-notice-restricted">Handled, restrictions stay</button>
+                            {f.title ? <button className="btn sm" disabled={!note} onClick={() => log('Closed by the medical officer: cleared for exercise and duties')} data-testid="close-notice">Cleared for exercise and duties</button>
+                              : <span className="tiny muted">To clear for exercise, ask {c.name.split(' ')[0]} to share this area first.</span>}
+                          </div>
+                        )
+                      })()}
                       {f.action && (
                         <details>
                           <summary>For the medical officer: what the crew member was told, and the basis</summary>
@@ -135,6 +154,7 @@ export function Crew() {
                         <div className="row wrap">
                           <input type="text" aria-label={`Closing note for ${x.title}`} value={notes[x.key] ?? ''} onChange={(e) => setNotes((p) => ({ ...p, [x.key]: e.target.value }))} placeholder="Note: what you found and did" style={{ flex: 1, minWidth: 180 }} />
                           <button className="btn sm" disabled={!(notes[x.key] ?? '').trim()} onClick={() => void logAction({ crew: c.id, alertKey: x.key, day, did: `Closed by the ${role === 'cmo' ? 'medical officer' : 'commander (backup)'}: cleared for exercise and duties`, feel: null, note: (notes[x.key] ?? '').trim() })} data-testid="close-item">Close: cleared for exercise and duties</button>
+                          <button className="btn sm" disabled={!(notes[x.key] ?? '').trim()} onClick={() => void logAction({ crew: c.id, alertKey: x.key, day, did: `Closed by the ${role === 'cmo' ? 'medical officer' : 'commander (backup)'}: resolved, not cleared for exercise or duties`, feel: null, note: (notes[x.key] ?? '').trim() })} data-testid="close-item-restricted">Close: resolved, not cleared</button>
                         </div>
                       )}
                     </div>

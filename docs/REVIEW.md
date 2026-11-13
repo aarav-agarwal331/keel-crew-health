@@ -476,6 +476,44 @@ Medium-severity findings fixed in the same pass:
   daily resting heart rate (LifeSnaps), and a count of how many calibration-half people are among
   those analysed.
 
-## Round 10
+## Round 10 (2026-11-12, fresh reviewers, redeployed build)
 
-See the end of this file once the tenth round has run.
+Judge's scores: impact 7, creativity 7, validity 8, relevance 9, presentation 6 (37 of 50), "nominate:
+yes". The statistician found no high-severity issue (sixth round running). The judge found one, the
+astronaut two, the flight surgeon one.
+
+| # | Reviewer | High-severity finding | Fix |
+|---|---|---|---|
+| 1 | Judge | Three figures for the real illness heart-rate rise (4 to 5, 3.3, 4.6 bpm). | One real-data figure everywhere (about 4.6 bpm over the four days from onset); 3.3 bpm is labelled as the simulator's template. |
+| 2 | Astronaut | The mood question said "private" while the medical officer sees its status by default. | The label shows the live setting ("Medical officer sees mood: status · commander: a tier only") and links to Sharing. |
+| 3 | Astronaut | An "act now" reading alerts nobody, and there is no button. | Every personal "act now" card has a large "Alert the medical officer and commander now" button; the alert shows at the top of their Crew screens until one of them taps "Acknowledge: I am on my way". In the demo this happens on one tablet; a flight version would use the cabin network, with no Earth link needed. |
+| 4 | Flight surgeon | Closing an item was the same as clearing the person for duty, a cleared illness notice could not come back if it worsened, and the medical officer could clear a notice whose details they could not see. | Three choices: note and keep open; handled, restrictions stay (exercise stays on hold); cleared for exercise and duties (only when the area is shared). A notice's closure applies to its status and pattern at the time: if it worsens or changes, it reopens. |
+
+Medium-severity findings fixed in the same pass:
+
+- **Yesterday's "act now"** (flight surgeon): becomes "act today: still waits for the medical officer",
+  without the "call a crewmate" prefix, and stays on the medical officer's list.
+- **Low blood sugar first step** (flight surgeon): "Take sugar now if you can swallow, and call a
+  crewmate to you."
+- **Blood sugar units** (flight surgeon): a value under 35 asks whether the meter showed mmol/L and gives
+  the conversion.
+- **Exercise wording** (astronaut): one rule everywhere: "No exercise until the medical officer clears
+  you"; the illness action says the same.
+- **Today** (astronaut): extra actions from the readings sit under "When you can"; the re-check time
+  comes first in a too-soon repeat; sleep timing is described against the schedule and against usual.
+- **Guide and import card** (flight surgeon): "No threshold has been reviewed by a clinician"; the list
+  is built from the rule table but wording is adapted at run time; imported blood pressure and sugar do
+  meet the fixed lines.
+- **Presentation** (judge): the Validation chart leads with heart rate alone, highlighted, with the
+  over-budget configuration second and not highlighted; Sharing's promise names fixed rules only; the
+  replay says it runs past "today".
+- **Statistician**: the README calls the +32 row a linking analysis and bolds heart rate alone;
+  predictive value on the watch maker's own resting heart rate (about 1 in 30 alert-tier, 1 in 61
+  notices); the Method range quotes only configurations the app runs; the early-warning figure names
+  its configuration and gives heart rate alone (+16, 7 to 25); device and five-sensor claims softened
+  or given their sample size; night-to-night variation read from the results; cohort column renamed
+  "Recordings"; METHOD wording and the bed-rest learned shift (+1.0 bpm) stated.
+
+## Round 11
+
+See the end of this file once the eleventh round has run.

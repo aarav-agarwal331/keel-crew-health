@@ -760,10 +760,9 @@
     ]
    },
    "summary": "You reported a sore throat or cough, and your heart rate, HRV, skin temperature or oxygen has moved the way an infection would push it. Neither would trigger Keel alone; together they are worth acting on. Keel cannot tell you the cause.",
-   "action": "Take your temperature now. No exercise until you have. Tell the medical officer.",
+   "action": "Take your temperature now and tell the medical officer. No exercise until they clear you.",
    "steps": [
-    "Enter the thermometer reading below. At 38.0 °C or more, or with a cough or chest symptoms: no exercise today, and the medical officer decides what you do.",
-    "If you have no fever, no cough, no unusual tiredness or aches, and the medical officer agrees, a light session is reasonable. Repeat the temperature in four hours and log symptoms at check-in.",
+    "Enter the thermometer reading below. Whatever it shows, the medical officer decides when you exercise again.",
     "Drink to your fluid target and protect tonight's sleep period.",
     "Keep some distance at meals and wipe shared surfaces until this clears."
    ],
@@ -1111,10 +1110,9 @@
     ]
    },
    "summary": "Resting heart rate is up together with other readings. This combination is often seen during an infection, usually once symptoms have started, but Keel cannot tell you the cause.",
-   "action": "Take your temperature now. No exercise until you have. Tell the medical officer.",
+   "action": "Take your temperature now and tell the medical officer. No exercise until they clear you.",
    "steps": [
-    "Enter the thermometer reading below. At 38.0 °C or more, or with a cough or chest symptoms: no exercise today, and the medical officer decides what you do.",
-    "If you have no fever, no cough, no unusual tiredness or aches, and the medical officer agrees, a light session is reasonable. Repeat the temperature in four hours and log symptoms at check-in.",
+    "Enter the thermometer reading below. Whatever it shows, the medical officer decides when you exercise again.",
     "Drink to your fluid target and protect tonight's sleep period.",
     "Keep some distance at meals and wipe shared surfaces until this clears."
    ],

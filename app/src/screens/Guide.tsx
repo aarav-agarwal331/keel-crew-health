@@ -28,7 +28,7 @@ export function Guide({ focus }: { focus?: string }) {
         <Sources ids={['6', '7']} refs={REFS} />
       </Card>
       <Card title="When to involve someone else">
-        <p className="small muted">This list is built from the rule table itself, so it cannot disagree with what Keel does.</p>
+        <p className="small muted">This list is built from the rule table. At run time Keel also adapts the wording (who to tell, repeats, a crewmate first), but never the thresholds.</p>
         <ul className="list">
           <li><strong>Now, whatever else Keel shows.</strong> Tell the medical officer; if you are the medical officer, tell the commander.
             <ul className="list"><li>Any of these symptoms: {SYMPTOMS.filter((x) => x.red_flag).map((x) => x.label.toLowerCase()).join('; ')}.</li>{NOW.map((r) => <li key={r.id}>{r.title}.</li>)}</ul></li>
@@ -37,7 +37,7 @@ export function Guide({ focus }: { focus?: string }) {
           <li><strong>When a link opens:</strong> anything the medical officer wants a flight surgeon to review. The daily summary contains only what you chose to share.</li>
           <li><strong>If you have thoughts of harming yourself, or cannot function:</strong> tell the medical officer now. Keel shows that tick to the medical officer only.</li>
         </ul>
-        <p className="small muted">Keel gives first steps (rest, fluids, a repeat reading, sugar for a low blood sugar) but never recommends medication; that is for the medical officer with the onboard medical checklist. The fixed thresholds are public clinical guidance for adults on Earth. Several are provisional values that no flight surgeon has reviewed, and each rule below says which. A fixed rule looks at every reading from the most recent day that has one, and anything needing attention now or today stays on the medical officer's list until they close it with a note. "Steady" on the Today screen means no change was detected, not that you are well.</p>
+        <p className="small muted">Keel gives first steps (rest, fluids, a repeat reading, sugar for a low blood sugar) but never recommends medication; that is for the medical officer with the onboard medical checklist. The fixed thresholds are public clinical guidance for adults on Earth. No threshold has been reviewed by a clinician; values without a cited source are marked provisional in the rule below. A fixed rule looks at every reading from the most recent day that has one, and anything needing attention now or today stays on the medical officer's list until they close it with a note. "Steady" on the Today screen means no change was detected, not that you are well.</p>
       </Card>
       <Card title="Everything Keel can recommend" id="actions">
         <p className="small muted">The complete list of {RULES.length} rules. Each has one action, how soon, who should know, and where the advice comes from. Nothing else can appear on an alert.</p>
