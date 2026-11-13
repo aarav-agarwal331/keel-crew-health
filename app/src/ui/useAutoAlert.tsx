@@ -6,7 +6,7 @@ import { useApp } from '../state'
  *  When `trigger` is true and something is "act now", the medical officer and commander are alerted after
  *  ten seconds unless the crew member cancels; leaving the screen sends it at once.  With emergency sharing
  *  off the alert still goes, but says only that the crew member needs help.  If the medical officer has not
- *  acknowledged five minutes later, the alert is sent again (while this screen is open; a flight version would escalate from the receiving tablets). */
+ *  acknowledged five minutes later, the alert is sent again by ui/useEscalation, whatever screen is open. */
 export function useAutoAlert(trigger: boolean) {
   const { today, me, day, actions, logAction, mission } = useApp()
   const [autoAlert, setAutoAlert] = useState<{ key: string; ts: number } | null>(null)
@@ -52,20 +52,9 @@ export function useAutoAlert(trigger: boolean) {
     if (pend.every((p) => resolved(p.alertKey)) || alreadySent('')) return
     void logAction({ crew: me, alertKey: akey, day, did: 'Alerted the crew', feel: null, ...alertFields(urgent, ' (sent automatically)', contextNote(today(me, day)?.findings ?? [])) })
   })
-  // escalation: no acknowledgement from the medical officer (or, when the patient is the medical officer, the commander)
-  const patientIsCmo = mission.crew.find((c) => c.id === me)?.role === 'cmo'
+  // repeats until acknowledged are sent by the app itself (ui/useEscalation), whichever screen is open
   const st = alertState(actions, me, urgent.map((x) => x.key))
-  const sent = st.sent ? [st.sent] : []
-  const acked = st.acks.some((x) => /medical officer/.test(x.note) || (patientIsCmo && /commander/.test(x.note)))
   const escalated = st.covering.some((x) => /sent again/.test(x.note))
-  useEffect(() => {
-    // repeat every five minutes until the medical officer acknowledges (not just once)
-    if (!sent.length || acked || !urgent.length) return
-    const last = Math.max(...st.covering.map((x) => x.ts))
-    const due = last + 5 * 60e3 - Date.now()
-    const t = window.setTimeout(() => void logAction({ crew: me, alertKey: akey, day, did: 'Alerted the crew', feel: null, ...alertFields(urgent, ' (no answer after 5 minutes: sent again)') }), Math.max(0, due))
-    return () => window.clearTimeout(t)
-  })
   const autoLeft = autoAlert ? Math.max(0, 10 - Math.floor((Date.now() - autoAlert.ts) / 1000)) : 0
   const autoCancelled = autoAlert ? actions.some((x) => x.alertKey === autoAlert.key && x.did === 'Alert cancelled') : false
   const cancel = () => { if (!autoAlert) return; cancelRef.current(); void logAction({ crew: me, alertKey: autoAlert.key, day, did: 'Alert cancelled', feel: null, note: 'cancelled by the crew member' }) }

@@ -1,4 +1,4 @@
-/** What an alert carries.  Items marked "medical officer only" never reach the commander: not their title,
+/** What an alert carries.  Serious symptoms (medical officer only) never reach the commander: not their title,
  *  and when every item is such an item, not the alert at all. */
 export function alertFields(urgent: { title: string; cmoOnly?: boolean; patientIsCmo?: boolean }[], suffix = '', cmoContext = '') {
   const priv = (x: (typeof urgent)[number]) => !!x.cmoOnly && !x.patientIsCmo

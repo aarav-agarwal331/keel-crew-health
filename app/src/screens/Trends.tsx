@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { concernDev, deployedScore, episodes } from '../core/detect'
-import { CATEGORIES, IND, INDICATORS, shortDay } from '../core/mission'
+import { CATEGORIES, IND, INDICATORS, rawSeries, shortDay } from '../core/mission'
 import { useApp } from '../state'
 import { TrendChart, TrendLegend, type Marker } from '../ui/charts'
 import { Card, href, Seg } from '../ui/kit'
@@ -58,7 +58,15 @@ export function Trends({ focus }: { focus?: string }) {
             <Card key={def.id} id={`ind-${def.id}`} className={focus === def.id ? 'action' : ''} title={def.label} right={<span className="num"><strong style={{ fontSize: '1.25rem' }}>{last === undefined ? '–' : last.toFixed(def.decimals)}</strong> <span className="small muted">{def.unit}</span></span>}>
               <TrendChart values={b.values} expected={band ? b.expected : undefined} lo={band ? b.lo : undefined} hi={band ? b.hi : undefined} from={from} to={day}
                 labelFor={(t) => shortDay(mission, t)} unit={def.unit} decimals={def.decimals} markers={markersFor(def.id)} refLines={refLines} concern={def.concern} ariaLabel={`${def.label} over time against your usual range`} />
-              <p className="small muted">{def.plain}{std ? ` Your usual is not the standard (${std.label.replace(/^Planned: /, 'planned ').replace(/^Scheduled /, 'scheduled ')}).` : ''}{def.id === 'glucose' ? ' Shown against general reference values, not a personal range.' : ''}</p>
+              <p className="small muted">{def.plain}{std ? ` Your usual range can differ from the standard (${std.label.replace(/^Planned: /, 'planned ').replace(/^Scheduled /, 'scheduled ')}).` : ''}{def.id === 'glucose' ? ' Shown against general reference values, not a personal range. 99 is the fasting reference; readings after food are normally higher, so Keel flags blood sugar only by its fixed low and high lines (see the Guide).' : ''}</p>
+              {def.id === 'rad' && (() => {
+                const rad = rawSeries(mission, me, 'rad', mine)
+                const fd = day - mission.pre_days
+                const cum = rad.slice(mission.pre_days, day + 1).filter((v) => !Number.isNaN(v)).reduce((x, y) => x + y, 0)
+                if (fd <= 20 || !mission.flight_days) return null
+                const leg = Math.round((cum / (fd + 1)) * mission.flight_days / 10) * 10
+                return <p className="small muted" data-testid="rad-projection">{Math.round(cum)} mSv so far. At this mission's average daily rate, about {leg} mSv by flight day {mission.flight_days}, the end of this leg; a return trip at the same rate would bring the total to about {leg * 2} mSv{leg * 2 > 600 ? ', past the 600 mSv career limit (which also counts earlier flights)' : ' (the 600 mSv career limit also counts earlier flights)'}. Dose planning is for the flight surgeon and commander.</p>
+              })()}
               <details>
                 <summary>Why it matters, how to measure, and the numbers</summary>
                 <div className="col small">

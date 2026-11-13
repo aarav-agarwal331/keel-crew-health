@@ -314,3 +314,19 @@ test('withdrawing a typing mistake never creates a reading nobody took', async (
   await expect(log).toContainText('58')
   await expect(log.locator('li', { hasText: 'Blood sugar 50' })).toHaveCount(1)
 })
+
+test('an unacknowledged alert is sent again after five minutes while the patient is on another screen', async ({ page }) => {
+  await page.clock.install()
+  await goOffline(page)
+  await nav(page, '#/checkin/demo')
+  await page.getByTestId('save-checkin').last().click()
+  await expect(page.getByTestId('checkin-act-now')).toBeVisible()
+  // leaving Check-in sends the alert at once; the patient then looks at something else entirely
+  await nav(page, '#/more')
+  await page.clock.runFor(6 * 60_000)
+  await nav(page, '#/crew')
+  const alert = page.getByTestId('crew-alert').first()
+  await expect(alert).toContainText('Sent 2 times')
+  await expect(page.getByTestId('crew-alert')).toHaveCount(1)
+  await expect(alert.getByTestId('alert-items')).toBeVisible()
+})

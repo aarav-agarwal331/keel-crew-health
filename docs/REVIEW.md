@@ -1152,6 +1152,57 @@ surgeon asked for the 12-hour change), automatic alerts for sensor-derived "now"
 opened source), splitting the injury red flag (a clinical call), a three-group device split and the
 planned window at the alert tier (pipeline work).
 
-## Round 28
+## Round 28 (2026-11-12, fresh reviewers, redeployed build)
 
-See the end of this file once the twenty-eighth round has run.
+Judge's scores: impact 8, creativity 8, validity 8, relevance 8, presentation 6 (38 of 50), "nominate:
+yes", no high-severity issue. The statistician found none ("every number I checked … matches the result
+JSON files"; no undisclosed leakage). The astronaut found two and the flight surgeon one:
+
+| # | Reviewer | High-severity finding | Fix |
+|---|---|---|---|
+| 1 | Astronaut | Only "thoughts of harming yourself" was marked medical-officer-only, so a commander who got "reason withheld" could infer it. | Every red-flag symptom now reaches the commander identically: "needs the medical officer urgently", tier "Act now", no title, symptom or area. A unit test asserts the commander's view is identical for self-harm, chest pain, harm to others and tooth pain. Check-in, Sharing, Guide, Alert, METHOD, README and the submission texts updated (the project page and judge answers had wrongly listed injury, tooth pain and swelling as private). |
+| 2 | Astronaut | After an urgent reading the patient was told to keep the screen open so the alert could repeat. | Repeats now come from the app itself (`ui/useEscalation.tsx`), every five minutes until the medical officer acknowledges, whatever screen is open; an end-to-end test leaves the patient on More, advances the clock six minutes and finds "Sent 2 times". Today now says "Do the step above, and call out to a crewmate now", says nothing sounds in this prototype, and names who acknowledged. |
+| 3 | Flight surgeon | In imported personal mode a low blood sugar lost "take sugar": the emergency override replaced it. | Personal mode now leads with fast sugar if awake and able to swallow, a 15-minute re-check, then emergency help if drowsy, confused or not better; crew-member steps are removed (unit test). |
+
+Medium-severity findings fixed in the same pass:
+
+- **Stale same-day advice** (flight surgeon): "today" items from an earlier day are reworded after 12
+  hours and ask for a new reading.
+- **Overdue same-day items** (flight surgeon): the commander's card says, without content, when an item
+  has waited more than a day for the medical officer.
+- **Crew alert** (judge, flight surgeon low): one banner per crew member with "sent N times", and the
+  urgent items as a list rather than one sentence.
+- **Check-in after an urgent save** (astronaut): the action is pinned at the top of the screen with the
+  countdown.
+- **Commander labels** (astronaut): one short legend that matches the tiles.
+- **Sharing** (astronaut): the medical-officer row no longer says "not what any notice says"; it states
+  that the title of an infection-like notice is included in an urgent alert.
+- **Cabin card** (astronaut): the radiation projection moved to the radiation chart on Trends; carbon
+  dioxide above the advisory line says what to do (or that there is nothing to do).
+- **Change wording** (astronaut): "the last three days are further from your usual than N of your
+  previous M days were", and a reading back inside the range says "this is not over yet".
+- **Readability** (astronaut): small text 15 px, tiny 14 px; disabled buttons no longer faded.
+- **Validation** (judge, statistician): the over-budget linking-analysis tile is now a collapsed
+  section; the "do not show" box leads with three plain sentences with the numbers one tap away;
+  "one written step (each threshold cited or marked provisional)"; "no useful early warning".
+- **Detection by illness kind** (statistician): both tiers shown for symptom-dated COVID-19, test-dated
+  COVID-19 and other illnesses, stating that the alert-tier shares rest almost entirely on symptomatic
+  COVID-19.
+- **Simulator illness template** (statistician): the app and METHOD now say the fit's baseline biases the
+  simulated rise low by about 0.7 bpm.
+- **Replay** (statistician): no longer says real illnesses may show more clearly; this scripted illness
+  is larger than most real ones.
+- **README** (judge): opens with the offline alert loop and two screenshots.
+- Low: access-log wording, the glucose reference line on Trends, "Your usual range can differ from the
+  standard", demo button no longer the brightest control on Today.
+
+Not done, with reasons: raising the z-score cap or scoring uncapped values (judge) changes the deployed
+detector after its evaluation and needs a full pipeline rerun and re-review, so the documented
+limitation stays; refitting the simulator template against the longer baseline (statistician) is
+pipeline work, disclosed instead; a wholesale copy edit of every screen (judge, astronaut) was done only
+where a reviewer pointed at specific text; renaming emergency sharing (astronaut) would desynchronise
+the docs and pitch for little gain.
+
+## Round 29
+
+See the end of this file once the twenty-ninth round has run.

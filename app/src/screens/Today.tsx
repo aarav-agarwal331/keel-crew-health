@@ -97,7 +97,7 @@ export function Today() {
         <section className="card intro" data-testid="intro">
           <p className="small"><strong>When Earth can't answer, Keel tells you what to do and who to tell.</strong> Advises you at once on a dangerous reading you enter, and alerts the medical officer and commander within ten seconds (on their Crew screens; over the cabin network in a flight version). You choose who sees what. It also watches your readings against your own normal. Demo: {crew?.name.split(' ')[0]}'s tablet, simulated {mission.title}.</p>
           <div className="row wrap">
-            <a className="btn primary sm" href={href('checkin', 'demo')} data-testid="intro-danger">Demo: enter a dangerous reading</a>
+            <a className="btn sm" href={href('checkin', 'demo')} data-testid="intro-danger">Demo: enter a dangerous reading</a>
             <a className="btn sm" href={href('replay')} data-testid="intro-replay">Demo: replay a scripted event</a>
             <a className="btn sm" href={href('validation')}>The evidence</a>
             <button className="btn sm" onClick={() => { setIntro(false); void store.putKv('intro-dismissed', true) }} aria-label="Hide this introduction">Hide</button>
@@ -134,14 +134,13 @@ export function Today() {
             const akey = `alert|${urgentNow.map((x) => x.key).sort().join('+')}`
             // an item counts as alerted, and acknowledged, if any earlier alert covered it
             const { sent, acks } = alertState(actions, me, urgentNow.map((x) => x.key))
-            const onlyCmo = urgentNow.every((x) => x.cmoOnly && !x.patientIsCmo)
             const on = sharing[me]?.emergency !== false
             return <div className="col">
               {auto.counting && <div className="banner strong" role="alert"><p><strong>Alerting the medical officer and commander in {auto.autoLeft} s.</strong></p><p className="small" data-testid="cancel-auto-alert-today">A typing mistake? Withdraw that reading on Check-in; the alert then goes only for anything else.</p></div>}
-              {!sent && <button className="btn alert block" style={{ minHeight: 72, fontSize: '1.2rem' }} onClick={() => void logAction({ crew: me, alertKey: akey, day, did: 'Alerted the crew', feel: null, ...alertFields(urgentNow, '', contextNote(a.findings)) })} data-testid="alert-crew">{onlyCmo ? 'Alert the medical officer now' : 'Alert the medical officer and commander now'}</button>}
+              {!sent && <button className="btn alert block" style={{ minHeight: 72, fontSize: '1.2rem' }} onClick={() => void logAction({ crew: me, alertKey: akey, day, did: 'Alerted the crew', feel: null, ...alertFields(urgentNow, '', contextNote(a.findings)) })} data-testid="alert-crew">Alert the medical officer and commander now</button>}
               {sent && !auto.escalated && !acks.some((x) => /medical officer/.test(x.note)) && Date.now() - sent.ts > 5 * 60e3 && <button className="btn alert block" onClick={() => void logAction({ crew: me, alertKey: akey, day, did: 'Alerted the crew', feel: null, ...alertFields(urgentNow, ' (no answer after 5 minutes: sent again)') })} data-testid="alert-again">No answer yet: alert them again</button>}
-              {sent && <p className="banner strong" role="status"><strong>Alert sent at {new Date(sent.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}.</strong> {acks.length ? acks.map((x) => `Acknowledged ${x.note} at ${new Date(x.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}.`).join(' ') : 'Not acknowledged yet: it stays at the top of their Crew screens until the medical officer does.'}</p>}
-              {sent && <p className="small"><strong>Keep this screen open until the medical officer answers.</strong> Until then Keel sends the alert again every five minutes; it cannot once the tablet is put away, so call out to a crewmate as well.</p>}
+              {sent && <p className="banner strong" role="status"><strong>Alert sent at {new Date(sent.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}.</strong> {acks.length ? acks.map((x) => `Acknowledged ${x.note.replace(/^by the (medical officer|commander)$/, (_m, r) => `by ${mission.crew.find((c) => c.role === (r === 'commander' ? 'commander' : 'cmo'))?.name ?? `the ${r}`} (${r})`)} at ${new Date(x.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}.`).join(' ') : 'Not acknowledged yet: it stays at the top of their Crew screens until the medical officer does.'}</p>}
+              {sent && !acks.some((x) => /medical officer/.test(x.note)) && <p className="small" data-testid="help-coming"><strong>Do the step above, and call out to a crewmate now.</strong> In this prototype nothing makes a sound: the alert sits at the top of the medical officer's and commander's Crew screens. You do not need to keep this screen open; Keel sends it again every five minutes until the medical officer answers.</p>}
               <p className="small">{on ? sent ? 'The details are visible on their Crew screens (emergency sharing).' : 'The details are visible on their Crew screens (emergency sharing). Saving an urgent check-in alerts them after ten seconds; this button alerts them now.' : 'Emergency sharing is off: the alert says only that you need help, not why.'}</p>
             </div>
           })()}
@@ -225,12 +224,12 @@ export function Today() {
               <a className="col" style={{ gap: 0, textDecoration: 'none', color: 'inherit' }} href={href('trends', 'co2')}>
                 <span className="small muted">Carbon dioxide {a.co2Advisory !== null && <StatusTag status="watch" label="" size={15} />}</span>
                 <span><span className="num" style={{ fontSize: '1.4rem', fontWeight: 700 }}>{Number.isNaN(co2[day]) ? '–' : co2[day].toFixed(1)}</span> <span className="small muted">mmHg</span></span>
-                <span className="tiny muted">{a.co2Advisory !== null ? 'Above Keel\'s advisory line of 2.5' : 'Advisory line 2.5, alert at 3.0'}</span>
+                <span className="tiny muted">{a.co2Advisory !== null ? 'Above Keel\'s advisory line of 2.5. If you have a headache, log it and move to better airflow; otherwise nothing for you to do.' : 'Advisory line 2.5, alert at 3.0'}</span>
               </a>
               <a className="col" style={{ gap: 0, textDecoration: 'none', color: 'inherit' }} href={href('trends', 'rad')}>
                 <span className="small muted">Radiation dose</span>
                 <span><span className="num" style={{ fontSize: '1.4rem', fontWeight: 700 }}>{cum.toFixed(0)}</span> <span className="small muted">mSv this mission (dosimeter estimate)</span></span>
-                <span className="tiny muted">Today {Number.isNaN(rad[day]) ? '–' : rad[day].toFixed(2)} mSv.{fd > 20 && mission.flight_days ? ` At this mission's average daily rate so far, about ${Math.round((cum / (fd + 1)) * mission.flight_days / 10) * 10} mSv by flight day ${mission.flight_days}, the end of this leg; ${Math.round((cum / (fd + 1)) * mission.flight_days * 2 / 10) * 10 > 600 ? 'a return trip at the same rate would take the total past the 600 mSv career limit.' : `a return trip at the same rate would bring the total to about ${Math.round((cum / (fd + 1)) * mission.flight_days * 2 / 10) * 10} mSv.`}` : ''} The 600 mSv career limit also counts earlier flights.</span>
+                <span className="tiny muted">Today {Number.isNaN(rad[day]) ? '–' : rad[day].toFixed(2)} mSv. Nothing for you to do; the projection for the mission is on the radiation chart.</span>
               </a>
             </div>
           </Card>

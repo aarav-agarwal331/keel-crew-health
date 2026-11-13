@@ -105,7 +105,7 @@ export interface ActionLog {
   ts: number
   /** an alert about items the commander must not see */
   cmoOnly?: boolean
-  /** the alert text the commander sees (without items marked "medical officer only") */
+  /** the alert text the commander sees (without serious symptoms, which go to the medical officer only) */
   cmdNote?: string
 }
 
@@ -181,7 +181,7 @@ export interface Finding {
   categories: string[]
   /** the entered readings this fixed rule is looking at (every one from the most recent day with a reading) */
   readings?: Reading[]
-  /** red-flag symptoms that go to the medical officer only (the commander is told only when the patient is the medical officer) */
+  /** a serious (red-flag) symptom: what it is goes to the medical officer only (the commander is told what only when the patient is the medical officer) */
   cmoOnly?: boolean
   /** the patient is the crew medical officer, so the commander is the backup */
   patientIsCmo?: boolean

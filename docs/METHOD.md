@@ -459,7 +459,8 @@ the same code version). Real data: 251 people, 107 illness episodes, two sensors
   whose rise was about 2.7 bpm, so much of the gap may be split-half noise. The two sides also use different
   baselines: the fit sets days −14 to −9 to zero, while the check measures from days −49 to −22, and in the
   validation half real days −14 to −9 already sit about 0.7 bpm above that baseline against 0.1 simulated,
-  so part of the gap is a matter of definition); HRV variability
+  so part of the gap is a matter of definition, and it biases the fitted rise low by roughly that
+  0.7 bpm; a refit against the same baseline was not done); HRV variability
   (37% too high); sleep carry-over; thresholds calibrated in simulation and applied to 72 real quiet
   people (1.30 false alerts per person-month against 1.00, 0.36 against 0.25) and, with five
   indicators, to 16 LifeSnaps people of the validation half (1.34 and 0.58); nights under six hours
@@ -480,9 +481,9 @@ the same code version). Real data: 251 people, 107 illness episodes, two sensors
   commander always sees the readiness tier, never the reasons unless shared. Crew-wide counts are
   shown only when three or more people are affected. With emergency sharing on (the default, and a
   setting the crew member can switch off), an "act now" finding is shown to the medical officer and
-  to the commander as backup, except red-flag symptoms marked "medical officer only" (thoughts of
-  harming yourself), which the commander sees only when the
-  patient is the medical officer. Medication classes and photos added at check-in belong to the
+  to the commander as backup, except red-flag symptoms: for every one of them the commander is told
+  only that the person needs the medical officer urgently (the same text whichever symptom it is, so
+  none can be inferred), and sees which only when the patient is the medical officer. Medication classes and photos added at check-in belong to the
   Symptoms area and are visible at full detail; under emergency sharing, today's medication classes are
   also shown to the medical officer while something urgent is open for that person (not for cabin alerts). Nothing is sent to the ground automatically.
   Views are logged.

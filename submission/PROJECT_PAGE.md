@@ -49,8 +49,8 @@ is decision support, not a diagnostic device.
   officer's view red, and exercise is held while any stop-or-rest advice is open. "Now" and "today"
   findings stay on the medical officer's list until the medical officer closes them with a note.
 - **Sharing.** Per role and per body system, four levels from private to full detail, with a preview of
-  exactly what each role sees and an access log. Some red-flag symptoms (thoughts of self-harm, an
-  injury, tooth pain, one-sided swelling) go to the medical officer only, not the commander. Under
+  exactly what each role sees and an access log. Which red-flag symptom someone reported goes to the medical officer only;
+  the commander is told only that they need the medical officer urgently, the same for every symptom. Under
   emergency sharing the medical officer sees the symptom names and the readings with their times.
 - **Crew readiness.** Before a demanding task such as a spacewalk the commander sees whether Keel has
   flags for each crew member, without the reasons unless the crew member shares them. It is an input

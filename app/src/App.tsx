@@ -15,6 +15,7 @@ import { Trends } from './screens/Trends'
 import { Validation } from './screens/Validation'
 import { useApp } from './state'
 import { href, Icon, KeelMark, ScreenBoundary, Simulated, useRoute } from './ui/kit'
+import { useEscalation } from './ui/useEscalation'
 
 const NAV = [
   { id: 'today', label: 'Today', icon: 'today' },
@@ -28,6 +29,7 @@ const MORE = ['more', 'sharing', 'link', 'replay', 'validation', 'method', 'data
 export default function App() {
   const route = useRoute()
   const { mission, day, link, today, me } = useApp()
+  useEscalation()
   const page = route[0]
   const a = today()
   const crew = mission.crew.find((c) => c.id === me)

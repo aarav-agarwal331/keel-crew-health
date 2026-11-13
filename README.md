@@ -6,11 +6,20 @@
 
 ![Keel's Today screen on a tablet: status, one recommended action, and what changed](docs/review/01-today-1.png)
 
+**The loop, with no Earth link:** a crew member enters a dangerous reading → Keel shows one written
+step at once → ten seconds later the medical officer and commander are alerted on their Crew screens,
+and the alert repeats every five minutes until the medical officer acknowledges.
+
+| Crew member, right after entering it | Medical officer's Crew screen |
+|---|---|
+| ![Today after a blood sugar of 50: take sugar now, alert sent](docs/review/16-today-after-entering-readings-1.png) | ![The medical officer's alert, one line per urgent item](docs/review/17-crew-as-medical-officer-after-readings-1.png) |
+
 Try it in 60 seconds:
 
 1. Open the live demo. You are on a crew member's tablet during a simulated Mars transit, in a link blackout.
-2. Tap **Demo: replay a scripted event** and press Play.
-3. Tap **The evidence** to see how well it works on real data, and what it cannot do.
+2. Tap **Demo: enter a dangerous reading**, save, then open **Crew** to see the alert arrive.
+3. Tap **Demo: replay a scripted event** and press Play, then **The evidence** to see how well it works
+   on real data, and what it cannot do.
 
 On the International Space Station a flight surgeon is seconds away by voice and talks privately with
 each crew member about once a week; routine vital signs are not streamed to the ground. On the way to
@@ -53,7 +62,7 @@ input to it.
 - **Auditable advice.** A fixed table of 45 rules maps patterns, entered readings and reported
   symptoms to cited countermeasures, each with how soon and who. No language model writes medical text.
 - **Crew-owned data.** Per-role, per-area sharing with an access log; the commander sees readiness,
-  not reasons, and some symptoms go to the medical officer only.
+  not reasons, and which serious symptom someone reported goes to the medical officer only.
 
 ## Headline results
 

@@ -106,7 +106,7 @@ describe('emergency consent', () => {
   it('without consent, nobody sees it', () => {
     for (const role of ['cmo', 'commander', 'ground'] as const) expect(viewFor(role, urgent, none()).findings).toHaveLength(0)
   })
-  it('symptoms marked for the medical officer only are not shown to the commander, unless the patient is the medical officer', () => {
+  it('the commander is told that a serious symptom is open, never which one (the same for every symptom), unless the patient is the medical officer', () => {
     const share = defaultSharing()
     for (const c of SHARE_CATEGORIES) { share.commander[c] = 'none'; share.cmo[c] = 'none' }
     const run = (crewId: string, symptoms: string[]) => {
@@ -115,13 +115,15 @@ describe('emergency consent', () => {
     }
     const patient = m.crew.find((c) => c.role !== 'cmo' && c.role !== 'commander')!.id
     const priv = run(patient, ['self_harm'])
-    expect(viewFor('cmo', priv, share).findings.some((f) => f.emergency)).toBe(true)
-    expect(viewFor('commander', priv, share).findings.length).toBe(0)
+    expect(viewFor('cmo', priv, share).findings.some((f) => f.emergency && f.symptoms?.length)).toBe(true)
     expect(viewFor('ground', priv, share).findings.length).toBe(0)
-    // chest pain is shown to both
-    expect(viewFor('commander', run(patient, ['chest_pain']), share).findings.some((f) => f.emergency)).toBe(true)
-    // a private item together with a non-private one is shown (the commander needs the non-private one)
-    expect(viewFor('commander', run(patient, ['self_harm', 'chest_pain']), share).findings.some((f) => f.emergency)).toBe(true)
+    // what the commander sees is identical whichever symptom it is: no title, no symptom, no action, no area
+    const strip = (v: ReturnType<typeof viewFor>) => JSON.stringify(v.findings.map(({ key: _k, days: _d, ...rest }) => rest))
+    const cmdSelf = viewFor('commander', priv, share)
+    expect(cmdSelf.findings).toHaveLength(1)
+    expect(cmdSelf.findings[0]).toMatchObject({ emergency: true, private: true, category: 'private' })
+    expect(cmdSelf.findings[0].title).toBeUndefined()
+    for (const s of ['chest_pain', 'harm_others', 'tooth']) expect(strip(viewFor('commander', run(patient, [s]), share))).toBe(strip(cmdSelf))
     // the medical officer as patient: the commander is the backup and sees it
     const cmo = m.crew.find((c) => c.role === 'cmo')!.id
     expect(viewFor('commander', run(cmo, ['self_harm']), share).findings.some((f) => f.emergency)).toBe(true)

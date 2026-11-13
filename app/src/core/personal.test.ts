@@ -17,5 +17,8 @@ it('imported personal data sends urgent readings to real care, never to a crew',
   const f = a.findings.find((q) => q.ruleId === 'R-V-GLU-LO2')!
   expect(f).toBeDefined()
   expect(f.action).toMatch(/local emergency number/)
+  // a low is treated first: sugar comes before the call for help
+  expect(f.action).toMatch(/^If you are awake and can swallow, take fast sugar now/)
   expect(f.action).not.toMatch(/crewmate|medical officer/)
+  expect(f.steps.join(' ')).not.toMatch(/crew member|crewmate|medical officer|whoever is with you/i)
 })

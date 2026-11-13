@@ -104,9 +104,9 @@ Keel is decision support and a demonstration, not a medical device.
 Some things are always visible. The commander sees a three-level flag for each person, never better
 than that person's own worst reading, so nobody is assigned to a spacewalk blind. A red-flag symptom
 or an "act now" reading is shown at once to the medical officer (an urgent reading also turns its
-body area and the medical officer's view red) and stays on that list until the medical officer closes it with a note; most also
-reach the commander as backup, but some (thoughts of self-harm, an injury, tooth pain, one-sided
-swelling) go to the medical officer only. Under emergency sharing the medical officer sees the
+body area and the medical officer's view red) and stays on that list until the medical officer closes it with a note; an urgent reading also
+reaches the commander as backup, while for a red-flag symptom the commander is told only that the
+person needs the medical officer urgently, the same for every symptom, so none can be inferred. Under emergency sharing the medical officer sees the
 symptom names and the readings with their times. Cabin readings are never private. What stays private
 is the reason behind an ordinary flag. Where to draw that line is a policy choice for an agency; Keel
 makes it explicit and shows each person exactly what every role sees.

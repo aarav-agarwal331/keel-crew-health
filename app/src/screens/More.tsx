@@ -10,7 +10,7 @@ export function More() {
       <div className="col">
         <LinkRow to={href('replay')} title="Mission replay" sub="Watch a health event develop, get detected, and turn into an action, in under a minute." />
         <LinkRow to={href('link')} title="Earth link" sub="Signal delay, blackouts, what is queued for the ground. Includes the demo control that cuts the link." />
-        <LinkRow to={href('sharing')} title="Sharing and privacy" sub="You choose what each role can see. Every access is logged." />
+        <LinkRow to={href('sharing')} title="Sharing and privacy" sub="You choose what each role can see. Each time the medical officer or commander opens Crew, it is logged." />
         <LinkRow to={href('validation')} title="Does it work? Validation" sub="Detection rates and false alerts measured on real wearable data and on simulated missions." />
         <LinkRow to={href('method')} title="How Keel works, and its limits" sub="The method in plain language, with equations and limitations." />
         <LinkRow to={href('guide')} title="Guide: measurements and everything Keel can recommend" sub="What each reading means, how to take it, why space changes it, and the full list of actions with sources." />

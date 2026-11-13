@@ -62,8 +62,8 @@ button { font: inherit; color: inherit; }
 :focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; border-radius: 6px; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .muted { color: var(--text-2); }
-.small { font-size: 0.86rem; }
-.tiny { font-size: 0.82rem; }
+.small { font-size: 0.94rem; }
+.tiny { font-size: 0.88rem; }
 .num { font-variant-numeric: tabular-nums; }
 
 /* ---- shell ---- */
@@ -110,7 +110,7 @@ main { flex: 1; width: 100%; max-width: 980px; margin: 0 auto; padding: 16px 16p
 .btn.danger { border-color: var(--serious); }
 .btn.alert { background: var(--critical); border-color: var(--critical); color: #fff; font-weight: 800; }
 .btn[aria-pressed='true'], .btn.on { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
-.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn:disabled { opacity: 1; color: var(--text-2); border-style: dashed; cursor: not-allowed; }
 .seg { display: inline-flex; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: var(--surface-2); flex-wrap: wrap; }
 .seg button { min-height: 44px; padding: 6px 14px; border: 0; background: transparent; font-weight: 600; font-size: 0.88rem; cursor: pointer; color: var(--text-2); }
 .seg button[aria-pressed='true'] { background: var(--accent); color: var(--accent-ink); }

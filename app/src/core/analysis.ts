@@ -479,8 +479,15 @@ export function analyzeDay(
     // imported personal data: there is no crew, no medical officer and no commander. Urgent and same-day items
     // send the person to real care instead.
     if (m.kind === 'personal' && (out.kind === 'vital' || out.kind === 'symptom') && (out.status === 'urgent' || out.status === 'act')) {
-      out.action = out.status === 'urgent' ? 'Call your local emergency number now, or get to urgent care now. Do not wait for this app.' : 'See a doctor today, and sooner if you feel worse.'
-      out.steps = out.steps.filter((x) => !/medical officer|crewmate|commander|whoever is with you/i.test(x))
+      // a low blood sugar is treated first: sugar comes before any call for help
+      const unitQ = /^Confirm which unit/.test(out.action)
+      out.action = unitQ
+        ? 'Confirm which unit your meter shows (the question is at the top of the screen). If you feel shaky, sweaty or confused, take fast sugar now if you are awake and can swallow, and call your local emergency number if you do not feel better within 15 minutes.'
+        : r.id === 'R-V-GLU-LO-R' ? 'Take fast sugar again now if you are awake and can swallow, and call your local emergency number now: it is still low after sugar.'
+        : r.id === 'R-V-GLU-LO2' ? 'If you are awake and can swallow, take fast sugar now (juice, regular soda or glucose tablets) and re-check in 15 minutes. Call your local emergency number now if you are drowsy or confused, cannot swallow, or are not better after the re-check. If someone is with you, tell them.'
+        : r.id === 'R-V-GLU-LO' ? 'Take fast sugar now (juice, regular soda or glucose tablets) and re-check in 15 minutes. If it is still below 70, or you feel shaky, sweaty or confused, take sugar again and get medical help now. See a doctor today about why it was low.'
+        : out.status === 'urgent' ? 'Call your local emergency number now, or get to urgent care now. Do not wait for this app.' : 'See a doctor today, and sooner if you feel worse.'
+      out.steps = out.steps.filter((x) => !/medical officer|crewmate|crew member|commander|whoever is with you/i.test(x))
       out.who = 'A doctor, or your local emergency number'
     }
     return patientIsCmo && !crewWide ? forCmoAsPatient(out) : out
@@ -523,7 +530,8 @@ export function analyzeDay(
       // an earlier day's urgent item becomes "waiting for the medical officer" only twelve hours after it
       // was entered (a tick at 23:55 is still "now" at 00:05)
       const enteredTs = log.length ? Math.max(...log.filter((q) => !q.void).map((q) => q.ts), 0) : (mineE.find((q) => q.day === start)?.ts ?? 0)
-      const stale = r.urgency === 'now' && start < day && Date.now() - enteredTs > 12 * 3600e3
+      // the same for a same-day item: advice meant for a fresh reading ("repeat in 15 minutes") is not repeated days later
+      const stale = (r.urgency === 'now' || r.urgency === 'today') && start < day && Date.now() - enteredTs > 12 * 3600e3
       // a later reading the same day is back on the safe side of this rule: say so, but keep it for the medical officer
       const lastLive = vals.map((v) => { const live = force[v].log.filter((q) => !q.void); return live.length ? live[live.length - 1] : undefined }).filter((q): q is Reading => !!q)
       // The latest reading the same day is "back on the safe side" only if it triggers NO fixed rule on that
@@ -561,9 +569,11 @@ export function analyzeDay(
         // a high right after a treated low is often sugar on the fingertip: wash and repeat, no more sugar
         ...(gluHigh && !repeatOk && !!firstBad && log.some((q) => !q.void && q.v < 70 && q.ts < firstBad.ts) ? { action: `You had a low reading earlier: a high one now may be sugar on your fingertip. Wash and dry your hands and repeat now; take no more sugar. ${r.action}` } : {}),
         ...(fromFile ? { urgency: 'today' as Urgency, action: `A value in your imported file (${m.day_label ? `${m.day_label} ${start + 1}` : `day ${start + 1}`}) is past this line. If it is recent and you feel unwell, contact a doctor; in an emergency call your local emergency number.`, tierReason: 'From imported data, not a reading just taken.' } : {}),
-        ...(stale && !fromFile ? { urgency: 'today' as Urgency, action: `This ${r.scope === 'symptom' ? 'item' : 'reading'} from ${m.day_label ? `${m.day_label} ${start + 1}` : `Day ${start + 1}`} still waits for the medical officer. If you have not told them yet, tell them today; at once if you feel unwell.`, tierReason: 'It stays open until the medical officer closes it with a note.' } : {}),
+        ...(stale && !fromFile ? { urgency: 'today' as Urgency, action: `This ${r.scope === 'symptom' ? 'item' : 'reading'} from ${m.day_label ? `${m.day_label} ${start + 1}` : `Day ${start + 1}`} still waits for the medical officer. If you have not told them yet, tell them today; at once if you feel unwell.${r.scope === 'symptom' ? '' : ' Take a new reading now: the advice for this one was for that moment.'}`, tierReason: 'It stays open until the medical officer closes it with a note.' } : {}),
         ...(r.id === 'R-RED' ? { symptoms: redSyms.map((x) => SYM[x]?.label ?? x) } : {}),
-        ...(r.id === 'R-RED' ? { cmoOnly: redSyms.every((x) => (SYM[x] as { commander?: boolean }).commander === false) } : {}),
+        // every serious symptom goes to the commander the same way ("needs the medical officer urgently"), so the
+        // commander can never work out which one it is (marking only some private would give those away)
+        ...(r.id === 'R-RED' ? { cmoOnly: true } : {}),
       }))
     }
     const co2Hi = findings.some((x) => x.ruleId === 'R-CO2-HI')
@@ -764,9 +774,9 @@ export function describeChange(c: Change): string {
 
 export function unusualness(c: Change): string {
   if (Number.isNaN(c.percentile) || !c.nHist) return 'Not enough history yet to say how unusual this is for you.'
-  const days = c.daysOut > 1 ? ` Outside your usual range on each of the last ${c.daysOut} days with a reading.` : c.latestInside ? ' The latest reading is back inside your usual range; the last three days together are still unusual.' : ''
-  if ((c.nLess ?? 0) >= c.nHist) return `Your most unusual reading in ${c.nHist} days.${days}`
-  return `More unusual than ${c.nLess} of your last ${c.nHist} days.${days}`
+  const days = c.daysOut > 1 ? ` Outside your usual range on each of the last ${c.daysOut} days with a reading.` : c.latestInside ? ' The latest reading is back inside your usual range, but the last three days together are still unusual, so this is not over yet.' : ''
+  if ((c.nLess ?? 0) >= c.nHist) return `The last three days are the furthest from your usual in ${c.nHist} days of history.${days}`
+  return `The last three days are further from your usual than ${c.nLess} of your previous ${c.nHist} days were.${days}`
 }
 
 /** Which kind of evidence stands behind using this indicator. */
