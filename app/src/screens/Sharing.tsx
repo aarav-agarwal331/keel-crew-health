@@ -27,7 +27,7 @@ export function Sharing() {
       <table className="tbl small" data-testid="who-sees-table">
         <thead><tr><th>Who</th><th>Always</th><th>Your choice</th></tr></thead>
         <tbody>
-          <tr><td>Medical officer</td><td>With emergency sharing on: every urgent or same-day safety item, with the value entered, and an alert for urgent ones; while an urgent item is open, also whether your heart, oxygen, temperature and symptom readings are inside your usual range (not what any notice says), so they can help. With it off: an alert that you need help, and "an item, details private".</td><td>Each area: nothing, status, trend or full detail</td></tr>
+          <tr><td>Medical officer</td><td>With emergency sharing on: every urgent or same-day safety item, with the value entered, and an alert for urgent ones; while an urgent item is open, also whether your heart, oxygen, temperature and symptom readings are inside your usual range (not what any notice says) and today's medication classes, so they can help. With it off: an alert that you need help, and "an item, details private".</td><td>Each area: nothing, status, trend or full detail</td></tr>
           <tr><td>Commander</td><td>Your readiness tier, without the reason. It is worked out from all your readings, including private ones and items marked "medical officer only", so ticking one of those changes it. With emergency sharing on: urgent items, the value entered and an alert, as backup (never items marked "medical officer only"). With it off: an alert that you need help.</td><td>Each area</td></tr>
           <tr><td>Crew</td><td>A count when three or more crew show a change in the same area</td><td>Nothing</td></tr>
           <tr><td>Ground</td><td>With emergency sharing on: a count of urgent items still open. With it off: nothing.</td><td>Each area, for the flight surgeon</td></tr>
@@ -99,7 +99,7 @@ export function Sharing() {
       )}
 
       <Card title="Access log" right={<span className="small muted">Stored on your device</span>}>
-        {log.length === 0 && <p className="muted">Nobody has looked at your shared data yet.</p>}
+        {log.length === 0 && <p className="muted">Nobody has looked at your shared data yet. A look is logged each time the medical officer or commander opens their Crew screen; it is not a measure of whether your items are being handled.</p>}
         {log.length > 0 && <div className="tablewrap"><table data-testid="access-log">
           <thead><tr><th>When</th><th>Who</th><th>What</th><th>Level</th></tr></thead>
           <tbody>{log.map((x, i) => <tr key={i}><td>{shortDay(mission, x.day)}, {new Date(x.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</td><td>{ROLES.find((r2) => r2.id === x.role)?.label}</td><td>{x.what}</td><td>{LEVELS.find((l) => l.id === x.level)?.label}</td></tr>)}</tbody>

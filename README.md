@@ -47,7 +47,7 @@ input to it.
   (251 people, 107 episodes), with false-alert rates, intervals, a chance level and held-out people.
   The app shows the results, including where a simple method does as well and what is *not* shown.
 - **Safety rules that do not wait for a trend.** Red-flag symptoms and single readings beyond a
-  sourced threshold are acted on at once. Every reading is kept with its time, the worst one counts,
+  sourced (or marked provisional) threshold are acted on at once. Every reading is kept with its time, the worst one counts,
   and anything urgent stays on the medical officer's list until they close it with a note.
 - **Alarm fatigue treated as a hazard.** Thresholds come from an explicit false-alert budget.
 - **Auditable advice.** A fixed table of 44 rules maps patterns, entered readings and reported
@@ -103,8 +103,8 @@ Honest reading:
 - **Imported watch data uses its own model.** Because of the next point, the app runs imports on a
   heart-rate-only model calibrated on the 251 real people (expected: the "heart rate alone" row).
 - **The thresholds must match the sensors.** With simulator thresholds Keel's two-sensor method runs
-  over budget on real people (1.31 against 1.00; 0.41 against 0.25); with five sensors about 1.3 to
-  2.3 times over (16 people, 29 person-months). The opposite happens to the shipped 11-channel model when it only gets heart rate: it
+  over budget on real people (1.31 against 1.00; 0.41 against 0.25); with five sensors about 35% and
+  135% over (16 people, 29 person-months). The opposite happens to the shipped 11-channel model when it only gets heart rate: it
   alerts well under budget (0.35 against 1.00; 0.12 against 0.25). A flight system needs thresholds per sensor set, calibrated on crew data.
 - **Much of the signal is behavioural.** Heart rate alone is +19 above luck; activity adds the rest,
   because people move less once they feel ill, and that cannot be separated from isolating at home.
@@ -229,7 +229,7 @@ statement saved in [docs/CHALLENGE.md](docs/CHALLENGE.md).
 | C4 | Dynamic charts over time | Trends: 2 weeks, 8 weeks, mission |
 | C5 | Colour coding at a glance | Four status levels, each with a colour, a shape and a label (colourblind-safe) |
 | C6 | Instructions and explanations | "How to measure" on every entry field; Guide |
-| D3 | Official Resources tab | Opened 2026-11-13, after this build |
+| D3 | Official Resources tab | Not yet checked: it opens 2026-11-13, after this build (a step for the team) |
 | E1 | Works with no link, offline proven | `app/e2e/offline.spec.ts`; Link → "Cut the link now" |
 | E2 | Personal baselines; adaptation not flagged as illness | Method → Personal baselines; Validation sections 2 and 4 |
 | E3 | Detection measured on real labeled data | Validation section 1 |

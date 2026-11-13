@@ -91,3 +91,4 @@ Reversible decisions made without asking, newest last.
 | 85 | 2026-11-12 | A low blood sugar leads among urgent items. Reverses part of 83's ordering. | Review round 19 (astronaut, high; judge): it is the one item with a treatment the person can take at once. |
 | 86 | 2026-11-12 | A closure is compared with the newest abnormal reading or newly ticked symptom; pending alerts are recorded so they survive the app closing. | Review round 19 (flight surgeon): closed items reopened on unrelated saves; a closed tab lost the alert. |
 | 87 | 2026-11-12 | A save never logs a value equal to a withdrawn reading, and blood-sugar units are converted per reading on import. | Review round 20 (flight surgeon, high): phantom readings and hidden highs. |
+| 88 | 2026-11-12 | The blood-sugar meter unit is per crew member, shown on the field, and impossible converted values are refused. | Review round 21 (flight surgeon, high): a typed 50 under a stale mmol/L setting became 901. |

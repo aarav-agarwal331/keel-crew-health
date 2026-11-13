@@ -79,9 +79,9 @@ export function Alert({ alertKey }: { alertKey?: string }) {
         </Card>
       )}
 
-      {f.changes.length > 0 && (
+      {f.changes.filter((c) => c.notable || c.daysOut > 0).length > 0 && (
         <Card title="What changed">
-          {f.changes.map((c) => {
+          {f.changes.filter((c) => c.notable || c.daysOut > 0).map((c) => {
             const b = bandFor(mission, model, analyses[me], me, c.ind, mine)
             const def = IND[c.ind]
             return (

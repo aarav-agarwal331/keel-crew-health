@@ -124,7 +124,6 @@ export function Today() {
           <AskCmo f={primary} />
           {primary.steps.filter((q) => /^For whoever is with you/.test(q)).slice(0, 1).map((q) => <p key={q} className="banner strong small">{q}</p>)}
           <RepeatEntry f={primary} />
-          {primary.status === 'urgent' && others.some((x) => ['R-ILL', 'R-SYM-ILL'].includes(x.ruleId)) && <div className="col" style={{ gap: 4 }}><p className="small"><strong>An infection-like notice is also open:</strong> take your temperature now as well.</p><TempEntry /></div>}
           {primary.status === 'urgent' && !primary.crewWide && (() => {
             const urgentNow = [primary, ...others].filter((x) => x.status === 'urgent')
             const akey = `alert|${urgentNow.map((x) => x.key).sort().join('+')}`
@@ -134,7 +133,7 @@ export function Today() {
             const on = sharing[me]?.emergency !== false
             return <div className="col">
               {auto.counting && <div className="banner strong" role="alert"><p><strong>Alerting the medical officer and commander in {auto.autoLeft} s.</strong></p><p className="small" data-testid="cancel-auto-alert-today">A typing mistake? Withdraw that reading in the list below; the alert then goes only for anything else.</p></div>}
-              {!sent && <button className="btn alert block" style={{ minHeight: 72, fontSize: '1.2rem' }} onClick={() => void logAction({ crew: me, alertKey: akey, day, did: 'Alerted the crew', feel: null, ...alertFields(urgentNow, contextNote(a.findings)) })} data-testid="alert-crew">{onlyCmo ? 'Alert the medical officer now' : 'Alert the medical officer and commander now'}</button>}
+              {!sent && <button className="btn alert block" style={{ minHeight: 72, fontSize: '1.2rem' }} onClick={() => void logAction({ crew: me, alertKey: akey, day, did: 'Alerted the crew', feel: null, ...alertFields(urgentNow, '', contextNote(a.findings)) })} data-testid="alert-crew">{onlyCmo ? 'Alert the medical officer now' : 'Alert the medical officer and commander now'}</button>}
               {sent && !auto.escalated && !acks.some((x) => /medical officer/.test(x.note)) && Date.now() - sent.ts > 5 * 60e3 && <button className="btn alert block" onClick={() => void logAction({ crew: me, alertKey: akey, day, did: 'Alerted the crew', feel: null, ...alertFields(urgentNow, ' (no answer after 5 minutes: sent again)') })} data-testid="alert-again">No answer yet: alert them again</button>}
               {sent && <p className="banner strong" role="status"><strong>Alert sent at {new Date(sent.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}.</strong> {acks.length ? acks.map((x) => `Acknowledged ${x.note} at ${new Date(x.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}.`).join(' ') : 'Not acknowledged yet: it stays at the top of their Crew screens until the medical officer does.'}</p>}
               {sent && <p className="small">Until it is acknowledged, Keel sends it again every five minutes while this screen is open; it cannot once the tablet is put away.</p>}
@@ -147,6 +146,7 @@ export function Today() {
               <ol className="list steps">{others.filter((x) => x.status === 'urgent').map((x) => <li key={x.key}><span className="col" style={{ gap: 6 }}><span><strong>{x.title}.</strong> {x.action}</span>{x.steps.filter((q) => /^For whoever is with you/.test(q)).slice(0, 1).map((q) => <span key={q} className="banner strong small">{q}</span>)}<RepeatEntry f={x} /></span></li>)}</ol>
             </div>
           )}
+          {primary.status === 'urgent' && others.some((x) => ['R-ILL', 'R-SYM-ILL'].includes(x.ruleId)) && <div className="col" style={{ gap: 4 }}><p className="small"><strong>After the above:</strong> an infection-like notice is also open, so take your temperature when you can.</p><TempEntry secondary /></div>}
           {(primary.also ?? []).length > 0 && <div><p className="small"><strong>Also today, from the same readings:</strong></p><ul className="list small">{primary.also!.map((x) => <li key={x.title}><strong>{x.title}.</strong> {x.action}</li>)}</ul></div>}
           {['R-ILL', 'R-SYM-ILL', 'R-V-TEMP', 'R-V-TEMP-HI'].includes(primary.ruleId) && primary.status !== 'urgent' ? <TempEntry /> : <><ReadingLog readings={primary.readings ?? []} title={[primary, ...others].filter((x) => x.status === "urgent").length > 1 ? "Readings behind the first item" : "Readings this is based on"} /></>}
           <a className="btn block" href={href('alert', primary.key)} data-testid="open-alert">Why, and what next <Chev /></a>

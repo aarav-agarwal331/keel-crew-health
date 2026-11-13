@@ -939,6 +939,37 @@ Not done, with reasons: one grouping of body areas across screens and one alert 
 a minor-injury split of the red-flag list (for a clinician), an erase-only-my-data button, refusing a
 fourth photo, intervals over fold seeds and pretend-date seeds (pipeline work).
 
-## Round 21
+## Round 21 (2026-11-12, fresh reviewers, redeployed build)
 
-See the end of this file once the twenty-first round has run.
+Judge's scores: impact 7, creativity 8, validity 7, relevance 8, presentation 5 (35 of 50), "nominate:
+yes", **no high-severity issue**. The statistician found none either. The astronaut found two, the
+flight surgeon one:
+
+| # | Reviewer | High-severity finding | Fix |
+|---|---|---|---|
+| 1 | Astronaut (flight surgeon low) | On the emergency screen the brightest button was the thermometer for the open infection notice, placed above the heart-rate item. | The temperature prompt moved below the urgent items and is secondary; each urgent item's repeat box is the main button. |
+| 2 | Astronaut | Check-in said medication classes reach the medical officer while something urgent is open, but the Sharing table and the act-now message did not. | Both now say so. |
+| 3 | Flight surgeon | With the meter set to mmol/L the field still said "(mg/dL)", so a typed 50 became 901 (a "very high" alert, no sugar advice); the unit was per tablet, not per person; the repeat box ignored it. | The field shows the selected unit; a converted value above what a meter can show (600) is refused with "check which unit"; the unit is stored per crew member; the repeat box uses it; end-to-end tested. |
+
+Medium-severity findings fixed in the same pass:
+
+- **Quick second value** (astronaut): a second value for the same reading within a minute asks
+  "Was the first a typing mistake? Withdraw it / keep both".
+- **Commander's alert text** (astronaut): the open-notice context goes only into the medical officer's
+  copy of an alert.
+- **Alert detail evidence** (astronaut): lists only readings that moved enough to matter, like Today.
+- **Access log** (astronaut): an empty log says what is logged and that it is not a measure of handling.
+- **Pre-set window first** (judge): the import-model tile shows +13, with +19 in its label.
+- **Disclosures** (statistician): the on-board illness verdict rests on only 29 simulated illnesses; the
+  bed-rest band widening and adaptation constant were set by hand; the merge rule wording matches the code.
+- **README** (judge, statistician): the Resources-tab row says it has not been checked yet; "sourced (or
+  marked provisional)" thresholds; transfer overruns as percentages.
+
+Not done, with reasons: a combination rule for fever plus fast pulse plus low pressure (a clinical rule
+for a clinician to set), sending act-today items to the medical officer automatically, the strap path's
+automatic alert, refitting the bed-rest constants and a larger illness simulation (pipeline work), binding
+the remaining typed figures on the Method screen to the JSON.
+
+## Round 22
+
+See the end of this file once the twenty-second round has run.

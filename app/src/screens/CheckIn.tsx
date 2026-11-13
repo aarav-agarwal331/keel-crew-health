@@ -1,7 +1,7 @@
 import { alertFields, alertState } from '../core/alerts'
 import { useAutoAlert } from '../ui/useAutoAlert'
 import { GlucoseUnit } from '../ui/GlucoseUnit'
-import { METER_HI, METER_LO, useMeterUnit } from '../ui/meterUnit'
+import { toMgdl, useMeterUnit } from '../ui/meterUnit'
 import { useEffect, useRef, useState } from 'react'
 import { dayLabel, IND, rawSeries, SYMPTOMS, symptomsOn } from '../core/mission'
 import { useApp } from '../state'
@@ -49,6 +49,8 @@ export function CheckIn({ open }: { open?: string }) {
   const [meterUnit, setMeterUnit] = useMeterUnit()
   // a dangerous reading the crew member has confirmed is no longer a typing mistake: its alert cannot be cancelled
   const [confirmed, setConfirmed] = useState(false)
+  // a second value for the same reading within a minute is often a corrected typing mistake: ask
+  const [replaceAsk, setReplaceAsk] = useState<{ k: string; prev: number; prevTs: number; now: number }[]>([])
   const [pvt, setPvt] = useState<number | null>(existing?.values.pvt_rt ?? null)
   const [meds, setMeds] = useState<string[]>(existing?.meds ?? [])
   const [photos, setPhotos] = useState<Photo[]>(existing?.photos ?? [])
@@ -75,13 +77,12 @@ export function CheckIn({ open }: { open?: string }) {
     for (const k of SPOT) {
       const raw = spot[k]
       if (raw === undefined || raw === '') continue
-      const rawU = String(raw).trim().toUpperCase()
       let v = Number(String(raw).replace(',', '.'))
       if (k === 'glucose') {
         // a meter's own out-of-range readouts are the most dangerous readings: keep them, past the lines
-        if (rawU === 'LO') v = METER_LO
-        else if (rawU === 'HI') v = METER_HI
-        else if (meterUnit === 'mmol' && !Number.isNaN(v)) v = Math.round(v * 18.016)
+        const mg = toMgdl(String(raw), meterUnit)
+        if (mg === null) { bad.push(`Blood sugar: ${raw} was not saved. That is more than a meter can show in ${meterUnit === 'mmol' ? 'mmol/L' : 'mg/dL'}: check which unit your meter shows.`); continue }
+        v = mg
       }
       const [lo, hi] = IND[k].range
       const [hardLo0, hardHi] = IND[k].limits ?? IND[k].range
@@ -98,6 +99,11 @@ export function CheckIn({ open }: { open?: string }) {
     const ts = Date.now()
     // earlier unanswered checks stay until answered
     setPending((prev) => [...prev.filter((x) => !check.includes(x.k)), ...check.map((k) => ({ k, v: values[sk(k)], ts }))])
+    const before = entries.find((x) => x.mission === mission.id && x.crew === me && x.day === day)
+    setReplaceAsk(dirty.filter((k) => values[sk(k)] !== undefined).flatMap((k) => {
+      const prev = [...(before?.readings ?? [])].reverse().find((r) => r.ind === sk(k) && !r.void)
+      return prev && prev.v !== values[sk(k)] && ts - prev.ts < 60_000 ? [{ k, prev: prev.v, prevTs: prev.ts, now: values[sk(k)] }] : []
+    }))
     setDirty([])
     // clear the typed readings so pressing Save again cannot log them twice; they are in the log below
     setSpot({})
@@ -124,9 +130,10 @@ export function CheckIn({ open }: { open?: string }) {
   const toggle = (id: string) => { setNoSym(false); setSym((p) => (p.includes(id) ? p.filter((x) => x !== id) : [...p, id])) }
   const unitPrompt = <GlucoseUnit />
   const prompts = (<div className="col" data-testid="checkin-prompts">{unitPrompt}{err && <p className="banner strong" role="alert">{err}</p>}
+      {replaceAsk.map((q) => <div className="banner strong" key={`r-${q.k}`} data-testid={`replace-${q.k}`}><p><strong>{lab(q.k)}: you entered {q.prev}, then {q.now} within a minute.</strong> Was the {q.prev} a typing mistake?</p><div className="row wrap"><button className="btn primary" onClick={() => { void voidReading(me, day, sk(q.k), q.prevTs); setReplaceAsk((p) => p.filter((x) => x.k !== q.k)) }}>Yes: withdraw {q.prev}</button><button className="btn" onClick={() => setReplaceAsk((p) => p.filter((x) => x.k !== q.k))}>No: keep both</button></div></div>)}
       {pending.map((q) => (
         <div className="banner strong" role="alert" key={q.k}>
-          {NOW_LINE[q.k]?.(q.v) ? <p style={{ fontSize: '1.2rem' }}><strong>Act now: {(today(me, day)?.findings.find((f) => (f.inds ?? []).includes(q.k) && f.kind === 'vital')?.action) ?? 'tell the medical officer now.'}</strong></p> : null}<p><strong>{lab(q.k)}: {q.v} {IND[q.k].unit}</strong> {NOW_LINE[q.k]?.(q.v) ? 'is past a fixed safety line' : 'is far outside the usual range'}, so Keel saved it and is acting on it. {NOW_LINE[q.k]?.(q.v) ? (sharingOn ? 'It is now on the medical officer\'s and the commander\'s Crew screens (emergency sharing), and an alert goes to them ten seconds after saving (at once if you leave this screen) unless you withdraw it below as a typing mistake. While it is open, the medical officer also sees whether your heart, oxygen, temperature and symptom readings are in your usual range.' : 'It is past a safety line. Emergency sharing is off, so nobody else has been shown it: tell the medical officer.') : q.k === 'glucose' && q.v < 35 ? `Did your meter show mmol/L? ${q.v} mmol/L is ${Math.round(q.v * 18)} mg/dL. If so, withdraw this and type ${Math.round(q.v * 18)}.` : (today(me, day)?.findings.some((f) => (f.inds ?? []).includes(q.k) && f.kind === 'vital') ? 'It is past a fixed line for today: it is on the medical officer\'s list; tell them today.' : q.k === 'temp_oral' && q.v < 35 ? 'Below 35.0 °C is usually a measurement problem: wait five minutes and repeat. If it repeats, tell the medical officer.' : 'It is not past a fixed safety line, so nobody else has been shown it.')} Is that what the device showed?</p>
+          {NOW_LINE[q.k]?.(q.v) ? <p style={{ fontSize: '1.2rem' }}><strong>Act now: {(today(me, day)?.findings.find((f) => (f.inds ?? []).includes(q.k) && f.kind === 'vital')?.action) ?? 'tell the medical officer now.'}</strong></p> : null}<p><strong>{lab(q.k)}: {q.v} {IND[q.k].unit}</strong> {NOW_LINE[q.k]?.(q.v) ? 'is past a fixed safety line' : 'is far outside the usual range'}, so Keel saved it and is acting on it. {NOW_LINE[q.k]?.(q.v) ? (sharingOn ? 'It is now on the medical officer\'s and the commander\'s Crew screens (emergency sharing), and an alert goes to them ten seconds after saving (at once if you leave this screen) unless you withdraw it below as a typing mistake. While it is open, the medical officer also sees whether your heart, oxygen, temperature and symptom readings are in your usual range, and today\'s medication classes.' : 'It is past a safety line. Emergency sharing is off, so nobody else has been shown it: tell the medical officer.') : q.k === 'glucose' && q.v < 35 ? `Did your meter show mmol/L? ${q.v} mmol/L is ${Math.round(q.v * 18)} mg/dL. If so, withdraw this and type ${Math.round(q.v * 18)}.` : (today(me, day)?.findings.some((f) => (f.inds ?? []).includes(q.k) && f.kind === 'vital') ? 'It is past a fixed line for today: it is on the medical officer\'s list; tell them today.' : q.k === 'temp_oral' && q.v < 35 ? 'Below 35.0 °C is usually a measurement problem: wait five minutes and repeat. If it repeats, tell the medical officer.' : 'It is not past a fixed safety line, so nobody else has been shown it.')} Is that what the device showed?</p>
           <div className="row wrap"><button className="btn primary" onClick={() => { if (NOW_LINE[q.k]?.(q.v)) setConfirmed(true); setPending((p) => p.filter((x) => x.k !== q.k)) }} data-testid={`confirm-${q.k}`}>Yes, that is right</button><button className="btn" onClick={() => void withdraw(q.k)} data-testid={`withdraw-${q.k}`}>No, a typing mistake: withdraw it</button></div>
           <p className="small">If you withdraw it, it stays in the log, struck through, and the medical officer still sees that it was entered.</p>
         </div>
@@ -237,7 +244,7 @@ export function CheckIn({ open }: { open?: string }) {
             <div className="grid3 fields">
               {SPOT.map((k) => (
                 <div className="field" key={k}>
-                  <label htmlFor={`f-${k}`}>{lab(k)} <span className="muted small">({IND[k].unit})</span></label>
+                  <label htmlFor={`f-${k}`}>{lab(k)} <span className="muted small">({k === 'glucose' && meterUnit === 'mmol' ? 'mmol/L' : IND[k].unit})</span></label>
                   {k === 'glucose' && <div className="row wrap" style={{ gap: 6, alignItems: 'center' }}><span className="small muted">My meter shows{meterUnit === null ? ' (not set yet)' : ''}:</span><div className="seg" role="group" aria-label="Unit my meter shows"><button aria-pressed={meterUnit === 'mg'} onClick={() => setMeterUnit('mg')} data-testid="meter-mg">mg/dL</button><button aria-pressed={meterUnit === 'mmol'} onClick={() => setMeterUnit('mmol')} data-testid="meter-mmol">mmol/L</button></div></div>}
                   {k === 'glucose' && meterUnit === 'mmol' && <p className="tiny muted">Type the mmol/L value; Keel stores it in mg/dL. LO and HI can be typed as shown.</p>}
                   <input id={`f-${k}`} type={k === 'glucose' ? 'text' : 'number'} inputMode="decimal" step="any" value={spot[k] ?? ''} onChange={(e) => { const v = e.target.value; setSpot((p) => ({ ...p, [k]: v })); setDirty((p) => (p.includes(k) ? p : [...p, k])) }} />

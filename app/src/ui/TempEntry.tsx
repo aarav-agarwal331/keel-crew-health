@@ -5,7 +5,7 @@ import { ReadingLog } from './kit'
 
 /** Enter a thermometer reading right where the advice asks for it.  What happens next is decided by
  *  the fixed rules (shared/rules.json), not by this component: it only reports what they now say. */
-export function TempEntry() {
+export function TempEntry({ secondary = false }: { secondary?: boolean } = {}) {
   const { me, day, entries, mission, saveEntry, today } = useApp()
   const cur = entries.find((e) => e.mission === mission.id && e.crew === me && e.day === day)
   const [v, setV] = useState('')
@@ -34,7 +34,7 @@ export function TempEntry() {
       <label className="lab small" htmlFor="temp-now">Thermometer reading (°C)</label>
       <div className="row">
         <input id="temp-now" type="number" inputMode="decimal" step="0.1" value={v} onChange={(e) => setV(e.target.value)} style={{ maxWidth: 160 }} data-testid="temp-now" />
-        <button className="btn primary" onClick={() => void save()} data-testid="temp-save">Save reading</button>
+        <button className={`btn ${secondary ? '' : 'primary'}`} onClick={() => void save()} data-testid="temp-save">Save reading</button>
       </div>
       {err && <p role="alert" className="small"><strong>{err}</strong></p>}
       {msg && <p role="status" className="small" data-testid="temp-msg"><strong>{msg}</strong></p>}

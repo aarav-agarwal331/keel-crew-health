@@ -150,7 +150,11 @@ test('every screen works with the network disabled', async ({ page }) => {
     await expect(page.getByTestId('glucose-unit')).toHaveCount(0)
     // a value withdrawn as a typing mistake stops counting, and stays visible in the log
     await nav(page, '#/checkin/measure')
+    // the meter was set to mmol/L above: 2.5 mmol/L is 45 mg/dL, and a value no meter can show is refused
     await page.getByLabel(/Blood sugar/).fill('45')
+    await page.getByTestId('save-checkin').first().click()
+    await expect(page.locator('main')).toContainText('more than a meter can show')
+    await page.getByLabel(/Blood sugar/).fill('2.5')
     await page.getByTestId('save-checkin').first().click()
     await page.getByTestId('withdraw-glucose').first().click()
     await expect(page.getByTestId('reading-log').first()).toContainText('withdrawn as a typing mistake')
