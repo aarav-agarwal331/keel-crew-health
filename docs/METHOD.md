@@ -104,7 +104,7 @@ launch into weightlessness and, for the lunar scenario, landing in one-sixth gra
    correlations. (The first version generated them independently; the realism check caught it.)
 4. Illness response. The mean resting-heart-rate change around dated illness onsets is fitted with the
    event template by least squares over days of rise before onset, days to the peak, hold and
-   recovery; the amplitude is the fitted peak (3.3 bpm, three days after onset, with a rise that starts
+   recovery; the amplitude is the fitted peak (3.3 bpm, about two days after onset, with a rise that starts
    four days before it). Episodes differ a great deal: the between-episode SD of the response, after
    subtracting measurement noise, is at least 2.0 times its mean (the fit caps it at 2.0; the raw
    ratio is higher). Each simulated illness is scaled by `max(0, N(1, 2.0))`, renormalised to mean 1, so about three in ten have no heart-rate response at
@@ -170,8 +170,8 @@ directions matter).
 *R* is the correlation matrix of personal z-scores on quiet days of training people, shrunk 20%
 toward the identity.
 
-**Alert episodes.** An alert is a maximal run of days with score ≥ threshold; runs separated by 3 days
-or fewer are one alert.
+**Alert episodes.** An alert is a maximal run of days with score ≥ threshold; runs with at most 2 days
+below threshold between them are one alert.
 
 **False-alert budget.** Alarm fatigue is an operational hazard [61][62], so thresholds are not chosen by
 feel. For a budget *B* (false alerts per person-month) the threshold is the smallest value for which
@@ -300,7 +300,7 @@ baseline, with the baseline restarted, with the band also widened, and with the 
 
 Keel computes, for each indicator, the mean `u` over the last three measured days; symptom counts
 over three days; the latest entered spot readings; the cabin readings; days since the last phase
-change; and days the detector's alert has been open. A fixed, ordered table of 40 rules is evaluated.
+change; and days the detector's alert has been open. A fixed, ordered table of 42 rules is evaluated.
 Rules have a scope:
 
 - **personal**: evaluated only while the detector has an alert open; the first one whose condition
@@ -357,16 +357,17 @@ the same code version). Real data: 251 people, 107 illness episodes, two sensors
 - **Alerts counted nowhere.** Alerts starting 11 to 21 days before an onset or 5 to 28 days after fall
   in neither the detection window nor quiet time: 56 at the notice tier (0.5 per episode) and 34 at
   the alert tier. False-alert rates therefore understate the burden for people who were ill.
-- **Thresholds calibrated on other real people** (5-fold over people, false alerts 0.99 to 1.00 by
-  construction). Heart rate alone: +22 (12 to 32). Heart rate and 7-day activity: +31 (21 to 41), and
+- **Thresholds calibrated on other real people** (5-fold over people; false alerts 0.99 to 1.00,
+  measured on held-out folds). Heart rate alone: +22 (12 to 32). Heart rate and 7-day activity: +31 (21 to 41), and
   +13 (4 to 21) at the alert tier. Heart rate and daily steps: 66%, luck 33%, +34 (24 to 44), and +33
   (23 to 43) at the alert tier.
 - **Against one fixed threshold for everyone.** Fixed threshold with daily steps: 41%, luck 23%, +18
   (8 to 27); with 7-day activity +7 (−1 to 15). Keel's lead with daily steps: +16 (3 to 29); in the
   original −14..+7 window +10 (−3 to 23); counting an already-open alert +16 (3 to 29); with 7-day
-  activity +24 (11 to 36) at the notice tier and +8 (−1 to 18) at the alert tier. A personal baseline
-  is probably better than a fixed threshold; with uncorrected multiple comparisons and a window chosen
-  after seeing data, it is not proven.
+  activity +24 (11 to 36) at the notice tier and +8 (−1 to 18) at the alert tier. These contrasts change
+  both the baseline and the detector. The like-for-like contrast of a personal against a population
+  baseline (the same 2-of-3 rule) is +11 (−3 to 25), not distinguishable from zero, so a personal
+  baseline is not shown to beat a fixed threshold.
 - **Against the simple personal rule.** Two-of-three-days z-score rule: +28 (19 to 38); its lead over
   the fixed threshold is +11 (−3 to 25). Keel's detector minus the simple rule: +5 (−2 to 12). Not
   distinguishable.
@@ -379,7 +380,8 @@ the same code version). Real data: 251 people, 107 illness episodes, two sensors
   cases), so it is not claimed as early warning.
 - **Most alerts are false.** At 0.97 upper-respiratory episodes per person-year [52b], between 1 in 11
   (daily steps, thresholds from real people) and 1 in 27 (two sensors, simulator thresholds)
-  alert-tier alerts would be such an illness; about 1 in 37 to 55 notices.
+  alert-tier alerts would be such an illness; about 1 in 37 to 56 notices (the import model: 1 in 16 alert-tier
+  alerts, 1 in 56 notices). All are upper bounds: the sensitivity comes from mostly symptomatic COVID-19.
 - **How luck is measured matters by a few points.** Device-weighted pseudo-events with real
   missingness: luck 33%, gap +34. Only people who had an episode: 32%, +34. Matched to how far into
   the recording real onsets fall: 31%, +35. Requiring a score on every day of a pseudo-window (our
@@ -394,7 +396,8 @@ the same code version). Real data: 251 people, 107 illness episodes, two sensors
   person-month; the reverse: +33, 1.11. Five fold seeds: +34 to +36. Original window: +31 (22 to 40).
 - **Simulation, full sensor set.** 67%, luck 41%, +26 (19 to 33); lead over the fixed threshold +6
   (−2 to 14). The z-score rule: +31. By event type, above luck: sleep restriction +55 and exercise
-  outage +54 (both are events whose scripted variable is itself a detector input), low fluids +26
+  outage +54 (events whose scripted variable is itself a detector input, as are low fluids and low
+  mood; sleep restriction and exercise outage are 30% of events but about 60% of the total), low fluids +26
   (10 to 40), cabin CO2 +11 (1 to 21), illness +11 (−9 to 30), low mood +13 (−5 to 32). The overall
   figure depends on the event mix, and for illness and low mood the interval includes zero.
 - **Mission-phase handling.** Alerts of any cause in the first 30 flight days: 0.90 per person-month
@@ -434,7 +437,7 @@ the same code version). Real data: 251 people, 107 illness episodes, two sensors
   shown only when three or more people are affected. With emergency sharing on (the default, and a
   setting the crew member can switch off), an "act now" finding is shown to the medical officer and
   to the commander as backup, except red-flag symptoms marked "medical officer only" (thoughts of
-  self-harm, an injury, tooth pain, one-sided swelling), which the commander sees only when the
+  harming yourself), which the commander sees only when the
   patient is the medical officer. Medication classes and photos added at check-in belong to the
   Symptoms area and are visible only at full detail. Nothing is sent to the ground automatically.
   Views are logged.

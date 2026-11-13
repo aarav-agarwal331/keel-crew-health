@@ -150,7 +150,7 @@ export class ScreenBoundary extends Component<{ children: ReactNode; name: strin
 
 /** The spot readings entered today, oldest first, with the time each was saved.  Nothing is overwritten;
  *  a reading withdrawn as a typing mistake stays visible, struck through. */
-export function ReadingLog({ readings, title = 'Readings today', onVoid }: { readings: { ind: string; v: number; ts: number; void?: boolean }[]; title?: string; onVoid?: (ind: string, ts: number) => void }) {
+export function ReadingLog({ readings, title = 'Readings today', onVoid, note = true }: { readings: { ind: string; v: number; ts: number; void?: boolean }[]; title?: string; onVoid?: (ind: string, ts: number) => void; note?: boolean }) {
   const [ask, setAsk] = useState<number | null>(null)
   if (!readings.length) return null
   const time = (ts: number) => new Date(ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })
@@ -166,11 +166,11 @@ export function ReadingLog({ readings, title = 'Readings today', onVoid }: { rea
           </li>
         ))}
       </ul>
-      <span>Every reading is kept. The most abnormal reading of the day stays on the medical officer's list until they close it; what you are told to do follows your latest reading.</span>
+      {note && <span>Every reading is kept. The most abnormal reading of the day stays on the medical officer's list until they close it. What you are told to do follows your latest reading once a repeat counts (for blood sugar, 15 minutes after the first).</span>}
     </div>
   )
 }
 const READING_LABEL: Record<string, [string, string]> = {
   temp_oral: ['Thermometer', '°C'], spo2_spot: ['Fingertip oxygen', '%'], spo2: ['Blood oxygen', '%'], sbp: ['Blood pressure, upper', 'mmHg'], dbp: ['Blood pressure, lower', 'mmHg'],
-  glucose: ['Blood sugar', 'mg/dL'], rhr_spot: ['Heart rate at rest', 'bpm'], rhr: ['Resting heart rate', 'bpm'], mass: ['Body mass', 'kg'],
+  glucose: ['Blood sugar', 'mg/dL'], rhr_spot: ['Heart rate at rest', 'bpm'], pvt_rt: ['Reaction test', 'ms'], sleep_h: ['Sleep', 'h'], rhr: ['Resting heart rate', 'bpm'], mass: ['Body mass', 'kg'],
 }

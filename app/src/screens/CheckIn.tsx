@@ -17,15 +17,17 @@ const LABEL: Record<string, string> = { rhr: 'Heart rate now, sitting at rest (s
 const lab = (k: string) => LABEL[k] ?? IND[k].label
 
 export function CheckIn({ open }: { open?: string }) {
-  const { mission, day, me, entries, saveEntry, voidReading, sharing } = useApp()
+  const { mission, day, me, entries, saveEntry, voidReading, sharing, today } = useApp()
   const sharingOn = sharing[me]?.emergency !== false
   const existing = entries.find((e) => e.mission === mission.id && e.crew === me && e.day === day)
-  const [mood, setMood] = useState<number | null>(existing?.values.mood ?? null)
+  // start from today's recorded answers (in the demo, the simulated ones) so the form matches Today
+  const simToday = (k: string) => { const v = rawSeries(mission, me, k, [])[day]; return Number.isNaN(v) ? null : v }
+  const [mood, setMood] = useState<number | null>(existing?.values.mood ?? simToday('mood'))
   // start from the symptoms already recorded for today (in the demo, the simulated ones), so saving adds to them
   const [sym, setSym] = useState<string[]>(existing?.symptoms ?? symptomsOn(mission, me, day, []))
   const usual = rawSeries(mission, me, 'fluid', []).slice(Math.max(0, day - 14), day).filter((v) => !Number.isNaN(v))
   const fluidHint = usual.length ? usual.reduce((a, b) => a + b, 0) / usual.length : 2.25
-  const [fluid, setFluid] = useState<number>(existing?.values.fluid ?? 0)
+  const [fluid, setFluid] = useState<number>(existing?.values.fluid ?? simToday('fluid') ?? 0)
   const [serious, setSerious] = useState((existing?.symptoms ?? []).some((x) => SYMPTOMS.find((q) => q.id === x)?.red_flag))
   const [noSym, setNoSym] = useState(existing ? existing.symptoms.length === 0 : false)
   const [more, setMore] = useState(open === 'measure')
@@ -63,7 +65,7 @@ export function CheckIn({ open }: { open?: string }) {
       const [hardLo, hardHi] = IND[k].limits ?? IND[k].range
       if (Number.isNaN(v) || v < hardLo || v > hardHi) { bad.push(`${lab(k)}: ${raw} was not saved. Enter a value between ${hardLo} and ${hardHi} ${IND[k].unit}.`); continue }
       values[sk(k)] = v
-      if (dirty.includes(k) && (v < lo || v > hi || NOW_LINE[k]?.(v))) check.push(k)
+      if (dirty.includes(k) && (v < lo || v > hi || NOW_LINE[k]?.(v) || (k === 'temp_oral' && v < 35))) check.push(k)
     }
     // symptoms and every valid value are always saved, whatever is wrong with one number
     await saveEntry({ crew: me, day, values, symptoms: sym, meds, photos }, dirty.map(sk))
@@ -98,7 +100,7 @@ export function CheckIn({ open }: { open?: string }) {
       {(err || pending.length > 0) && <div className="col">{err && <p className="banner strong" role="alert">{err}</p>}
       {pending.map((q) => (
         <div className="banner strong" role="alert" key={q.k}>
-          <p><strong>{lab(q.k)}: {q.v} {IND[q.k].unit}</strong> is far outside the usual range, so Keel saved it and is acting on it. {NOW_LINE[q.k]?.(q.v) ? <strong>Act now: stop what you are doing, rest, and tell the medical officer now. </strong> : null}{NOW_LINE[q.k]?.(q.v) ? (sharingOn ? 'It is past a safety line, so it is now visible on the medical officer\'s and the commander\'s Crew screens (emergency sharing). They are not alerted.' : 'It is past a safety line. Emergency sharing is off, so nobody else has been shown it: tell the medical officer.') : 'It is not past a safety line, so nobody else has been shown it.'} Is that what the device showed?</p>
+          <p><strong>{lab(q.k)}: {q.v} {IND[q.k].unit}</strong> is far outside the usual range, so Keel saved it and is acting on it. {NOW_LINE[q.k]?.(q.v) ? <strong>Act now: {(today(me, day)?.findings.find((f) => (f.inds ?? []).includes(q.k) && f.kind === 'vital')?.action) ?? 'tell the medical officer now.'} </strong> : null}{NOW_LINE[q.k]?.(q.v) ? (sharingOn ? 'It is past a safety line, so it is now visible on the medical officer\'s and the commander\'s Crew screens (emergency sharing). They are not alerted.' : 'It is past a safety line. Emergency sharing is off, so nobody else has been shown it: tell the medical officer.') : (today(me, day)?.findings.some((f) => (f.inds ?? []).includes(q.k) && f.kind === 'vital') ? 'It is past a fixed line for today: it is on the medical officer\'s list; tell them today.' : q.k === 'temp_oral' && q.v < 35 ? 'Below 35.0 °C is usually a measurement problem: wait five minutes and repeat. If it repeats, tell the medical officer.' : 'It is not past a fixed safety line, so nobody else has been shown it.')} Is that what the device showed?</p>
           <div className="row wrap"><button className="btn primary" onClick={() => setPending((p) => p.filter((x) => x.k !== q.k))} data-testid={`confirm-${q.k}`}>Yes, that is right</button><button className="btn" onClick={() => void withdraw(q.k)} data-testid={`withdraw-${q.k}`}>No, a typing mistake: withdraw it</button></div>
           <p className="small">If you withdraw it, it stays in the log, struck through, and the medical officer still sees that it was entered.</p>
         </div>
@@ -111,7 +113,7 @@ export function CheckIn({ open }: { open?: string }) {
   return (
     <>
       <h1>Check-in</h1>
-      <p className="muted">{dayLabel(mission, day)}. Four quick answers, about a minute. Stored on your tablet; anything urgent goes at once to the medical officer and, as backup, the commander. <a href={href('sharing')}>Who sees what</a></p>
+      <p className="muted">{dayLabel(mission, day)}. Four quick answers, about a minute. Stored on your tablet; {sharingOn ? 'anything urgent appears at once on the medical officer\'s and, as backup, the commander\'s Crew screens; they are not notified, so tell them.' : 'emergency sharing is off, so tell the medical officer yourself about anything urgent.'} <a href={href('sharing')}>Who sees what</a></p>
       {!existing && !Number.isNaN(rawSeries(mission, me, 'mood', [])[day]) && <p className="small muted">Today's check-in in this demo came from the simulation. Anything you save here is added to it.</p>}
 
       <Card title="1. How are you feeling?">
@@ -128,7 +130,7 @@ export function CheckIn({ open }: { open?: string }) {
         <button className={`choice red ${serious ? '' : ''}`} aria-expanded={serious} onClick={() => setSerious((v) => !v)} data-testid="serious-toggle" style={{ minHeight: 56 }}>Something serious? Chest pain, fainting, trouble breathing, bleeding, vision loss, thoughts of harming yourself…</button>
         {serious && (
           <>
-            <span className="lab">Tell the medical officer now if you have any of these. Ticking one and saving shows it to the medical officer at once (emergency sharing). The commander is shown it too, except the items marked "medical officer only".</span>
+            <span className="lab">Tell the medical officer now if you have any of these. {sharingOn ? 'Ticking one and saving makes it visible on the medical officer\'s Crew screen (and the commander\'s, except items marked "medical officer only"). Nobody is notified: tell them yourself.' : 'Emergency sharing is off, so nobody else will see it: tell the medical officer yourself.'}</span>
             <div className="choices wide" role="group" aria-label="Symptoms that need the medical officer now">
               {redFlags.map((s) => <button key={s.id} className="choice red" aria-pressed={sym.includes(s.id)} onClick={() => toggle(s.id)} data-testid={`sym-${s.id}`}>{s.label}{(s as { commander?: boolean }).commander === false ? <span className="tiny"> (medical officer only)</span> : null}</button>)}
             </div>
@@ -153,7 +155,7 @@ export function CheckIn({ open }: { open?: string }) {
       </div>
 
       {!more && saveBtn}
-      {saved && <div className="card" role="status"><strong>Saved.</strong><p className="muted">Keel has re-checked your readings on this tablet with your new entries.</p><div className="row wrap"><button className="btn" onClick={() => go('today')}>See Today</button><a className="btn" href={href('sharing')}>Who can see this?</a></div></div>}
+      {saved && <div className="card" role="status"><strong>Saved.</strong><p className="muted">Keel has re-checked your readings on this tablet with your new entries.</p>{(() => { const n = (today(me, day)?.findings ?? []).filter((f) => f.status === 'urgent').length; return n > 0 ? <p className="banner strong"><strong>{n === 1 ? 'One item needs' : `${n} items need`} action now.</strong> See Today for what to do.</p> : null })()}<div className="row wrap"><button className="btn" onClick={() => go('today')}>See Today</button><a className="btn" href={href('sharing')}>Who can see this?</a></div></div>}
 
       <button className="btn block" aria-expanded={more} onClick={() => setMore((v) => !v)} data-testid="more-checkin">{more ? 'Hide the optional extras' : 'Add more: reaction test, exercise, measurements (optional)'}</button>
       {more && (

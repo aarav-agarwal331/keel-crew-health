@@ -30,6 +30,33 @@
    "urgency": "now"
   },
   {
+   "id": "R-V-GLU-LO2",
+   "scope": "vital",
+   "priority": 1.05,
+   "urgency": "now",
+   "title": "Blood sugar reading is below 54 mg/dL",
+   "when": {
+    "val": "glucose",
+    "max": 53.99
+   },
+   "summary": "The reading you entered is in the range that general guidance says can cause unclear thinking or seizure. Keel does not interpret it.",
+   "action": "If you are awake and can swallow, eat or drink something sugary now, and tell the medical officer now.",
+   "steps": [
+    "For whoever is with you: if they are confused, drowsy or cannot swallow safely, give nothing by mouth and get the medical officer now.",
+    "Stay with another crew member.",
+    "Repeat the reading in 15 minutes; if it is still below 70, take sugar again and repeat.",
+    "Do not exercise or do critical tasks until it is back above 70 and you feel normal."
+   ],
+   "tier": "cmo",
+   "tier_reason": "A fixed safety threshold, not a trend.",
+   "cm": [
+    "CM-VITALS"
+   ],
+   "categories": [
+    "nutrition"
+   ]
+  },
+  {
    "id": "R-V-SPO2",
    "scope": "vital",
    "priority": 1.1,
@@ -185,6 +212,41 @@
    ]
   },
   {
+   "id": "R-V-BP-HI3",
+   "scope": "vital",
+   "priority": 1.16,
+   "urgency": "now",
+   "title": "Blood pressure of 220 upper or 130 lower, twice",
+   "when": {
+    "any": [
+     {
+      "val": "sbp",
+      "min": 220,
+      "count": 2
+     },
+     {
+      "val": "dbp",
+      "min": 130,
+      "count": 2
+     }
+    ]
+   },
+   "summary": "Two readings at or above 220 upper or 130 lower. Keel does not interpret it. These values are provisional and have not been reviewed by a flight surgeon.",
+   "action": "Stay at rest and tell the medical officer now.",
+   "steps": [
+    "Stay with another crew member.",
+    "Note any headache, chest pain, breathlessness, vision change or weakness."
+   ],
+   "tier": "cmo",
+   "tier_reason": "A fixed safety threshold. Placeholder threshold for a clinician to set; not from a cited source.",
+   "cm": [
+    "CM-VITALS"
+   ],
+   "categories": [
+    "cardio"
+   ]
+  },
+  {
    "id": "R-V-TEMP-HI",
    "scope": "vital",
    "priority": 1.2,
@@ -244,33 +306,6 @@
    ],
    "categories": [
     "cardio"
-   ]
-  },
-  {
-   "id": "R-V-GLU-LO2",
-   "scope": "vital",
-   "priority": 1.35,
-   "urgency": "now",
-   "title": "Blood sugar reading is below 54 mg/dL",
-   "when": {
-    "val": "glucose",
-    "max": 53.99
-   },
-   "summary": "The reading you entered is in the range that general guidance says can cause unclear thinking or seizure. Keel does not interpret it.",
-   "action": "If you are awake and can swallow, eat or drink something sugary now, and tell the medical officer now.",
-   "steps": [
-    "For whoever is with you: if they are confused, drowsy or cannot swallow safely, give nothing by mouth and get the medical officer now.",
-    "Stay with another crew member.",
-    "Repeat the reading in 15 minutes; if it is still below 70, take sugar again and repeat.",
-    "Do not exercise or do critical tasks until it is back above 70 and you feel normal."
-   ],
-   "tier": "cmo",
-   "tier_reason": "A fixed safety threshold, not a trend.",
-   "cm": [
-    "CM-VITALS"
-   ],
-   "categories": [
-    "nutrition"
    ]
   },
   {
@@ -481,6 +516,33 @@
    ]
   },
   {
+   "id": "R-V-SPO2N",
+   "scope": "vital",
+   "priority": 1.78,
+   "urgency": "today",
+   "title": "Overnight blood oxygen of 90% or lower",
+   "when": {
+    "run": "spo2",
+    "max": 90,
+    "days": 1
+   },
+   "summary": "The wearable recorded an overnight blood oxygen of 90% or lower. Wrist oxygen readings are often wrong, but a personal baseline can make a slow fall look normal, so a fixed floor applies. The value 90 is provisional and has not been reviewed by a flight surgeon.",
+   "action": "Take a fingertip oxygen reading now, sitting still with a warm hand, and tell the medical officer today.",
+   "steps": [
+    "If the fingertip reading is 92% or lower, or you are short of breath, tell the medical officer now.",
+    "Ask for the cabin oxygen, pressure and carbon dioxide readings."
+   ],
+   "tier": "cmo",
+   "tier_reason": "A fixed safety threshold, not a trend.",
+   "cm": [
+    "CM-SPO2",
+    "CM-VITALS"
+   ],
+   "categories": [
+    "cardio"
+   ]
+  },
+  {
    "id": "R-V-HR",
    "scope": "vital",
    "priority": 1.8,
@@ -587,7 +649,7 @@
      }
     ]
    },
-   "summary": "You reported vomiting within three days of at least 1000 mSv on your dosimeter, a dose at which radiation sickness becomes possible. Keel cannot tell whether the two are linked; motion sickness and stomach bugs are far more common. How soon vomiting starts helps the medical officer judge the dose. The 1000 mSv line is a provisional value chosen by us.",
+   "summary": "You reported vomiting within three days of at least 1000 mSv on your dosimeter, a dose at which radiation sickness becomes possible. Keel cannot tell whether the two are linked; motion sickness and stomach bugs are far more common. How soon vomiting starts helps the medical officer judge the dose. The 1000 mSv line is a provisional value chosen by us. Radiation sickness depends on the absorbed dose in grays; the dosimeter's millisieverts are only a rough guide to it.",
    "action": "Tell the medical officer now, and note the time the vomiting started.",
    "steps": [
     "Sip fluids, and tell the medical officer before taking anything.",

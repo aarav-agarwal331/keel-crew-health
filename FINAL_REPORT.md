@@ -15,7 +15,7 @@ source, how soon and who should know. No server, no language model.
 | Area | State |
 |---|---|
 | Screens | Today, Trends, Alert detail, Check-in (with a reaction self-test), Sharing, Crew readiness, Earth link, Mission replay, Validation, How Keel works, Guide (measurements and every rule), Data sources, More |
-| Science | Phase-aware robust personal baselines; four detectors plus a fixed-threshold comparison; thresholds from a false-alert budget; 40 auditable rules with cited countermeasures; fixed safety thresholds and red-flag symptoms that bypass the detector; an append-only reading log and a medical officer's list of open items |
+| Science | Phase-aware robust personal baselines; four detectors plus a fixed-threshold comparison; thresholds from a false-alert budget; 42 auditable rules with cited countermeasures; fixed safety thresholds and red-flag symptoms that bypass the detector; an append-only reading log and a medical officer's list of open items |
 | Data in | Simulated missions (Mars transit, lunar surface); CSV, Fitbit JSON and Apple Health import; live heart-rate strap over Web Bluetooth; manual check-in with medication classes and a photo for the medical officer |
 | Real data used | Stanford COVID-19 wearables phases 1 and 2 (detection), LifeSnaps (variability), NASA Life Sciences Data Archive bed-rest campaigns (gravity transitions) |
 | Privacy | Per-role, per-area sharing at four levels, a tested privacy gate, access log, switchable emergency sharing, some symptoms shown to the medical officer only |
@@ -79,7 +79,7 @@ source, how soon and who should know. No server, no language model.
    Heart rate alone is +22; activity adds the rest because people move less once they feel ill, and
    that cannot be separated from isolating at home. Pretend dates cannot be matched to the calendar.
    A crew on a fixed exercise schedule may show less.
-5. **Keel's detector is not shown to beat a simple personal rule** (+5, −2 to 12), and its lead over a
+5. **Neither Keel's detector nor a personal baseline is shown to beat a simpler method.** Like for like, a personal against a population baseline is +11 (−3 to 25). **Keel's detector is not shown to beat a simple personal rule** (+5, −2 to 12), and its lead over a
    fixed threshold includes zero in the original window. The detector choice is arbitrary among
    equals and was made by a rule written during review.
 6. **Nothing was pre-registered.** The window, the metric, the chance estimate and the headline itself

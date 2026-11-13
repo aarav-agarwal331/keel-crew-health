@@ -73,7 +73,7 @@ Alert thresholds are not chosen by feel. They are set in simulation to a budget 
 per person-month and one mistaken alert per four person-months, because alarm fatigue is an
 operational hazard; on real people they ran over that budget (1.40 and 0.39 per person-month).
 Thresholds depend on which sensors are present: imported watch data therefore runs on a separate
-heart-rate-only model calibrated on the 251 real people (+22 above luck, 12 to 32). A fixed table of 40 rules turns a pattern, an entered reading or a reported symptom into wording, one action,
+heart-rate-only model calibrated on the 251 real people (+22 above luck, 12 to 32). A fixed table of 42 rules turns a pattern, an entered reading or a reported symptom into wording, one action,
 follow-up steps, how soon and who, each citing a NASA document, a published study or public clinical
 guidance. No language model writes any advice, and by design Keel gives no medication or treatment
 advice.
@@ -171,7 +171,8 @@ activity).**
   +10 (−3 to 23) in the original wider window (−14 to +7 days). With 7-day activity the fixed
   threshold is +7 (−1 to 15) and Keel's lead is +24 (11 to 36) at the notice tier and +8 (−1 to 18)
   at the alert tier. Four detectors, two tiers and several windows were compared without correction,
-  so a personal baseline is probably better than a fixed threshold, not proven.
+  and the like-for-like contrast (same rule, personal against population baseline) is +11 (−3 to 25),
+  so a personal baseline is not shown to beat a fixed threshold.
 - Keel's detector is not shown to beat a simple personal rule (two of three days outside the personal
   range). The simple rule alone is +28 (19 to 38); the detector's lead over it is +5 (−2 to 12), not
   distinguishable.

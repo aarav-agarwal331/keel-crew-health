@@ -120,7 +120,7 @@ test('every screen works with the network disabled', async ({ page }) => {
     await page.getByTestId('save-checkin').first().click()
     await nav(page, '#/today')
     await expect(page.locator('main')).toContainText('150 or more')
-    await expect(page.locator('#today-routine')).toContainText('Exercise: on hold')
+    await expect(page.locator('#today-routine')).toContainText(/Exercise: on hold|No exercise until/)
     // a value withdrawn as a typing mistake stops counting, and stays visible in the log
     await nav(page, '#/checkin/measure')
     await page.getByLabel(/Blood sugar/).fill('45')

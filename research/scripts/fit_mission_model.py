@@ -122,6 +122,8 @@ def set_demo_days(model, p, thr_notice, deployed):
         eps = [a for a, b in episodes(score_of(m, crew), thr_notice, p.merge_gap) if ev["onset"] - 3 <= a <= ev["onset"] + 6]
         day = (eps[0] + 1) if eps else ev["onset"] + 1
         m["default_day"], m["default_crew"] = int(day), crew
+        if m["id"] in staged:   # the replay states how its demo day was chosen, from this record
+            m["staging"] = staged[m["id"]]
         path.write_text(json.dumps(m, ensure_ascii=False, separators=(",", ":")))
         print(f"{m['id']}: scripted illness on flight day {ev['onset'] - m['pre_days'] + 1}, first alert {'flight day ' + str(eps[0] - m['pre_days'] + 1) if eps else 'none in window'}, demo opens on day index {day}")
 

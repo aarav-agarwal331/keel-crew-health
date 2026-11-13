@@ -350,6 +350,49 @@ Not done from round 6: trimming prose on every screen; a "typical case" replay; 
 closures in the replay; a more distant arrival geometry for the link delay; a raw-sample resting
 heart rate for imports.
 
-## Round 7
+## Round 7 (2026-11-12, fresh reviewers, redeployed build)
 
-See the end of this file once the seventh round has run.
+Judge's scores: impact 8, creativity 8, validity 7, relevance 9, presentation 7 (39 of 50), "nominate:
+yes". The statistician found no high-severity issue for the third round running. The judge, the
+astronaut and the flight surgeon all found the same one.
+
+| # | Reviewer | High-severity finding | Fix |
+|---|---|---|---|
+| 1 | Judge, astronaut, flight surgeon | After a blood sugar of 50 and a repeat of 85 a few seconds later, Check-in said "stop, rest, tell the medical officer" (no sugar), Today said "eat something sugary now", the medical officer's list said the repeat "was back on the safe side", and the reading log promised that advice "follows your latest reading". | The check-in prompt now uses the rule's own action; the medical officer's list applies the same 15-minute rule as the crew member's screen; a repeat that comes too soon says so ("sugar takes about 15 minutes to work"); the reading-log sentence says when a repeat counts; low blood sugar ranks first among "now" items; after a safe repeat the advice says to eat a snack or the next meal. |
+| 2 | Astronaut | Check-in and Sharing said urgent items "go at once" to the medical officer, while the alert cards said nobody is alerted. | Both now say the item appears on the Crew screens and nobody is notified; the wording also changes when emergency sharing is off. |
+
+Medium-severity findings fixed in the same pass:
+
+- **"Now" downgraded at midnight** (flight surgeon): an urgent item stays "now" until closed; a red flag
+  ticked in the last three days stays even if the next check-in leaves it out.
+- **Unlogged retests** (flight surgeon): reaction-test results and manual sleep entries are logged; a
+  heart-rate strap reading is a logged spot check and meets the fixed safety lines.
+- **No fixed floor for overnight oxygen** (flight surgeon): overnight 90% or lower now asks for a
+  fingertip reading (today); two blood pressure readings at 220 upper or 130 lower are "now".
+- **Check-in banner by urgency** (flight surgeon): a "today" reading says it is on the medical
+  officer's list; a thermometer reading under 35 °C asks for a repeat.
+- **Red-flag routing** (flight surgeon): one-sided swelling and tooth or jaw pain now reach the
+  commander; only thoughts of self-harm stay with the medical officer.
+- **Check-in after save** (astronaut): the Saved box says how many items need action now.
+- **Exercise** (astronaut): "No exercise until the medical officer clears you" whenever anything is "now".
+- **Medical officer's view** (judge, astronaut): "(entered: 170)" instead of "(you entered 170)"; the
+  reading-log explanation appears once.
+- **Body list labels** (judge, astronaut): the status words sit under the area name, not beside the icon.
+- **Check-in prefill** (astronaut): mood and fluids start from today's recorded values.
+- **Statistician**: Today names which configuration its false-alert expectation comes from; the
+  simulated +26 says most of it comes from events whose scripted change is itself an input; the
+  import-model figure carries the Fitbit and vendor-resting-heart-rate caveats; "a personal baseline
+  is probably better than a fixed threshold" is withdrawn (like for like it is +11, −3 to 25); every
+  headline bar shows its false-alert rate; the replay's staging is recorded in the mission file and
+  stated (no candidate day had two quiet weeks); METHOD corrections (peak day, merge rule, measured
+  not constructed false-alert rate, predictive-value bounds).
+- **Illness size** (judge): one statement of the real heart-rate rise (a fitted peak of about 3 bpm, or
+  4.6 bpm averaged over four days, depending on the measure).
+- **Replay headline** (judge): "flagged it with her check-in, on the day symptoms began".
+
+Not done from round 7: a real notification between devices; locking emergency sharing on for red
+flags; original-window results for every configuration; trend-chart label clutter.
+
+## Round 8
+
+See the end of this file once the eighth round has run.

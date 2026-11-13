@@ -82,7 +82,7 @@ export function Today() {
     <>
       {intro && mission.simulated && (
         <section className="card intro" data-testid="intro">
-          <p className="small"><strong>Keel is a crew health monitor that works with no link to Earth.</strong> It learns each person's own normal and gives one action with its source. Demo: {crew?.name.split(' ')[0]}'s tablet, simulated {mission.title}.</p>
+          <p className="small"><strong>Keel is a crew health monitor that works with no link to Earth.</strong> It learns each person's own normal and gives one action with its source. Demo: {crew?.name.split(' ')[0]}'s tablet, simulated {mission.title}. A lunar base mission is under More.</p>
           <div className="row wrap">
             <a className="btn primary sm" href={href('replay')} data-testid="intro-replay">Demo: replay a scripted event (40 s)</a>
             <a className="btn sm" href={href('validation')}>The evidence</a>
@@ -167,7 +167,7 @@ export function Today() {
             <ul className="list">
               <li><StatusTag status={checked ? 'steady' : 'learning'} label={checkedByMe ? 'Check-in done' : checked ? 'Check-in done (simulated)' : 'Daily check-in (about a minute)'} size={18} />{!checked && <a className="btn sm" href={href('checkin')} style={{ marginLeft: 'auto', float: 'right' }}>Start</a>}</li>
               <li><StatusTag status={wearOk ? 'steady' : 'learning'} label={wearOk ? 'Sensor worn last night' : 'No sensor data last night: wear it tonight'} size={18} /></li>
-              <li><StatusTag status={exDone ? 'steady' : 'learning'} label={a.exerciseHold ? (askingTemp && tempToday === undefined ? 'Exercise: on hold until you take your temperature' : 'Exercise: on hold until the medical officer agrees (see the action above)') : exDone ? 'Exercise done today' : `Exercise: ${Number.isNaN(ex[day]) ? 0 : Math.round(ex[day])} of ${target} min today`} size={18} /></li>
+              <li><StatusTag status={exDone ? 'steady' : 'learning'} label={a.exerciseHold ? (askingTemp && tempToday === undefined && a.status !== 'urgent' ? 'Exercise: on hold until you take your temperature' : 'No exercise until the medical officer clears you') : exDone ? 'Exercise done today' : `Exercise: ${Number.isNaN(ex[day]) ? 0 : Math.round(ex[day])} of ${target} min today`} size={18} /></li>
               {spotDue.length > 0 && <li><StatusTag status="learning" label={`Weekly measurement due: ${spotDue.map((k) => IND[k].label.toLowerCase()).join(', ')}`} size={18} /> <a className="btn sm" href={href('checkin', 'measure')} data-testid="enter-measurements">Enter</a></li>}
               {!Number.isNaN(sleepLast) && sleepLast < 5.5 && <li><StatusTag status="watch" label={`Sleep last night ${sleepLast.toFixed(1)} h. The scheduled sleep period is 8.5 h.`} size={18} /></li>}
             </ul>
@@ -182,13 +182,13 @@ export function Today() {
               <a className="col" style={{ gap: 0, textDecoration: 'none', color: 'inherit' }} href={href('trends', 'rad')}>
                 <span className="small muted">Radiation dose</span>
                 <span><span className="num" style={{ fontSize: '1.4rem', fontWeight: 700 }}>{cum.toFixed(0)}</span> <span className="small muted">mSv this mission (dosimeter estimate)</span></span>
-                <span className="tiny muted">Today {Number.isNaN(rad[day]) ? '–' : rad[day].toFixed(2)} mSv.{fd > 20 && mission.flight_days ? ` At this mission's average daily rate so far, about ${Math.round((cum / (fd + 1)) * mission.flight_days / 10) * 10} mSv by the end.` : ''} The 600 mSv career limit also counts earlier flights.</span>
+                <span className="tiny muted">Today {Number.isNaN(rad[day]) ? '–' : rad[day].toFixed(2)} mSv.{fd > 20 && mission.flight_days ? ` At this mission's average daily rate so far, about ${Math.round((cum / (fd + 1)) * mission.flight_days / 10) * 10} mSv by flight day ${mission.flight_days}, the end of this leg; a return trip adds more.` : ''} The 600 mSv career limit also counts earlier flights.</span>
               </a>
             </div>
           </Card>
         </div>
       </div>
-      <p className="small muted">Keel opened {notices30} notice{notices30 === 1 ? '' : 's'} from your readings in the last 30 days. Keel can be wrong: on real watch data its thresholds gave about one to one and a half false notices a month, and more are likely with the full sensor set. <a href={href('validation')}>How often it is right</a></p>
+      <p className="small muted">Keel opened {notices30} notice{notices30 === 1 ? '' : 's'} from your readings in the last 30 days. Keel can be wrong. {mission.kind === 'personal' ? 'For imported data the heart-rate model gave about one false notice a month on other people\'s watch data.' : 'The full-sensor thresholds on this tablet are untested on real data; set the same way for five sensors, they gave about two false alerts a month on real people.'} <a href={href('validation')}>How often it is right</a></p>
       <p className="banner">Keel is decision support, not a medical device. It does not diagnose. It shows how your readings compare with your own normal and points to documented countermeasures.</p>
     </>
   )

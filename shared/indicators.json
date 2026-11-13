@@ -603,14 +603,12 @@
   {
    "id": "swelling",
    "label": "New swelling or pain in one leg, or on one side of the neck",
-   "red_flag": true,
-   "commander": false
+   "red_flag": true
   },
   {
    "id": "tooth",
    "label": "Severe tooth or jaw pain",
-   "red_flag": true,
-   "commander": false
+   "red_flag": true
   },
   {
    "id": "self_harm",

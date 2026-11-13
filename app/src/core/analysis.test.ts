@@ -193,9 +193,10 @@ describe('end to end on the demo mission', () => {
     // a reading withdrawn as a typing mistake is not used
     const w: Entry = { ...e, values: {}, readings: [{ ind: 'glucose', v: 50, ts: 1, void: true }] }
     expect(run('c0', 100, [w]).findings.some((q) => q.ruleId === 'R-V-GLU-LO2')).toBe(false)
-    // an urgent reading from an earlier day is no longer "now" but stays open
+    // an urgent reading from an earlier day stays "now" until the medical officer closes it
     const later = run('c0', 101, [e]).findings.find((q) => q.ruleId === 'R-V-GLU-LO2')!
-    expect(later.status).toBe('act')
+    expect(later.status).toBe('urgent')
+    expect(later.action).toMatch(/still open/)
   })
   it('a red flag unticked later stays on the medical officer list', () => {
     const e: Entry = { key: 'k', mission: m.id, crew: 'c0', day: 100, values: {}, symptoms: [], redFlags: ['chest_pain'], ts: 0 }

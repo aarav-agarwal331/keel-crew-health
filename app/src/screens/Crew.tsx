@@ -81,7 +81,7 @@ export function Crew() {
               {v.findings.filter((x) => x.emergency).map((x) => (
                 <div key={x.key} className="banner strong">
                   <p><strong>{x.title}{x.symptoms?.length ? `: ${x.symptoms.join('; ').toLowerCase()}` : ''}.</strong> <span className="small">(shared automatically: emergency sharing)</span></p>
-                  <ReadingLog readings={x.readings ?? []} title="Entered readings, in order" />
+                  <ReadingLog readings={x.readings ?? []} title="Entered readings, in order" note={false} />
                   <p className="small">{c.name.split(' ')[0]} was told: "{x.action}"</p>
                 </div>
               ))}
@@ -102,7 +102,7 @@ export function Crew() {
                           <div className="col small" style={{ paddingLeft: 30 }}>
                             <p><strong>{c.name.split(' ')[0]} was told ({URGENCY_LABEL[(f.urgency ?? 'routine') as 'now'].toLowerCase()}):</strong> "{f.action}"</p>
                             <ol className="list steps">{(f.steps ?? []).map((x) => <li key={x}><span>{x}</span></li>)}</ol>
-                            <ReadingLog readings={f.readings ?? []} title="Entered readings, in order" />
+                            <ReadingLog readings={f.readings ?? []} title="Entered readings, in order" note={false} />
                             {(f.changes ?? []).length > 0 && <p><strong>Readings shared with you:</strong> {f.changes!.map((ch) => `${IND[ch.ind].label} ${Number.isNaN(ch.value) ? '–' : ch.value.toFixed(IND[ch.ind].decimals)} ${IND[ch.ind].unit} (usual ${ch.expected.toFixed(IND[ch.ind].decimals)})`).join('; ')}.</p>}
                             {(f.countermeasures ?? []).map((id) => CM[id]).filter(Boolean).map((cm) => <p key={cm.id} className="muted"><strong>{cm.title}.</strong> {cm.text} [{cm.refs.join(', ')}]</p>)}
                             <p className="muted">Keel does not recommend medication or treatment. Those decisions are yours, with the onboard medical checklist and the flight surgeon when a link is available. If readings from other areas would help, ask the crew member to share them.</p>
@@ -123,7 +123,7 @@ export function Crew() {
                   {open.map((x) => (
                     <div key={x.key} className="col" style={{ gap: 6, borderTop: '1px solid var(--border)', paddingTop: 8 }}>
                       <span className="small"><strong>{x.symptoms?.length ? `${x.title}: ${x.symptoms.join('; ').toLowerCase()} — ` : ''}{x.redacted ? `An item in ${catLabel(x.category).toLowerCase()} (details not shared; ask ${c.name.split(' ')[0]})` : x.title}</strong> <span className="muted">({shortDay(mission, x.day)}, {x.urgency === 'now' ? 'needed attention at once' : 'needed attention the same day'}{x.withdrawn ? '; the crew member withdrew the reading as a typing mistake' : ''}{x.settled ? '; a later reading that day was back on the safe side' : ''})</span></span>
-                      <ReadingLog readings={x.readings ?? []} title="Entered readings" />
+                      <ReadingLog readings={x.readings ?? []} title="Entered readings" note={false} />
                       {!(role === 'cmo' && c.role === 'cmo') && (
                         <div className="row wrap">
                           <input type="text" aria-label={`Closing note for ${x.title}`} value={notes[x.key] ?? ''} onChange={(e) => setNotes((p) => ({ ...p, [x.key]: e.target.value }))} placeholder="Note: what you found and did" style={{ flex: 1, minWidth: 180 }} />

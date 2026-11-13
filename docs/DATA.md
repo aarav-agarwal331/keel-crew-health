@@ -19,7 +19,7 @@ Access date for everything below: **2026-11-12**. Machine-readable companion: `d
 ## 1. What this survey is for
 
 The app learns a personal physiological baseline (resting heart rate, HRV, SpO2, sleep, activity,
-symptoms) and flags drift before a health event. Two things are needed from real data:
+symptoms) and flags drift. (This survey was written before testing; on real data Keel's alerts mostly come around symptom onset, with no useful early warning.) Two things are needed from real data:
 
 - **(a) Detection evaluation**: wearable recordings from many people with *dated* events
   (illness onset, sleep loss, stress, exertion), so that detection rate, lead time and false alarms

@@ -68,7 +68,7 @@ const getJson = async <T,>(path: string): Promise<T> => {
 }
 
 /** spot readings that are logged with their time each time they are entered */
-const LOGGED = ['temp_oral', 'spo2_spot', 'sbp', 'dbp', 'glucose', 'rhr_spot', 'mass']
+const LOGGED = ['temp_oral', 'spo2_spot', 'sbp', 'dbp', 'glucose', 'rhr_spot', 'mass', 'pvt_rt', 'sleep_h']
 
 export function AppProvider({ children }: { children: ReactNode }) {
   const [mission, setMission] = useState<Mission | null>(null)
