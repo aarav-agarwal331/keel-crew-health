@@ -6,7 +6,7 @@ Crew readiness
 Commander
 Medical officer
 
-Day 121. What each crew member has chosen to share with you. Nothing is shown that they have not shared, except emergencies they agreed to share and, under that consent, the fact that an item is open in an area. Their overall tier is worked out from all their readings.
+Day 121. What each crew member has chosen to share with you. Nothing is shown that they have not shared, except emergencies they agreed to share and, under that consent, the fact that an item is open in an area. Their overall status here covers only the areas they share with you; the commander's tier (a separate thing) uses all their readings.
 
 Labels: a crew member's own "Act today" or "Act now" shows to the commander as "Talk to the medical officer first"; "Worth a look" is the same on both screens.
 

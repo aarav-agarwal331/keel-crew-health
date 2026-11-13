@@ -2,14 +2,14 @@ SCREEN: 14-today-steady-day-commander
 TOP BAR: Keel | Earth link: 1 min 34 s delay | Amara · Flight day 66 | Simulated data
 BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
-When Earth can't answer, Keel tells you what to do and who to tell. Responds at once to dangerous readings you enter. You choose who sees what. It also watches your readings against your own normal. Demo: Amara's tablet, simulated Mars transit. A lunar base mission is under More.
+When Earth can't answer, Keel tells you what to do and who to tell. Responds at once to dangerous readings you enter. You choose who sees what. It also watches your readings against your own normal. Demo: Amara's tablet, simulated Mars transit.
 
-Demo: replay a scripted event (40 s)
+Demo: replay a scripted event
 The evidence
 Hide
 Worth a look
 
-No action needed yet. Keep an eye on: brain, sleep and mood, cabin air.
+No action needed yet. Keep an eye on: brain, sleep and mood.
 
 Cabin CO2 is 2.6 mmHg. Headaches get more likely the higher it goes; 2.5 is Keel's advisory line and 3.0 its alert. If you have a headache, log it at check-in and move to better airflow.
 

@@ -31,24 +31,24 @@ Resting heart rate (overnight) (bpm)
 50
 60
 Day 104
-Day 112
-Day 121
-Day 129
+Day 111
+Day 117
+Day 124
 Heart rate variability (ms)
 40
 50
 Day 104
-Day 112
-Day 121
-Day 129
+Day 111
+Day 117
+Day 124
 Skin temperature (overnight) (°C)
 33
 34
 35
 Day 104
-Day 112
-Day 121
-Day 129
+Day 111
+Day 117
+Day 124
 What Keel did
 DAY 104
 Worth a look: Exercise has dropped below your plan

@@ -2,9 +2,9 @@ SCREEN: 16-today-after-entering-readings
 TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 121 | Simulated data
 BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
-When Earth can't answer, Keel tells you what to do and who to tell. Responds at once to dangerous readings you enter. You choose who sees what. It also watches your readings against your own normal. Demo: Lucía's tablet, simulated Mars transit. A lunar base mission is under More.
+When Earth can't answer, Keel tells you what to do and who to tell. Responds at once to dangerous readings you enter. You choose who sees what. It also watches your readings against your own normal. Demo: Lucía's tablet, simulated Mars transit.
 
-Demo: replay a scripted event (40 s)
+Demo: replay a scripted event
 The evidence
 Hide
 Act now
@@ -15,7 +15,7 @@ Demo crew member, simulated readings.
 
 RECOMMENDED ACTION
 
-Take sugar now if you can swallow, and call a crewmate to you. Tell the medical officer now. Re-check at 19:43: your repeat (85) came too soon to count.
+Take sugar now if you can swallow, and call a crewmate to you. Your readings disagree (50, then 85): treat it as low to be safe. If you are awake and can swallow, eat or drink something sugary now, and tell the medical officer now. Re-check at 20:17.
 
 When: now. Who: the crew medical officer.
 
@@ -23,22 +23,22 @@ A fixed safety threshold, not a trend.
 
 For whoever is with you: if they are confused, drowsy or cannot swallow safely, give nothing by mouth and get the medical officer now.
 
-Alert the medical officer and commander now
+Alert sent at 20:02. Not acknowledged yet: it stays at the top of their Crew screens until the medical officer does.
 
 The details are visible on their Crew screens (emergency sharing). The button is what alerts them.
 
 Also act now
 Heart rate reading at rest is 150 or more (entered: 170). Call a crewmate to you now. Sit or strap in, count your pulse by hand for a full minute now, and tell the medical officer now.
 Readings this is based on:
-Blood sugar 50 mg/dL, at 19:28
-Blood sugar 85 mg/dL, at 19:28
+Blood sugar 50 mg/dL, at 20:02
+Blood sugar 85 mg/dL, at 20:02
 Every reading is kept. The most abnormal reading of the day stays on the medical officer's list until they close it. What you are told to do follows your latest reading once a repeat counts (for blood sugar, 15 minutes after the first).
 Why, and what next
 
 No link to Earth right now. Everything on this screen was worked out on this device.
 
-Not urgent: 1 more item for after the above
-What changed
+After the above: 1 more item (act today or worth a look)
+Other changes in your readings (not the cause of the alert above)
 All trends
 Resting heart rate (overnight) 66 bpm
 Higher than your usual 53. Your most unusual reading in 53 days.
