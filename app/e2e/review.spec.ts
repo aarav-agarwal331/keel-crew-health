@@ -61,6 +61,7 @@ test('capture for review', async ({ page }) => {
   await capture(page, '15-checkin-after-entering-readings')
   await page.getByTestId('confirm-rhr').first().click(); await page.waitForTimeout(300)
   await nav(page, '#/today'); await capture(page, '16-today-after-entering-readings')
+  await page.getByTestId('alert-crew').first().click(); await page.waitForTimeout(300)
   await nav(page, '#/crew'); await page.getByRole('button', { name: 'Medical officer' }).click(); await capture(page, '17-crew-as-medical-officer-after-readings')
   fs.writeFileSync(`${OUT}/console-errors.txt`, errors.length ? errors.join('\n') : 'No console errors during the capture.\n')
 })

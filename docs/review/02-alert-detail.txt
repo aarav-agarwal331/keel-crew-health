@@ -12,9 +12,9 @@ Act today since Day 120 (2 days). Keel first raised a notice on Day 115 for a di
 
 RECOMMENDED ACTION
 
-Take your temperature now. No exercise until you have. Tell the medical officer.
+Take your temperature now and tell the medical officer. No exercise until they clear you.
 
-Enter the thermometer reading below. At 38.0 °C or more, or with a cough or chest symptoms: no exercise today, and the medical officer decides what you do.
+Enter the thermometer reading below. Whatever it shows, the medical officer decides when you exercise again.
 Drink to your fluid target and protect tonight's sleep period.
 Keep some distance at meals and wipe shared surfaces until this clears.
 Thermometer reading (°C)
@@ -113,7 +113,7 @@ Where this advice comes from
 Symptom check, rest, limit spread, consult
 PUBLISHED RESEARCH
 
-In our own test on Earth data, resting heart rate rose by about 4 to 5 bpm on average in the days after symptoms began. People differed widely, and some showed no rise at all. Immune function changes in space and latent viruses reactivate in most ISS crew. NASA lists hygiene, quarantine and monitoring as countermeasures.
+In our own test on Earth data, resting heart rate rose by about 4.6 bpm on average over the four days from symptom onset. People differed widely, and some showed no rise at all. Immune function changes in space and latent viruses reactivate in most ISS crew. NASA lists hygiene, quarantine and monitoring as countermeasures.
 
 [58] Mishra T, Wang M, Metwally AA, et al. "Pre-symptomatic detection of COVID-19 from smartwatch data." Nat Biomed Eng 4(12):1208–1220, 2020. Source
 [60] Natarajan A, Su HW, Heneghan C. "Assessment of physiological signs associated with COVID-19 measured using wearable devices." NPJ Digit Med 3(1):156, 2020. Source

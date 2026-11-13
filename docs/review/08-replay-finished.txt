@@ -55,7 +55,7 @@ What Keel did
 DAY 124
 More serious now: Your body looks like it is under strain
 
-Take your temperature now. No exercise until you have. Tell the medical officer. (today; medical officer, flight surgeon when a link exists)
+Take your temperature now and tell the medical officer. No exercise until they clear you. (today; medical officer, flight surgeon when a link exists)
 
 DAY 122
 Act today: The same symptom three days running
@@ -65,18 +65,18 @@ Tell the medical officer today. (today; medical officer)
 DAY 121
 Same notice (open since Day 115), read differently: Your body looks like it is under strain
 
-Take your temperature now. No exercise until you have. Tell the medical officer. (today; medical officer)
+Take your temperature now and tell the medical officer. No exercise until they clear you. (today; medical officer)
 
 DAY 120
 SCRIPTED EVENT
 What was scripted: illness (infection-like strain)
 
-This is the day the scripted illness symptoms begin and the simulated crew member ticks them at check-in. An odd tired or congested day before this is ordinary simulated background, not the script. Scripted at 2.15 times the average real response as fitted in the calibration half (a peak of 3.3 bpm): a peak resting heart rate rise of about 7 bpm. That matches the published median among cases a detector caught, so this is an easy case. The simulated rise starts up to 4 days before the symptom day. Real responses vary widely; in the simulator about three illnesses in ten have no heart-rate rise at all. On any one night, ordinary night-to-night variation of about 3.5 bpm comes on top of the scripted rise.
+This is the day the scripted illness symptoms begin and the simulated crew member ticks them at check-in. An odd tired or congested day before this is ordinary simulated background, not the script. Scripted at 2.15 times the simulator's illness template (fitted to real data; template peak 3.3 bpm, while real episodes rose about 4.6 bpm on average over the four days from onset): a peak resting heart rate rise of about 7 bpm. That matches the published median among cases a detector caught, so this is an easy case. The simulated rise starts up to 4 days before the symptom day. Real responses vary widely; in the simulator about three illnesses in ten have no heart-rate rise at all. On any one night, ordinary night-to-night variation of about 3.3 bpm comes on top of the scripted rise.
 
 DAY 120
 Act today: Throat or cough symptoms, and your readings are drifting
 
-Take your temperature now. No exercise until you have. Tell the medical officer. (today; medical officer)
+Take your temperature now and tell the medical officer. No exercise until they clear you. (today; medical officer)
 
 DAY 119
 More serious now: Your mood has been lower than usual
@@ -126,7 +126,7 @@ Keel's log for this replay also has 6 entries that are not about the scripted ev
 
 Across all the real data, not this one script: heart rate alone (not the eleven-channel model in this replay, which is tested in simulation only) flagged 50% of 107 real illness episodes, 22 points more than luck, at about 1.0 false alerts per person-month. Useful early warning was not shown.
 
-One scripted event proves nothing by itself. The day of the scripted illness was chosen from a short list when the demo missions were built, by looking at the detector's output for two quiet weeks beforehand; no candidate day had them, so the first was used and earlier notices appear. This replay is not a random draw.
+The replay runs on past the demo's "today" (Day 121) to show how the notice ends; those later days are simulated ahead. One scripted event proves nothing by itself. The day of the scripted illness was chosen from a short list when the demo missions were built, by looking at the detector's output for two quiet weeks beforehand; no candidate day had them, so the first was used and earlier notices appear. This replay is not a random draw.
 
 Open that day as Lucía
 See the validation

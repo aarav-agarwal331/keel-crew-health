@@ -2,7 +2,7 @@ SCREEN: 01-today
 TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 121 | Simulated data
 BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
-Keel: crew health with no link to Earth. Acts at once on dangerous readings. You choose who sees what. It also watches your readings against your own normal. Demo: Lucía's tablet, simulated Mars transit. A lunar base mission is under More.
+Keel: crew health with no link to Earth. Responds at once to dangerous readings you enter. You choose who sees what. It also watches your readings against your own normal. Demo: Lucía's tablet, simulated Mars transit. A lunar base mission is under More.
 
 Demo: replay a scripted event (40 s)
 The evidence
@@ -15,15 +15,13 @@ Demo crew member, simulated readings.
 
 RECOMMENDED ACTION
 
-Take your temperature now. No exercise until you have. Tell the medical officer.
+Take your temperature now and tell the medical officer. No exercise until they clear you.
 
 When: today. Who: the crew medical officer.
 
 Possible illness in a closed cabin affects the whole crew, and early rest is cheap.
 
-Also in your readings
-Your mood has been lower than usual. Book a private conversation with the medical officer.
-Your reactions are slower than usual. Repeat the test after a ten-minute break; if it is still slow, ask for a buddy check on critical tasks today.
+When you can: 2 more from your readings
 Thermometer reading (°C)
 Save reading
 Why, and what next
@@ -77,7 +75,7 @@ Crew goal this week: 86% of planned exercise done together. Individual numbers s
 Report a symptom now
 Check-in done (simulated)
 Sensor worn last night
-Exercise: on hold. Take your temperature; then the medical officer decides
+No exercise until the medical officer clears you
 Sleep last night 4.5 h. The scheduled sleep period is 8.5 h.
 Cabin
 Deep-space transit vehicle

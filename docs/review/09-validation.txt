@@ -17,24 +17,24 @@ Keel runs two models. On a crew member's tablet it uses all eleven on-board chan
 
 +22 points
 above luck on real illness: the import model
-Overnight heart rate alone, thresholds from other real people (5-fold over people): 50% of 107 episodes flagged against 28% by luck, interval 12 to 32, at 0.99 false alerts per person-month. Stricter tier: +19 (11 to 28). This is what imported data runs on, fitted on all of these people. In the original wider window: +19 (9 to 29). On Fitbit's own daily resting heart rate (the kind of value an import carries), for 63 LifeSnaps people without illness labels: 1.07 alerts per person-month at the notice tier and 0.46 at the stricter one (budgets 1.00 and 0.25). Caveats: 208 of the 251 people wore Fitbits (other devices did much worse), and an import carries the watch maker's own smoothed resting heart rate, not the night-time value the model was calibrated on.
+Overnight heart rate alone, thresholds from other real people (5-fold over people): 50% of 107 episodes flagged against 28% by luck, interval 12 to 32, at 0.99 false alerts per person-month. Stricter tier: +19 (11 to 28). This is what imported data runs on, fitted on all of these people. In the original wider window: +19 (9 to 29). On Fitbit's own daily resting heart rate (the kind of value an import carries), for 63 LifeSnaps people without illness labels: 1.07 alerts per person-month at the notice tier and 0.46 at the stricter one (budgets 1.00 and 0.25). Caveats: 208 of the 251 people wore Fitbits (other devices did worse, in a small sample with a wide interval), and an import carries the watch maker's own smoothed resting heart rate, not the night-time value the model was calibrated on.
 +26 points
 above luck in simulation: the on-board model
 All eleven channels, thresholds from simulated training missions, 100 simulated test missions: 67% of events flagged against 41% by luck, simulation interval 19 to 33 (seed-to-seed variation only, given assumed effect sizes; each cabin CO2 event counts once per crew member). Simulation only, with assumed effect sizes for everything except the illness heart-rate response. Most of it comes from sleep restriction and an exercise outage, whose scripted change is itself an input; illness is +11 (-9 to 30) and cabin CO2 +11 (1 to 21).
 +32 points
 above luck on real illness: two sensors, simulator thresholds
 The method fitted only on simulated people, then applied to real people with heart rate and 7-day activity: 72% flagged against 40%, interval 22 to 41, but at 1.40 false alerts per person-month against a budget of 1.00: simulator thresholds run over budget on real people. On the 132 people the simulator's fits did not use (60 episodes): +35 (22 to 46); the hand-set 30% exercise cut was chosen with some of them in view. "7-day activity" is steps here and exercise minutes in the simulator. Stricter tier: +19 (9 to 28) at 0.39. Original wider window: +29 (20 to 38).
-What these results do not show. Useful early warning. At the notice tier an alert started in the ten days before onset or on the day itself for 46% of episodes, against 28% by luck (+18, 9 to 28); at the stricter tier that brings in the medical officer, +1 (-5 to 7), about nothing. The notice-tier gain is small and confounded (test dates, isolation after a positive test, lower activity on the day itself), so we do not claim early warning. Most alerts are false: at the in-flight rate of respiratory illness, about about 1 in 16 alert-tier alerts would be a real illness for the import model and about 1 in 27 for the two-sensor version (a spread across configurations, not an interval; all upper bounds). The model file the app ships is calibrated for all eleven channels: fed only overnight heart rate (and sleep where recorded), as a real import would be, it flagged 12% of episodes (+9 above luck) at 0.08 false alerts per person-month, and at its alert tier it flagged no episodes (three false alerts in total). Thresholds have to be set for the sensors a person actually has, so imported watch data now runs on a separate heart-rate-only model calibrated on these real people: the "heart rate alone" row below (+22, 12 to 32). Keel is not shown to beat a simple personal rule, and its lead over one fixed threshold depends on choices we made after seeing data. The data is from people on Earth with consumer watches, mostly with COVID-19. Everything except illness is tested in simulation only.
+What these results do not show. Useful early warning. At the notice tier an alert started in the ten days before onset or on the day itself for 46% of episodes, against 28% by luck (+18, 9 to 28); at the stricter tier that brings in the medical officer, +1 (-5 to 7), about nothing. The notice-tier gain is small and confounded (test dates, isolation after a positive test, lower activity on the day itself), so we do not claim early warning. Most alerts are false: at the in-flight rate of respiratory illness, about 1 in 16 alert-tier alerts would be a real illness for the import model and about 1 in 27 for the two-sensor version (a spread across configurations, not an interval; all upper bounds). The model file the app ships is calibrated for all eleven channels: fed only overnight heart rate (and sleep where recorded), as a real import would be, it flagged 12% of episodes (+9 above luck) at 0.08 false alerts per person-month, and at its alert tier it flagged no episodes (three false alerts in total). Thresholds have to be set for the sensors a person actually has, so imported watch data now runs on a separate heart-rate-only model calibrated on these real people: the "heart rate alone" row below (+22, 12 to 32). Keel is not shown to beat a simple personal rule, and its lead over one fixed threshold depends on choices we made after seeing data. The data is from people on Earth with consumer watches, mostly with COVID-19. Everything except illness is tested in simulation only.
 
 Jump to: real data · simulated missions · simulator realism · NASA bed-rest data · limitations
 
 Detection above luck on real illness, notice tier
+Heart rate alone (the import model)
++22
 Two sensors, simulator-set*
 +32
 HR + 7-day activity, real thresholds
 +31
-Heart rate alone
-+22
 With daily steps
 +34
 Fixed threshold, daily steps
@@ -43,14 +43,14 @@ Fixed threshold, 7-day activity
 +7
 Shipped 11-channel model, import channels
 +9
-Share of 107 real illness episodes flagged, minus the share an alert would hit by luck. Bars show 95% intervals. The first bar is a two-sensor version of Keel's method with thresholds from the simulator; the next three use thresholds calibrated on other real people (5-fold over people) to one false alert per person-month; the next two are one fixed threshold for everyone; the last is the eleven-channel model the app ships, given only the channels a real import has. Heart rate alone is the figure most likely to carry over to a crew on a fixed exercise schedule.
+Share of 107 real illness episodes flagged, minus the share an alert would hit by luck. Bars show 95% intervals. The first bar is heart rate alone, the model imported data runs on; the second is a two-sensor version of Keel's method with thresholds from the simulator, which runs over its false-alert budget; the next two use thresholds calibrated on other real people (5-fold over people) to one false alert per person-month; the next two are one fixed threshold for everyone; the last is the eleven-channel model the app ships, given only the channels a real import has. Heart rate alone is the figure most likely to carry over to a crew on a fixed exercise schedule.
 How this was measured
 Made by research/scripts/eval_real.py
 1. Real wearable data with dated illness
 
 Stanford COVID-19 wearables phase 1 (Mishra et al. 2020) and phase 2 subset (Alavi et al. 2022). Indicators available: resting heart rate + daily steps. No HRV, oxygen or temperature exists in this data.
 
-Who is in the test	People
+Who is in the test	Recordings
 Downloaded (all 120 of phase 1; all 84 positives and 120 others of phase 2)	324
 Left out: fewer than 28 nights with a usable resting heart rate	−73
 Analysed (18 AppleWatch, 208 Fitbit, 25 Other)	251
@@ -129,12 +129,12 @@ What real illness looks like in resting heart rate
 Days from symptom onset
 Resting heart rate change, bpm
 Onset
-Mean change from each person's own earlier level, 70 dated episodes, with a 95% band. The rise is small before symptoms and peaks a day or two after onset. Night-to-night variation is about 3.5 bpm, so a single person's rise is hard to see.
+Mean change from each person's own earlier level, 70 dated episodes, with a 95% band. The rise is small before symptoms and peaks a day or two after onset. Night-to-night variation is about 3.3 bpm, so a single person's rise is hard to see.
 How this was measured
 Made by research/scripts/eval_real.py
 What an alert is worth
 
-ISS crews report about one episode of upper-respiratory symptoms per person-year. At that rate, and with the detection above luck measured here, about 1 in 11 alert-tier alerts and about 1 in 37 notices would be attributable to such an illness with daily steps and thresholds from real people; about 1 in 25 and about 1 in 41 with the 7-day activity average; and about 1 in 27 and about 1 in 55 with thresholds from the simulator, which run over budget; and about 1 in 16 and about 1 in 56 for the heart-rate-only model imports run on. These are upper bounds: the sensitivity comes from mostly symptomatic COVID-19, and in-flight colds are milder. The other conditions Keel watches for would raise those shares, and full-sensor thresholds running two to four times over budget (section 3) would lower them; neither can be measured on real data. The figures closest to the app are the simulator-threshold ones. This is why a notice asks for a look, not for the medical officer.
+ISS crews report about one episode of upper-respiratory symptoms per person-year. At that rate, and with the detection above luck measured here, about 1 in 11 alert-tier alerts and about 1 in 37 notices would be attributable to such an illness with daily steps and thresholds from real people; about 1 in 25 and about 1 in 41 with the 7-day activity average; and about 1 in 27 and about 1 in 55 with thresholds from the simulator, which run over budget; on the watch maker's own resting heart rate, where the import model's false-alert rates are higher, about about 1 in 30 and about 1 in 61; and about 1 in 16 and about 1 in 56 for the heart-rate-only model imports run on. These are upper bounds: the sensitivity comes from mostly symptomatic COVID-19, and in-flight colds are milder. The other conditions Keel watches for would raise those shares, and full-sensor thresholds running two to four times over budget (section 3) would lower them; neither can be measured on real data. The figures closest to the app are the simulator-threshold ones. This is why a notice asks for a look, not for the medical officer.
 
 Assumes 0.97 illnesses per person-year (upper-respiratory symptoms on the ISS, source 52b) and the detection above luck measured on real data. How this was measured · research/scripts/eval_real.py
 
@@ -192,4 +192,4 @@ The simulator's illness response was fitted on 38 episode curves from 55 people;
 The four personal-baseline detectors perform alike at the notice tier. Keel runs the one picked on simulated training missions by a selection rule that was itself revised during review; the choice flipped once. The simple rule is +28 above luck at the notice tier and +26 at the alert tier.
 Full limitations and what a clinician would need to review
 
-Result files, code version: real 999c2f562afc, simulated 999c2f562afc, realism 999c2f562afc, bed rest 999c2f562afc. Scripts: research/scripts/.
+Result files, code version: real ab5742cc9d6e, simulated ab5742cc9d6e, realism ab5742cc9d6e, bed rest ab5742cc9d6e. Scripts: research/scripts/.

@@ -17,7 +17,7 @@ Hostile, closed environment	Recycled air and water, shared microbes, an immune s
 [7] NASA Human Research Program. "5 Hazards of Human Spaceflight." nasa.gov (updated 2026). Source
 When to involve someone else
 
-This list is built from the rule table itself, so it cannot disagree with what Keel does.
+This list is built from the rule table. At run time Keel also adapts the wording (who to tell, repeats, a crewmate first), but never the thresholds.
 
 Now, whatever else Keel shows. Tell the medical officer; if you are the medical officer, tell the commander.
 Any of these symptoms: chest pain or pressure; short of breath at rest; fainted, blacked out or had a seizure; racing or irregular heartbeat; swelling of lips, face or tongue, or a rash with trouble breathing; sudden loss of vision, or a painful red eye; worst headache of your life, or fever with a stiff neck; confusion, weakness or trouble speaking; severe belly pain; severe side or back pain; vomited more than twice, or cannot keep fluids down; coughing or vomiting blood, or bleeding that will not stop; cannot pass urine, or blood in urine; injury, or something in the eye; smoke or chemical exposure; joint pain or numbness after a spacewalk; new swelling or pain in one leg, or on one side of the neck; severe tooth or jaw pain; thoughts of harming yourself; thoughts of harming someone else.
@@ -50,7 +50,7 @@ Cabin carbon dioxide is elevated.
 When a link opens: anything the medical officer wants a flight surgeon to review. The daily summary contains only what you chose to share.
 If you have thoughts of harming yourself, or cannot function: tell the medical officer now. Keel shows that tick to the medical officer only.
 
-Keel gives first steps (rest, fluids, a repeat reading, sugar for a low blood sugar) but never recommends medication; that is for the medical officer with the onboard medical checklist. The fixed thresholds are public clinical guidance for adults on Earth. Several are provisional values that no flight surgeon has reviewed, and each rule below says which. A fixed rule looks at every reading from the most recent day that has one, and anything needing attention now or today stays on the medical officer's list until they close it with a note. "Steady" on the Today screen means no change was detected, not that you are well.
+Keel gives first steps (rest, fluids, a repeat reading, sugar for a low blood sugar) but never recommends medication; that is for the medical officer with the onboard medical checklist. The fixed thresholds are public clinical guidance for adults on Earth. No threshold has been reviewed by a clinician; values without a cited source are marked provisional in the rule below. A fixed rule looks at every reading from the most recent day that has one, and anything needing attention now or today stays on the medical officer's list until they close it with a note. "Steady" on the Today screen means no change was detected, not that you are well.
 
 Everything Keel can recommend
 
