@@ -99,7 +99,7 @@ Sensors alone, or with her check-in? The flag on Day 120 came from the symptoms 
 
 Keel's log for this replay also has 1 entry that is not about the scripted event. Some are one open notice being read differently as the days pass; some reflect ordinary lapses in the simulated routine, such as a missed exercise session; some are false alerts. That is part of the picture: notices are budgeted at about one false one per person-month in simulation, and real crews would likely see more.
 
-Across all the real data, not this one script: heart rate alone (not the eleven-channel model in this replay, which is tested in simulation only) flagged 50% of 107 real illness episodes, 19 points more than luck, at about 1.0 false alerts per person-month. Useful early warning was not shown.
+Across all the real data, not this one script: heart rate alone (not the eleven-channel model in this replay, which is tested in simulation only) flagged 50% of 107 real illness episodes, 13 to 19 points more than luck (in the detection window set before the analysis, and in the narrower one), at about 1.0 false alerts per person-month. Useful early warning was not shown.
 
 The replay runs on past the demo's "today" (Day 122) to show how the readings evolve over the next few days; those days are simulated ahead, and the notice is still open at the end (only the medical officer closes it). One scripted event proves nothing by itself. The day of the scripted illness was chosen from a short list when the demo missions were built, by looking at the detector's output for two quiet weeks beforehand. This replay is not a random draw.
 

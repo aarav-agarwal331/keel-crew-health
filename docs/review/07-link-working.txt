@@ -16,6 +16,8 @@ Queued for the ground
 
 One summary per mission day goes out automatically, smaller than a text message. It contains only what you have chosen to share with the flight surgeon in Sharing (by default nothing personal except, under emergency sharing, a count of urgent items still open; plus cabin alerts). While there is no link, summaries wait here and go out together when it returns.
 
+An emergency does not go to the ground by itself, even with the link up: the daily summary carries only a count of urgent items still open (under emergency sharing), and the medical officer decides whether to call the flight surgeon.
+
 Recently sent
 Day 101 · sent same day, arrived 3 min 06 s later
 Day 100 · sent same day, arrived 3 min 04 s later

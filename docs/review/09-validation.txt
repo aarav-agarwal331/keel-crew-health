@@ -13,8 +13,8 @@ Everything else is simulated, including the tablet's own eleven-channel model (s
 +13 to +19 points
 above luck on real illness: the import model
 Overnight heart rate alone, thresholds from other real people (5-fold over people): 50% of 107 episodes flagged against 31% by luck, interval 9 to 28, at 0.99 false alerts per person-month. Alert tier: +19 (11 to 28). This is what imported data runs on, fitted on all of these people. In the original wider window: +13 (4 to 24). On Fitbit's own daily resting heart rate (the kind of value an import carries), for 63 LifeSnaps people without illness labels: 1.04 alerts per person-month at the notice tier and 0.30 at the stricter one (budgets 1.00 and 0.25). Caveats: 208 of the 251 people wore Fitbits (other devices did worse, in a small sample with a wide interval), and an import carries the watch maker's own smoothed resting heart rate, not the night-time value the model was calibrated on.
-+14 points
-above luck for simulated illness: the on-board model
+Not shown
+simulated illness is not distinguishable from luck for the on-board model (+14, -6 to 34)
 All eleven channels, thresholds from simulated training missions, 100 simulated test missions. Illness, which it sees through physiology and through the simulator's assumed drops in exercise, food intake and sleep when ill: +14 (-6 to 34). All event types together: +31, with 71% of events flagged against 41% by luck, simulation interval 25 to 36 (seed-to-seed variation only, given assumed effect sizes; each cabin CO2 event counts once per crew member). Simulation only, with assumed effect sizes for everything except the illness heart-rate response, which is fitted but fails its own check. Most of it comes from sleep restriction and an exercise outage, whose scripted change is itself an input; illness is +14 (-6 to 34) and cabin CO2 +16 (6 to 24).
 +28 points*
 linking analysis only: at 1.31 false alerts a month, over budget, so not comparable with the tiles beside it
@@ -24,7 +24,7 @@ What these results do not show. Useful early warning. At the notice tier an aler
 Jump to: real data · simulated missions · simulator realism · NASA bed-rest data · limitations
 
 Detection above luck on real illness, notice tier
-Heart rate alone (the import model)
+Heart rate alone (the import model; +13 in the p…
 +19
 Two sensors, simulator-set, at 1.31 false alerts…
 +28
@@ -181,7 +181,7 @@ No open dataset has astronaut wearable time series. The real evaluation uses peo
 The real illness data has two indicators. Claims about HRV, oxygen, temperature, mood, reaction time, fluids and food rest on simulation with assumed effect sizes.
 107 real episodes is a small sample; intervals are wide. Symptom dates are self-reported and shifted for privacy.
 Thresholds for the full indicator set are calibrated on simulated missions and probably run over budget on real people.
-Detection above luck is likely optimistic about what physiology explains: pretend dates cannot be matched to the calendar, so travel, testing and isolation around a real onset are not reproduced. Heart rate alone (+19) is the safer figure.
+Detection above luck is likely optimistic about what physiology explains: pretend dates cannot be matched to the calendar, so travel, testing and isolation around a real onset are not reproduced. Heart rate alone (+13 in the pre-set window, +19 in the narrower one) is the safer figure.
 The simulator's illness response was fitted on 38 episode curves from 55 people; 47 of the 107 evaluated episodes belong to those people, so anything that passes through the simulator (the app's thresholds, the choice of detector) has seen those people; results on the 132 people not used by its fits are given beside the headline (not unseen: the 30% exercise cut and the 30% chance of an unworn night in simulated ground people were set with the real data in view).
 The four personal-baseline detectors perform alike at the notice tier. Keel runs the one picked on simulated training missions by a selection rule that was itself revised during review; the choice has flipped twice, most recently to the simple rule after a sign error in the multivariate statistic was corrected. The simple rule is +28 above luck at the notice tier and +26 at the alert tier.
 Full limitations and what a clinician would need to review

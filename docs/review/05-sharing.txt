@@ -8,7 +8,7 @@ Lucía Reyes, your health data is yours. You decide below what each role can see
 
 Who	Always	Your choice
 Medical officer	With emergency sharing on: every urgent or same-day safety item, with the value entered, and an alert for urgent ones; while an urgent item is open, also whether your heart, oxygen, temperature and symptom readings are inside your usual range (not what any notice says), so they can help. With it off: an alert that you need help, and "an item, details private".	Each area: nothing, status, trend or full detail
-Commander	Your readiness tier, without the reason. With emergency sharing on: urgent items, the value entered and an alert, as backup (never items marked "medical officer only"). With it off: an alert that you need help.	Each area
+Commander	Your readiness tier, without the reason. It is worked out from all your readings, including private ones and items marked "medical officer only", so ticking one of those changes it. With emergency sharing on: urgent items, the value entered and an alert, as backup (never items marked "medical officer only"). With it off: an alert that you need help.	Each area
 Crew	A count when three or more crew show a change in the same area	Nothing
 Ground	With emergency sharing on: a count of urgent items still open. With it off: nothing.	Each area, for the flight surgeon
 Everyone	Cabin air and radiation readings	Not personal
@@ -33,8 +33,8 @@ Flight surgeon on the ground
 The crew member trained to provide care on board.
 
 Private: Nothing beyond the always-visible items above.
-Status: Only steady / worth a look / act today / act now.
-Trends: Status plus whether each reading is inside your normal range.
+Status: Only steady / worth a look / act today / act now. Under emergency sharing the medical officer also sees the title of a safety item, or of a notice that includes a symptom you reported.
+Trends: Status, the title of any notice from your readings, and whether each reading is inside your normal range.
 Full detail: Status, trends, the actual numbers and your notes.
 
 Sharing areas group the readings a medical officer would look at together, so they are not the same as the body areas on Today. Each area below lists exactly what it contains.

@@ -59,7 +59,7 @@ Thoughts of harming yourself
 Thoughts of harming someone else
 3. Fluids today
 −
-2.50 L
+2.60 L
 +
 Same as usual (2.5 L)
 + 1 L
@@ -92,7 +92,7 @@ Decongestant or antihistamine
 Anti-nausea medicine
 Other medicine
 
-Classes only, no doses. These can move heart rate, reaction time and sleep, so Keel shows them next to any alert. Keel never recommends medication. The medical officer will not see these unless you share Symptoms in full detail.
+Classes only, no doses. These can move heart rate, reaction time and sleep, so Keel shows them next to any alert. Keel never recommends medication. The medical officer sees these if you share Symptoms in full detail, and, under emergency sharing, while something urgent is open for you.
 
 Photo (optional, kept on your tablet)
 What is it of?
