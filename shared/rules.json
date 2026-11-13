@@ -41,7 +41,7 @@
     "Stop exercise and any demanding task.",
     "Stay with another crew member.",
     "If you are the medical officer, tell the commander: they are your backup.",
-    "The medical officer closes this in Keel with a note once it has been dealt with; until then it stays on your Today screen.",
+    "The medical officer closes this in Keel with a note once it has been dealt with; until then it stays on their list (and on your Today screen for three days).",
     "The medical officer leads care on board and decides whether to consult the flight surgeon. Keel sends nothing to the ground by itself: the daily summary carries only what you chose to share."
    ],
    "tier": "cmo",
@@ -95,7 +95,7 @@
    "action": "Tell the medical officer now.",
    "steps": [
     "Repeat the reading once with a warm, still hand while someone fetches the medical officer.",
-    "Sit upright and rest.",
+    "Sit up, or strap in with your head up, and rest.",
     "Ask for the cabin oxygen, pressure and carbon dioxide readings."
    ],
    "tier": "cmo",
@@ -206,7 +206,7 @@
     "min": 150
    },
    "summary": "You entered a resting heart rate of 150 or more. Keel does not interpret it. The value 150 is provisional and has not been reviewed by a flight surgeon.",
-   "action": "Sit or strap in, put the ECG on now (or the pulse oximeter if there is none), and tell the medical officer now.",
+   "action": "Sit or strap in, put the ECG on now (if there is none, count your pulse by hand for a full minute), and tell the medical officer now.",
    "steps": [
     "For whoever is with you: if they stop responding or are not breathing normally, shout for the whole crew, start CPR and get the defibrillator.",
     "Stay with another crew member.",
@@ -242,7 +242,7 @@
     ]
    },
    "summary": "You entered a resting heart rate of 120 or more and ticked dizziness. A fast rhythm that comes and goes needs to be recorded while it is happening. Keel does not interpret it. The value 120 is provisional and has not been reviewed by a flight surgeon.",
-   "action": "Sit or strap in, put the ECG on now (or the pulse oximeter if there is none), and tell the medical officer now.",
+   "action": "Sit or strap in, put the ECG on now (if there is none, count your pulse by hand for a full minute), and tell the medical officer now.",
    "steps": [
     "For whoever is with you: if they stop responding or are not breathing normally, shout for the whole crew, start CPR and get the defibrillator.",
     "Stay with another crew member.",

@@ -355,8 +355,13 @@ every screen's status for a person agrees.
 Numbers are in the app's Validation screen and in `app/public/results/*.json` (all five files carry
 the same code version). Real data: 251 people, 107 illness episodes, two sensors.
 
-- **Keel's method, two sensors, thresholds from the simulator** (heart rate and 7-day activity).
-  Notice tier: 68% of episodes flagged, luck 41%, **+28 points above luck (95% interval 18 to 37)**,
+- **Headline: heart rate alone, the model imported data runs on**, thresholds set on other people
+  (5-fold): **+13 points above luck (4 to 24)** in the detection window planned before the analysis,
+  +19 (9 to 28) in the narrower window used elsewhere, at about one false alert per person-month (only
+  the window was planned; the metric and this configuration were chosen after first results).
+- **Linking analysis (over its false-alert budget, so not comparable with the headline): Keel's method,
+  two sensors, thresholds from the simulator** (heart rate and 7-day activity).
+  Notice tier: 68% of episodes flagged, luck 41%, +28 points above luck (95% interval 18 to 37),
   at 1.31 false alerts per person-month against a budget of 1.00. On the 132 people the simulator's
   fits did not use (60 episodes): +30 (17 to 42), 1.29. Alert tier: 39%, luck 15%, +24
   (14 to 34), at 0.41 against a budget of 0.25; on those 132 people, +21 (8 to 34).
@@ -413,7 +418,8 @@ the same code version). Real data: 251 people, 107 illness episodes, two sensors
   (daily steps, thresholds from real people) and 1 in 22 (two sensors, simulator thresholds)
   alert-tier alerts would be such an illness; about 1 in 42 to 70 notices. For the import model, the
   configuration the app runs on real data: 1 in 16 alert-tier alerts and 1 in 67 notices on night-time
-  heart rate, 1 in 20 and 1 in 70 on the watch maker's own resting heart rate (assuming detection carries over unchanged, not measured). All are likely optimistic estimates of the share that is respiratory illness: the sensitivity comes from
+  heart rate, 1 in 20 and 1 in 70 on the watch maker's own resting heart rate (assuming detection carries over unchanged, not measured). These use the narrower detection window; in
+  the window planned first, notices are about 1 in 94 and the alert tier was not computed. All are likely optimistic estimates of the share that is respiratory illness: the sensitivity comes from
   mostly symptomatic COVID-19, and uncounted alerts near episodes and over-budget transfers would lower
   the shares further.
 - **How luck is measured matters by a few points.** Device-weighted pseudo-events with real

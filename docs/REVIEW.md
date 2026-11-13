@@ -1422,6 +1422,29 @@ calls (decision 108); lead-day luck, a window ending before onset, counting excl
 and the Fisher test in the script (statistician) are pipeline work; a shorter Today and Sharing grid
 (judge, astronaut) remain the main presentation debt.
 
-## Round 35
+## Round 35 (2026-11-13, fresh reviewers, redeployed build)
 
-See the end of this file once the thirty-fifth round has run.
+Judge's scores: impact 7, creativity 8, validity 8, relevance 8, presentation 6 (37 of 50), "nominate:
+yes". **No reviewer reported a high-severity issue** (judge, astronaut, flight surgeon and statistician
+each said so explicitly). This meets the stopping rule of the brief.
+
+Medium-severity findings fixed after the round:
+
+- **Statistics** (statistician): the "1 in N" shares name the narrower window and give about 1 in 94
+  notices in the planned window (alert tier not computed there); METHOD section 8 leads with the +13
+  heart-rate-only headline and labels the +28 linking analysis as over budget; the short version says
+  "thresholds set on other people (5-fold)" instead of "people not used for fitting"; the share of
+  episodes flagged only on or after onset is computed for heart rate alone; bed rest is "uninformative
+  about benefit" everywhere; the five-sensor over-budget figures say LifeSnaps has no illness labels.
+- **Urgent Check-in** (astronaut): one countdown and one withdraw control while the alert counts down.
+- **Wording** (judge, flight surgeon low): a plainer landing line; the on-board row says it was tested
+  on real data only with heart-rate inputs; both chance levels in the README; the fast-heart-rate action
+  matches its step; "sit up, or strap in with your head up"; where a serious-symptom item stays.
+
+Not done, with reasons (all recorded for the team in FINAL_REPORT section 4): withdrawing an act-now
+reading with one tap, escalating cough-with-falling-oxygen to "now", default sharing for the medical
+officer, saving vital signs beyond the entry limits, blood-pressure repeat boxes (flight surgeon) are
+clinical or policy calls, and changing the entry limits would change `shared/indicators.json` and force
+a full pipeline rerun; the held-out heart-rate-only result, lead-day luck and paired simulation tests
+(statistician) are pipeline work; a shorter Today and a role-by-area Sharing grid (judge, astronaut) are
+the main remaining presentation work.

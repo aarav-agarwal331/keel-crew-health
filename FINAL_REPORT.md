@@ -72,18 +72,18 @@ source, how soon and who should know. No server, no language model.
    run over budget on real people (1.31 against 1.00, 0.41 against 0.25; about 1.3 to 2.3 times over
    with five sensors), and the headline is quoted at that higher rate. The model the app ships is set for
    eleven channels: given only a watch's heart rate it flags about one illness in three (29%) and stays
-   well under budget (0.35 and 0.12 false alerts per person-month). The headline is therefore a two-sensor version of Keel's method, not the
-   shipped file. Imports now run on a separate heart-rate-only model calibrated on real people; other
+   well under budget (0.35 and 0.12 false alerts per person-month). The headline (+13, heart rate alone, planned
+   window) is therefore the import model, not the shipped on-board file; the two-sensor +28 runs over budget. Imports now run on a separate heart-rate-only model calibrated on real people; other
    sensor subsets (for example a failed HRV sensor) still use the full-set thresholds.
 4. **The evidence for illness detection is partly behavioural, and "above luck" is likely optimistic.**
    Heart rate alone is +19; activity adds the rest because people move less once they feel ill, and
    that cannot be separated from isolating at home. Pretend dates cannot be matched to the calendar.
    A crew on a fixed exercise schedule may show less.
-5. **Neither Keel's detector nor a personal baseline is shown to beat a simpler method.** Like for like, a personal against a population baseline is +11 (−3 to 25) at the notice tier and +17 (7 to 28) at the alert tier: mixed. **Keel now deploys the simple personal rule itself:** a review found the multivariate statistic used correlations of the wrong sign, and after the fix its lead on simulated training missions fell below the pre-set margin. On real data the multivariate EWMA scores +34 against the rule's +28 (no paired interval), and the rule's lead over a
+5. **Neither Keel's detector nor a personal baseline is shown to beat a simpler method.** Like for like, a personal against a population baseline is +11 (−3 to 25) at the notice tier and +17 (7 to 28) at the alert tier: mixed. **Keel now deploys the simple personal rule itself:** a review found the multivariate statistic used correlations of the wrong sign, and after the fix its lead on simulated training missions fell below the 3-point margin adopted during review. On real data the multivariate EWMA scores +34 against the rule's +28 (no paired interval), and the rule's lead over a
    fixed threshold includes zero in both windows. The detector choice is arbitrary among
    equals and was made by a rule written during review.
 6. **Nothing was pre-registered.** The window, the metric, the chance estimate and the headline itself
-   changed across twenty-seven review rounds. Everything is in `DECISIONS.md`. Intervals hold thresholds
+   changed across thirty-five review rounds. Everything is in `DECISIONS.md`. Intervals hold thresholds
    fixed and are not corrected for multiple comparisons.
 7. **The simulator's illness response was fitted on episodes from people who are also evaluated** (47 of the 107 episodes belong to its 55 calibration people; the fit used 38 curves with enough baseline). Results on the
    132 people its fits did not use are reported beside it; they rest on 60 episodes.
@@ -113,7 +113,13 @@ source, how soon and who should know. No server, no language model.
 17. **The one-minute reaction test** is not the validated three-minute test.
 18. **`shared/references.json`** was generated once from `docs/DOMAIN.md` and then maintained by hand.
     References 68 and 69 rest on PubMed abstracts only.
-19. **Space Apps rules were not checked** (as instructed). The repository and the live site became
+19. **Alerts are silent and local.** In the demo every role is on one tablet; an alert is a banner on the
+    Crew screen, nothing makes a sound, and repeats run only while Keel is open on that tablet.
+20. **Clinical and policy calls left open** (decision 108 in `DECISIONS.md`): default sharing (the
+    medical officer sees status unless the crew member shares more), no sugar amount, blood pressure
+    180/120 stays same-day, no low-temperature rule, and a typing mistake on an act-now reading can be
+    withdrawn with one tap (the item stays on the medical officer's list). A clinician should settle these.
+21. **Space Apps rules were not checked** (as instructed). The repository and the live site became
     public on 2026-11-12, before the event.
 
 ## 5. Steps that need a human
@@ -152,4 +158,9 @@ source, how soon and who should know. No server, no language model.
 
 ## 7. Review rounds
 
-See `docs/REVIEW.md` for every round: what each reviewer found, what was changed, and what was left.
+Thirty-five rounds, each with four fresh reviewers (flight surgeon, statistician, exhausted astronaut,
+Space Apps judge) who saw only the deployed app's captures and the docs. Round 35 was the first in
+which no reviewer reported a high-severity issue. The judges' totals over the last eight rounds were
+35 to 38 of 50, always "nominate: yes"; presentation (5 to 6) is consistently the weakest score, because
+the screens carry a lot of qualified text. See `docs/REVIEW.md` for every round: what each reviewer
+found, what was changed, and what was left with a reason.

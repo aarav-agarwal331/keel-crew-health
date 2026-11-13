@@ -66,7 +66,8 @@ tested in simulation only, so the main contribution is the offline safety, shari
 ## Headline results
 
 Detection is reported **above luck**: at one false alert per person-month an alert falls inside a
-two-week window by chance about a third of the time, so that share is measured and subtracted.
+detection window by chance about a third of the time in the narrower two-week window, and 43% in the
+longer window planned first, so that share is measured and subtracted.
 
 Real wearable data: 251 people, 107 dated illness episodes (Stanford COVID-19 wearables), two sensors
 (overnight heart rate and activity).
@@ -108,12 +109,14 @@ Honest reading:
 - **Most alerts are false.** At in-flight illness rates, about one alert in 20 at the alert tier would be
   attributable to a real respiratory illness for the import model on the watch maker's own resting
   heart rate, as imports carry it, assuming detection carries over unchanged (not measured; 1 in 16 on night-time heart rate), and one in 22 for the two-sensor
-  simulator-threshold version (one in 13 for a daily-steps configuration the app does not run). All are likely optimistic estimates.
+  simulator-threshold version (one in 13 for a daily-steps configuration the app does not run). These use the
+  narrower detection window; in the window planned first, notices are about 1 in 94, and the alert tier was
+  not computed there. All are likely optimistic estimates.
 - **Imported watch data uses its own model.** Because of the next point, the app runs imports on a
   heart-rate-only model calibrated on the 251 real people (expected: the "heart rate alone" row).
 - **The thresholds must match the sensors.** With simulator thresholds Keel's two-sensor method runs
   over budget on real people (1.31 against 1.00; 0.41 against 0.25); with five sensors about 34% and
-  134% over (16 people, 29 person-months). The opposite happens to the shipped 11-channel model when it only gets heart rate: it
+  134% over (16 people, 29 person-months; LifeSnaps has no illness labels, so every alert counts as false). The opposite happens to the shipped 11-channel model when it only gets heart rate: it
   alerts well under budget (0.35 against 1.00; 0.12 against 0.25). A flight system needs thresholds per sensor set, calibrated on crew data.
 - **Much of the signal may be behavioural.** Heart rate alone is +19 above luck and heart rate with daily steps +28 (separate intervals; the paired difference was not estimated), so activity may add part of the signal,
   because people move less once they feel ill, and that cannot be separated from isolating at home.
