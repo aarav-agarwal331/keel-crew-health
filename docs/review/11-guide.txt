@@ -24,6 +24,7 @@ Any of these symptoms: chest pain or pressure; short of breath at rest; fainted,
 Blood sugar reading is below 54 mg/dL.
 Blood sugar still below 70 on a repeat reading.
 Fingertip oxygen reading is 92% or lower.
+Fever together with a fast heart rate, low blood pressure, low oxygen or confusion.
 Two heart rate readings at rest of 120 or more.
 Heart rate reading at rest is 150 or more.
 Heart rate reading at rest is 120 or more, with dizziness.
@@ -57,13 +58,14 @@ Keel gives first steps (rest, fluids, a repeat reading, sugar for a low blood su
 
 Everything Keel can recommend
 
-The complete list of 46 rules. Each has one action, how soon, who should know, and where the advice comes from. Apart from a few fixed variants written into the code (a repeat reading that counts, sugar on the fingertip after a low, a meter unit not yet confirmed, an early illness notice, a value from an imported file, and the crewmate and backup wording), nothing else can appear on an alert.
+The complete list of 47 rules. Each has one action, how soon, who should know, and where the advice comes from. Apart from a few fixed variants written into the code (a repeat reading that counts, sugar on the fingertip after a low, a meter unit not yet confirmed, an early illness notice, a value from an imported file, and the crewmate and backup wording), nothing else can appear on an alert.
 
 Smoke or chemical exposure
 Symptom that needs the medical officer now
 Blood sugar reading is below 54 mg/dL
 Blood sugar still below 70 on a repeat reading
 Fingertip oxygen reading is 92% or lower
+Fever together with a fast heart rate, low blood pressure, low oxygen or confusion
 Two heart rate readings at rest of 120 or more
 Heart rate reading at rest is 150 or more
 Heart rate reading at rest is 120 or more, with dizziness

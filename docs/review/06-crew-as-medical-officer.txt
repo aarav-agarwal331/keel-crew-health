@@ -55,6 +55,13 @@ Exercise is on hold for Lucía until you clear them; minutes logged by the devic
 
 Overdue: an item that needs you has been open for 3 days. Please see Lucía today.
 
+Open items for you to close
+The same symptom three days running (Day 122, needed attention the same day)
+Close: resolved, no restriction
+Close: resolved, not cleared
+
+A later normal reading does not close an item. Only a note from you does, and a new abnormal reading after your note reopens it. Consider consulting the flight surgeon at the next link for anything marked "at once".
+
 Tomás Novák
 Mission specialist
 
@@ -69,4 +76,4 @@ Symptoms
 
 "Steady" and "no flags" mean within the person's own usual range and no rule triggered. They do not mean the values are healthy.
 
-The tier is a rule-based summary: it is never better than "Worth a look" when an area on the crew member's own screen is flagged, it is "Talk to the medical officer first" for anything urgent or anything that involves the medical officer, and nausea or clearly slowed reactions always mean a conversation first. It is not a validated fitness-for-duty test and not a clearance.
+The tier is a rule-based summary: it is never better than "Worth a look" when an area on the crew member's own screen is flagged, it is "Act now" while an urgent item is open (shown under emergency sharing) and "Talk to the medical officer first" for anything else that involves the medical officer, and nausea or clearly slowed reactions always mean a conversation first. It is not a validated fitness-for-duty test and not a clearance.

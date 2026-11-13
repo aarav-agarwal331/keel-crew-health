@@ -2,7 +2,7 @@ SCREEN: 01-today
 TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 122 | Simulated data
 BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
-When Earth can't answer, Keel tells you what to do and who to tell. Advises you at once on a dangerous reading you enter, and alerts the medical officer and commander within ten seconds (on their Crew screens; over the cabin network in a flight version). You choose who sees what. It also watches your readings against your own normal. Demo: Lucía's tablet, simulated Mars transit.
+When Earth can't answer, Keel tells you what to do and who to tell. Advises you at once on a dangerous reading you enter, and within ten seconds posts a silent alert on the medical officer's and commander's Crew screens (the same tablet in this demo; over the cabin network, with sound, in a flight version). You choose who sees what. It also watches your readings against your own normal. Demo: Lucía's tablet, simulated Mars transit.
 
 Demo: enter a dangerous reading
 Demo: replay a scripted event
@@ -51,9 +51,9 @@ All trends
 Heart rate variability 28 ms
 Lower than your usual 43. The last three days are further from your usual than 49 of your previous 53 days were. Outside your usual range on each of the last 2 days with a reading.
 Skin temperature (overnight) 34.8 °C
-Higher than your usual 34.1. The last three days are further from your usual than 48 of your previous 53 days were. The latest reading is back inside your usual range, but the last three days together are still unusual, so this is not over yet. Wrist skin temperature, not a fever reading.
+Higher than your usual 34.1. The last three days are further from your usual than 48 of your previous 53 days were. The last three days together are still unusual, so this is not over yet. Wrist skin temperature, not a fever reading.
 Resting heart rate (overnight) 56 bpm
-Higher than your usual 53. The last three days are further from your usual than 50 of your previous 53 days were. The latest reading is back inside your usual range, but the last three days together are still unusual, so this is not over yet.
+Higher than your usual 53. The last three days are further from your usual than 50 of your previous 53 days were. The last three days together are still unusual, so this is not over yet.
 Food intake 52 % of plan
 Lower than your usual 83. The last three days are further from your usual than 51 of your previous 52 days were.
 Your body at a glance

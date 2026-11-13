@@ -227,6 +227,7 @@ Day 122
 
 The radiation dose your personal dosimeter recorded today, and your running mission total.
 
-217 mSv so far. At this mission's average daily rate, about 320 mSv by flight day 180, the end of this leg; a return trip at the same rate would bring the total to about 640 mSv, past the 600 mSv career limit (which also counts earlier flights). This is a straight-line projection, not a forecast: it ignores shielding changes and solar activity, and Keel does not know the mission's dose plan. Dose planning is for the flight surgeon and commander; there is nothing for you to do.
+217 mSv so far, against a 600 mSv career limit (which also counts earlier flights). Dose planning is for the flight surgeon and commander; there is nothing for you to do.
 
+Projection
 Why it matters, how to measure, and the numbers

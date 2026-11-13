@@ -50,4 +50,4 @@ Worth a look
 
 "Steady" and "no flags" mean within the person's own usual range and no rule triggered. They do not mean the values are healthy.
 
-The tier is a rule-based summary: it is never better than "Worth a look" when an area on the crew member's own screen is flagged, it is "Talk to the medical officer first" for anything urgent or anything that involves the medical officer, and nausea or clearly slowed reactions always mean a conversation first. It is not a validated fitness-for-duty test and not a clearance.
+The tier is a rule-based summary: it is never better than "Worth a look" when an area on the crew member's own screen is flagged, it is "Act now" while an urgent item is open (shown under emergency sharing) and "Talk to the medical officer first" for anything else that involves the medical officer, and nausea or clearly slowed reactions always mean a conversation first. It is not a validated fitness-for-duty test and not a clearance.

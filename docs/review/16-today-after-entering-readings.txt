@@ -2,7 +2,7 @@ SCREEN: 16-today-after-entering-readings
 TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 122 | Simulated data
 BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
-When Earth can't answer, Keel tells you what to do and who to tell. Advises you at once on a dangerous reading you enter, and alerts the medical officer and commander within ten seconds (on their Crew screens; over the cabin network in a flight version). You choose who sees what. It also watches your readings against your own normal. Demo: Lucía's tablet, simulated Mars transit.
+When Earth can't answer, Keel tells you what to do and who to tell. Advises you at once on a dangerous reading you enter, and within ten seconds posts a silent alert on the medical officer's and commander's Crew screens (the same tablet in this demo; over the cabin network, with sound, in a flight version). You choose who sees what. It also watches your readings against your own normal. Demo: Lucía's tablet, simulated Mars transit.
 
 Demo: enter a dangerous reading
 Demo: replay a scripted event
@@ -10,7 +10,7 @@ The evidence
 Hide
 Act now
 
-Blood sugar reading is below 54 mg/dL (entered: 50, then 85; the 50 still counts)
+2 act-now items: Blood sugar reading is below 54 mg/dL; Heart rate reading at rest is 150 or more
 
 Your commander sees: Act now (an urgent item is open), plus 2 items with what it is, the value entered and what you were told to do (emergency sharing); nothing else.
 
@@ -18,7 +18,7 @@ Demo crew member, simulated readings.
 
 RECOMMENDED ACTION
 Blood sugar reading is below 54 mg/dL (entered: 50, then 85; the 50 still counts).
-Take sugar now if you can swallow, and call a crewmate to you. Your readings disagree (50, then 85): treat it as low to be safe. Tell the medical officer now. Re-check at 00:44.
+Take sugar now if you can swallow, and call a crewmate to you. Your readings disagree (50, then 85): treat it as low to be safe. Tell the medical officer now. Re-check at 00:58.
 For whoever is with you: if they are awake and able to swallow when asked, give sugar, even if they seem confused; if they are drowsy or cannot swallow safely, give nothing by mouth and get the medical officer now.
 Repeat reading: blood sugar (mg/dL)
 Save repeat
@@ -32,19 +32,19 @@ When: now. Who: the crew medical officer. For every item above.
 
 A fixed safety threshold, not a trend.
 
-Alert sent at 00:29. Not acknowledged yet: it stays at the top of their Crew screens until the medical officer does.
+Alert sent at 00:43. Not acknowledged yet: it stays at the top of their Crew screens until the medical officer does.
 
-Do the step above, and call out to a crewmate now. In this prototype nothing makes a sound: the alert sits at the top of the medical officer's and commander's Crew screens. You do not need to keep this screen open: while Keel is open on this tablet it sends the alert again every five minutes until the medical officer answers.
+Do the step above, and call out to a crewmate now. In this prototype nothing makes a sound: the alert sits at the top of the medical officer's and commander's Crew screens. You do not need to keep this screen open: while Keel is open on this tablet it sends the alert again every five minutes until the medical officer answers. A flight version would repeat it, with sound, from the receiving tablets.
 
 The details are visible on their Crew screens (emergency sharing).
 
-After the above: an infection-like notice is also open, so take your temperature when you can.
+After the above: an infection-like notice is also open, so take your temperature now: a fever with a fast heart rate needs the medical officer at once.
 
 Thermometer reading (°C)
 Save reading
 Readings behind the first item:
-Blood sugar 50 mg/dL, at 00:29 Typing mistake?
-Blood sugar 85 mg/dL, at 00:29 (0 s after the one before) Typing mistake?
+Blood sugar 50 mg/dL, at 00:43 Typing mistake?
+Blood sugar 85 mg/dL, at 00:43 (seconds after the one before) Typing mistake?
 Every reading is kept. The most abnormal reading of the day stays on the medical officer's list until they close it. What you are told to do follows your latest reading once a repeat counts (for blood sugar, 15 minutes after the first).
 Why, and what next
 
