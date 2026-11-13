@@ -8,7 +8,7 @@
   "alert": 0.25
  },
  "script": "research/scripts/eval_real.py",
- "commit": "591f788",
+ "commit": "548d96c",
  "adaptation_prior": {
   "shift": [
    0.0
@@ -26,7 +26,8 @@
     0.1242141327872761,
     0.31846565330147253
    ],
-   "fa_per_person_month": 0.9863303650519838
+   "fa_per_person_month": 0.9863303650519838,
+   "share_of_alerts_that_are_real": 0.017769027838199718
   },
   "0.25": {
    "detection_rate": 0.27102803738317754,
@@ -36,7 +37,8 @@
     0.11416594018629592,
     0.2775139187594848
    ],
-   "fa_per_person_month": 0.2426798452142291
+   "fa_per_person_month": 0.2426798452142291,
+   "share_of_alerts_that_are_real": 0.060947959218587644
   }
  },
  "indicators": [

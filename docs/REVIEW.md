@@ -308,6 +308,48 @@ Not done from round 5: thresholds for other sensor subsets (for example a failed
 "typical case" replay beside the easy one; storing source documents on the tablet; a confirm-first
 delay before emergency sharing (we chose to share first and allow withdrawal); trend-chart clutter.
 
-## Round 6
+## Round 6 (2026-11-12, fresh reviewers, redeployed build)
 
-See the end of this file once the sixth round has run.
+Judge's scores: impact 7, creativity 8, validity 8, relevance 9, presentation 7 (39 of 50), "nominate:
+yes". The statistician again found no high-severity issue; the other three found some.
+
+| # | Reviewer | High-severity finding | Fix |
+|---|---|---|---|
+| 1 | Flight surgeon | "Your repeat reading is back on the safe side" fired when the repeat still met a lesser rule (blood sugar 50 then 60, temperature 39.6 then 39.0), and with no time for sugar to work. | "Safe" now means the latest reading triggers no fixed rule on that measurement, and for blood sugar the repeat must be at least 15 minutes after the first. Unit-tested for 60 and for a repeat after 2 minutes. |
+| 2 | Flight surgeon | The motion-sickness and fluid rules said "tell the medical officer today" for what the red-flag list calls "now" (repeated vomiting, severe flank pain). | Those steps now say to tick the red flag and tell the medical officer now. |
+| 3 | Judge, astronaut | One blood sugar of 50 showed three deadlines (Guide "now", Today "today", list "at once"). | After a safe repeat the advice keeps "now" for telling the medical officer and says no more sugar is needed; the list says "a later reading was back on the safe side"; the reading-log text says what the list keeps and what the advice follows. |
+| 4 | Judge, statistician | The import card said both "calibrated on 251 real people" and "calibrated on simulated missions". | The stale line is gone. |
+| 5 | Astronaut | Sharing and Check-in disagreed on which red flags are hidden from the commander. | Sharing builds its list from the symptom table. "Thoughts of harming someone else" is now shown to the commander (flight surgeon's advice); an injury too. |
+| 6 | Astronaut | "Nothing personal" on Earth link and "nothing shown that they have not shared" on Crew contradicted the urgent-item count and the redacted open items. | Both sentences now say exactly what crosses: a count of open urgent items for the ground; the existence of an item in an unshared area for the medical officer; a tier computed from all readings for the commander. |
+| 7 | Astronaut | After typing 170 at check-in, the screen did not say what to do and hedged ("if it is past a safety line"). | It now says "Act now: stop, rest, tell the medical officer now" and states plainly whether others can see it; the prompts no longer sit inside the sticky Save bar. |
+
+Medium-severity findings fixed in the same pass:
+
+- **"Shown at once" implied an alarm** (flight surgeon): Today, Check-in and Alert now say the item is
+  visible on the other Crew screens and nobody is alerted: tell them yourself.
+- **Open items carry their content** (flight surgeon): under emergency consent the medical officer's
+  list shows the entered readings and red-flag names for every item, also after a safe repeat.
+- **Two heart rates of 120 or more** now hold exercise; the severe low-sugar rule carries the same
+  restrictions as the mild one, plus a step for the person with them.
+- **Saving a check-in erased the simulated symptoms** (flight surgeon): the form starts from them.
+- **Headline** (judge, statistician): the Validation screen now leads with the two models the app runs,
+  the heart-rate import model on real data and the on-board model in simulation, with the two-sensor
+  simulator-threshold result third; bars show points, not percentages.
+- **Held-out group** (statistician): now includes the people whose only episodes are test-date-only;
+  "did not use" reworded; predictive value given for the import model; the bed-rest flag rate on
+  14-day stretches away from any transition is now computed as a luck baseline; the replay's
+  closing figure says it is a two-sensor version, not the replay's model; the import card says the
+  watch maker's resting heart rate is not the quantity the model was calibrated on.
+- **Smaller fixes**: the value appears in a fixed rule's title ("you entered 170"); a step ruled out
+  by the person's own reports is hidden; the thermometer stays available when a different alert leads;
+  one label for the "caution" tier ("Worth a look"); body-list labels no longer overflow; the check-in
+  header is one line; the "Typing mistake?" withdrawal needs a second tap; the replay says its demo day
+  was chosen from the detector's output.
+
+Not done from round 6: trimming prose on every screen; a "typical case" replay; logging notice
+closures in the replay; a more distant arrival geometry for the link delay; a raw-sample resting
+heart rate for imports.
+
+## Round 7
+
+See the end of this file once the seventh round has run.

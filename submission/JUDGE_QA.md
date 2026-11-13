@@ -8,7 +8,7 @@ on Earth above luck. What we cannot: that the simulator is a faithful stand-in. 
 realism checks fail or are off (for example nights under six hours are 50% against a published 44%).
 On NASA's public bed-rest data, the closest open stand-in for a gravity change, a plain personal
 baseline flagged 9 of 14 volunteers after getting up and Keel flagged 4, which is not significant
-(p = 0.06) and has no ground truth. The next step is to request the in-flight data.
+(p = 0.06), has no ground truth, and 4 of 14 is about what the same rule flags in quiet stretches by chance. The next step is to request the in-flight data.
 
 **2. Does it give early warning before symptoms? If not, what is the value?**
 No useful early warning shown. At the notice tier an alert started in the ten days up to symptom
@@ -29,8 +29,8 @@ Keel uses neither. Our headline is Keel's method on two sensors (overnight heart
 with its model and thresholds fitted only on simulated people, applied unchanged to real people: 72%
 of 107 episodes flagged against 40% by luck, +32 points (22 to 41), at 1.40 false alerts per
 person-month against a budget of 1.00. At the stricter tier, the one that brings in the medical
-officer, +19 (9 to 28) at 0.39 against 0.25. On the 113 people the simulator's calibration did not use,
-+38 (23 to 50). It is not what the shipped app would do with a watch import: the model file it ships
+officer, +19 (9 to 28) at 0.39 against 0.25. On the 132 people the simulator's fits did not use,
++35 (22 to 46). It is not what the shipped app would do with a watch import: the model file it ships
 is calibrated for all eleven on-board channels, and given only a watch's channels it flagged 12% of
 episodes (+9, 4 to 16) at 0.08 false alerts per person-month, with the stricter tier never firing.
 Thresholds have to match the sensors, so imports now run on a separate heart-rate-only model
@@ -46,8 +46,8 @@ reproduced. Heart rate alone is +22 (12 to 32), and that is the safer figure.
 **5. How do you know you did not overfit or leak?**
 People, not days, are held out: five folds over people on real data, and separate training and test
 missions in simulation. Baselines only look backwards, and that is unit-tested. The headline's
-thresholds come from the simulator, and on the 113 real people the simulator's calibration did not
-use the result is +38 (23 to 50). Checks on the cross-validated result: training on one Stanford
+thresholds come from the simulator, and on the 132 real people the simulator's fits did not
+use the result is +35 (22 to 46). Checks on the cross-validated result: training on one Stanford
 cohort and testing on the other gives +33 and +33; five different fold splits give +34 to +36; the
 original, wider window gives +31 (22 to 40). The cautions are ours: nothing was pre-registered,
 analysis choices changed during four rounds of AI role-played review, and four detectors, two tiers

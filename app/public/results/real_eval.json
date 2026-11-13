@@ -1,7 +1,7 @@
 {
  "script": "research/scripts/eval_real.py",
- "commit": "591f788",
- "code_version": "cefc408fc8c3",
+ "commit": "548d96c",
+ "code_version": "f9debaa3cc6e",
  "seed": 20261112,
  "data": "Stanford COVID-19 wearables phase 1 (Mishra et al. 2020) and phase 2 subset (Alavi et al. 2022)",
  "indicators": "Resting heart rate + daily steps",
@@ -2785,13 +2785,15 @@
    "true_alerts_per_person_month": 0.02678166267048014,
    "false_alerts_per_person_month": 0.25465699944227554,
    "share_of_alerts_that_are_real": 0.09515985639439377,
-   "with_7_day_activity": 0.03938110120228941
+   "with_7_day_activity": 0.03938110120228941,
+   "import_model_heart_rate_only": 0.060947959218587644
   },
   "1.0": {
    "true_alerts_per_person_month": 0.027218446470583645,
    "false_alerts_per_person_month": 0.9898974644986915,
    "share_of_alerts_that_are_real": 0.02676041754635953,
-   "with_7_day_activity": 0.024127800738951256
+   "with_7_day_activity": 0.024127800738951256,
+   "import_model_heart_rate_only": 0.017769027838199718
   },
   "assumption": "Illness rate 0.97 per person-year (upper-respiratory symptoms on the ISS, DOMAIN ref 52b); sensitivity = detection net of luck on real data."
  },
@@ -3959,13 +3961,13 @@
    "chance": 0.41537137825259857,
    "net": 0.31360058436422383,
    "net_ci": [
-    0.2209996700963362,
-    0.4038050364753104
+    0.2217532155421768,
+    0.40378475389822555
    ],
    "net_diff_vs_fixed": 0.09855835911959976,
    "net_diff_vs_fixed_ci": [
-    -0.030616611299018968,
-    0.22838591265472696
+    -0.03171813916895686,
+    0.22833852134562926
    ]
   },
   "-10..+4": {
@@ -3973,13 +3975,13 @@
    "chance": 0.3268283527485364,
    "net": 0.33672304912062245,
    "net_ci": [
-    0.23964324602696677,
-    0.42906150206003196
+    0.2402861047073695,
+    0.4359951740429085
    ],
    "net_diff_vs_fixed": 0.15904242192282808,
    "net_diff_vs_fixed_ci": [
-    0.031387969346589634,
-    0.29009442428152116
+    0.029936428726472633,
+    0.2938137947746006
    ]
   },
   "-7..+0": {
@@ -3987,13 +3989,13 @@
    "chance": 0.17830417139670698,
    "net": 0.15814442673413412,
    "net_ci": [
-    0.06470105592469894,
-    0.25358877276917563
+    0.06514712372763062,
+    0.25367712534473363
    ],
    "net_diff_vs_fixed": 0.15317821161243755,
    "net_diff_vs_fixed_ci": [
-    0.04195408382246263,
-    0.26133964719510827
+    0.042341553045651466,
+    0.26336868375575284
    ]
   },
   "-3..+0": {
@@ -4001,13 +4003,13 @@
    "chance": 0.08789709591619486,
    "net": 0.12705617511184253,
    "net_ci": [
-    0.04841561484064953,
-    0.21043724717158474
+    0.04821244689906476,
+    0.21140993831822746
    ],
    "net_diff_vs_fixed": 0.09624430325858095,
    "net_diff_vs_fixed_ci": [
-    0.0038678029638346363,
-    0.19030066200213844
+    0.006266183230316879,
+    0.18820781331938963
    ]
   }
  },
@@ -4433,8 +4435,8 @@
   "label": "Model and thresholds from the simulator, heart rate + 7-day activity, applied unchanged to real people",
   "n_people_all": 251,
   "n_events_all": 107,
-  "n_people_held_out": 113,
-  "n_events_held_out": 41,
+  "n_people_held_out": 132,
+  "n_events_held_out": 60,
   "all": {
    "0.25": {
     "n_people": 251,
@@ -4539,104 +4541,104 @@
   },
   "held_out": {
    "0.25": {
-    "n_people": 113,
-    "n_events": 41,
-    "n_scorable": 41,
-    "n_detected": 14,
-    "detection_rate": 0.34146341463414637,
-    "early_rate": 0.04878048780487805,
-    "by_onset_rate": 0.07317073170731707,
-    "median_lead": -2.0,
-    "false_alerts": 143,
-    "quiet_person_months": 384.9540078843627,
-    "fa_per_person_month": 0.37147294760197985,
-    "quiet_days_in_alert_frac": 0.04949650110940434,
+    "n_people": 132,
+    "n_events": 60,
+    "n_scorable": 60,
+    "n_detected": 17,
+    "detection_rate": 0.2833333333333333,
+    "early_rate": 0.06666666666666667,
+    "by_onset_rate": 0.08333333333333333,
+    "median_lead": -1.0,
+    "false_alerts": 163,
+    "quiet_person_months": 449.1458607095926,
+    "fa_per_person_month": 0.36291105909888827,
+    "quiet_days_in_alert_frac": 0.04842012873025161,
     "detection_rate_ci": [
-     0.1891891891891892,
-     0.4883720930232558
+     0.17298728813559322,
+     0.4
     ],
     "early_rate_ci": [
-     0.0,
-     0.12202743902439017
+     0.015618990384615386,
+     0.13047579983593105
     ],
     "by_onset_rate_ci": [
-     0.0,
-     0.16288759689922472
+     0.018510101010101008,
+     0.15283157276995302
     ],
     "median_lead_ci": [
-     -3.0,
-     -1.0
+     -2.0,
+     0.0
     ],
     "fa_per_person_month_ci": [
-     0.3145818834302812,
-     0.42923050846230687
+     0.31085386524164477,
+     0.42081620202721476
     ],
-    "chance_pooled": 0.11711711711711711,
-    "chance_detection_rate": 0.11435540069686413,
-    "chance_by_onset_rate": 0.08114595431668602,
-    "n_pseudo_events": 555,
-    "net_detection": 0.22710801393728225,
-    "net_by_onset": -0.007975222609368948,
+    "chance_pooled": 0.13178294573643412,
+    "chance_detection_rate": 0.13032113517550412,
+    "chance_by_onset_rate": 0.09833831217326364,
+    "n_pseudo_events": 645,
+    "net_detection": 0.1530121981578292,
+    "net_by_onset": -0.015004978839930308,
     "net_detection_ci": [
-     0.07611880032675926,
-     0.3800767842327226
+     0.0326683309455535,
+     0.2699119842990095
     ],
     "net_by_onset_ci": [
-     -0.08511656629585101,
-     0.08590882019285309
+     -0.08759173571635763,
+     0.061380208333333346
     ],
-    "net_rescaled": 0.25643244944527505,
-    "share_of_alerts_that_are_real": 0.04709195798667717
+    "net_rescaled": 0.1759410333476456,
+    "share_of_alerts_that_are_real": 0.032958060674246
    },
    "1.0": {
-    "n_people": 113,
-    "n_events": 41,
-    "n_scorable": 41,
-    "n_detected": 33,
-    "detection_rate": 0.8048780487804879,
-    "early_rate": 0.3170731707317073,
-    "by_onset_rate": 0.4878048780487805,
+    "n_people": 132,
+    "n_events": 60,
+    "n_scorable": 60,
+    "n_detected": 46,
+    "detection_rate": 0.7666666666666667,
+    "early_rate": 0.3333333333333333,
+    "by_onset_rate": 0.48333333333333334,
     "median_lead": 0.0,
-    "false_alerts": 526,
-    "quiet_person_months": 384.9540078843627,
-    "fa_per_person_month": 1.3663969960744153,
-    "quiet_days_in_alert_frac": 0.19627922853729304,
+    "false_alerts": 614,
+    "quiet_person_months": 449.1458607095926,
+    "fa_per_person_month": 1.3670392042129902,
+    "quiet_days_in_alert_frac": 0.1958016383850205,
     "detection_rate_ci": [
-     0.6511337209302326,
-     0.923125
+     0.6458165322580646,
+     0.873015873015873
     ],
     "early_rate_ci": [
-     0.1891891891891892,
-     0.4706290849673202
+     0.20408163265306123,
+     0.45457887700534755
     ],
     "by_onset_rate_ci": [
-     0.32558139534883723,
-     0.65
+     0.3461206896551724,
+     0.6182034632034632
     ],
     "median_lead_ci": [
      -1.0,
      2.0
     ],
     "fa_per_person_month_ci": [
-     1.2586394754103065,
-     1.4731230085445626
+     1.268329072033329,
+     1.4686578666189274
     ],
-    "chance_pooled": 0.418018018018018,
-    "chance_detection_rate": 0.4206581494386373,
-    "chance_by_onset_rate": 0.3014092140921409,
-    "n_pseudo_events": 555,
-    "net_detection": 0.3842198993418506,
-    "net_by_onset": 0.1863956639566396,
+    "chance_pooled": 0.4201550387596899,
+    "chance_detection_rate": 0.4207991038088126,
+    "chance_by_onset_rate": 0.303117998506348,
+    "n_pseudo_events": 645,
+    "net_detection": 0.34586756285785414,
+    "net_by_onset": 0.18021533482698532,
     "net_detection_ci": [
-     0.22877230558966186,
-     0.5031082013796107
+     0.22256219817399536,
+     0.46192931767884227
     ],
     "net_by_onset_ci": [
-     0.023828336703741206,
-     0.34866237752073503
+     0.04367180109624947,
+     0.31786134527443516
     ],
-    "net_rescaled": 0.6632006629066317,
-    "share_of_alerts_that_are_real": 0.022224529791792427
+    "net_rescaled": 0.5971461113618293,
+    "share_of_alerts_that_are_real": 0.020041355902845875
    }
   }
  },
@@ -4753,18 +4755,18 @@
   },
   "held_out": {
    "0.25": {
-    "n_people": 113,
-    "n_events": 41,
-    "n_scorable": 40,
+    "n_people": 132,
+    "n_events": 60,
+    "n_scorable": 59,
     "n_detected": 0,
     "detection_rate": 0.0,
     "early_rate": 0.0,
     "by_onset_rate": 0.0,
     "median_lead": null,
     "false_alerts": 1,
-    "quiet_person_months": 344.8094612352168,
-    "fa_per_person_month": 0.0029001524390243902,
-    "quiet_days_in_alert_frac": 9.527439024390244e-05,
+    "quiet_person_months": 401.57687253613665,
+    "fa_per_person_month": 0.0024901832460732984,
+    "quiet_days_in_alert_frac": 8.18062827225131e-05,
     "detection_rate_ci": [
      0.0,
      0.0
@@ -4783,12 +4785,12 @@
     ],
     "fa_per_person_month_ci": [
      0.0,
-     0.009516083861534168
+     0.008062399087157907
     ],
     "chance_pooled": 0.0,
     "chance_detection_rate": 0.0,
     "chance_by_onset_rate": 0.0,
-    "n_pseudo_events": 555,
+    "n_pseudo_events": 645,
     "net_detection": 0.0,
     "net_by_onset": 0.0,
     "net_detection_ci": [
@@ -4802,53 +4804,53 @@
     "net_rescaled": 0.0
    },
    "1.0": {
-    "n_people": 113,
-    "n_events": 41,
-    "n_scorable": 40,
-    "n_detected": 7,
-    "detection_rate": 0.17073170731707318,
-    "early_rate": 0.04878048780487805,
-    "by_onset_rate": 0.04878048780487805,
+    "n_people": 132,
+    "n_events": 60,
+    "n_scorable": 59,
+    "n_detected": 9,
+    "detection_rate": 0.15,
+    "early_rate": 0.05,
+    "by_onset_rate": 0.05,
     "median_lead": -2.0,
     "false_alerts": 23,
-    "quiet_person_months": 344.8094612352168,
-    "fa_per_person_month": 0.06670350609756098,
-    "quiet_days_in_alert_frac": 0.0035251524390243903,
+    "quiet_person_months": 401.57687253613665,
+    "fa_per_person_month": 0.057274214659685865,
+    "quiet_days_in_alert_frac": 0.0030268324607329844,
     "detection_rate_ci": [
-     0.06521739130434782,
-     0.30005813953488364
+     0.06663934426229508,
+     0.25
     ],
     "early_rate_ci": [
      0.0,
-     0.11907142857142854
+     0.11598465473145776
     ],
     "by_onset_rate_ci": [
      0.0,
-     0.11907142857142854
+     0.11598465473145776
     ],
     "median_lead_ci": [
      -3.0,
      4.0
     ],
     "fa_per_person_month_ci": [
-     0.042449572509032404,
-     0.09146946426468383
+     0.037199997047553196,
+     0.08070601619049468
     ],
-    "chance_pooled": 0.02882882882882883,
-    "chance_detection_rate": 0.027526132404181183,
-    "chance_by_onset_rate": 0.02416569879984514,
-    "n_pseudo_events": 555,
-    "net_detection": 0.143205574912892,
-    "net_by_onset": 0.02461478900503291,
+    "chance_pooled": 0.024806201550387597,
+    "chance_detection_rate": 0.02376773711725168,
+    "chance_by_onset_rate": 0.02085511575802838,
+    "n_pseudo_events": 645,
+    "net_detection": 0.1262322628827483,
+    "net_by_onset": 0.029144884241971623,
     "net_detection_ci": [
-     0.03654712524381297,
-     0.2684350530141245
+     0.04475738860237322,
+     0.23094312702098058
     ],
     "net_by_onset_ci": [
-     -0.0284541832341706,
-     0.09260114426205263
+     -0.016674203729820296,
+     0.09533730256518308
     ],
-    "net_rescaled": 0.14725904693658187
+    "net_rescaled": 0.12930556352439418
    }
   }
  },

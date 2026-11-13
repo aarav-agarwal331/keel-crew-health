@@ -57,7 +57,7 @@ export function Today() {
   const exDone = ex[day] >= target * 0.8
   const wearOk = !Number.isNaN(rawSeries(mission, me, 'rhr', mine)[day])
   // the thermometer is on the list so that a personal baseline exists before a fever question comes up
-  const askingTemp = !!primary && ['R-ILL', 'R-SYM-ILL', 'R-V-TEMP', 'R-V-TEMP-HI'].includes(primary.ruleId)
+  const askingTemp = a.findings.some((x) => ['R-ILL', 'R-SYM-ILL', 'R-V-TEMP', 'R-V-TEMP-HI'].includes(x.ruleId))
   const spotDue = ['mass', 'sbp', 'glucose', 'temp_oral'].filter((k) => !(k === 'temp_oral' && askingTemp)).filter((k) => {
     const v = rawSeries(mission, me, k, mine)
     for (let t = day; t > day - 7 && t >= 0; t--) if (!Number.isNaN(v[t])) return false
@@ -109,7 +109,7 @@ export function Today() {
           <p className="do">{primary.action}</p>
           <p className="small"><strong>When:</strong> {URGENCY_LABEL[primary.urgency].toLowerCase()}. <strong>Who:</strong> {(primary.who ?? WHO_LABEL[primary.tier]).toLowerCase()}.</p>
           <p className="small">{primary.tierReason}</p>
-          {primary.status === 'urgent' && !primary.crewWide && <p className="small"><strong>{sharing[me]?.emergency === false ? 'Emergency sharing is off: nobody else has been shown this. Tell the medical officer yourself.' : primary.cmoOnly && !primary.patientIsCmo ? 'Shown to the medical officer at once (emergency sharing). Not shown to the commander.' : 'Shown to the medical officer and the commander at once (emergency sharing).'}</strong></p>}
+          {primary.status === 'urgent' && !primary.crewWide && <p className="small"><strong>{sharing[me]?.emergency === false ? 'Emergency sharing is off: nobody else has been shown this. Tell the medical officer yourself.' : primary.cmoOnly && !primary.patientIsCmo ? 'Now visible on the medical officer\'s Crew screen (emergency sharing), not the commander\'s. They are not alerted: tell them yourself now.' : 'Now visible on the medical officer\'s and the commander\'s Crew screens (emergency sharing). They are not alerted: tell them yourself now.'}</strong></p>}
           {others.filter((x) => x.status === 'urgent').length > 0 && <p className="small"><strong>Also needs attention now:</strong> {others.filter((x) => x.status === 'urgent').map((x) => x.title).join('; ')}. Each is listed below.</p>}
           {['R-ILL', 'R-SYM-ILL', 'R-V-TEMP', 'R-V-TEMP-HI'].includes(primary.ruleId) ? <TempEntry /> : <ReadingLog readings={primary.readings ?? []} title="Readings this is based on" />}
           <a className="btn primary block" href={href('alert', primary.key)} data-testid="open-alert">Why, and what next <Chev /></a>
@@ -118,9 +118,12 @@ export function Today() {
           {primary.kind === 'personal' && primary.tier !== 'self' && !needsCmo && <p className="small muted">The medical officer can see this alert.</p>}
         </section>
       )}
+      {askingTemp && primary && !['R-ILL', 'R-SYM-ILL', 'R-V-TEMP', 'R-V-TEMP-HI'].includes(primary.ruleId) && (
+        <Card title="Also: take your temperature"><TempEntry /></Card>
+      )}
       {waiting.length > 0 && (
         <Card title="Waiting for the medical officer to close">
-          <ul className="list small">{waiting.map((x) => <li key={x.key}><strong>{x.title}</strong> <span className="muted">({shortDay(mission, x.day)}{x.withdrawn ? '; you withdrew the reading as a typing mistake' : ''})</span></li>)}</ul>
+          <ul className="list small">{waiting.map((x) => <li key={x.key}><strong>{x.title}</strong> <span className="muted">({shortDay(mission, x.day)}{x.withdrawn ? '; you withdrew the reading as a typing mistake' : ''}{x.settled ? '; your repeat was back on the safe side' : ''})</span></li>)}</ul>
           <p className="small muted">These came from your own entries. A later normal reading does not close them: the medical officer does, with a note{crew?.role === 'cmo' ? ' (for you, the commander)' : ''}.</p>
         </Card>
       )}
@@ -185,7 +188,7 @@ export function Today() {
           </Card>
         </div>
       </div>
-      <p className="small muted">Keel opened {notices30} notice{notices30 === 1 ? '' : 's'} from your readings in the last 30 days. Keel can be wrong: expect one or two false notices a month. <a href={href('validation')}>How often it is right</a></p>
+      <p className="small muted">Keel opened {notices30} notice{notices30 === 1 ? '' : 's'} from your readings in the last 30 days. Keel can be wrong: on real watch data its thresholds gave about one to one and a half false notices a month, and more are likely with the full sensor set. <a href={href('validation')}>How often it is right</a></p>
       <p className="banner">Keel is decision support, not a medical device. It does not diagnose. It shows how your readings compare with your own normal and points to documented countermeasures.</p>
     </>
   )

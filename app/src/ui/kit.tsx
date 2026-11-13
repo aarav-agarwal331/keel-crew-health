@@ -166,7 +166,7 @@ export function ReadingLog({ readings, title = 'Readings today', onVoid }: { rea
           </li>
         ))}
       </ul>
-      <span>Every reading is kept. On the most recent day with a reading, the most abnormal one counts, and anything urgent stays on the medical officer's list until they close it.</span>
+      <span>Every reading is kept. The most abnormal reading of the day stays on the medical officer's list until they close it; what you are told to do follows your latest reading.</span>
     </div>
   )
 }

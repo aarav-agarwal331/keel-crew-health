@@ -44,7 +44,7 @@ export function Crew() {
   return (
     <>
       <div className="card-h"><h1>Crew readiness</h1><Seg label="View as" value={role} onChange={setRole} options={[{ id: 'commander', label: 'Commander' }, { id: 'cmo', label: 'Medical officer' }]} /></div>
-      <p className="muted">{shortDay(mission, day)}. {role === 'commander' ? 'Whether Keel has any flags for each crew member before a demanding task tomorrow, such as a spacewalk. You see a tier for everyone; reasons appear only where a crew member has chosen to share them.' : 'What each crew member has chosen to share with you. Nothing is shown that they have not shared, except emergencies they agreed to share.'}</p>
+      <p className="muted">{shortDay(mission, day)}. {role === 'commander' ? 'Whether Keel has any flags for each crew member before a demanding task tomorrow, such as a spacewalk. You see a tier for everyone; reasons appear only where a crew member has chosen to share them.' : 'What each crew member has chosen to share with you. Nothing is shown that they have not shared, except emergencies they agreed to share and, under that consent, the fact that an item is open in an area. Their overall tier is worked out from all their readings.'}</p>
       <p className="banner">Demo view. On a mission each role has its own device; here you can switch roles. Every look is written to the crew member's access log.</p>
 
       {role === 'commander' && (
@@ -95,7 +95,7 @@ export function Crew() {
                   })}
                   {v.findings.filter((x) => !x.emergency).filter((x, i, arr) => x.title || arr.findIndex((y) => !y.title && y.category === x.category) === i).map((f) => (
                     <li key={f.key}>
-                      <strong>{f.title ?? `Alert in ${catLabel(f.category).toLowerCase()}`}</strong> <span className="muted">({STATUS_LABEL[f.status].toLowerCase()} for {f.days} d)</span>
+                      <strong>{f.title ?? `Open item in ${catLabel(f.category).toLowerCase()} (details not shared)`}</strong> <span className="muted">({STATUS_LABEL[f.status].toLowerCase()} for {f.days} d)</span>
                       {f.action && (
                         <details>
                           <summary>For the medical officer: what the crew member was told, and the basis</summary>
@@ -122,7 +122,8 @@ export function Crew() {
                   <span className="lab">{role === 'cmo' && c.role === 'cmo' ? 'The medical officer\'s own open items: the commander, as backup, closes these' : 'Open items for you to close'}</span>
                   {open.map((x) => (
                     <div key={x.key} className="col" style={{ gap: 6, borderTop: '1px solid var(--border)', paddingTop: 8 }}>
-                      <span className="small"><strong>{x.redacted ? `An item in ${catLabel(x.category).toLowerCase()} (details not shared; ask ${c.name.split(' ')[0]})` : x.title}</strong> <span className="muted">({shortDay(mission, x.day)}, {x.urgency === 'now' ? 'needed attention at once' : 'needed attention the same day'}{x.withdrawn ? '; the crew member withdrew the reading as a typing mistake' : ''})</span></span>
+                      <span className="small"><strong>{x.symptoms?.length ? `${x.title}: ${x.symptoms.join('; ').toLowerCase()} — ` : ''}{x.redacted ? `An item in ${catLabel(x.category).toLowerCase()} (details not shared; ask ${c.name.split(' ')[0]})` : x.title}</strong> <span className="muted">({shortDay(mission, x.day)}, {x.urgency === 'now' ? 'needed attention at once' : 'needed attention the same day'}{x.withdrawn ? '; the crew member withdrew the reading as a typing mistake' : ''}{x.settled ? '; a later reading that day was back on the safe side' : ''})</span></span>
+                      <ReadingLog readings={x.readings ?? []} title="Entered readings" />
                       {!(role === 'cmo' && c.role === 'cmo') && (
                         <div className="row wrap">
                           <input type="text" aria-label={`Closing note for ${x.title}`} value={notes[x.key] ?? ''} onChange={(e) => setNotes((p) => ({ ...p, [x.key]: e.target.value }))} placeholder="Note: what you found and did" style={{ flex: 1, minWidth: 180 }} />

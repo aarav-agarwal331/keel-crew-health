@@ -91,6 +91,8 @@ test('every screen works with the network disabled', async ({ page }) => {
     await expect(page.locator('main')).toContainText('Thermometer reading is in the fever range')
     // the thermometer box sits on the fever alert itself
     await page.locator('a', { hasText: 'Thermometer reading is in the fever range' }).first().click()
+    await expect(page.getByTestId('temp-now').first()).toBeVisible()
+    await page.waitForTimeout(400)
     await page.getByTestId('temp-now').first().fill('39.6')
     await page.getByTestId('temp-save').first().click()
     await expect(page.getByTestId('temp-msg').first()).toContainText('medical officer now')

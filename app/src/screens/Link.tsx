@@ -43,7 +43,7 @@ export function LinkScreen() {
         ) : (
           <div className="row wrap">
             <button className={`btn ${linkCut ? 'primary' : 'danger'}`} onClick={() => setLinkCut(!linkCut)} data-testid="cut-link" aria-pressed={linkCut}>{linkCut ? 'Restore the link' : 'Cut the link now'}</button>
-            <span className="small muted">{linkCut ? 'Link cut. Use any screen: nothing stops working. Restore it when you are done.' : 'Demo control. Cut it, then use any screen: nothing stops working.'}</span>
+            <span className="small muted">{linkCut ? 'Link cut. Use any screen: nothing stops working. With no link no flight surgeon can be reached; the medical officer decides on board. Restore it when you are done.' : 'Demo control. Cut it, then use any screen: nothing stops working.'}</span>
             {linkCut && queued.length === 0 && <p className="banner info">Today's summary had already gone out before you cut the link, so nothing is waiting yet. The next one is made tomorrow and will wait here until the link is back. <button className="btn sm" onClick={() => setDay(day + 1)} data-testid="link-next-day">Go to tomorrow and see it wait</button></p>}
           </div>
         ))}
@@ -51,7 +51,7 @@ export function LinkScreen() {
 
       {hasLink && (
         <Card title="Queued for the ground" right={<span className="chip num" data-testid="queue-count">{queued.length} waiting</span>}>
-          <p className="small muted">One summary per mission day goes out automatically, smaller than a text message. It contains only what you have chosen to share with the flight surgeon in Sharing (by default nothing personal, only cabin alerts). While there is no link, summaries wait here and go out together when it returns.</p>
+          <p className="small muted">One summary per mission day goes out automatically, smaller than a text message. It contains only what you have chosen to share with the flight surgeon in Sharing (by default nothing personal except, under emergency sharing, a count of urgent items still open; plus cabin alerts). While there is no link, summaries wait here and go out together when it returns.</p>
           {queued.length > 0 && <ul className="list small num">{queued.slice(-6).map((o) => <li key={o.day}>{shortDay(mission, o.day)} · waiting</li>)}{queued.length > 6 && <li className="muted">and {queued.length - 6} earlier</li>}</ul>}
           {sent.length > 0 && <><span className="lab small">Recently sent</span><ul className="list small num">{sent.map((o) => <li key={o.day}>{shortDay(mission, o.day)} · sent {o.sentDay !== undefined && o.sentDay !== o.day ? `on ${shortDay(mission, o.sentDay)} (was queued)` : 'same day'}{o.delayS ? `, arrived ${fmtDelay(o.delayS)} later` : ''}</li>)}</ul></>}
           {outbox.length > 0 && <details><summary>See exactly what the latest summary contains ({outbox[outbox.length - 1].bytes} bytes)</summary><pre className="eq" data-testid="summary-payload">{JSON.stringify(JSON.parse(outbox[outbox.length - 1].payload), null, 1)}</pre></details>}

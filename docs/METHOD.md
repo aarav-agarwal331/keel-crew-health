@@ -337,20 +337,23 @@ the same code version). Real data: 251 people, 107 illness episodes, two sensors
 
 - **Keel's method, two sensors, thresholds from the simulator** (heart rate and 7-day activity).
   Notice tier: 72% of episodes flagged, luck 40%, **+32 points above luck (95% interval 22 to 41)**,
-  at 1.40 false alerts per person-month against a budget of 1.00. On the 113 people the simulator's
-  calibration did not use (41 episodes): +38 (23 to 50), 1.37. Alert tier: 32%, luck 13%, +19
-  (9 to 28), at 0.39 against a budget of 0.25; on those 113 people, +23 (8 to 38).
+  at 1.40 false alerts per person-month against a budget of 1.00. On the 132 people the simulator's
+  fits did not use (60 episodes): +35 (22 to 46), 1.37. Alert tier: 32%, luck 13%, +19
+  (9 to 28), at 0.39 against a budget of 0.25; on those 132 people, +15 (3 to 27).
 - **The model file the app ships**, given only the channels a real import has: 12% flagged, luck 3%,
   +9 (4 to 16), at 0.08 false alerts per person-month; at the alert tier it flagged no episodes (three
   false alerts in all). Its thresholds are
   set for eleven channels, so with one or two it rarely alerts. The app says so on its import card.
 - **Caveats on the two-sensor result.** "7-day activity" is a 7-day mean of steps in the real data
   and of exercise minutes in the simulator, which may explain part of the false-alert overrun. The
-  113 held-out people include no test-date-only episodes (the hardest), so +38 is not directly
-  comparable with +32.
+  held-out group now includes the people whose only episodes are test-date-only (they were in neither
+  calibration half). The hand-set 30% simulated exercise cut was chosen with some validation-half
+  episodes in view, so "not used by the simulator's fits" is the accurate description, not "unseen".
 - **Imported data.** The app runs imports on a heart-rate-only model fitted and calibrated on all 251
   real people (`model_import.json`, written by `eval_real.py`); its expected performance is the
-  cross-validated heart-rate-alone result below.
+  cross-validated heart-rate-alone result below. Caveat: the model was calibrated on resting heart rate
+  computed from raw night-time samples (`build_daily.py`), while imports carry the watch maker's own
+  daily resting heart rate, which is smoothed differently; false alerts on imported data may differ.
 - **Alerts counted nowhere.** Alerts starting 11 to 21 days before an onset or 5 to 28 days after fall
   in neither the detection window nor quiet time: 56 at the notice tier (0.5 per episode) and 34 at
   the alert tier. False-alert rates therefore understate the burden for people who were ill.
@@ -403,7 +406,9 @@ the same code version). Real data: 251 people, 107 illness episodes, two sensors
 - **NASA bed-rest data.** After getting up, a plain baseline flags 9 of 14 volunteers; restarting the
   baseline, 8; widening the band, 4; adding the learned shift, 4. The difference is not significant
   (exact paired p = 0.06), there is no ground truth that these flags are false (a faster pulse after
-  bed rest is real), and the learned shift adds nothing beyond widening the band.
+  bed rest is real), and the learned shift adds nothing beyond widening the band. The same pulse-only
+  2-of-3 rule flags 11 of 31 (35%) 14-day stretches away from any transition, so Keel's 4 of 14 (29%)
+  is about the chance level and the plain baseline's 9 of 14 (64%) is above it.
 - **Simulator against reality.** The pass marks were set during review, not in advance. What passes
   was fitted on the other half of the same datasets: four of five variabilities, four of five
   carry-overs, all four between-indicator correlations. Every independent check fails or is off: the

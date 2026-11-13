@@ -51,7 +51,7 @@ symptoms) and flags drift before a health event. Two things are needed from real
 | Rank | Dataset | Event type | People | Dated events | Local path |
 |---|---|---|---|---|---|
 | 1 | Stanford COVID-19 wearables, phase 2 (subset) | Illness onset | 204 | 84 COVID-19 positives: 84 test dates, 66 symptom-onset dates | `data/raw/stanford_covid_wearables_phase2/` |
-| 2 | Stanford COVID-19 wearables, phase 1 | Illness onset | 118 | 32 COVID-19 (30 symptom, 30 diagnosis dates); 13 people with 15 other-illness rows; 73 unlabelled | `data/raw/stanford_covid_wearables_phase1/` |
+| 2 | Stanford COVID-19 wearables, phase 1 | Illness onset | 118 | 32 COVID-19 (30 symptom, 30 diagnosis dates); 13 people with 15 other-illness rows; 73 unlabelled (as the paper describes them; our reduced files count 120 recordings, see the note at the top) | `data/raw/stanford_covid_wearables_phase1/` |
 | 3 | PMData | Sleep loss, stress, fatigue, exertion, injury | 16 | 1,747 daily wellness reports, 783 training sessions, 77 non-empty injury reports | `data/raw/pmdata/pmdata.zip` |
 
 Stress-specific add-ons, both fully downloaded:

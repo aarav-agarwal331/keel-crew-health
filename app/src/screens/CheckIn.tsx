@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { dayLabel, IND, rawSeries, SYMPTOMS } from '../core/mission'
+import { dayLabel, IND, rawSeries, SYMPTOMS, symptomsOn } from '../core/mission'
 import { useApp } from '../state'
 import type { Photo } from '../core/types'
 import { SPOT_KEY } from '../core/analysis'
@@ -17,10 +17,12 @@ const LABEL: Record<string, string> = { rhr: 'Heart rate now, sitting at rest (s
 const lab = (k: string) => LABEL[k] ?? IND[k].label
 
 export function CheckIn({ open }: { open?: string }) {
-  const { mission, day, me, entries, saveEntry, voidReading } = useApp()
+  const { mission, day, me, entries, saveEntry, voidReading, sharing } = useApp()
+  const sharingOn = sharing[me]?.emergency !== false
   const existing = entries.find((e) => e.mission === mission.id && e.crew === me && e.day === day)
   const [mood, setMood] = useState<number | null>(existing?.values.mood ?? null)
-  const [sym, setSym] = useState<string[]>(existing?.symptoms ?? [])
+  // start from the symptoms already recorded for today (in the demo, the simulated ones), so saving adds to them
+  const [sym, setSym] = useState<string[]>(existing?.symptoms ?? symptomsOn(mission, me, day, []))
   const usual = rawSeries(mission, me, 'fluid', []).slice(Math.max(0, day - 14), day).filter((v) => !Number.isNaN(v))
   const fluidHint = usual.length ? usual.reduce((a, b) => a + b, 0) / usual.length : 2.25
   const [fluid, setFluid] = useState<number>(existing?.values.fluid ?? 0)
@@ -92,22 +94,24 @@ export function CheckIn({ open }: { open?: string }) {
   const redFlags = SYMPTOMS.filter((x) => x.red_flag)
   const toggle = (id: string) => { setNoSym(false); setSym((p) => (p.includes(id) ? p.filter((x) => x !== id) : [...p, id])) }
   const saveBtn = (
-    <div className="sticky-save col">
-      {err && <p className="banner strong" role="alert">{err}</p>}
+    <>
+      {(err || pending.length > 0) && <div className="col">{err && <p className="banner strong" role="alert">{err}</p>}
       {pending.map((q) => (
         <div className="banner strong" role="alert" key={q.k}>
-          <p><strong>{lab(q.k)}: {q.v} {IND[q.k].unit}</strong> is far outside the usual range, so Keel saved it and is acting on it; if it is past a safety line, the medical officer and the commander have already been shown it. Is that what the device showed?</p>
+          <p><strong>{lab(q.k)}: {q.v} {IND[q.k].unit}</strong> is far outside the usual range, so Keel saved it and is acting on it. {NOW_LINE[q.k]?.(q.v) ? <strong>Act now: stop what you are doing, rest, and tell the medical officer now. </strong> : null}{NOW_LINE[q.k]?.(q.v) ? (sharingOn ? 'It is past a safety line, so it is now visible on the medical officer\'s and the commander\'s Crew screens (emergency sharing). They are not alerted.' : 'It is past a safety line. Emergency sharing is off, so nobody else has been shown it: tell the medical officer.') : 'It is not past a safety line, so nobody else has been shown it.'} Is that what the device showed?</p>
           <div className="row wrap"><button className="btn primary" onClick={() => setPending((p) => p.filter((x) => x.k !== q.k))} data-testid={`confirm-${q.k}`}>Yes, that is right</button><button className="btn" onClick={() => void withdraw(q.k)} data-testid={`withdraw-${q.k}`}>No, a typing mistake: withdraw it</button></div>
           <p className="small">If you withdraw it, it stays in the log, struck through, and the medical officer still sees that it was entered.</p>
         </div>
-      ))}
-      <button className="btn primary block" onClick={() => void save()} data-testid="save-checkin">Save check-in</button>
-    </div>
+      ))}</div>}
+      <div className="sticky-save col">
+        <button className="btn primary block" onClick={() => void save()} data-testid="save-checkin">Save check-in</button>
+      </div>
+    </>
   )
   return (
     <>
       <h1>Check-in</h1>
-      <p className="muted">{dayLabel(mission, day)}. Four quick answers take about a minute. Your answers are stored on your own tablet. Other crew members see only what <a href={href('sharing')}>Sharing</a> allows: by default the commander sees a readiness tier without the reason, a serious symptom or a reading past a safety line (marked "act now") is shown at once to the medical officer and, as backup, the commander, and the daily summary for the ground carries only what you set for the flight surgeon.</p>
+      <p className="muted">{dayLabel(mission, day)}. Four quick answers, about a minute. Stored on your tablet; anything urgent goes at once to the medical officer and, as backup, the commander. <a href={href('sharing')}>Who sees what</a></p>
       {!existing && !Number.isNaN(rawSeries(mission, me, 'mood', [])[day]) && <p className="small muted">Today's check-in in this demo came from the simulation. Anything you save here is added to it.</p>}
 
       <Card title="1. How are you feeling?">

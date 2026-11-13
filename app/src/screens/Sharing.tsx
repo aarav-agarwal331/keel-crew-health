@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { STATUS_LABEL } from '../core/analysis'
-import { CATEGORIES, IND, INDICATORS, shortDay } from '../core/mission'
+import { CATEGORIES, IND, INDICATORS, shortDay, SYMPTOMS } from '../core/mission'
 import { readiness, READY_LABEL } from '../core/readiness'
 import { defaultSharing, LEVELS, ROLES, SHARE_CATEGORIES, type Level, type Role } from '../core/sharing'
 import { viewFor } from '../core/visibility'
@@ -34,7 +34,7 @@ export function Sharing() {
             <button aria-pressed={s.emergency !== false} onClick={() => setEmergency(me, true)}>On</button>
             <button aria-pressed={s.emergency === false} onClick={() => setEmergency(me, false)}>Off</button>
           </div>
-          <span className="small muted">When on, a symptom you mark as serious or an "act now" safety reading is shown at once to the medical officer, and stays on their list until they close it with a note. The commander is shown it too, as backup, except the items marked "medical officer only" at check-in (thoughts of harming yourself, an injury, tooth pain, one-sided swelling). Emergency sharing sends no details to the ground: the daily ground summary carries only what you set for the flight surgeon below, plus a count of urgent items still open, so the flight surgeon knows to call. Everything that needs attention now or today goes on the medical officer's list; for an area you have not shared, they see only that there is an item, not what it is. If you switch this off, both can see that it is off.</span>
+          <span className="small muted">When on, a symptom you mark as serious or an "act now" safety reading is shown at once to the medical officer, and stays on their list until they close it with a note. The commander is shown it too, as backup, except the items marked "medical officer only" at check-in ({SYMPTOMS.filter((x) => (x as { commander?: boolean }).commander === false).map((x) => x.label.toLowerCase()).join('; ')}). Emergency sharing sends no details to the ground: the daily ground summary carries only what you set for the flight surgeon below, plus a count of urgent items still open, so the flight surgeon knows to call. Everything that needs attention now or today goes on the medical officer's list; for an area you have not shared, they see only that there is an item, not what it is. If you switch this off, both can see that it is off.</span>
         </div>
       </Card>
 

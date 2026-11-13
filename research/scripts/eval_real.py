@@ -382,7 +382,7 @@ def main():
         for m in ["fixed", DEPLOYED]:
             rr[m] = [{**person_outcome(res["scores"][m][i], res["thr_person"][m][1.0][i], q.onsets, w2, p.merge_gap), "pid": q.pid} for i, q in enumerate(people)]
             cc[m] = chance_rows(people, res["scores"][m], res["thr_person"][m][1.0], w2, p.merge_gap, 5, SEED, scored_only=False)
-        st = with_net(rr[DEPLOYED], cc[DEPLOYED], (rr["fixed"], cc["fixed"]), 1000)
+        st = with_net(rr[DEPLOYED], cc[DEPLOYED], (rr["fixed"], cc["fixed"]), 2000)
         win[f"-{pre}..+{post}"] = {"detection_rate": st["detection_rate"], "chance": st["chance_detection_rate"], "net": st["net_detection"], "net_ci": st["net_detection_ci"],
                                    "net_diff_vs_fixed": st["net_diff"], "net_diff_vs_fixed_ci": st["net_diff_ci"]}
     p1 = [q for q in people if q.meta["dataset"] == "phase1"]
@@ -411,7 +411,10 @@ def main():
     stq = daily_all.merge(qg[["dataset", "pid"]], on=["dataset", "pid"])
     _, val_s = realdata.split_half(sorted((stq.dataset + ":" + stq.pid).unique()))
     _, val_e2 = realdata.split_half(realdata.event_pids(events_all), seed=11)
-    held = [i for i, q in enumerate(pe7) if q.pid in val_s or q.pid in val_e2]
+    # held out = people whose data the simulator's noise and illness fits did not use: the validation halves,
+    # plus people whose only episodes are test-date-only (those are in neither calibration half)
+    ev_used = set(realdata.event_pids(events_all))
+    held = [i for i, q in enumerate(pe7) if q.pid in val_s or q.pid in val_e2 or (q.onsets and q.pid not in ev_used and q.pid not in val_s)]
     deployed_cfg = {"label": "Model and thresholds from the simulator, heart rate + 7-day activity, applied unchanged to real people",
                     "n_people_all": len(pe7), "n_events_all": sum(len(q.onsets) for q in pe7),
                     "n_people_held_out": len(held), "n_events_held_out": sum(len(pe7[i].onsets) for i in held), "all": {}, "held_out": {}}
@@ -443,7 +446,7 @@ def main():
         x11[:, shipped.indicators.index("sleep_h")] = q.x[:, 1]
         ship_people.append(Person(pid=q.pid, x=x11, onsets=q.onsets, meta=q.meta, events_meta=q.events_meta))
     s_sc = [x[DEPLOYED] for x in score_people(ship_people, shipped, p)]
-    held_s = [i for i, q in enumerate(ship_people) if q.pid in val_s or q.pid in val_e2]
+    held_s = [i for i, q in enumerate(ship_people) if q.pid in val_s or q.pid in val_e2 or (q.onsets and q.pid not in ev_used and q.pid not in val_s)]
     shipped_cfg = {"label": "The model file the app ships (11 indicators, thresholds from simulated missions), given the channels a real import shares with it: overnight heart rate and, where recorded, sleep duration",
                    "n_people": len(ship_people), "n_events": sum(len(q.onsets) for q in ship_people), "n_people_with_sleep": int(sum(1 for q in pe_s if np.sum(~np.isnan(q.x[:, 1])) >= MIN_DAYS)),
                    "thresholds": MJ["thresholds"], "all": {}, "held_out": {}}
@@ -475,6 +478,9 @@ def main():
                 "simulated_calibration": False, "budgets": {"notice": 1.0, "alert": 0.25}, "script": "research/scripts/eval_real.py", "commit": git_commit(),
                 "adaptation_prior": adaptation_prior(["rhr"]),
                 "expected": {b: {k: abl["rhr"][DEPLOYED][b][k] for k in ("detection_rate", "chance_detection_rate", "net_detection", "net_detection_ci", "fa_per_person_month")} for b in ("1.0", "0.25")}}
+    for b_ in ("1.0", "0.25"):
+        imp_meta["expected"][b_]["share_of_alerts_that_are_real"] = ppv_at(abl["rhr"][DEPLOYED][b_])
+        ppv[b_]["import_model_heart_rate_only"] = imp_meta["expected"][b_]["share_of_alerts_that_are_real"]
     write_json(APP_PUBLIC / "data" / "model_import.json", model_json(imp, p, imp_thr, imp_meta), indent=1)
     print("import model thresholds", imp_thr)
 

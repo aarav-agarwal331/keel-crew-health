@@ -57,7 +57,7 @@ export function viewFor(role: Role, a: DayAnalysis, share: SharingSettings, valu
     if (f.kind === 'environment') continue
     const cat = f.categories[0]
     // emergency consent: urgent findings go to the medical officer and the commander (the backup) with their title and action
-    // Symptoms marked "medical officer only" (thoughts of self-harm, an injury, tooth pain) are held back from the
+    // Symptoms marked "medical officer only" in shared/indicators.json are held back from the
     // commander unless the patient is the medical officer, whose backup the commander is.
     if (f.status === 'urgent' && share.emergency !== false && role !== 'ground' && !(role === 'commander' && f.cmoOnly && !f.patientIsCmo)) {
       // the medical officer is told what was reported or measured, with times; the commander only that it happened
@@ -98,7 +98,7 @@ export function visibleOpenItems(role: Role, items: OpenItem[], share: SharingSe
     const shared = allows((share[role] as Record<string, Level>)[it.category] ?? 'none', 'trend')
     const consent = share.emergency !== false && (role === 'cmo' || patientIsCmo)
     if (shared || (consent && it.urgency === 'now')) out.push(it)
-    else if (consent) out.push({ ...it, redacted: true })
+    else if (consent) out.push({ ...it, redacted: true, readings: undefined, symptoms: undefined })
   }
   return out
 }

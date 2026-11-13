@@ -200,6 +200,8 @@ input[type='range'] { width: 100%; min-height: 44px; accent-color: var(--accent)
 .syslist { display: flex; flex-direction: column; gap: 6px; }
 .syslist button { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 48px; padding: 6px 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface-2); cursor: pointer; text-align: left; font-size: 0.92rem; }
 .syslist button[aria-pressed='true'] { border: 2px solid var(--text); }
+.syslist button .tag-status { flex-shrink: 0; white-space: nowrap; font-size: 0.85rem; }
+.syslist button > span:first-child { min-width: 0; text-align: left; }
 
 /* ---- replay ---- */
 .timeline { position: relative; height: 54px; background: var(--surface-2); border-radius: 12px; border: 1px solid var(--border); overflow: hidden; }

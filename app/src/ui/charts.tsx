@@ -178,7 +178,7 @@ const SERIES = ['var(--series)', 'var(--series-2)', 'var(--series-3)', 'var(--te
 
 export interface BarRow { label: string; value: number; lo?: number; hi?: number; note?: string; highlight?: boolean }
 
-export function BarCI({ rows, max, unit, decimals = 0, ariaLabel, pct }: { rows: BarRow[]; max?: number; unit?: string; decimals?: number; ariaLabel: string; pct?: boolean }) {
+export function BarCI({ rows, max, unit, decimals = 0, ariaLabel, pct, points }: { rows: BarRow[]; max?: number; unit?: string; decimals?: number; ariaLabel: string; pct?: boolean; points?: boolean }) {
   const [ref, W] = useWidth<HTMLDivElement>()
   const [hover, setHover] = useState<number | null>(null)
   const labelW = Math.min(300, Math.max(130, W * 0.46))
@@ -186,7 +186,7 @@ export function BarCI({ rows, max, unit, decimals = 0, ariaLabel, pct }: { rows:
   const padR = 64
   const mx = max ?? Math.max(...rows.map((r) => Math.max(r.value || 0, r.hi ?? 0))) * 1.08
   const x = (v: number) => labelW + (Math.max(0, v) / (mx || 1)) * (W - labelW - padR)
-  const f = (v: number) => (Number.isNaN(v) ? '–' : pct ? `${(v * 100).toFixed(0)}%` : `${v.toFixed(decimals)}${unit ? ' ' + unit : ''}`)
+  const f = (v: number) => (Number.isNaN(v) ? '–' : points ? `${v >= 0 ? '+' : '−'}${Math.abs(v * 100).toFixed(0)}` : pct ? `${(v * 100).toFixed(0)}%` : `${v.toFixed(decimals)}${unit ? ' ' + unit : ''}`)
   return (
     <div className="chart" ref={ref}>
       <svg height={rows.length * rowH + 8} role="img" aria-label={ariaLabel}>

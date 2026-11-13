@@ -259,8 +259,10 @@
    "summary": "The reading you entered is in the range that general guidance says can cause unclear thinking or seizure. Keel does not interpret it.",
    "action": "If you are awake and can swallow, eat or drink something sugary now, and tell the medical officer now.",
    "steps": [
+    "For whoever is with you: if they are confused, drowsy or cannot swallow safely, give nothing by mouth and get the medical officer now.",
     "Stay with another crew member.",
-    "Repeat the reading in 15 minutes."
+    "Repeat the reading in 15 minutes; if it is still below 70, take sugar again and repeat.",
+    "Do not exercise or do critical tasks until it is back above 70 and you feel normal."
    ],
    "tier": "cmo",
    "tier_reason": "A fixed safety threshold, not a trend.",
@@ -397,7 +399,7 @@
    "summary": "You entered a very high reading. Keel does not interpret it.",
    "action": "Rest five minutes and repeat. If it is still that high, tell the medical officer today; with chest pain, severe headache or vision change, tell them now.",
    "steps": [
-    "Tell the medical officer now if you have a headache, chest pain, breathlessness or a vision change."
+    "Tell the medical officer now if you have a severe headache, chest pain, breathlessness or a vision change."
    ],
    "tier": "cmo",
    "tier_reason": "A fixed safety threshold. Placeholder threshold for a clinician to set; not from a cited source.",
@@ -952,7 +954,7 @@
    "summary": "Common in most crew in the first two to three days after a gravity change. Keel cannot tell whether that is the cause: cabin air, low fluids and other problems can feel the same.",
    "action": "Light duty today: slow head movements, small sips and snacks, and tell the medical officer before any suited work.",
    "steps": [
-    "Tell the medical officer today if you vomit more than twice, cannot keep fluids down, or have a headache with it. Medication is available.",
+    "If you vomit more than twice or cannot keep fluids down, tick it as serious at check-in and tell the medical officer now.",
     "Check the cabin carbon dioxide reading on the Today screen.",
     "If it lasts beyond day 4, the medical officer should review it."
    ],
@@ -1218,7 +1220,7 @@
    "steps": [
     "Aim for at least 2.0 to 2.5 litres a day and pale urine.",
     "Log each drink bag at check-in so the trend is visible.",
-    "Tell the medical officer about any sharp side or back pain."
+    "If you have severe side or back pain, tick it as serious at check-in and tell the medical officer now."
    ],
    "tier": "self",
    "tier_reason": "Simple to correct yourself.",

@@ -156,7 +156,7 @@ activity).**
 - The headline is Keel's method, on two sensors, with thresholds set only in simulation: the
   detector run on the two sensors the real data has (overnight heart rate and 7-day activity), with
   its model and thresholds fitted only on simulated people and applied unchanged to real people. On
-  the 113 people the simulator's calibration did not use (41 episodes) it is +38 (23 to 50). The
+  the 132 people the simulator's fits did not use (60 episodes) it is +35 (22 to 46). The
   alert tier is the one that brings in the medical officer. Both tiers ran over their false-alert
   budget.
 - The model file the app ships is calibrated for all eleven on-board channels. Given only the
@@ -184,7 +184,7 @@ activity).**
 **NASA bed-rest analog data.** After getting up from head-down bed rest, a plain personal baseline
 flags the pulse of 9 of 14 volunteers; Keel flags 4. The difference is not significant (exact paired
 p = 0.06), there is no ground truth that those flags are false, and the gain comes from widening the
-band.
+band. The same rule flags about a third of quiet two-week stretches, so 4 of 14 is roughly chance level.
 
 **Simulated missions (full sensor set, 1 false alert per person-month).** 67% flagged against 41% by
 luck: +26 points (19 to 33). The lead over a fixed threshold is +6 (−2 to 14). By event type, above

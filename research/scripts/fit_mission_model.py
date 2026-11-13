@@ -96,6 +96,7 @@ def set_demo_days(model, p, thr_notice, deployed):
 
     run_sim.main({"mars_transit": 400, "lunar_surface": 400})      # first without the illness (day 400 is past the end)
     chosen = {}
+    staged = {}
     for path in sorted((APP_PUBLIC / "data" / "missions").glob("*.json")):
         m = json.loads(path.read_text())
         if not isinstance(m, dict) or not m.get("simulated") or m["id"] not in candidates:
@@ -106,6 +107,9 @@ def set_demo_days(model, p, thr_notice, deployed):
         L = m["pre_days"]
         quiet = [fd for fd in candidates[m["id"]] if not any(a <= L + fd + 4 and b >= L + fd - 14 for a, b in eps)]
         chosen[m["id"]] = quiet[0] if quiet else list(candidates[m["id"]])[0]
+        if not quiet:   # say so: the replay text must not claim a quiet run-up
+            print(f"WARNING {m['id']}: no candidate day has two quiet weeks before it; using flight day {chosen[m['id']]}")
+        staged[m["id"]] = {"flight_day": chosen[m["id"]], "quiet_two_weeks_before": bool(quiet)}
     run_sim.main(chosen)
     for path in sorted((APP_PUBLIC / "data" / "missions").glob("*.json")):
         m = json.loads(path.read_text())

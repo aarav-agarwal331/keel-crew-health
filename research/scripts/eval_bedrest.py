@@ -89,6 +89,8 @@ def main():
     rows = []
     qd = {k: 0 for k in variants}
     qf = {k: 0 for k in variants}
+    # luck: how often does the same flag rule fire in a 14-day stretch away from any transition?
+    luck = {k: [0, 0] for k in variants}
     for s in val:
         x, tr = transitions(subj[s])
         zs = {k: concern_dev(zscores(x[:, None], model, p, mk(tr))[0], model.concern)[:, 0] for k, mk in variants.items()}
@@ -98,7 +100,14 @@ def main():
             if all(np.sum(~np.isnan(z[i:i + WINDOW_AFTER])) >= 5 for z in zs.values()):
                 rows.append({"subject": s, "transition": n, **{k: bool(flags(z, i)) for k, z in zs.items()},
                              "naive_mean_u": float(np.nanmean(zs["naive"][i:i + WINDOW_AFTER])), "aware_mean_u": float(np.nanmean(zs["aware"][i:i + WINDOW_AFTER]))})
+        quiet_ok = np.ones(len(x), bool)
+        for i, n in tr:
+            quiet_ok[max(0, i - WINDOW_AFTER):i + 2 * WINDOW_AFTER] = False
         for key, z in zs.items():
+            for st in range(0, len(x) - WINDOW_AFTER + 1, WINDOW_AFTER):
+                if quiet_ok[st:st + WINDOW_AFTER].all() and np.sum(~np.isnan(z[st:st + WINDOW_AFTER])) >= 5:
+                    luck[key][1] += 1
+                    luck[key][0] += int(flags(z, st))
             far = ~near & ~np.isnan(z)
             qd[key] += int(far.sum())
             qf[key] += int((z[far] >= FLAG_U).sum())
@@ -125,6 +134,7 @@ def main():
         "script": "research/scripts/eval_bedrest.py", "commit": git_commit(), "code_version": code_version(),
         "data": "NASA Life Sciences Data Archive, public head-down-tilt bed-rest campaigns (UTMB campaigns 1 and 3, CFT70): daily nurse-taken pulse",
         "n_subjects": len(subj), "n_calibration": len(cal), "n_validation": len(val), "expected_shift_bpm": shift, "transitions": res,
+        "luck_14_day_stretches": {k: {"stretches": v[1], "flagged": v[0], "share": v[0] / max(1, v[1])} for k, v in luck.items()},
         "days_outside_transitions": {k: {"days": qd[k], "share_of_days_at_or_above_2sd": qf[k] / max(1, qd[k])} for k in qd},
         "flag_rule": f"pulse at least {FLAG_U} robust SD above the personal baseline on {K} of {N} consecutive days within {WINDOW_AFTER} days after the transition",
         "labels": {"PRE_TEST>IN_TEST": "Going into bed rest (head-down tilt)", "IN_TEST>POST_TEST": "Getting up after bed rest (return to upright)"},

@@ -621,8 +621,7 @@
   {
    "id": "harm_others",
    "label": "Thoughts of harming someone else",
-   "red_flag": true,
-   "commander": false
+   "red_flag": true
   }
  ]
 }

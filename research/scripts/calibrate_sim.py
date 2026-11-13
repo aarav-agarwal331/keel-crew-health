@@ -58,7 +58,7 @@ def main():
     st = st.assign(pid=st.dataset + ":" + st.pid)
     cal_s, _ = realdata.split_half(sorted(st.pid.unique()))
     targets = {
-        "rhr": (realdata.within_stats(st[st.pid.isin(cal_s)], "rhr"), "rhr_within_sd", False, "Stanford wearables, people with no reported illness (calibration half)"),
+        "rhr": (realdata.within_stats(st[st.pid.isin(cal_s)], "rhr"), "rhr_within_sd", False, "Stanford wearables, recordings with no dated illness, including phase 2 participants never confirmed healthy (calibration half)"),
         "hrv": (realdata.within_stats(ls_cal, "hrv", log=True), "lnhrv_within_sd", True, "LifeSnaps (calibration half)"),
         "spo2": (realdata.within_stats(ls_cal, "spo2"), "spo2_within_sd", False, "LifeSnaps (calibration half)"),
         "temp": (realdata.within_stats(ls_cal, "temp"), "temp_within_sd", False, "LifeSnaps nightly skin temperature (calibration half)"),

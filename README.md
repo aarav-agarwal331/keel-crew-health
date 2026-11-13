@@ -51,7 +51,7 @@ Real wearable data: 251 people, 107 dated illness episodes (Stanford COVID-19 we
 | Configuration, notice tier | Flagged | By luck | **Above luck** (95% interval) | False alerts per person-month |
 |---|---|---|---|---|
 | **Keel's method, two sensors (heart rate + 7-day activity), model and thresholds fitted only on simulated people** | 72% | 40% | **+32 points** (22 to 41) | 1.40 (budget 1.00) |
-| … on the 113 people the simulator's calibration did not use (41 episodes) | 80% | 42% | +38 (23 to 50) | 1.37 |
+| … on the 132 people the simulator's fits did not use (60 episodes) | 77% | 42% | +35 (22 to 46) | 1.37 |
 | Same sensors, thresholds from other real people (5-fold over people) | 62% | 31% | +31 (21 to 41) | 1.00 |
 | … heart rate alone | 50% | 28% | +22 (12 to 32) | 0.99 |
 | … heart rate + daily steps | 66% | 33% | +34 (24 to 44) | 0.99 |
@@ -70,7 +70,7 @@ Real wearable data: 251 people, 107 dated illness episodes (Stanford COVID-19 we
 |---|---|
 | Simulated missions, full sensor set, 1 false alert per person-month | 67% flagged (luck 41%): +26 above luck (19 to 33). By event type: sleep restriction +55, exercise outage +54, low fluids +26 (10 to 40), cabin CO2 +11 (1 to 21), illness +11 (−9 to 30), low mood +13 (−5 to 32) |
 | Events in the first 25 flight days, luck taken from the same flight days | +24 (14 to 33) with gravity-phase handling, +15 (6 to 25) without |
-| Gravity transitions, real NASA bed-rest pulse data, 14 volunteers | flags after getting up: 9 with a plain personal baseline, 4 with Keel. Not significant (exact paired p = 0.06), there is no ground truth that those flags are false, and the gain comes from widening the band, not from the learned shift |
+| Gravity transitions, real NASA bed-rest pulse data, 14 volunteers | flags after getting up: 9 with a plain personal baseline, 4 with Keel. The same pulse-only rule flags 35% of 14-day stretches away from any transition (11 of 31), so Keel's 4 of 14 is about chance level and the plain baseline's 9 of 14 is above it. Not significant (exact paired p = 0.06), no ground truth that those flags are false, and the gain comes from widening the band |
 
 Honest reading:
 

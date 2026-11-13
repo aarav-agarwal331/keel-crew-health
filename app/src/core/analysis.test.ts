@@ -120,7 +120,7 @@ describe('end to end on the demo mission', () => {
     }
   })
   it('a repeat reading never erases an abnormal one: the worst reading of the day counts, and both are kept', () => {
-    const e: Entry = { key: 'k', mission: m.id, crew: 'c0', day: 100, values: { glucose: 85 }, symptoms: [], ts: 2, readings: [{ ind: 'glucose', v: 50, ts: 1 }, { ind: 'glucose', v: 85, ts: 2 }] }
+    const e: Entry = { key: 'k', mission: m.id, crew: 'c0', day: 100, values: { glucose: 85 }, symptoms: [], ts: 2, readings: [{ ind: 'glucose', v: 50, ts: 1 }, { ind: 'glucose', v: 85, ts: 1 + 16 * 60 * 1000 }] }
     const a = run('c0', 100, [e])
     const f1 = a.findings.find((x) => x.ruleId === 'R-V-GLU-LO2')!
     expect(f1).toBeDefined()
@@ -128,6 +128,11 @@ describe('end to end on the demo mission', () => {
     expect(a.status).toBe('act')
     expect(f1.action).toMatch(/back on the safe side/)
     expect(a.openItems.some((x) => x.ruleId === 'R-V-GLU-LO2')).toBe(true)
+    // a repeat that is still low (60), or a normal one taken too soon (2 minutes), is not "safe"
+    const still: Entry = { ...e, readings: [{ ind: 'glucose', v: 50, ts: 1 }, { ind: 'glucose', v: 60, ts: 1 + 16 * 60 * 1000 }] }
+    expect(run('c0', 100, [still]).findings.some((x) => /safe side/.test(x.action))).toBe(false)
+    const soon: Entry = { ...e, readings: [{ ind: 'glucose', v: 50, ts: 1 }, { ind: 'glucose', v: 85, ts: 1 + 2 * 60 * 1000 }] }
+    expect(run('c0', 100, [soon]).status).toBe('urgent')
     expect(f1.readings!.map((r) => r.v)).toEqual([50, 85])
     // the next day, with no new reading, it is still open and dated from the reading
     const b = run('c0', 101, [e]).findings.find((x) => x.ruleId === 'R-V-GLU-LO2')!

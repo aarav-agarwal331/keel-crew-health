@@ -20,14 +20,14 @@
    "unit": "bpm",
    "basis": "calibrated",
    "ref": null,
-   "note": "Fitted so simulated within-person SD matches 3.508 from Stanford wearables, people with no reported illness (calibration half), n = 74 people"
+   "note": "Fitted so simulated within-person SD matches 3.508 from Stanford wearables, recordings with no dated illness, including phase 2 participants never confirmed healthy (calibration half), n = 74 people"
   },
   "rhr_ar1": {
    "value": 0.332,
    "unit": "",
    "basis": "calibrated",
    "ref": null,
-   "note": "Lag-1 autocorrelation 0.16 in Stanford wearables, people with no reported illness (calibration half), n = 74 people"
+   "note": "Lag-1 autocorrelation 0.16 in Stanford wearables, recordings with no dated illness, including phase 2 participants never confirmed healthy (calibration half), n = 74 people"
   },
   "hrv_median": {
    "value": 45.0,
