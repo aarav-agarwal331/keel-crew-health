@@ -113,7 +113,7 @@ Where this advice comes from
 Symptom check, rest, limit spread, consult
 PUBLISHED RESEARCH
 
-In our own test on Earth data the resting heart rate rise during illness averaged about 5 bpm at its peak, a day or two after symptoms began, with wide differences between people: three in ten showed no rise. Immune function changes in space and latent viruses reactivate in most ISS crew. NASA lists hygiene, quarantine and monitoring as countermeasures.
+In our own test on Earth data the resting heart rate rise during illness was small on average: a fitted peak of about 3 bpm, or about 4.6 bpm averaged over the four days from symptom onset, depending on which half of the people and which measure is used. People differed widely, and some showed no rise at all. Immune function changes in space and latent viruses reactivate in most ISS crew. NASA lists hygiene, quarantine and monitoring as countermeasures.
 
 [58] Mishra T, Wang M, Metwally AA, et al. "Pre-symptomatic detection of COVID-19 from smartwatch data." Nat Biomed Eng 4(12):1208–1220, 2020. Source
 [60] Natarajan A, Su HW, Heneghan C. "Assessment of physiological signs associated with COVID-19 measured using wearable devices." NPJ Digit Med 3(1):156, 2020. Source

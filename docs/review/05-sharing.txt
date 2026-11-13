@@ -7,13 +7,13 @@ Sharing and privacy
 Lucía Reyes, your health data is yours. You decide below what each role can see.
 
 Always visible, whatever you choose below
-To the commander: your readiness tier (no Keel flags / minor flags / talk to the medical officer first), without the reason. A commander has to be able to plan a spacewalk safely. The tier is worked out from all your readings, including ones you keep private.
+To the commander: your readiness tier (no Keel flags / worth a look / talk to the medical officer first), without the reason, except emergencies (see below). A commander has to be able to plan a spacewalk safely. The tier is worked out from all your readings, including ones you keep private.
 To the crew: counts. When three or more crew members show a change in the same area, the Crew screen shows the count, not the names. In a crew of four that is not fully anonymous.
 To everyone: cabin readings (air, radiation). They are not personal.
 Emergency sharing
 On
 Off
-When on, a symptom you mark as serious or an "act now" safety reading is shown at once to the medical officer, and stays on their list until they close it with a note. The commander is shown it too, as backup, except the items marked "medical officer only" at check-in (new swelling or pain in one leg, or on one side of the neck; severe tooth or jaw pain; thoughts of harming yourself). Emergency sharing sends no details to the ground: the daily ground summary carries only what you set for the flight surgeon below, plus a count of urgent items still open, so the flight surgeon knows to call. Everything that needs attention now or today goes on the medical officer's list; for an area you have not shared, they see only that there is an item, not what it is. If you switch this off, both can see that it is off.
+When on, a symptom you mark as serious or an "act now" safety reading appears at once on the medical officer's Crew screen (nobody is alerted, so tell them), and stays on their list until they close it with a note. The commander is shown it too, as backup, except the items marked "medical officer only" at check-in (thoughts of harming yourself). Emergency sharing sends no details to the ground: the daily ground summary carries only what you set for the flight surgeon below, plus a count of urgent items still open, so the flight surgeon knows to call. Everything that needs attention now or today goes on the medical officer's list; for an area you have not shared, they see only that there is an item, not what it is. If you switch this off, both can see that it is off.
 Who are you setting this for?
 Crew medical officer
 Commander

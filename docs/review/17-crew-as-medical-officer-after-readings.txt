@@ -33,22 +33,20 @@ Symptoms
 Lucía Reyes
 Flight engineer
 
-Heart rate reading at rest is 150 or more (you entered 170). (shared automatically: emergency sharing)
+Blood sugar reading is below 54 mg/dL (entered: 50, then 85). (shared automatically: emergency sharing)
 
 Entered readings, in order:
-Heart rate at rest 170 bpm, at 18:03
-Every reading is kept. The most abnormal reading of the day stays on the medical officer's list until they close it; what you are told to do follows your latest reading.
+Blood sugar 50 mg/dL, at 18:18
+Blood sugar 85 mg/dL, at 18:18
+
+Lucía was told: "If you are awake and can swallow, eat or drink something sugary now, and tell the medical officer now. Your repeat (85) came too soon to count: sugar takes about 15 minutes to work, so check again 15 minutes after the first reading."
+
+Heart rate reading at rest is 150 or more (entered: 170). (shared automatically: emergency sharing)
+
+Entered readings, in order:
+Heart rate at rest 170 bpm, at 18:18
 
 Lucía was told: "Stop, rest, and tell the medical officer now."
-
-Blood sugar reading is below 54 mg/dL (you entered 50, then 85). (shared automatically: emergency sharing)
-
-Entered readings, in order:
-Blood sugar 50 mg/dL, at 18:03
-Blood sugar 85 mg/dL, at 18:03
-Every reading is kept. The most abnormal reading of the day stays on the medical officer's list until they close it; what you are told to do follows your latest reading.
-
-Lucía was told: "If you are awake and can swallow, eat or drink something sugary now, and tell the medical officer now."
 
 Act now
 
@@ -59,16 +57,14 @@ Food and fluids
 Symptoms
 Open item in heart, oxygen and temperature (details not shared) (act today for 2 d)
 Open items for you to close
+Blood sugar reading is below 54 mg/dL (Day 121, needed attention at once)
+Entered readings:
+Blood sugar 50 mg/dL, at 18:18
+Blood sugar 85 mg/dL, at 18:18
+Close
 Heart rate reading at rest is 150 or more (Day 121, needed attention at once)
 Entered readings:
-Heart rate at rest 170 bpm, at 18:03
-Every reading is kept. The most abnormal reading of the day stays on the medical officer's list until they close it; what you are told to do follows your latest reading.
-Close
-Blood sugar reading is below 54 mg/dL (Day 121, needed attention at once; a later reading that day was back on the safe side)
-Entered readings:
-Blood sugar 50 mg/dL, at 18:03
-Blood sugar 85 mg/dL, at 18:03
-Every reading is kept. The most abnormal reading of the day stays on the medical officer's list until they close it; what you are told to do follows your latest reading.
+Heart rate at rest 170 bpm, at 18:18
 Close
 
 A later normal reading does not close an item. Only a note from you does, and a new abnormal reading after your note reopens it. Consider consulting the flight surgeon at the next link for anything marked "at once".

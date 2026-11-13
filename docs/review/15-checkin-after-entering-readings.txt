@@ -4,7 +4,7 @@ BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
 Check-in
 
-Flight day 121. Four quick answers, about a minute. Stored on your tablet; anything urgent goes at once to the medical officer and, as backup, the commander. Who sees what
+Flight day 121. Four quick answers, about a minute. Stored on your tablet; anything urgent appears at once on the medical officer's and, as backup, the commander's Crew screens; they are not notified, so tell them. Who sees what
 
 1. How are you feeling?
 1
@@ -34,7 +34,7 @@ Something else
 Something serious? Chest pain, fainting, trouble breathing, bleeding, vision loss, thoughts of harming yourself…
 3. Fluids today
 −
-0.00 L
+2.55 L
 +
 Same as usual (2.5 L)
 + 1 L
@@ -50,6 +50,8 @@ None
 Saved.
 
 Keel has re-checked your readings on this tablet with your new entries.
+
+2 items need action now. See Today for what to do.
 
 See Today
 Who can see this?
@@ -104,21 +106,21 @@ How to measure
 Heart rate now, sitting at rest (spot check) (bpm)
 How to measure
 Readings today:
-Blood sugar 50 mg/dL, at 18:03 Typing mistake?
-Blood sugar 85 mg/dL, at 18:03 Typing mistake?
-Heart rate at rest 170 bpm, at 18:03 Typing mistake?
-Every reading is kept. The most abnormal reading of the day stays on the medical officer's list until they close it; what you are told to do follows your latest reading.
+Blood sugar 50 mg/dL, at 18:18 Typing mistake?
+Blood sugar 85 mg/dL, at 18:18 Typing mistake?
+Heart rate at rest 170 bpm, at 18:18 Typing mistake?
+Every reading is kept. The most abnormal reading of the day stays on the medical officer's list until they close it. What you are told to do follows your latest reading once a repeat counts (for blood sugar, 15 minutes after the first).
 
 Taking a reading again? Type the new value and save: the earlier one is kept with its time, and both are shown to whoever you share them with.
 
-Blood sugar: 50 mg/dL is far outside the usual range, so Keel saved it and is acting on it. Act now: stop what you are doing, rest, and tell the medical officer now. It is past a safety line, so it is now visible on the medical officer's and the commander's Crew screens (emergency sharing). They are not alerted. Is that what the device showed?
+Blood sugar: 50 mg/dL is far outside the usual range, so Keel saved it and is acting on it. Act now: If you are awake and can swallow, eat or drink something sugary now, and tell the medical officer now. Your repeat (85) came too soon to count: sugar takes about 15 minutes to work, so check again 15 minutes after the first reading. It is past a safety line, so it is now visible on the medical officer's and the commander's Crew screens (emergency sharing). They are not alerted. Is that what the device showed?
 
 Yes, that is right
 No, a typing mistake: withdraw it
 
 If you withdraw it, it stays in the log, struck through, and the medical officer still sees that it was entered.
 
-Heart rate now, sitting at rest (spot check): 170 bpm is far outside the usual range, so Keel saved it and is acting on it. Act now: stop what you are doing, rest, and tell the medical officer now. It is past a safety line, so it is now visible on the medical officer's and the commander's Crew screens (emergency sharing). They are not alerted. Is that what the device showed?
+Heart rate now, sitting at rest (spot check): 170 bpm is far outside the usual range, so Keel saved it and is acting on it. Act now: Stop, rest, and tell the medical officer now. It is past a safety line, so it is now visible on the medical officer's and the commander's Crew screens (emergency sharing). They are not alerted. Is that what the device showed?
 
 Yes, that is right
 No, a typing mistake: withdraw it

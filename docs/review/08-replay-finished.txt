@@ -141,7 +141,7 @@ Do today's session, even a shortened one, and plan the next three. (at the next 
 
 RESULT OF THIS REPLAY
 
-In this scripted case Keel flagged it on the day symptoms began, with a specific action and no link to Earth.
+In this scripted case Keel flagged it with her check-in, on the day symptoms began, with a specific action and no link to Earth.
 
 Sensors alone, or with her check-in? The flag on Day 120 came from the symptoms she ticked at check-in, combined with drifting readings. The sensors alone showed the illness pattern on Day 121, 1 day after symptoms began.
 
@@ -151,7 +151,7 @@ Keel's log for this replay also has 7 entries that are not about the scripted ev
 
 Across all the real data, not this one script: a two-sensor version of the method (not the eleven-channel model in this replay), with thresholds from the simulator, flagged 72% of 107 real illness episodes, 32 points more than luck, at 1.4 false alerts per person-month. Useful early warning was not shown. Everything except illness is tested in simulation only.
 
-One scripted event proves nothing by itself. The day of the scripted illness was chosen when the demo missions were built, by looking at the detector's output for a quiet stretch beforehand, so this replay is not a random draw.
+One scripted event proves nothing by itself. The day of the scripted illness was chosen from a short list when the demo missions were built, by looking at the detector's output for two quiet weeks beforehand; no candidate day had them, so the first was used and earlier notices appear. This replay is not a random draw.
 
 Open that day as Lucía
 See the validation

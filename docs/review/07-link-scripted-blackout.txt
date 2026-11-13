@@ -9,7 +9,7 @@ Scripted two-week blackout (antenna fault), modelled on the two-week command pau
 
 Keel does not use the link to work. Detection, explanations and recommended actions all run on the tablet. In this demo one tablet holds the whole simulated crew (on a mission each person's tablet holds their own data); it last re-checked all four in a fraction of a second. The link only carries a summary for the flight surgeon when one is available.
 
-Day 3 of a 14-day blackout. The link is expected back on Day 133. Every screen you have used so far was running without it, and 3 daily summaries are waiting to go.
+Day 3 of a 14-day blackout. The link is expected back on Day 133. No flight surgeon can be reached; the medical officer decides on board. Every screen you have used so far was running without it, and 3 daily summaries are waiting to go.
 
 Go to a day with a working link and cut it yourself
 Queued for the ground

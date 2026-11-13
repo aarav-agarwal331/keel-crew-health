@@ -21,13 +21,14 @@ This list is built from the rule table itself, so it cannot disagree with what K
 
 Now, whatever else Keel shows. Tell the medical officer; if you are the medical officer, tell the commander.
 Any of these symptoms: chest pain or pressure; short of breath at rest; fainted, blacked out or had a seizure; racing or irregular heartbeat; swelling of lips, face or tongue, or a rash with trouble breathing; sudden loss of vision, or a painful red eye; worst headache of your life, or fever with a stiff neck; confusion, weakness or trouble speaking; severe belly pain; severe side or back pain; vomited more than twice, or cannot keep fluids down; coughing or vomiting blood, or bleeding that will not stop; cannot pass urine, or blood in urine; injury, or something in the eye; smoke or chemical exposure; joint pain or numbness after a spacewalk; new swelling or pain in one leg, or on one side of the neck; severe tooth or jaw pain; thoughts of harming yourself; thoughts of harming someone else.
+Blood sugar reading is below 54 mg/dL.
 Fingertip oxygen reading is 92% or lower.
 Two heart rate readings at rest of 120 or more.
 Heart rate reading at rest is 150 or more.
 Heart rate reading at rest is 35 or less.
 Upper blood pressure reading is under 80, or under 90 with dizziness or fainting.
+Blood pressure of 220 upper or 130 lower, twice.
 Thermometer reading is 39.4 °C or higher.
-Blood sugar reading is below 54 mg/dL.
 Blood sugar reading is 300 mg/dL or higher.
 Vomiting after a very high radiation dose.
 Cabin carbon dioxide is above 4 mmHg.
@@ -38,6 +39,7 @@ Blood sugar reading is 200 mg/dL or higher.
 Upper blood pressure reading is below 90 mmHg.
 Blood pressure reading is 180 upper or 120 lower, or higher.
 Resting heart rate of 120 or more.
+Overnight blood oxygen of 90% or lower.
 Resting heart rate above 100 on two nights.
 Your mood has been very low for days.
 You reported a change in vision.
@@ -52,17 +54,18 @@ Keel gives first steps (rest, fluids, a repeat reading, sugar for a low blood su
 
 Everything Keel can recommend
 
-The complete list of 40 rules. Each has one action, how soon, who should know, and where the advice comes from. Nothing else can appear on an alert.
+The complete list of 42 rules. Each has one action, how soon, who should know, and where the advice comes from. Nothing else can appear on an alert.
 
 Symptom that needs the medical officer now
+Blood sugar reading is below 54 mg/dL
 Fingertip oxygen reading is 92% or lower
 Two heart rate readings at rest of 120 or more
 Heart rate reading at rest is 150 or more
 Heart rate reading at rest is 35 or less
 Upper blood pressure reading is under 80, or under 90 with dizziness or fainting
+Blood pressure of 220 upper or 130 lower, twice
 Thermometer reading is 39.4 °C or higher
 Thermometer reading is in the fever range, or well above your usual
-Blood sugar reading is below 54 mg/dL
 Blood sugar reading is between 54 and 69 mg/dL
 Blood sugar reading is 300 mg/dL or higher
 Blood sugar reading is 200 mg/dL or higher
@@ -70,6 +73,7 @@ Upper blood pressure reading is below 90 mmHg
 Blood pressure reading is 180 upper or 120 lower, or higher
 Blood pressure reading is 140 upper or 90 lower, or higher
 Resting heart rate of 120 or more
+Overnight blood oxygen of 90% or lower
 Resting heart rate above 100 on two nights
 Your mood has been very low for days
 You reported a change in vision
