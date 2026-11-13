@@ -1,0 +1,89 @@
+{
+ "deployed": "zscore",
+ "id": "import",
+ "calibrated_on": "251 real people (Stanford COVID-19 wearables), overnight resting heart rate only",
+ "simulated_calibration": false,
+ "budgets": {
+  "notice": 1.0,
+  "alert": 0.25
+ },
+ "script": "research/scripts/eval_real.py",
+ "commit": "f10e89b",
+ "adaptation_prior": {
+  "shift": [
+   0.0
+  ],
+  "tau": [
+   6.0
+  ]
+ },
+ "expected": {
+  "1.0": {
+   "detection_rate": 0.4953271028037383,
+   "chance_detection_rate": 0.3097988398503357,
+   "net_detection": 0.18552826295340263,
+   "net_detection_ci": [
+    0.09253807420841813,
+    0.2838495073208805
+   ],
+   "fa_per_person_month": 0.9901332116788321,
+   "share_of_alerts_that_are_real": 0.014920325464761169
+  },
+  "0.25": {
+   "detection_rate": 0.2803738317757009,
+   "chance_detection_rate": 0.08846136860945696,
+   "net_detection": 0.19191246316624394,
+   "net_detection_ci": [
+    0.10689848843989046,
+    0.2839836153150333
+   ],
+   "fa_per_person_month": 0.240242700729927,
+   "share_of_alerts_that_are_real": 0.06065526072356649
+  }
+ },
+ "indicators": [
+  "rhr"
+ ],
+ "transform": [
+  "none"
+ ],
+ "concern": [
+  1.0
+ ],
+ "floor": [
+  1.5
+ ],
+ "pop_mean": [
+  65.69023633069828
+ ],
+ "pop_sd": [
+  10.145150678493584
+ ],
+ "corr": [
+  [
+   1.0
+  ]
+ ],
+ "h_cusum": 3.6624520210479936,
+ "h_mewma": 7.859088569048751,
+ "adjust": [],
+ "params": {
+  "window": 28,
+  "gap": 3,
+  "min_n": 7,
+  "n_full": 14,
+  "z_clip": 4.0,
+  "kofn_k": 2,
+  "kofn_n": 3,
+  "cusum_k": 0.75,
+  "cusum_reset_gap": 5,
+  "cusum_calm": 3,
+  "realert_days": 7,
+  "ewma_lambda": 0.3,
+  "merge_gap": 3
+ },
+ "thresholds": {
+  "notice": 1.4638228712861372,
+  "alert": 2.712089223724927
+ }
+}

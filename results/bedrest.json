@@ -1,0 +1,94 @@
+{
+ "script": "research/scripts/eval_bedrest.py",
+ "commit": "f10e89b",
+ "code_version": "8ab10aa726c4",
+ "data": "NASA Life Sciences Data Archive, public head-down-tilt bed-rest campaigns (UTMB campaigns 1 and 3, CFT70): daily nurse-taken pulse",
+ "n_subjects": 29,
+ "n_calibration": 14,
+ "n_validation": 15,
+ "expected_shift_bpm": {
+  "PRE_TEST>IN_TEST": {
+   "median": -1.25,
+   "iqr": [
+    -2.75,
+    0.0
+   ],
+   "n": 14
+  },
+  "IN_TEST>POST_TEST": {
+   "median": 1.0,
+   "iqr": [
+    -1.0,
+    5.5
+   ],
+   "n": 13
+  }
+ },
+ "transitions": {
+  "PRE_TEST>IN_TEST": {
+   "n": 15,
+   "naive_flagged": 2,
+   "reset_flagged": 1,
+   "reset_widen_flagged": 0,
+   "aware_flagged": 1,
+   "p_naive_vs_aware": 1.0,
+   "naive_mean_u": -0.2110822719348254,
+   "aware_mean_u": -0.018977469902623546
+  },
+  "IN_TEST>POST_TEST": {
+   "n": 14,
+   "naive_flagged": 9,
+   "reset_flagged": 8,
+   "reset_widen_flagged": 4,
+   "aware_flagged": 4,
+   "p_naive_vs_aware": 0.0625,
+   "naive_mean_u": 0.8099349936785194,
+   "aware_mean_u": 0.3289856062656371
+  }
+ },
+ "luck_14_day_stretches": {
+  "naive": {
+   "stretches": 31,
+   "flagged": 11,
+   "share": 0.3548387096774194
+  },
+  "reset": {
+   "stretches": 31,
+   "flagged": 11,
+   "share": 0.3548387096774194
+  },
+  "reset_widen": {
+   "stretches": 31,
+   "flagged": 11,
+   "share": 0.3548387096774194
+  },
+  "aware": {
+   "stretches": 31,
+   "flagged": 11,
+   "share": 0.3548387096774194
+  }
+ },
+ "days_outside_transitions": {
+  "naive": {
+   "days": 1017,
+   "share_of_days_at_or_above_2sd": 0.09832841691248771
+  },
+  "reset": {
+   "days": 1017,
+   "share_of_days_at_or_above_2sd": 0.1111111111111111
+  },
+  "reset_widen": {
+   "days": 1017,
+   "share_of_days_at_or_above_2sd": 0.1111111111111111
+  },
+  "aware": {
+   "days": 1017,
+   "share_of_days_at_or_above_2sd": 0.1111111111111111
+  }
+ },
+ "flag_rule": "pulse at least 2.0 robust SD above the personal baseline on 2 of 3 consecutive days within 14 days after the transition",
+ "labels": {
+  "PRE_TEST>IN_TEST": "Going into bed rest (head-down tilt)",
+  "IN_TEST>POST_TEST": "Getting up after bed rest (return to upright)"
+ }
+}
