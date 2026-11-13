@@ -16,7 +16,7 @@ Demo crew member, simulated readings.
 
 RECOMMENDED ACTION
 
-Take sugar now if you can swallow, and call a crewmate to you. Your readings disagree (50, then 85): treat it as low to be safe. Tell the medical officer now. Re-check at 21:32.
+Take sugar now if you can swallow, and call a crewmate to you. Your readings disagree (50, then 85): treat it as low to be safe. Tell the medical officer now. Re-check at 21:43.
 
 When: now. Who: the crew medical officer.
 
@@ -24,17 +24,19 @@ A fixed safety threshold, not a trend.
 
 For whoever is with you: if they are confused, drowsy or cannot swallow safely, give nothing by mouth and get the medical officer now.
 
-Alert sent at 21:17. Not acknowledged yet: it stays at the top of their Crew screens until the medical officer does.
+Alert sent at 21:28. Not acknowledged yet: it stays at the top of their Crew screens until the medical officer does.
 
 The details are visible on their Crew screens (emergency sharing).
 
 Also act now
 Heart rate reading at rest is 150 or more (entered: 170). Call a crewmate to you now. Sit or strap in, count your pulse by hand for a full minute now, and tell the medical officer now.
+Repeat reading: heart rate now, sitting at rest (bpm)
+Save repeat
 Repeat reading: blood sugar (mg/dL)
 Save repeat
 Readings behind the first item:
-Blood sugar 50 mg/dL, at 21:17
-Blood sugar 85 mg/dL, at 21:17
+Blood sugar 50 mg/dL, at 21:28
+Blood sugar 85 mg/dL, at 21:28
 Every reading is kept. The most abnormal reading of the day stays on the medical officer's list until they close it. What you are told to do follows your latest reading once a repeat counts (for blood sugar, 15 minutes after the first).
 Why, and what next
 
@@ -44,13 +46,13 @@ After the above, still to do: Several readings have moved the way they can durin
 Other changes in your readings (not the cause of the alert above)
 All trends
 Food intake 52 % of plan
-Lower than your usual 83. More unusual than 51 of your last 52 days. Out of your range for 2 days.
+Lower than your usual 83. More unusual than 51 of your last 52 days.
 Mood 2 /5
-Lower than your usual 4. Your most unusual reading in 52 days. Out of your range for 10 days.
+Lower than your usual 4. Your most unusual reading in 52 days. Outside your usual range on each of the last 3 days with a reading.
 Reaction time 286 ms
-Higher than your usual 262. Your most unusual reading in 52 days. Out of your range for 6 days.
+Higher than your usual 262. Your most unusual reading in 52 days. Outside your usual range on each of the last 3 days with a reading.
 Heart rate variability 28 ms
-Lower than your usual 43. More unusual than 49 of your last 53 days. Out of your range for 2 days.
+Lower than your usual 43. More unusual than 49 of your last 53 days. Outside your usual range on each of the last 2 days with a reading.
 Your body at a glance
 Cabin
 Brain, sleep and mood

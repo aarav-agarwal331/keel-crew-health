@@ -50,6 +50,9 @@ Note only, keep open
 Handled, restrictions stay
 Handled after examining them in person
 The same symptom three days running (act today, 1 day)
+
+Overdue: an item that needs you has been open for 3 days. Please see Lucía today.
+
 Tomás Novák
 Mission specialist
 

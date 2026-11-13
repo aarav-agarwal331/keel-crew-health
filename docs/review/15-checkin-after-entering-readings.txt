@@ -94,7 +94,7 @@ How to measure
 Blood pressure (lower) (mmHg)
 How to measure
 Blood sugar (mg/dL)
-My meter shows:
+My meter shows (not set yet):
 mg/dL
 mmol/L
 How to measure
@@ -105,16 +105,16 @@ How to measure
 Heart rate now, sitting at rest (spot check) (bpm)
 How to measure
 Readings today:
-Blood sugar 50 mg/dL, at 21:17 Typing mistake?
-Blood sugar 85 mg/dL, at 21:17 Typing mistake?
-Heart rate at rest 170 bpm, at 21:17 Typing mistake?
+Blood sugar 50 mg/dL, at 21:28 Typing mistake?
+Blood sugar 85 mg/dL, at 21:28 Typing mistake?
+Heart rate at rest 170 bpm, at 21:28 Typing mistake?
 Every reading is kept. The most abnormal reading of the day stays on the medical officer's list until they close it. What you are told to do follows your latest reading once a repeat counts (for blood sugar, 15 minutes after the first).
 
 Taking a reading again? Type the new value and save: the earlier one is kept with its time, and both are shown to whoever you share them with.
 
 Save check-in
 
-Act now: Take sugar now if you can swallow, and call a crewmate to you. Your readings disagree (50, then 85): treat it as low to be safe. Tell the medical officer now. Re-check at 21:32.
+Act now: Take sugar now if you can swallow, and call a crewmate to you. Your readings disagree (50, then 85): treat it as low to be safe. Tell the medical officer now. Re-check at 21:43.
 
 Blood sugar: 50 mg/dL is past a fixed safety line, so Keel saved it and is acting on it. It is past a safety line, so it is now visible on the medical officer's and the commander's Crew screens (emergency sharing), and an alert goes to them ten seconds after saving (at once if you leave this screen) unless you cancel it below. Is that what the device showed?
 
@@ -138,9 +138,12 @@ Keel has re-checked your readings on this tablet with your new entries.
 
 2 items need action now. See Today for what to do.
 
-Alerting the medical officer and commander in 10 s. Leaving this screen sends it now.
+Alerting the medical officer and commander in 9 s. Leaving this screen sends it now.
 
-Cancel: it was a typing mistake (withdraws the reading)
+A typing mistake? Withdraw that reading; the alert still goes for anything else.
+
+Withdraw blood sugar 50: typing mistake
+Withdraw heart rate now, sitting at rest (spot check) 170: typing mistake
 Alert the medical officer and commander now
 See Today
 Who can see this?

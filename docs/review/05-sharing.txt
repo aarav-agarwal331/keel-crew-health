@@ -7,10 +7,10 @@ Sharing and privacy
 Lucía Reyes, your health data is yours. You decide below what each role can see. What is shown whatever you choose:
 
 Who	Always	Your choice
-Medical officer	With emergency sharing on: every urgent or same-day safety item, with the value entered, and an alert for urgent ones. With it off: an alert that you need help, and "an item, details private".	Each area: nothing, status, trend or full detail
+Medical officer	With emergency sharing on: every urgent or same-day safety item, with the value entered, and an alert for urgent ones; while an urgent item is open, also your heart, oxygen and temperature and your symptoms at trend level, so they can help. With it off: an alert that you need help, and "an item, details private".	Each area: nothing, status, trend or full detail
 Commander	Your readiness tier, without the reason. With emergency sharing on: urgent items, the value entered and an alert, as backup (never items marked "medical officer only"). With it off: an alert that you need help.	Each area
 Crew	A count when three or more crew show a change in the same area	Nothing
-Ground	A count of urgent items still open	Each area, for the flight surgeon
+Ground	With emergency sharing on: a count of urgent items still open. With it off: nothing.	Each area, for the flight surgeon
 Everyone	Cabin air and radiation readings	Not personal
 
 How it travels: in this demo every role is on one tablet. In a flight version your data stays on your tablet, and only the views allowed here would go over the cabin network, to the medical officer's and commander's tablets; the daily ground summary goes out when a link exists.
