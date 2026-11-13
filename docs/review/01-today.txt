@@ -12,7 +12,7 @@ Act today
 
 Several readings have moved the way they can during an infection
 
-Your commander sees: Talk to the medical officer first, with no reason given.
+Your commander sees: Talk to the medical officer first, with no reason given, and that an item has waited more than a day for the medical officer (nothing about it).
 
 Triggered by readings that drifted from your normal, together with symptoms you reported in the last three days (headache, stuffy head or nose, sore throat, unusual tiredness).
 

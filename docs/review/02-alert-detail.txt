@@ -80,6 +80,8 @@ Open for 3 days: the medical officer's screen now marks it overdue and asks them
 
 Possible illness in a closed cabin affects the whole crew, and early rest is cheap.
 
+What happens next: the medical officer assesses you and treats you from the onboard medical checklist and kit. Keel stops at first steps and never recommends medication.
+
 Share heart, oxygen and temperature in full detail with the medical officer
 
 This changes one setting: Heart, oxygen and temperature becomes "Full detail" for the medical officer, until you change it back in Sharing. Readings in other areas, such as sleep or reaction time, stay as you set them.

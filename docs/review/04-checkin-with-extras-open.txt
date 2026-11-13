@@ -116,7 +116,7 @@ Blood pressure (upper) (mmHg)
 How to measure
 Blood pressure (lower) (mmHg)
 How to measure
-Blood sugar (mg/dL)
+Blood sugar (pick your meter's unit above first)
 My meter shows (not set yet):
 mg/dL
 mmol/L

@@ -10,32 +10,31 @@ The evidence
 Hide
 Act now
 
-Heart rate reading at rest is 150 or more (entered: 170)
+Blood sugar reading is below 54 mg/dL (entered: 50, then 85; the 50 still counts)
 
 Your commander sees: Act now (an urgent item is open), plus 2 items with what it is, the value entered and what you were told to do (emergency sharing); nothing else.
 
 Demo crew member, simulated readings.
 
 RECOMMENDED ACTION
-
-Call a crewmate to you now. Sit or strap in, put the ECG or pulse oximeter on now, and tell the medical officer now.
-
-Also act now
-Blood sugar reading is below 54 mg/dL (entered: 50, then 85; the 50 still counts). Take sugar now if you can swallow, and call a crewmate to you. Your readings disagree (50, then 85): treat it as low to be safe. Tell the medical officer now. Re-check at 00:32.
+Blood sugar reading is below 54 mg/dL (entered: 50, then 85; the 50 still counts).
+Take sugar now if you can swallow, and call a crewmate to you. Your readings disagree (50, then 85): treat it as low to be safe. Tell the medical officer now. Re-check at 00:44.
 For whoever is with you: if they are awake and able to swallow when asked, give sugar, even if they seem confused; if they are drowsy or cannot swallow safely, give nothing by mouth and get the medical officer now.
 Repeat reading: blood sugar (mg/dL)
 Save repeat
-
-When: now. Who: the crew medical officer.
-
-A fixed safety threshold, not a trend.
-
+Heart rate reading at rest is 150 or more (entered: 170).
+Call a crewmate to you now. Sit or strap in, put the ECG on now (or the pulse oximeter if there is none), and tell the medical officer now.
+For whoever is with you: if they stop responding or are not breathing normally, shout for the whole crew, start CPR and get the defibrillator.
 Repeat reading: heart rate now, sitting at rest (bpm)
 Save repeat
 
-Alert sent at 00:17. Not acknowledged yet: it stays at the top of their Crew screens until the medical officer does.
+When: now. Who: the crew medical officer. For every item above.
 
-Do the step above, and call out to a crewmate now. In this prototype nothing makes a sound: the alert sits at the top of the medical officer's and commander's Crew screens. You do not need to keep this screen open; Keel sends it again every five minutes until the medical officer answers.
+A fixed safety threshold, not a trend.
+
+Alert sent at 00:29. Not acknowledged yet: it stays at the top of their Crew screens until the medical officer does.
+
+Do the step above, and call out to a crewmate now. In this prototype nothing makes a sound: the alert sits at the top of the medical officer's and commander's Crew screens. You do not need to keep this screen open: while Keel is open on this tablet it sends the alert again every five minutes until the medical officer answers.
 
 The details are visible on their Crew screens (emergency sharing).
 
@@ -44,7 +43,8 @@ After the above: an infection-like notice is also open, so take your temperature
 Thermometer reading (°C)
 Save reading
 Readings behind the first item:
-Heart rate at rest 170 bpm, at 00:17 Typing mistake?
+Blood sugar 50 mg/dL, at 00:29 Typing mistake?
+Blood sugar 85 mg/dL, at 00:29 (0 s after the one before) Typing mistake?
 Every reading is kept. The most abnormal reading of the day stays on the medical officer's list until they close it. What you are told to do follows your latest reading once a repeat counts (for blood sugar, 15 minutes after the first).
 Why, and what next
 
