@@ -61,7 +61,7 @@ Left out for too few nights: 21 of the 73 had a dated illness (17 of them Apple 
 Keel's detector against simpler ones, real data
 One threshold for all
 +18
-Keel (2-of-3 rule)
+Keel's rule (2-of-3 rule…
 +28
 Personal + CUSUM
 +32
@@ -96,7 +96,7 @@ How much depends on how luck is measured
 
 Luck is estimated by placing pretend illness dates on quiet days and scoring them like real ones. Pretend dates handle missing data the same way as real ones (they carry the person's quiet-time gaps, not the extra unworn days illness brings) and are weighted to the device mix of the real episodes: luck 34%, gap +28. Matched to how far into the recording real onsets fall (a young baseline is noisier): 33%, gap +30. Using only people who had an episode: 33%, gap +30. Requiring a score on every day of a pretend window, as our earlier analysis did: 35%, gap +27. As a share of what luck leaves to be found, the gap is 43%.
 
-What this cannot fix. Pretend events are placed on label-quiet days with the same missing data as real windows, and weighted to the device mix of the real episodes. They cannot be matched to the calendar (dates are shifted per person), so exposure, travel, testing and isolation near a real onset are not reproduced; detection above luck is therefore an upper bound on what physiology alone explains.
+What this cannot fix. Pretend events are placed on label-quiet days with the same missing data as real windows, and weighted to the device mix of the real episodes. They cannot be matched to the calendar (dates are shifted per person), so exposure, travel, testing and isolation near a real onset are not reproduced; detection above luck is therefore likely optimistic on what physiology alone explains.
 
 How this was measured · research/scripts/eval_real.py
 
@@ -130,7 +130,7 @@ What an alert is worth
 
 ISS crews report about one episode of upper-respiratory symptoms per person-year. At that rate, and with the detection above luck measured here, about 1 in 13 alert-tier alerts and about 1 in 44 notices would be attributable to such an illness with daily steps and thresholds from real people; none (that tier never fires) and about 1 in 42 with the 7-day activity average; and about 1 in 22 and about 1 in 60 with thresholds from the simulator, which run over budget; on the watch maker's own resting heart rate, where the import model's false-alert rates are higher (assuming detection carries over unchanged, which was not measured), about 1 in 20 and about 1 in 70; and about 1 in 16 and about 1 in 67 for the heart-rate-only model imports run on. These are likely optimistic estimates of the share that is a respiratory illness (they assume one true alert per illness and false-alert rates measured on Earth): the sensitivity comes from mostly symptomatic COVID-19, in-flight colds are milder, and full-sensor thresholds running over budget (section 3) would lower them further. Alerts for the other conditions Keel watches for are not counted here; they cannot be measured on real data. For imported watch data the closest figures are the heart-rate-only ones on the watch maker's resting heart rate; for the on-board model, the simulator-threshold ones. This is why a notice asks for a look, not for the medical officer.
 
-Uses the narrower detection window (no figure was computed for the original one). Assumes 0.97 illnesses per person-year (upper-respiratory symptoms on the ISS, source 52b) and the detection above luck measured on real data. How this was measured · research/scripts/eval_real.py
+Uses the narrower detection window; with the pre-set window's heart-rate-alone detection, notices would be about 1 in 94 (computed here from the same result file; the false-alert rate does not depend on the window). Assumes 0.97 illnesses per person-year (upper-respiratory symptoms on the ISS, source 52b) and the detection above luck measured on real data. How this was measured · research/scripts/eval_real.py
 
 False alerts over long quiet periods
 
@@ -159,7 +159,7 @@ Which indicators and components earn their place (real data)
 Indicators	Notice tier: flagged, luck	Above luck (interval)	Alert tier: flagged, luck	Above luck (interval)
 Resting heart rate only	50%, 31%	+19 (9 to 28)	28%, 9%	+19 (11 to 28)
 Resting heart rate + daily steps	63%, 34%	+28 (19 to 38)	35%, 9%	+26 (17 to 35)
-Resting heart rate + 7-day mean of steps (the activity feature the app uses)	64%, 34%	+30 (20 to 39)	0%, 0%	+0 (0 to 0)
+Resting heart rate + 7-day mean of steps (the closest real-data stand-in for the on-board 7-day exercise feature)	64%, 34%	+30 (20 to 39)	0%, 0%	+0 (0 to 0)
 … + adjust heart rate for the previous day's steps	62%, 35%	+27 (17 to 36)	34%, 8%	+25 (16 to 34)
 Night and whole-day resting heart rate + steps (exploratory, added after seeing the main result)	61%, 34%	+27 (17 to 37)	33%, 9%	+24 (15 to 33)
 Adding sleep duration, in the 18 people who have it: without → with	79% → 74%	–	–	–
