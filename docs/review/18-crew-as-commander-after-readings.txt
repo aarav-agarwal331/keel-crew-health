@@ -2,7 +2,7 @@ SCREEN: 18-crew-as-commander-after-readings
 TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 122 | Simulated data
 BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
-Alert about Lucía Reyes, sent automatically after an urgent check-in at 22:46: Blood sugar reading is below 54 mg/dL (entered: 50, then 85; the 50 still counts); Heart rate reading at rest is 150 or more (entered: 170). Go to them now.
+Alert about Lucía Reyes, sent automatically after an urgent check-in at 23:02: Blood sugar reading is below 54 mg/dL (entered: 50, then 85; the 50 still counts); Heart rate reading at rest is 150 or more (entered: 170). Go to them now.
 
 Acknowledge: I am on my way
 
@@ -31,15 +31,13 @@ NASA's medical operations standard requires medical clearance before every space
 Lucía Reyes
 Flight engineer
 
-Talk to the medical officer first
-
- A private medical matter; the medical officer is handling it. Please do not ask Lucía about it.
-
 Act now: an urgent item is open
+
+Urgent: go to Lucía now (details below).
 
 Blood sugar reading is below 54 mg/dL (entered: 50, then 85; the 50 still counts). (shared automatically: emergency sharing)
 
-Lucía was told: "Take sugar now if you can swallow, and call a crewmate to you. Your readings disagree (50, then 85): treat it as low to be safe. Tell the medical officer now. Re-check at 23:01."
+Lucía was told: "Take sugar now if you can swallow, and call a crewmate to you. Your readings disagree (50, then 85): treat it as low to be safe. Tell the medical officer now. Re-check at 23:17."
 
 Heart rate reading at rest is 150 or more (entered: 170). (shared automatically: emergency sharing)
 
@@ -60,7 +58,7 @@ Mission specialist
 
 Worth a look
 
- Reason not shared. Ask Tomás.
+ Reason private. The medical officer will advise if needed.
 
 "Steady" and "no flags" mean within the person's own usual range and no rule triggered. They do not mean the values are healthy.
 
