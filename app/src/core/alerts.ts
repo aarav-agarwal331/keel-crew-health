@@ -25,5 +25,5 @@ export function alertState<T extends { crew: string; did: string; alertKey: stri
  *  the alert says so. */
 export function contextNote(findings: { ruleId: string; title: string; days: number; status: string }[]): string {
   const inf = findings.find((f) => (f.ruleId === 'R-ILL' || f.ruleId === 'R-SYM-ILL') && f.status !== 'urgent')
-  return inf ? ` (also open: "${inf.title}", ${inf.days} day${inf.days === 1 ? '' : 's'})` : ''
+  return inf ? ` (for the medical officer only, also open: "${inf.title}", ${inf.days} day${inf.days === 1 ? '' : 's'})` : ''
 }

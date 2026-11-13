@@ -62,6 +62,7 @@ export function Crew() {
         ))
       })()}
       <div className="card-h"><h1>Crew readiness</h1><Seg label="View as" value={role} onChange={setRole} options={[{ id: 'commander', label: 'Commander' }, { id: 'cmo', label: 'Medical officer' }]} /></div>
+      <p className="chip" data-testid="viewing-as">Viewing as {mission.crew.find((c) => c.role === role)?.name ?? (role === 'cmo' ? 'the medical officer' : 'the commander')} ({role === 'cmo' ? 'medical officer' : 'commander'}): demo view on one tablet</p>
       <p className="muted">{shortDay(mission, day)}. {role === 'commander' ? 'Whether Keel has any flags for each crew member before a demanding task tomorrow, such as a spacewalk. You see a tier for everyone; reasons appear only where a crew member has chosen to share them, and for urgent items under their emergency sharing (as their backup).' : 'What each crew member has chosen to share with you. Nothing is shown that they have not shared, except, under the emergency sharing they agreed to, every open urgent or same-day safety item with its readings. Their overall status here covers only the areas they share with you; the commander\'s tier (a separate thing) uses all their readings.'}</p>
       <p className="small muted">Labels: a crew member's own "Act now", or an "Act today" that involves the medical officer, shows to the commander as "Talk to the medical officer first"; a self-managed "Act today" and "Worth a look" show as "Worth a look".</p>
       <p className="banner">Demo view. On a mission each role has its own device; here you can switch roles. Every look is written to the crew member's access log.</p>
@@ -150,6 +151,7 @@ export function Crew() {
               )}
               {role === 'cmo' && extras.meds.length > 0 && <p className="small"><strong>Medication logged today:</strong> {extras.meds.join(', ').toLowerCase()}.</p>}
               {role === 'cmo' && extras.photos.length > 0 && <div className="row wrap">{extras.photos.map((ph) => <figure key={ph.ts} style={{ margin: 0 }}><img src={ph.data} alt={`${ph.label} photo from ${c.name}`} style={{ width: 140, height: 140, objectFit: 'cover', borderRadius: 10 }} /><figcaption className="tiny">{ph.label}</figcaption></figure>)}</div>}
+              {role === 'cmo' && a?.exerciseHold && <p className="small" data-testid={`ex-hold-${c.id}`}><strong>Exercise is on hold</strong> for {c.name.split(' ')[0]} until you clear them; minutes logged by the devices may still appear.</p>}
               {/* an item that needs the medical officer and has stayed open for two days or more is overdue: say so, without its content */}
               {role === 'cmo' && c.role !== 'cmo' && a && (() => {
                 const overdue = a.findings.filter((f) => !f.crewWide && f.status === 'act' && f.tier !== 'self' && f.days >= 2)

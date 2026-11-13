@@ -1,3 +1,4 @@
+import { readiness, READY_LABEL } from '../core/readiness'
 import { SYMPTOMS } from '../core/mission'
 import { alertFields, alertState, contextNote } from '../core/alerts'
 import { useAutoAlert } from '../ui/useAutoAlert'
@@ -107,6 +108,7 @@ export function Today() {
           <div className="col" style={{ gap: 4, color: 'var(--text)' }}>
             <h1>{a.staleDays >= 2 && !primary ? 'No recent data' : STATUS_LABEL[shown]}</h1>
             <p className="muted">{primary ? primary.title : a.staleDays >= 2 ? `No readings for ${a.staleDays} days, so Keel cannot say how you are. Wear the sensor tonight and do a check-in.` : shown === 'watch' && !primary ? `No action needed yet. Keep an eye on: ${softAreas.join(', ')}.` : a.status === 'steady' && changes.length ? `Nothing needs action. ${changes.length === 1 ? 'One reading is' : `${changes.length} readings are`} a little off your usual; Keel is watching.` : HEADLINE[a.status]}</p>
+            <p className="small muted" data-testid="commander-sees">Your commander sees: {READY_LABEL[readiness(a).tier]}, with no reason.</p>
             {primary?.kind === 'personal' && <p className="small muted" data-testid="based-on">{Object.entries(a.features.sym ?? {}).some(([, v]) => v > 0) ? `Triggered by readings that drifted from your normal, together with symptoms you reported in the last three days (${Object.entries(a.features.sym ?? {}).filter(([, v]) => v > 0).map(([k]) => SYMPTOMS.find((x) => x.id === k)?.label.toLowerCase() ?? k).join(', ')}).` : 'Triggered by readings that drifted from your normal, with no symptoms reported.'}</p>}
           </div>
         </div>
@@ -225,7 +227,7 @@ export function Today() {
               <a className="col" style={{ gap: 0, textDecoration: 'none', color: 'inherit' }} href={href('trends', 'rad')}>
                 <span className="small muted">Radiation dose</span>
                 <span><span className="num" style={{ fontSize: '1.4rem', fontWeight: 700 }}>{cum.toFixed(0)}</span> <span className="small muted">mSv this mission (dosimeter estimate)</span></span>
-                <span className="tiny muted">Today {Number.isNaN(rad[day]) ? '–' : rad[day].toFixed(2)} mSv.{fd > 20 && mission.flight_days ? ` At this mission's average daily rate so far, about ${Math.round((cum / (fd + 1)) * mission.flight_days / 10) * 10} mSv by flight day ${mission.flight_days}, the end of this leg; a return trip adds more.` : ''} The 600 mSv career limit also counts earlier flights.</span>
+                <span className="tiny muted">Today {Number.isNaN(rad[day]) ? '–' : rad[day].toFixed(2)} mSv.{fd > 20 && mission.flight_days ? ` At this mission's average daily rate so far, about ${Math.round((cum / (fd + 1)) * mission.flight_days / 10) * 10} mSv by flight day ${mission.flight_days}, the end of this leg; ${Math.round((cum / (fd + 1)) * mission.flight_days * 2 / 10) * 10 > 600 ? 'a return trip at the same rate would take the total past the 600 mSv career limit.' : `a return trip at the same rate would bring the total to about ${Math.round((cum / (fd + 1)) * mission.flight_days * 2 / 10) * 10} mSv.`}` : ''} The 600 mSv career limit also counts earlier flights.</span>
               </a>
             </div>
           </Card>

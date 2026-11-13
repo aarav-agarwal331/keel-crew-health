@@ -66,5 +66,6 @@ test('capture for review', async ({ page }) => {
   // leaving Check-in already sent the alert automatically; press the button only if it is still offered
   if (await page.getByTestId('alert-crew').count()) { await page.getByTestId('alert-crew').first().click(); await page.waitForTimeout(300) }
   await nav(page, '#/crew'); await page.getByRole('button', { name: 'Medical officer' }).click(); await capture(page, '17-crew-as-medical-officer-after-readings')
+  await page.getByRole('button', { name: 'Commander' }).click(); await capture(page, '18-crew-as-commander-after-readings')
   fs.writeFileSync(`${OUT}/console-errors.txt`, errors.length ? errors.join('\n') : 'No console errors during the capture.\n')
 })

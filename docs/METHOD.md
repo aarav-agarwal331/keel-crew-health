@@ -275,7 +275,7 @@ radiation alarm [47][48]. After two days without any reading the status is "no r
   windows later tabulated it is not the largest for the deployed rule with daily steps (+28 against +29),
   but for heart rate alone the original window is clearly lower (+13, 4 to 24, against +19); the
   original window's results are given beside the main ones, and for heart rate alone they are the
-  pre-specified, conservative figures.
+  figures in the originally planned window (only the window was planned; the metric and the headline came later).
 - **Leakage guards.** Causal baselines; thresholds from training people (unit test
   `test_cv_never_scores_a_person_with_a_model_that_saw_them`); simulator calibrated on a different half
   of the people than the realism check uses; detector selected on training missions.
@@ -320,7 +320,7 @@ baseline, with the baseline restarted, with the band also widened, and with the 
 
 Keel computes, for each indicator, the mean `u` over the last three measured days; symptom counts
 over three days; the latest entered spot readings; the cabin readings; days since the last phase
-change; and days the detector's alert has been open. A fixed, ordered table of 44 rules is evaluated.
+change; and days the detector's alert has been open. A fixed, ordered table of 45 rules is evaluated.
 Rules have a scope:
 
 - **personal**: evaluated only while the detector has an alert open; the first one whose condition

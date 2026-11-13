@@ -50,7 +50,7 @@ input to it.
   sourced (or marked provisional) threshold are acted on at once. Every reading is kept with its time, the worst one counts,
   and anything urgent stays on the medical officer's list until they close it with a note.
 - **Alarm fatigue treated as a hazard.** Thresholds come from an explicit false-alert budget.
-- **Auditable advice.** A fixed table of 44 rules maps patterns, entered readings and reported
+- **Auditable advice.** A fixed table of 45 rules maps patterns, entered readings and reported
   symptoms to cited countermeasures, each with how soon and who. No language model writes medical text.
 - **Crew-owned data.** Per-role, per-area sharing with an access log; the commander sees readiness,
   not reasons, and some symptoms go to the medical officer only.
@@ -65,7 +65,8 @@ Real wearable data: 251 people, 107 dated illness episodes (Stanford COVID-19 we
 
 | Configuration, notice tier | Flagged | By luck | **Above luck** (95% interval) | False alerts per person-month |
 |---|---|---|---|---|
-| **Heart rate alone, thresholds from other real people (the import model)** | 50% | 31% | **+19 (9 to 28)**; +13 (4 to 24) in the pre-set window | 0.99 |
+| **Heart rate alone, thresholds from other real people (the import model), originally planned window** | 56% | 43% | **+13 (4 to 24)** |
+| … the same, in the narrower window used elsewhere in this table | 50% | 31% | +19 (9 to 28) | 0.99 |
 | Heart rate + 7-day activity, thresholds from other real people (5-fold over people) | 64% | 34% | +30 (20 to 39) | 0.99 |
 | Heart rate + daily steps, thresholds from other real people | 63% | 34% | +28 (19 to 38) | 0.98 |
 | One fixed threshold for everyone, heart rate + daily steps | 41% | 23% | +18 (8 to 27) | 1.01 |
@@ -106,7 +107,7 @@ Honest reading:
   over budget on real people (1.31 against 1.00; 0.41 against 0.25); with five sensors about 35% and
   135% over (16 people, 29 person-months). The opposite happens to the shipped 11-channel model when it only gets heart rate: it
   alerts well under budget (0.35 against 1.00; 0.12 against 0.25). A flight system needs thresholds per sensor set, calibrated on crew data.
-- **Much of the signal is behavioural.** Heart rate alone is +19 above luck; activity adds the rest,
+- **Much of the signal is behavioural.** Heart rate alone is +19 above luck and heart rate with daily steps +28 (separate intervals; the paired difference was not estimated), so activity may add part of the signal,
   because people move less once they feel ill, and that cannot be separated from isolating at home.
 - **Above luck is likely optimistic.** Pretend illness dates cannot be matched to the calendar, so travel,
   testing and isolation around a real onset are not reproduced. Four other ways of estimating luck
@@ -208,7 +209,7 @@ statement saved in [docs/CHALLENGE.md](docs/CHALLENGE.md).
 |---|---|---|
 | A1 | Gathers health indicators | 18 indicators; wearable import, Bluetooth strap, check-in, cabin sensors (Data sources, Check-in) |
 | A2 | Astronauts evaluate their own health | Today status against a personal baseline; Trends; body map |
-| A3 | Act on it; guidance on treatments and improvements | One recommended action on Today; Alert detail with steps and cited countermeasures; Guide → "Everything Keel can recommend" (all 44 rules). Keel gives first steps (rest, fluids, a repeat reading, sugar for a low blood sugar) but deliberately no medication advice: that is left to the medical officer |
+| A3 | Act on it; guidance on treatments and improvements | One recommended action on Today; Alert detail with steps and cited countermeasures; Guide → "Everything Keel can recommend" (all 45 rules). Keel gives first steps (rest, fluids, a repeat reading, sugar for a low blood sugar) but deliberately no medication advice: that is left to the medical officer |
 | A4 | A visual tool | Charts with personal bands, clickable body map, replay |
 | A5 | Any input: keyboard, clicks, files, camera | Check-in taps and number entry; file import; live sensor; a photo taken or chosen at check-in for the medical officer (stored on the device, not analysed) |
 | A6 | Data represents a health indicator, with units | Units on every reading and entry field (for example blood sugar in mg/dL) |

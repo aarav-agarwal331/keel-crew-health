@@ -537,25 +537,42 @@
    "urgency": "today",
    "title": "Resting heart rate of 120 or more",
    "when": {
-    "any": [
-     {
-      "run": "rhr",
-      "min": 120,
-      "days": 1
-     },
-     {
-      "val": "rhr_manual",
-      "min": 120,
-      "max": 149.99
-     }
-    ]
+    "val": "rhr_manual",
+    "min": 120,
+    "max": 149.99
    },
-   "summary": "Your overnight resting heart rate, or one you entered at rest, was 120 or more. One such reading is enough for the medical officer to look. The value 120 is provisional and has not been reviewed by a flight surgeon.",
+   "summary": "A heart rate you entered at rest was 120 or more. One such reading is enough for the medical officer to look. The value 120 is provisional and has not been reviewed by a flight surgeon.",
    "action": "Rest for ten minutes, repeat the reading, and tell the medical officer today.",
    "steps": [
     "Rest for ten minutes and take it again by hand at check-in: a second typed reading of 120 or more means telling the medical officer now.",
     "Take your temperature and drink to your fluid target.",
     "Note any chest pain, breathlessness or light-headedness: with any of them, tell the medical officer now."
+   ],
+   "tier": "cmo",
+   "tier_reason": "A fixed safety threshold, not a trend.",
+   "cm": [
+    "CM-VITALS"
+   ],
+   "categories": [
+    "cardio"
+   ]
+  },
+  {
+   "id": "R-V-HR1N",
+   "scope": "vital",
+   "priority": 1.74,
+   "urgency": "now",
+   "title": "Overnight resting heart rate of 120 or more",
+   "when": {
+    "run": "rhr",
+    "min": 120,
+    "days": 1
+   },
+   "summary": "Your heart rate while asleep was 120 or more. A sleeping heart rate that high needs the medical officer now. The value 120 is provisional and has not been reviewed by a flight surgeon.",
+   "action": "Tell the medical officer now, and take your temperature.",
+   "steps": [
+    "Count your pulse by hand for a full minute, sitting at rest, and enter it at check-in.",
+    "Note any chest pain, breathlessness or light-headedness and tell the medical officer."
    ],
    "tier": "cmo",
    "tier_reason": "A fixed safety threshold, not a trend.",

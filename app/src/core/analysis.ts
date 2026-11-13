@@ -622,6 +622,9 @@ export function analyzeDay(
     Object.assign(ill, { patternStart: began, days: day - began + 1, carriesFixed: true })
     findings.splice(i, 1)
   }
+  // a readings notice the person manages themself (sleep, exercise, fluids) is "worth a look", not "act today":
+  // the louder label is kept for what involves the medical officer, as the commander's tier already does
+  for (const fd of findings) if (fd.kind === 'personal' && fd.tier === 'self' && fd.status === 'act') fd.status = 'watch'
   // at the same urgency, an item with operational consequences (it stops exercise) leads
   // and an unchallenged reading leads one that a later reading already disagrees with
   // a low blood sugar leads among urgent items: it is the one with a treatment the person can take at once

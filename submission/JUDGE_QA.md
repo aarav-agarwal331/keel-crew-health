@@ -88,7 +88,7 @@ includes zero.
 
 **9. Why not use an AI model to explain alerts or answer questions?**
 Because the crew cannot check it and nobody on Earth can catch its mistakes. Advice comes from a table
-of 44 rules that a flight surgeon can read in one sitting, each tied to a NASA document, a published
+of 45 rules that a flight surgeon can read in one sitting, each tied to a NASA document, a published
 study or public clinical guidance, with an audit trail on every alert. A unit test fails the build if
 rule text reads like a diagnosis. By design Keel gives no medication advice; its actions are first steps such as rest, fluids, a repeat reading or sugar for a low blood sugar.
 

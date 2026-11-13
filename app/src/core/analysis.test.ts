@@ -277,6 +277,10 @@ describe('end to end on the demo mission', () => {
     expect(f.cmdNote).not.toContain('Serious symptom')
     expect(alertFields([{ title: 'Serious symptom', cmoOnly: true }]).cmoOnly).toBe(true)
     expect(alertFields([{ title: 'Serious symptom', cmoOnly: true, patientIsCmo: true }]).cmoOnly).toBe(false)
+    // context about a non-urgent notice goes to the medical officer's copy only
+    const ctx = alertFields([{ title: 'Heart rate 150 or more' }], ' (sent automatically)', ' (for the medical officer only, also open: "notice")')
+    expect(ctx.note).toContain('also open')
+    expect(ctx.cmdNote).not.toContain('also open')
   })
   it('"outside your usual range" uses the band the charts draw', () => {
     for (const c of m.crew) for (let d = m.pre_days + 20; d < m.days; d += 7) for (const ch of run(c.id, d).changes) {

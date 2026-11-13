@@ -970,6 +970,39 @@ for a clinician to set), sending act-today items to the medical officer automati
 automatic alert, refitting the bed-rest constants and a larger illness simulation (pipeline work), binding
 the remaining typed figures on the Method screen to the JSON.
 
-## Round 22
+## Round 22 (2026-11-12, fresh reviewers, redeployed build)
 
-See the end of this file once the twenty-second round has run.
+Judge's scores: impact 7, creativity 8, validity 7, relevance 8, presentation 5 (35 of 50), "nominate:
+yes", **no high-severity issue** (the third round running for the judge). The statistician found none
+either. The astronaut found one, the flight surgeon one:
+
+| # | Reviewer | High-severity finding | Fix |
+|---|---|---|---|
+| 1 | Astronaut | The medical officer's alert carried "also open: [the infection notice]", and nothing showed whether the commander's copy did too. | The commander's copy already left it out (round 21); the note now says "for the medical officer only", a unit test checks the commander's text, and the review capture adds the commander's Crew screen after the urgent readings. |
+| 2 | Flight surgeon | The round-21 "you entered 50, then 85 within a minute: was the 50 a typing mistake?" prompt made withdrawing a real low the main button, contradicting "treat it as low". | The prompt never appears when the first value is past an act-now line; elsewhere "Keep both" is the main button. |
+
+Medium-severity findings fixed in the same pass:
+
+- **Self-managed notices** (astronaut, raised in several rounds): a readings notice the person manages
+  themself shows as "Worth a look", matching the commander's tier; Today says what the commander sees.
+- **Overnight heart rate** (flight surgeon): a sleeping heart rate of 120 or more is a new "now" rule
+  (R-V-HR1N); the spot-reading rule keeps "rest and repeat".
+- **Exercise hold** (astronaut): the medical officer's card says exercise is on hold.
+- **Threshold sources** (flight surgeon): the Guide says which fixed lines are provisional values.
+- **Radiation** (flight surgeon): the cabin card says when a return trip at the same rate would pass the
+  600 mSv career limit.
+- **Statistician wording**: the README's heart-rate row is split by window (56% / 43% / +13 and
+  50% / 31% / +19); "originally planned window" instead of "pre-specified"; comparisons without a paired
+  interval are softened; the import device caveat names the model it came from; the detector chart title
+  no longer implies Keel's rule beats the others.
+- **Demo role** (judge): the Crew screen says whose view it is.
+
+Not done, with reasons: escalation from the receiving tablets (needs device-to-device sync, disclosed),
+automatic sharing of readings behind items that involve the medical officer (a privacy policy choice for
+an agency), °F and fraction checks on imports, a low-body-temperature rule (for a clinician), masking
+no-data days in the 2-of-3 score (needs a rerun), the `chance_note` string in the result file (needs a
+rerun; the screen corrects it).
+
+## Round 23
+
+See the end of this file once the twenty-third round has run.
