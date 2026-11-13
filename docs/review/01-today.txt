@@ -9,7 +9,7 @@ The evidence
 Hide
 Act today
 
-Your body looks like it is under strain
+Readings like those often seen early in an infection
 
 Demo crew member, simulated readings.
 
@@ -21,7 +21,10 @@ When: today. Who: the crew medical officer.
 
 Possible illness in a closed cabin affects the whole crew, and early rest is cheap.
 
-When you can: 2 more from your readings
+Also today, from the same readings:
+
+Your mood has been lower than usual. Book a private conversation with the medical officer.
+Your reactions are slower than usual. Repeat the test after a ten-minute break; if it is still slow, ask for a buddy check on critical tasks today.
 Thermometer reading (°C)
 Save reading
 Why, and what next

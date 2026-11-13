@@ -9,13 +9,13 @@ The evidence
 Hide
 Act now
 
-Blood sugar reading is below 54 mg/dL (entered: 50, then 85)
+Blood sugar reading is below 54 mg/dL (entered: 50, then 85; 85 still counts)
 
 Demo crew member, simulated readings.
 
 RECOMMENDED ACTION
 
-Take sugar now if you can swallow, and call a crewmate to you. Your readings disagree (50, then 85): treat it as low to be safe. If you are awake and can swallow, eat or drink something sugary now, and tell the medical officer now. Re-check at 20:17.
+Take sugar now if you can swallow, and call a crewmate to you. Your readings disagree (50, then 85): treat it as low to be safe. Tell the medical officer now. Re-check at 20:30.
 
 When: now. Who: the crew medical officer.
 
@@ -23,21 +23,25 @@ A fixed safety threshold, not a trend.
 
 For whoever is with you: if they are confused, drowsy or cannot swallow safely, give nothing by mouth and get the medical officer now.
 
-Alert sent at 20:02. Not acknowledged yet: it stays at the top of their Crew screens until the medical officer does.
+Alerting the medical officer and commander in 10 s.
 
-The details are visible on their Crew screens (emergency sharing). The button is what alerts them.
+Cancel the alert
+
+Alert sent at 20:15. Not acknowledged yet: it stays at the top of their Crew screens until the medical officer does.
+
+The details are visible on their Crew screens (emergency sharing).
 
 Also act now
 Heart rate reading at rest is 150 or more (entered: 170). Call a crewmate to you now. Sit or strap in, count your pulse by hand for a full minute now, and tell the medical officer now.
 Readings this is based on:
-Blood sugar 50 mg/dL, at 20:02
-Blood sugar 85 mg/dL, at 20:02
+Blood sugar 50 mg/dL, at 20:15
+Blood sugar 85 mg/dL, at 20:15
 Every reading is kept. The most abnormal reading of the day stays on the medical officer's list until they close it. What you are told to do follows your latest reading once a repeat counts (for blood sugar, 15 minutes after the first).
 Why, and what next
 
 No link to Earth right now. Everything on this screen was worked out on this device.
 
-After the above: 1 more item (act today or worth a look)
+After the above, still to do: Readings like those often seen early in an infection (act today)
 Other changes in your readings (not the cause of the alert above)
 All trends
 Resting heart rate (overnight) 66 bpm

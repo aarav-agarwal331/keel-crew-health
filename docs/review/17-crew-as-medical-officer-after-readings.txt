@@ -2,7 +2,13 @@ SCREEN: 17-crew-as-medical-officer-after-readings
 TOP BAR: Keel | No Earth link · running on board | Lucía · Flight day 121 | Simulated data
 BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
-Lucía Reyes raised an alert at 20:02: Blood sugar reading is below 54 mg/dL (entered: 50, then 85); Heart rate reading at rest is 150 or more (entered: 170) (sent automatically). Go to them now.
+Alert about Lucía Reyes, sent automatically after an urgent check-in at 20:15: Blood sugar reading is below 54 mg/dL (entered: 50, then 85; 85 still counts); Heart rate reading at rest is 150 or more (entered: 170). Go to them now.
+
+Acknowledge: I am on my way
+
+In a flight version this would sound on the medical officer's and commander's tablets over the cabin network; no Earth link is needed.
+
+Alert about Lucía Reyes, sent automatically after an urgent check-in at 20:15: Blood sugar reading is below 54 mg/dL (entered: 50, then 85; 85 still counts); Heart rate reading at rest is 150 or more (entered: 170). Go to them now.
 
 Acknowledge: I am on my way
 
@@ -43,18 +49,18 @@ Symptoms
 Lucía Reyes
 Flight engineer
 
-Blood sugar reading is below 54 mg/dL (entered: 50, then 85). (shared automatically: emergency sharing)
+Blood sugar reading is below 54 mg/dL (entered: 50, then 85; 85 still counts). (shared automatically: emergency sharing)
 
 Entered readings, in order:
-Blood sugar 50 mg/dL, at 20:02
-Blood sugar 85 mg/dL, at 20:02
+Blood sugar 50 mg/dL, at 20:15
+Blood sugar 85 mg/dL, at 20:15
 
-Lucía was told: "Take sugar now if you can swallow, and call a crewmate to you. Your readings disagree (50, then 85): treat it as low to be safe. If you are awake and can swallow, eat or drink something sugary now, and tell the medical officer now. Re-check at 20:17."
+Lucía was told: "Take sugar now if you can swallow, and call a crewmate to you. Your readings disagree (50, then 85): treat it as low to be safe. Tell the medical officer now. Re-check at 20:30."
 
 Heart rate reading at rest is 150 or more (entered: 170). (shared automatically: emergency sharing)
 
 Entered readings, in order:
-Heart rate at rest 170 bpm, at 20:02
+Heart rate at rest 170 bpm, at 20:15
 
 Lucía was told: "Call a crewmate to you now. Sit or strap in, count your pulse by hand for a full minute now, and tell the medical officer now."
 
@@ -73,13 +79,13 @@ Cleared after examining them in person
 Open items for you to close
 Blood sugar reading is below 54 mg/dL (Day 121, needed attention at once)
 Entered readings:
-Blood sugar 50 mg/dL, at 20:02
-Blood sugar 85 mg/dL, at 20:02
+Blood sugar 50 mg/dL, at 20:15
+Blood sugar 85 mg/dL, at 20:15
 Close: cleared for exercise and duties
 Close: resolved, not cleared
 Heart rate reading at rest is 150 or more (Day 121, needed attention at once)
 Entered readings:
-Heart rate at rest 170 bpm, at 20:02
+Heart rate at rest 170 bpm, at 20:15
 Close: cleared for exercise and duties
 Close: resolved, not cleared
 

@@ -4,7 +4,7 @@ BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
 Check-in
 
-Flight day 121. Four quick answers, about a minute. Stored on your tablet; emergency sharing is on, so anything urgent appears at once on the medical officer's and, as backup, the commander's Crew screens; they are not notified, so tell them. Who sees what
+Flight day 121. Four quick answers, about a minute. Stored on your tablet; emergency sharing is on, so anything urgent appears at once on the medical officer's and, as backup, the commander's Crew screens, and ten seconds after you save it alerts them unless you cancel. Who sees what
 
 Today's check-in in this demo came from the simulation. Anything you save here is added to it.
 
@@ -35,7 +35,7 @@ Vision change
 Rash or itchy skin
 Something else
 Something serious? Chest pain, fainting, trouble breathing, bleeding, vision loss, thoughts of harming yourself…
-Tell the medical officer now if you have any of these. Ticking one and saving makes it visible on the medical officer's Crew screen (and the commander's, except items marked "medical officer only"). Nobody is notified: tell them yourself.
+Tell the medical officer now if you have any of these. Ticking one and saving makes it visible on the medical officer's Crew screen (and the commander's, except items marked "medical officer only"), and ten seconds after you save it alerts them unless you cancel.
 Chest pain or pressure
 Short of breath at rest
 Fainted, blacked out or had a seizure
