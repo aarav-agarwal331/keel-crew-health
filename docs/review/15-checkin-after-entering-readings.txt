@@ -4,7 +4,7 @@ BOTTOM NAV: Today | Trends | Check-in | Crew | More
 
 Check-in
 
-Flight day 121. Four quick answers take about a minute. Your answers are stored on your own tablet. Other crew members see only what Sharing allows: by default the commander sees a readiness tier without the reason, a serious symptom or a reading past a safety line (marked "act now") is shown at once to the medical officer and, as backup, the commander, and the daily summary for the ground carries only what you set for the flight surgeon.
+Flight day 121. Four quick answers, about a minute. Stored on your tablet; anything urgent goes at once to the medical officer and, as backup, the commander. Who sees what
 
 1. How are you feeling?
 1
@@ -104,21 +104,21 @@ How to measure
 Heart rate now, sitting at rest (spot check) (bpm)
 How to measure
 Readings today:
-Blood sugar 50 mg/dL, at 17:47 Typing mistake?
-Blood sugar 85 mg/dL, at 17:47 Typing mistake?
-Heart rate at rest 170 bpm, at 17:47 Typing mistake?
-Every reading is kept. On the most recent day with a reading, the most abnormal one counts, and anything urgent stays on the medical officer's list until they close it.
+Blood sugar 50 mg/dL, at 18:03 Typing mistake?
+Blood sugar 85 mg/dL, at 18:03 Typing mistake?
+Heart rate at rest 170 bpm, at 18:03 Typing mistake?
+Every reading is kept. The most abnormal reading of the day stays on the medical officer's list until they close it; what you are told to do follows your latest reading.
 
 Taking a reading again? Type the new value and save: the earlier one is kept with its time, and both are shown to whoever you share them with.
 
-Blood sugar: 50 mg/dL is far outside the usual range, so Keel saved it and is acting on it; if it is past a safety line, the medical officer and the commander have already been shown it. Is that what the device showed?
+Blood sugar: 50 mg/dL is far outside the usual range, so Keel saved it and is acting on it. Act now: stop what you are doing, rest, and tell the medical officer now. It is past a safety line, so it is now visible on the medical officer's and the commander's Crew screens (emergency sharing). They are not alerted. Is that what the device showed?
 
 Yes, that is right
 No, a typing mistake: withdraw it
 
 If you withdraw it, it stays in the log, struck through, and the medical officer still sees that it was entered.
 
-Heart rate now, sitting at rest (spot check): 170 bpm is far outside the usual range, so Keel saved it and is acting on it; if it is past a safety line, the medical officer and the commander have already been shown it. Is that what the device showed?
+Heart rate now, sitting at rest (spot check): 170 bpm is far outside the usual range, so Keel saved it and is acting on it. Act now: stop what you are doing, rest, and tell the medical officer now. It is past a safety line, so it is now visible on the medical officer's and the commander's Crew screens (emergency sharing). They are not alerted. Is that what the device showed?
 
 Yes, that is right
 No, a typing mistake: withdraw it

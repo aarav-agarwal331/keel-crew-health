@@ -10,14 +10,14 @@ You cut the link (demo control)
 Keel does not use the link to work. Detection, explanations and recommended actions all run on the tablet. In this demo one tablet holds the whole simulated crew (on a mission each person's tablet holds their own data); it last re-checked all four in a fraction of a second. The link only carries a summary for the flight surgeon when one is available.
 
 Restore the link
-Link cut. Use any screen: nothing stops working. Restore it when you are done.
+Link cut. Use any screen: nothing stops working. With no link no flight surgeon can be reached; the medical officer decides on board. Restore it when you are done.
 
 Today's summary had already gone out before you cut the link, so nothing is waiting yet. The next one is made tomorrow and will wait here until the link is back. Go to tomorrow and see it wait
 
 Queued for the ground
 0 waiting
 
-One summary per mission day goes out automatically, smaller than a text message. It contains only what you have chosen to share with the flight surgeon in Sharing (by default nothing personal, only cabin alerts). While there is no link, summaries wait here and go out together when it returns.
+One summary per mission day goes out automatically, smaller than a text message. It contains only what you have chosen to share with the flight surgeon in Sharing (by default nothing personal except, under emergency sharing, a count of urgent items still open; plus cabin alerts). While there is no link, summaries wait here and go out together when it returns.
 
 Recently sent
 Day 101 · sent same day, arrived 3 min 06 s later

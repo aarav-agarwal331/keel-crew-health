@@ -15,7 +15,6 @@ RECOMMENDED ACTION
 Take your temperature now. No exercise until you have. Tell the medical officer.
 
 Enter the thermometer reading below. At 38.0 °C or more, or with a cough or chest symptoms: no exercise today, and the medical officer decides what you do.
-If you have no fever, no cough, no unusual tiredness or aches, and the medical officer agrees, a light session is reasonable. Repeat the temperature in four hours and log symptoms at check-in.
 Drink to your fluid target and protect tonight's sleep period.
 Keep some distance at meals and wipe shared surfaces until this clears.
 Thermometer reading (°C)
@@ -88,7 +87,7 @@ Possible illness in a closed cabin affects the whole crew, and early rest is che
 
 Show the medical officer the readings behind this alert
 
-This changes one setting: Heart, oxygen and temperature becomes "Full detail" for the medical officer, until you change it back in Sharing. Nothing else changes.
+This changes one setting: Heart, oxygen and temperature becomes "Full detail" for the medical officer, until you change it back in Sharing. Readings in other areas, such as sleep or reaction time, stay as you set them.
 
 What did you do?
 Did it

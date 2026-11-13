@@ -147,11 +147,11 @@ Sensors alone, or with her check-in? The flag on Day 120 came from the symptoms 
 
 On Day 119 the detector had already moved, but the readings then looked like something else ("Your mood has been lower than usual") and the advice was for that. It is not counted as flagging this event.
 
-Keel's log for this replay also has 7 entries that are not about the scripted event. Some are one open notice being read differently as the days pass; some reflect ordinary lapses in the simulated routine, such as a missed exercise session; some are false alerts. That is part of the picture: notices are budgeted at about one false one per person-month.
+Keel's log for this replay also has 7 entries that are not about the scripted event. Some are one open notice being read differently as the days pass; some reflect ordinary lapses in the simulated routine, such as a missed exercise session; some are false alerts. That is part of the picture: notices are budgeted at about one false one per person-month in simulation, and real crews would likely see more.
 
-Across all the real data, not this one script: with two sensors and thresholds from the simulator, Keel flagged 72% of 107 real illness episodes, 32 points more than luck, at 1.4 false alerts per person-month. Useful early warning was not shown. Everything except illness is tested in simulation only.
+Across all the real data, not this one script: a two-sensor version of the method (not the eleven-channel model in this replay), with thresholds from the simulator, flagged 72% of 107 real illness episodes, 32 points more than luck, at 1.4 false alerts per person-month. Useful early warning was not shown. Everything except illness is tested in simulation only.
 
-One scripted event proves nothing by itself. The day of the scripted illness was chosen, when the demo missions were built, so that the replay opens on a stretch without detector alerts; notices from ordinary lapses in the simulated routine can still appear.
+One scripted event proves nothing by itself. The day of the scripted illness was chosen when the demo missions were built, by looking at the detector's output for a quiet stretch beforehand, so this replay is not a random draw.
 
 Open that day as Lucía
 See the validation

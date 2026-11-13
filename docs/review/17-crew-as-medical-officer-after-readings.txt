@@ -6,7 +6,7 @@ Crew readiness
 Commander
 Medical officer
 
-Day 121. What each crew member has chosen to share with you. Nothing is shown that they have not shared, except emergencies they agreed to share.
+Day 121. What each crew member has chosen to share with you. Nothing is shown that they have not shared, except emergencies they agreed to share and, under that consent, the fact that an item is open in an area. Their overall tier is worked out from all their readings.
 
 Demo view. On a mission each role has its own device; here you can switch roles. Every look is written to the crew member's access log.
 
@@ -33,13 +33,22 @@ Symptoms
 Lucía Reyes
 Flight engineer
 
-Heart rate reading at rest is 150 or more. (shared automatically: emergency sharing)
+Heart rate reading at rest is 150 or more (you entered 170). (shared automatically: emergency sharing)
 
 Entered readings, in order:
-Heart rate at rest 170 bpm, at 17:47
-Every reading is kept. On the most recent day with a reading, the most abnormal one counts, and anything urgent stays on the medical officer's list until they close it.
+Heart rate at rest 170 bpm, at 18:03
+Every reading is kept. The most abnormal reading of the day stays on the medical officer's list until they close it; what you are told to do follows your latest reading.
 
 Lucía was told: "Stop, rest, and tell the medical officer now."
+
+Blood sugar reading is below 54 mg/dL (you entered 50, then 85). (shared automatically: emergency sharing)
+
+Entered readings, in order:
+Blood sugar 50 mg/dL, at 18:03
+Blood sugar 85 mg/dL, at 18:03
+Every reading is kept. The most abnormal reading of the day stays on the medical officer's list until they close it; what you are told to do follows your latest reading.
+
+Lucía was told: "If you are awake and can swallow, eat or drink something sugary now, and tell the medical officer now."
 
 Act now
 
@@ -48,12 +57,18 @@ Sleep and body clock
 Exercise
 Food and fluids
 Symptoms
-Alert in food and fluids (act today for 1 d)
-Alert in heart, oxygen and temperature (act today for 2 d)
+Open item in heart, oxygen and temperature (details not shared) (act today for 2 d)
 Open items for you to close
 Heart rate reading at rest is 150 or more (Day 121, needed attention at once)
+Entered readings:
+Heart rate at rest 170 bpm, at 18:03
+Every reading is kept. The most abnormal reading of the day stays on the medical officer's list until they close it; what you are told to do follows your latest reading.
 Close
-Blood sugar reading is below 54 mg/dL (Day 121, needed attention at once)
+Blood sugar reading is below 54 mg/dL (Day 121, needed attention at once; a later reading that day was back on the safe side)
+Entered readings:
+Blood sugar 50 mg/dL, at 18:03
+Blood sugar 85 mg/dL, at 18:03
+Every reading is kept. The most abnormal reading of the day stays on the medical officer's list until they close it; what you are told to do follows your latest reading.
 Close
 
 A later normal reading does not close an item. Only a note from you does, and a new abnormal reading after your note reopens it. Consider consulting the flight surgeon at the next link for anything marked "at once".

@@ -14,7 +14,7 @@ Demo control. Cut it, then use any screen: nothing stops working.
 Queued for the ground
 0 waiting
 
-One summary per mission day goes out automatically, smaller than a text message. It contains only what you have chosen to share with the flight surgeon in Sharing (by default nothing personal, only cabin alerts). While there is no link, summaries wait here and go out together when it returns.
+One summary per mission day goes out automatically, smaller than a text message. It contains only what you have chosen to share with the flight surgeon in Sharing (by default nothing personal except, under emergency sharing, a count of urgent items still open; plus cabin alerts). While there is no link, summaries wait here and go out together when it returns.
 
 Recently sent
 Day 101 · sent same day, arrived 3 min 06 s later
