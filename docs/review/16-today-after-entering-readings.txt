@@ -12,13 +12,13 @@ Act now
 
 Blood sugar reading is below 54 mg/dL (entered: 50, then 85; the 50 still counts)
 
-Your commander sees: Talk to the medical officer first, with no reason.
+Your commander sees: Talk to the medical officer first, plus 2 items with what it is and the value entered (emergency sharing); nothing else.
 
 Demo crew member, simulated readings.
 
 RECOMMENDED ACTION
 
-Take sugar now if you can swallow, and call a crewmate to you. Your readings disagree (50, then 85): treat it as low to be safe. Tell the medical officer now. Re-check at 22:49.
+Take sugar now if you can swallow, and call a crewmate to you. Your readings disagree (50, then 85): treat it as low to be safe. Tell the medical officer now. Re-check at 23:01.
 
 When: now. Who: the crew medical officer.
 
@@ -29,7 +29,7 @@ For whoever is with you: if they are confused, drowsy or cannot swallow safely, 
 Repeat reading: blood sugar (mg/dL)
 Save repeat
 
-Alert sent at 22:34. Not acknowledged yet: it stays at the top of their Crew screens until the medical officer does.
+Alert sent at 22:46. Not acknowledged yet: it stays at the top of their Crew screens until the medical officer does.
 
 Until it is acknowledged, Keel sends it again every five minutes while this screen is open; it cannot once the tablet is put away.
 
@@ -45,8 +45,8 @@ After the above: an infection-like notice is also open, so take your temperature
 Thermometer reading (°C)
 Save reading
 Readings behind the first item:
-Blood sugar 50 mg/dL, at 22:34
-Blood sugar 85 mg/dL, at 22:34 (0 s after the one before)
+Blood sugar 50 mg/dL, at 22:46
+Blood sugar 85 mg/dL, at 22:46 (0 s after the one before)
 Every reading is kept. The most abnormal reading of the day stays on the medical officer's list until they close it. What you are told to do follows your latest reading once a repeat counts (for blood sugar, 15 minutes after the first).
 Why, and what next
 

@@ -56,7 +56,7 @@ Keel gives first steps (rest, fluids, a repeat reading, sugar for a low blood su
 
 Everything Keel can recommend
 
-The complete list of 45 rules. Each has one action, how soon, who should know, and where the advice comes from. Nothing else can appear on an alert.
+The complete list of 45 rules. Each has one action, how soon, who should know, and where the advice comes from. Apart from a few fixed variants written into the code (a repeat reading that counts, sugar on the fingertip after a low, a meter unit not yet confirmed, an early illness notice, a value from an imported file, and the crewmate and backup wording), nothing else can appear on an alert.
 
 Smoke or chemical exposure
 Symptom that needs the medical officer now
