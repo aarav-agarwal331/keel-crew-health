@@ -1,3 +1,4 @@
+import { SYMPTOMS } from '../core/mission'
 import { alertFields, alertState } from '../core/alerts'
 import { useAutoAlert } from '../ui/useAutoAlert'
 import { STATUS_LABEL, unusualness, URGENCY_LABEL, WHO_LABEL } from '../core/analysis'
@@ -105,7 +106,7 @@ export function Today() {
           <div className="col" style={{ gap: 4, color: 'var(--text)' }}>
             <h1>{a.staleDays >= 2 && !primary ? 'No recent data' : STATUS_LABEL[shown]}</h1>
             <p className="muted">{primary ? primary.title : a.staleDays >= 2 ? `No readings for ${a.staleDays} days, so Keel cannot say how you are. Wear the sensor tonight and do a check-in.` : shown === 'watch' && !primary ? `No action needed yet. Keep an eye on: ${softAreas.join(', ')}.` : a.status === 'steady' && changes.length ? `Nothing needs action. ${changes.length === 1 ? 'One reading is' : `${changes.length} readings are`} a little off your usual; Keel is watching.` : HEADLINE[a.status]}</p>
-            {primary?.kind === 'personal' && <p className="small muted" data-testid="based-on">{Object.values(a.features.sym ?? {}).some((v) => v > 0) ? 'Triggered by the symptoms you reported plus readings that drifted from your normal.' : 'Triggered by readings that drifted from your normal, with no symptoms reported.'}</p>}
+            {primary?.kind === 'personal' && <p className="small muted" data-testid="based-on">{Object.entries(a.features.sym ?? {}).some(([, v]) => v > 0) ? `Triggered by readings that drifted from your normal, together with symptoms you reported in the last three days (${Object.entries(a.features.sym ?? {}).filter(([, v]) => v > 0).map(([k]) => SYMPTOMS.find((x) => x.id === k)?.label.toLowerCase() ?? k).join(', ')}).` : 'Triggered by readings that drifted from your normal, with no symptoms reported.'}</p>}
           </div>
         </div>
         {a.status === 'steady' && a.co2Advisory !== null && <p className="banner info"><strong>Cabin CO2 is {a.co2Advisory.toFixed(1)} mmHg.</strong> Headaches get more likely the higher it goes; 2.5 is Keel's advisory line and 3.0 its alert. If you have a headache, log it at check-in and move to better airflow.</p>}
@@ -205,7 +206,7 @@ export function Today() {
             <ul className="list">
               <li><StatusTag status={checked ? 'steady' : 'learning'} label={checkedByMe ? 'Check-in done' : checked ? 'Check-in done (simulated)' : 'Daily check-in (about a minute)'} size={18} />{!checked && <a className="btn sm" href={href('checkin')} style={{ marginLeft: 'auto', float: 'right' }}>Start</a>}</li>
               <li><StatusTag status={wearOk ? 'steady' : 'learning'} label={wearOk ? 'Sensor worn last night' : 'No sensor data last night: wear it tonight'} size={18} /></li>
-              <li><StatusTag status={exDone ? 'steady' : 'learning'} label={a.exerciseHold ? 'No exercise until the medical officer clears you' : exDone ? 'Exercise done today' : `Exercise: ${Number.isNaN(ex[day]) ? 0 : Math.round(ex[day])} of ${target} min today`} size={18} /></li>
+              <li><StatusTag status={a.exerciseHold ? 'watch' : exDone ? 'steady' : 'learning'} label={a.exerciseHold ? 'No exercise until the medical officer clears you' : exDone ? 'Exercise done today' : `Exercise: ${Number.isNaN(ex[day]) ? 0 : Math.round(ex[day])} of ${target} min today`} size={18} /></li>
               {spotDue.length > 0 && <li><StatusTag status="learning" label={`Weekly measurement due: ${spotDue.map((k) => IND[k].label.toLowerCase()).join(', ')}`} size={18} /> <a className="btn sm" href={href('checkin', 'measure')} data-testid="enter-measurements">Enter</a></li>}
               {!Number.isNaN(sleepLast) && sleepLast < 5.5 && <li><StatusTag status="watch" label={`Sleep last night ${sleepLast.toFixed(1)} h. The scheduled sleep period is 8.5 h.`} size={18} /></li>}
             </ul>

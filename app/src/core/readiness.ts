@@ -1,8 +1,9 @@
 /**
  * Crew readiness for a demanding task tomorrow (for example a spacewalk).
  * Rule-based heuristic, not a validated fitness-for-duty test and not a medical clearance.
- * It can never be better than what the crew member's own screens show: any area at "act"
- * means "talk to the medical officer first", any area at "worth a look" means "minor flags".
+ * It can never be better than what the crew member's own screens show: anything urgent, or any item that
+ * involves the medical officer, means "talk to the medical officer first"; a self-managed "act today" item or
+ * an area at "worth a look" means "worth a look".
  * The tier is always visible to the commander; the reasons only where the crew member shares them.
  */
 import type { DayAnalysis } from './analysis'
@@ -41,13 +42,15 @@ export function readiness(a: DayAnalysis): Readiness {
     // but its reason is filed under a private label so the commander never sees what it is
     if (f.cmoOnly && !f.patientIsCmo) { bump('hold'); reasons.push({ category: 'private', text: 'A private matter for the medical officer' }); continue }
     if (f.crewWide) continue
-    if (f.status === 'urgent' || f.status === 'act' || f.tier !== 'self') bump('hold')
+    // a self-managed item (a late night, a missed session) is worth a look, not a reason to stop someone working
+    if (f.status === 'urgent' || f.tier !== 'self') bump('hold')
     else bump('caution')
     reasons.push({ category: f.categories[0] ?? 'symptoms', text: f.title })
   }
   for (const [cat, st] of Object.entries(a.categories)) {
     if (cat === 'environment') continue
-    if (st === 'act' || st === 'urgent') bump('hold')
+    if (st === 'urgent') bump('hold')
+    else if (st === 'act') bump('caution')
     else if (st === 'watch') { bump('caution'); if (!reasons.some((r) => r.category === cat)) reasons.push({ category: cat, text: cat === 'symptoms' ? 'Symptoms reported on more than one day' : 'A reading outside the usual range' }) }
   }
   // nausea or vomiting before suited work, and clearly slowed reactions, always need a conversation

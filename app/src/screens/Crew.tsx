@@ -50,10 +50,10 @@ export function Crew() {
         // an alert stays until the medical officer has acknowledged it (the commander's acknowledgement is shown, not enough)
         // when the patient is the medical officer, the commander (their backup) acknowledging is enough
         const open = raised.filter((x) => !acksFor(x).some((q) => /medical officer/.test(q.note) || (isCmo(x.crew) && /commander/.test(q.note))))
-          .filter((x) => !(role === 'commander' && (x.cmoOnly || /\(medical officer only\)/.test(x.note)) && !isCmo(x.crew)))
+          .filter((x) => !(role === 'commander' && (x.cmoOnly || /\(medical officer only\)/.test(x.note)) && !isCmo(x.crew) && Date.now() - x.ts < 5 * 60e3))
         return open.map((x) => (
           <section key={x.ts} className="card action" role="alert" data-testid="crew-alert">
-            <p className="do">{x.did === 'Asked to be seen today' ? `${mission.crew.find((c) => c.id === x.crew)?.name} asks to be seen today` : /\(sent automatically\)/.test(x.note) ? `Alert about ${mission.crew.find((c) => c.id === x.crew)?.name}, sent automatically after an urgent check-in` : `${mission.crew.find((c) => c.id === x.crew)?.name} raised an alert`} at {new Date(x.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}{(sharing[x.crew]?.emergency !== false) ? `: ${(role === 'commander' && !isCmo(x.crew) && x.cmdNote !== undefined ? x.cmdNote : x.note).replace(/ \(sent automatically\)/, '').replace(/ \(medical officer only\)/, '')}` : ''}{x.did === 'Asked to be seen today' ? '. See them today.' : '. Go to them now.'}</p>
+            {role === 'commander' && (x.cmoOnly || /\(medical officer only\)/.test(x.note)) && !isCmo(x.crew) ? <p className="do">{`${mission.crew.find((c) => c.id === x.crew)?.name} needs the medical officer urgently, and the medical officer has not answered for five minutes. Find the medical officer, or stay with ${mission.crew.find((c) => c.id === x.crew)?.name.split(' ')[0]}. (A private medical matter: the reason is not shown.)`}</p> : <p className="do">{x.did === 'Asked to be seen today' ? `${mission.crew.find((c) => c.id === x.crew)?.name} asks to be seen today` : /\(sent automatically\)/.test(x.note) ? `Alert about ${mission.crew.find((c) => c.id === x.crew)?.name}, sent automatically after an urgent check-in` : `${mission.crew.find((c) => c.id === x.crew)?.name} raised an alert`} at {new Date(x.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}{(sharing[x.crew]?.emergency !== false) ? `: ${(role === 'commander' && !isCmo(x.crew) && x.cmdNote !== undefined ? x.cmdNote : x.note).replace(/ \(sent automatically\)/, '').replace(/ \(medical officer only\)/, '')}` : ''}{x.did === 'Asked to be seen today' ? '. See them today.' : '. Go to them now.'}</p>}
             {!acksFor(x).length && Date.now() - x.ts > 5 * 60e3 && <p className="banner strong"><strong>Not acknowledged for {Math.round((Date.now() - x.ts) / 60e3)} minutes.</strong> Whoever reads this: go to them, or find the medical officer.</p>}
             {acksFor(x).map((q) => <p key={q.ts} className="small">Acknowledged {q.note} at {new Date(q.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}.</p>)}
             {!acksFor(x).some((q) => q.note.includes(role === 'cmo' ? 'medical officer' : 'commander')) && <button className="btn primary" onClick={() => void logAction({ crew: x.crew, alertKey: x.alertKey, day, did: 'Acknowledged the alert', feel: null, note: `by the ${role === 'cmo' ? 'medical officer' : 'commander'}` })} data-testid="ack-alert">Acknowledge: I am on my way</button>}
@@ -63,7 +63,7 @@ export function Crew() {
       })()}
       <div className="card-h"><h1>Crew readiness</h1><Seg label="View as" value={role} onChange={setRole} options={[{ id: 'commander', label: 'Commander' }, { id: 'cmo', label: 'Medical officer' }]} /></div>
       <p className="muted">{shortDay(mission, day)}. {role === 'commander' ? 'Whether Keel has any flags for each crew member before a demanding task tomorrow, such as a spacewalk. You see a tier for everyone; reasons appear only where a crew member has chosen to share them, and for urgent items under their emergency sharing (as their backup).' : 'What each crew member has chosen to share with you. Nothing is shown that they have not shared, except, under the emergency sharing they agreed to, every open urgent or same-day safety item with its readings. Their overall status here covers only the areas they share with you; the commander\'s tier (a separate thing) uses all their readings.'}</p>
-      <p className="small muted">Labels: a crew member's own "Act today" or "Act now" shows to the commander as "Talk to the medical officer first"; "Worth a look" is the same on both screens.</p>
+      <p className="small muted">Labels: a crew member's own "Act now", or an "Act today" that involves the medical officer, shows to the commander as "Talk to the medical officer first"; a self-managed "Act today" and "Worth a look" show as "Worth a look".</p>
       <p className="banner">Demo view. On a mission each role has its own device; here you can switch roles. Every look is written to the crew member's access log.</p>
 
       {role === 'commander' && (
@@ -95,6 +95,7 @@ export function Crew() {
                 return shown.length
                   ? <ul className="list small">{shown.map((x, i) => <li key={i}>{x.text}</li>)}</ul>
                   : c.role === 'commander' ? <p className="small muted">This is the commander's own card. The reasons are on their own Today screen.</p>
+                  : r?.reasons.some((x) => x.category === 'private') ? <p className="small muted"><StatusTag status="private" label="" size={16} /> A private medical matter; the medical officer is handling it. Please do not ask {c.name.split(' ')[0]} about it.</p>
                   : <p className="small muted"><StatusTag status="private" label="" size={16} /> Reason not shared. Ask {c.name.split(' ')[0]}.</p>
               })()}
               {v.findings.filter((x) => x.emergency).map((x) => (
@@ -114,7 +115,7 @@ export function Crew() {
                   })}
                   {v.findings.filter((x) => !x.emergency).filter((x, i, arr) => x.title || arr.findIndex((y) => !y.title && y.category === x.category) === i).map((f) => (
                     <li key={f.key}>
-                      <strong>{f.title ?? `Notice from the readings in ${catLabel(f.category).toLowerCase()} (details not shared)`}</strong> <span className="muted">({STATUS_LABEL[f.status].toLowerCase()}, {f.days} {f.days === 1 ? 'day' : 'days'})</span>
+                      <strong>{f.title ?? (f.fixed ? `An item in ${catLabel(f.category).toLowerCase()} (details not shared)` : `Notice from the readings in ${catLabel(f.category).toLowerCase()} (details not shared)`)}</strong> <span className="muted">({STATUS_LABEL[f.status].toLowerCase()}, {f.days} {f.days === 1 ? 'day' : 'days'})</span>
                       {role === 'cmo' && c.role !== 'cmo' && f.key.includes('|P|') && ['act', 'urgent'].includes(f.status) && (() => {
                         const k = `${f.key}#${f.status}#${day - f.days + 1}`
                         const note = (notes[k] ?? '').trim()
@@ -185,7 +186,7 @@ export function Crew() {
         ))}
       </div>
       <p className="small muted">"Steady" and "no flags" mean within the person's own usual range and no rule triggered. They do not mean the values are healthy.</p>
-      <p className="banner">The tier is a rule-based summary: it is never better than the worst area on the crew member's own screen, and nausea or clearly slowed reactions always mean a conversation first. It is not a validated fitness-for-duty test and not a clearance.</p>
+      <p className="banner">The tier is a rule-based summary: it is never better than "Worth a look" when an area on the crew member's own screen is flagged, it is "Talk to the medical officer first" for anything urgent or anything that involves the medical officer, and nausea or clearly slowed reactions always mean a conversation first. It is not a validated fitness-for-duty test and not a clearance.</p>
     </>
   )
 }

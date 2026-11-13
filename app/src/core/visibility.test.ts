@@ -24,6 +24,15 @@ const none = (): SharingSettings => {
 }
 
 describe('privacy gate', () => {
+  it('under emergency consent a same-day fixed-rule item reaches the medical officer with its title, even in an unshared area', () => {
+    const e = (d: number) => ({ key: `k${d}`, mission: m.id, crew, day: d, values: {}, symptoms: ['headache'], ts: d })
+    const b = analyzeDay(m, crew, an, model, 100, [e(98), e(99), e(100)])
+    const f = b.findings.find((x) => x.ruleId === 'R-SYM-PERSIST')
+    expect(f).toBeDefined()
+    const sh = none(); sh.emergency = true
+    expect(viewFor('cmo', b, sh).findings.some((x) => x.key === f!.key && x.title === f!.title)).toBe(true)
+    expect(viewFor('commander', b, sh).findings.some((x) => x.key === f!.key)).toBe(false)
+  })
   it('there is something private to protect in this fixture', () => {
     expect(a.findings.some((f) => !f.crewWide)).toBe(true)
   })

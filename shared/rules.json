@@ -619,7 +619,7 @@
    "steps": [
     "If you have thoughts of harming yourself, or cannot function, tell the medical officer or the commander now.",
     "A private conference with the support team at home can be recorded and sent when a link opens.",
-    "You decide what is shared. The commander sees only that a conversation with the medical officer is advised, not why."
+    "Under emergency sharing the medical officer sees that this item is open and what it is; your mood readings themselves follow your sharing settings. The commander sees only that a conversation with the medical officer is advised, not why."
    ],
    "tier": "cmo",
    "tier_reason": "Sustained very low mood should not wait for a trend.",

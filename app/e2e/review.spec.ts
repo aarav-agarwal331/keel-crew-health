@@ -25,6 +25,8 @@ test.use({ viewport: { width: 820, height: 1200 }, baseURL: URL })
 test('capture for review', async ({ page }) => {
   test.setTimeout(300_000)
   fs.mkdirSync(OUT, { recursive: true })
+  // remove earlier captures, so a screen that now has fewer parts leaves no stale image behind
+  for (const f of fs.readdirSync(OUT)) if (/^\d\d-.*\.(png|txt)$/.test(f)) fs.rmSync(`${OUT}/${f}`)
   const errors: string[] = []
   page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()) })
   page.on('pageerror', (e) => errors.push(e.message))

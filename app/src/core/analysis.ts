@@ -447,6 +447,11 @@ export function analyzeDay(
       ...(crewWide || r.id === 'R-RED-EXP' ? { who: 'The commander and the whole crew' } : {}), ...(patientIsCmo ? { patientIsCmo: true } : {}), ...extra,
     }
     out.inds = [...new Set([...condFixed(r.when), ...out.changes.map((c) => c.ind)])]
+    // name the symptom that actually persisted, not the rule's list
+    if (r.id === 'R-SYM-PERSIST') {
+      const which = ['headache', 'vomiting', 'dizziness', 'cough'].filter((x) => (sym[x] ?? 0) >= 3).map((x) => (SYM[x]?.label ?? x).toLowerCase())
+      if (which.length) out.summary = `You reported ${which.join(' and ')} on each of the last three days. A symptom that does not go away deserves a look whatever your readings show.`
+    }
     // a fixed rule names the reading itself: "you entered 170", not only the rule
     if (kind === 'vital' && out.readings?.length) {
       const live = out.readings.filter((q) => !q.void)
@@ -589,7 +594,8 @@ export function analyzeDay(
     Object.assign(ill, { patternStart: began, days: day - began + 1 })
     findings.splice(i, 1)
   }
-  findings.sort((a, b) => rank[b.status] - rank[a.status])
+  // at the same urgency, an item with operational consequences (it stops exercise) leads
+  findings.sort((a, b) => rank[b.status] - rank[a.status] || Number(holdsEx(b.ruleId)) - Number(holdsEx(a.ruleId)))
   const status: Status = findings.length ? findings[0].status : learning || staleDays >= 2 ? 'learning' : 'steady'
 
   // --- one status per area, used by every screen (body map, sharing preview, role views) ------

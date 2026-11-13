@@ -752,6 +752,49 @@ Not done, with reasons: a mission-wide glucose unit setting, a repeated sub-35 �
 relative to in-flight baseline, R-MOOD's audience (judgement calls for a clinician); a nested bootstrap
 that refits thresholds, a physiology-only simulated-illness ablation (pipeline work, disclosed).
 
-## Round 16
+## Round 16 (2026-11-12, fresh reviewers, redeployed build after the detector change)
 
-See the end of this file once the sixteenth round has run.
+Judge's scores: impact 6, creativity 8, validity 7, relevance 8, presentation 6 (35 of 50), "nominate:
+yes", with one high-severity issue. The astronaut found two, the statistician one, the flight surgeon
+none.
+
+| # | Reviewer | High-severity finding | Fix |
+|---|---|---|---|
+| 1 | Judge, astronaut (flight surgeon medium) | Sharing promised the medical officer sees every same-day safety item with what it is, but a symptom item ("the same symptom three days running") reached them as "Notice from the readings in symptoms (details not shared)". | Under emergency consent a fixed-rule "act today" item reaches the medical officer with its title in any area (unit-tested); an untitled item from a fixed rule says "An item in …", not "Notice from the readings"; Alert detail and the ask button say exactly what the medical officer sees. |
+| 2 | Astronaut (judge, flight surgeon medium) | The pinned countdown bar was see-through and printed over the Save button and the page heading. | The bar is back in the page flow under the Save button, with a solid background. |
+| 3 | Statistician | Data sources said the import model ran "about twice its budget at the alert tier" on Fitbit's own resting heart rate; after the rerun it is about a fifth over. | Corrected; it was the last hand-typed result on that screen. |
+
+Medium-severity findings fixed in the same pass:
+
+- **Self-managed "act today"** (astronaut): a self-managed item (late sleep, missed exercise) now puts the
+  commander's tier on "Worth a look", not "Talk to the medical officer first"; the Guide, Crew legend
+  and Method say so; unit test updated.
+- **Headline order** (flight surgeon): at the same urgency, an item that stops exercise leads, so the
+  infection-like pattern comes before a persistent-symptom item.
+- **Backup for "medical officer only" alerts** (flight surgeon): after five minutes without the medical
+  officer's acknowledgement the commander is alerted with no content ("needs the medical officer
+  urgently … the reason is not shown"); the commander's card for a private hold says "A private medical
+  matter; the medical officer is handling it. Please do not ask them about it."
+- **Cancel** (flight surgeon): the 10-second cancel withdraws the reading as a typing mistake, and
+  disappears once the reading is confirmed.
+- **Meter unit** (flight surgeon): the blood-sugar unit is set once per tablet ("My meter shows: mg/dL |
+  mmol/L"); mmol/L input is converted; "LO" and "HI" meter readouts can be entered and count as past the
+  lines; the unit question appears only while the unit is unknown.
+- **Still-open items** (flight surgeon): the ask button says "Open for N days without a conversation: ask
+  today" after two days; the low-mood rule no longer says "you decide what is shared".
+- **Persisting symptom named** (judge, astronaut): the summary names the symptom that persisted.
+- **Validation** (judge, statistician): the over-budget tile is marked not comparable; the window
+  sentence is corrected (for heart rate alone the pre-specified window gives +13 against +19); the
+  smoothing rows are labelled as not applying to the deployed rule; the false-alert concentration
+  sentence is computed from the values; "halves" became "about a third"; METHOD.md gives the paired
+  EWMA-vs-rule difference.
+- **Small**: fluids pre-fill labelled; the trigger line names the symptoms; a restriction shows a warning
+  icon, not a tick; the review capture deletes old screenshots first (two stale parts had survived).
+
+Not done, with reasons: one status vocabulary and one set of areas across body figure, Sharing and Trends
+(a redesign); a repeat box for every urgent item and for blood pressure and temperature; sudden-vision
+red flags and a ketone step (indicator and rule changes for a clinician); a nested bootstrap.
+
+## Round 17
+
+See the end of this file once the seventeenth round has run.

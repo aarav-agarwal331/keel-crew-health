@@ -114,8 +114,9 @@ describe('end to end on the demo mission', () => {
       const a = run(c.id, d)
       const worst = Math.max(...Object.entries(a.categories).filter(([k]) => k !== 'environment').map(([, v]) => ({ learning: 0, steady: 1, watch: 2, act: 3, urgent: 4 })[v]))
       const r = readiness(a).tier
-      if (worst >= 3) expect(r).toBe('hold')
-      if (worst === 2) expect(['caution', 'hold']).toContain(r)
+      // urgent, or anything that involves the medical officer, holds; a self-managed "act today" is at least "worth a look"
+      if (worst >= 4 || a.findings.some((f) => !f.crewWide && f.tier !== 'self' && ['act', 'urgent'].includes(f.status))) expect(r).toBe('hold')
+      if (worst >= 2) expect(['caution', 'hold']).toContain(r)
       // an area flagged on the body map is flagged at least as strongly in the sharing areas
       for (const f2 of a.findings.filter((x) => !x.crewWide && x.changes.length)) expect(worst).toBeGreaterThanOrEqual({ learning: 0, steady: 1, watch: 2, act: 3, urgent: 4 }[f2.status])
     }

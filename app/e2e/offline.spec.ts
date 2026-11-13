@@ -39,8 +39,9 @@ test('every screen works with the network disabled', async ({ page }) => {
   })
 
   await test.step('Alert detail: evidence, action, escalation, log what you did', async () => {
-    // the readings-based notice (the persistent-symptom item is listed first, as reported items are)
-    await page.getByRole('link', { name: /during an infection/ }).first().click()
+    // the readings-based notice leads: at equal urgency, the item that stops exercise comes first
+    await page.getByTestId('open-alert').click()
+    await expect(page.locator('h1')).toContainText(/during an infection/)
     await expect(page.getByTestId('alert-action')).toBeVisible()
     await expect(page.getByText('What changed')).toBeVisible()
     await page.getByRole('button', { name: 'Did it', exact: true }).click()

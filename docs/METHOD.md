@@ -200,8 +200,7 @@ simulated crew's 30% exercise cut when ill was set by hand with the real step dr
 night for simulated ground people, `ground_people(p_wear=0.3)`, set to resemble real wear time), so the choice is not fully independent
 of them, and the history means it is not pre-registered. On the test missions the z-score rule is
 slightly ahead (+31 against +29 at the notice tier); on real data the multivariate EWMA scores +34
-(24 to 44) against the z-score rule's +28 (19 to 38) at the notice tier, with no paired interval for
-the difference in the current results; the four personal detectors cannot be told apart at the
+(24 to 44) against the z-score rule's +28 (19 to 38) at the notice tier, a paired difference of +5 (−2 to 12); the four personal detectors cannot be told apart at the
 notice tier (at the alert tier they spread from +15 to +31), and the choice is best read as arbitrary among equals.
 
 **Rules outside the detector.** Some things do not depend on a personal baseline or cannot wait for
@@ -273,8 +272,10 @@ radiation alarm [47][48]. After two days without any reading the status is "no r
   cross-validation over people, with the cross-phase split reported beside it.
 - **The window.** It was narrowed from −14..+7 to −10..+4 days while the real-data evaluation was
   being written. The commit history cannot show that this preceded the first run, and of the four
-  windows later tabulated it has the largest gap above luck, so the original window's results are
-  given beside the main ones and are the conservative figures.
+  windows later tabulated it is not the largest for the deployed rule with daily steps (+28 against +29),
+  but for heart rate alone the original window is clearly lower (+13, 4 to 24, against +19); the
+  original window's results are given beside the main ones, and for heart rate alone they are the
+  pre-specified, conservative figures.
 - **Leakage guards.** Causal baselines; thresholds from training people (unit test
   `test_cv_never_scores_a_person_with_a_model_that_saw_them`); simulator calibrated on a different half
   of the people than the realism check uses; detector selected on training missions.
@@ -397,8 +398,8 @@ the same code version). Real data: 251 people, 107 illness episodes, two sensors
   tier and +17 (7 to 28) at the alert tier: mixed evidence, uncorrected for multiple comparisons.
 - **Against the multivariate detector.** Keel now deploys the simple two-of-three-days z-score rule
   itself: +28 (19 to 38). The multivariate EWMA, the previously deployed detector, scores +34
-  (24 to 44) at the notice tier and +31 (21 to 41) at the alert tier. The intervals overlap widely; no
-  paired interval for the difference is in the current results.
+  (24 to 44) at the notice tier and +31 (21 to 41) at the alert tier. The paired difference is +5 (−2 to 12)
+  at the notice tier and +5 (−2 to 13) at the alert tier: not distinguishable.
 - **No useful early warning shown.** Alerts starting in the ten days up to onset, above luck: +14
   (4 to 24) for the two-sensor simulator-threshold configuration and +12 (2 to 22) cross-validated with
   daily steps, both at the notice tier; at the alert tier +6 (−1 to 13), whose interval includes zero,

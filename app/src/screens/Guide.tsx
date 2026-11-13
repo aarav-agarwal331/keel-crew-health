@@ -32,7 +32,7 @@ export function Guide({ focus }: { focus?: string }) {
         <ul className="list">
           <li><strong>Now, whatever else Keel shows.</strong> Tell the medical officer; if you are the medical officer, tell the commander.
             <ul className="list"><li>Any of these symptoms: {SYMPTOMS.filter((x) => x.red_flag).map((x) => x.label.toLowerCase()).join('; ')}.</li>{NOW.map((r) => <li key={r.id}>{r.title}.</li>)}</ul></li>
-          <li><strong>Today.</strong> Whenever Keel shows "Act today", and:
+          <li><strong>Today.</strong> Whenever Keel shows "Act today" and "Who" is not "you manage this yourself", and:
             <ul className="list">{TODAY.map((r) => <li key={r.id}>{r.title}.</li>)}</ul></li>
           <li><strong>When a link opens:</strong> anything the medical officer wants a flight surgeon to review. The daily summary contains only what you chose to share.</li>
           <li><strong>If you have thoughts of harming yourself, or cannot function:</strong> tell the medical officer now. Keel shows that tick to the medical officer only.</li>

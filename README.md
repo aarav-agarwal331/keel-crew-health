@@ -235,7 +235,7 @@ statement saved in [docs/CHALLENGE.md](docs/CHALLENGE.md).
 | E4 | Simulation labelled | "Simulated data" chip on every screen that shows it |
 | E5 | Auditable alert-to-action | Alert detail → audit trail; `shared/rules.json` |
 | E6 | Crew-owned data, access log | Sharing |
-| E7 | Privacy-preserving readiness | Crew (tier never better than the crew member's own worst area; reasons only if shared) |
+| E7 | Privacy-preserving readiness | Crew (tier never "Steady" while an area is flagged; "Talk to the medical officer first" for anything urgent or involving the medical officer; reasons only if shared) |
 | E8 | Link delay, blackout, queued summary | Link |
 | E9 | Mission replay | Replay |
 | E10 | Decision support, not diagnosis | Stated on Today, Alert, More; enforced by a unit test on the rule text |

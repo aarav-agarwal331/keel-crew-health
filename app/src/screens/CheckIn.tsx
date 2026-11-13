@@ -1,6 +1,7 @@
 import { alertFields, alertState } from '../core/alerts'
 import { useAutoAlert } from '../ui/useAutoAlert'
 import { GlucoseUnit } from '../ui/GlucoseUnit'
+import { METER_HI, METER_LO, useMeterUnit } from '../ui/meterUnit'
 import { useEffect, useRef, useState } from 'react'
 import { dayLabel, IND, rawSeries, SYMPTOMS, symptomsOn } from '../core/mission'
 import { useApp } from '../state'
@@ -45,6 +46,9 @@ export function CheckIn({ open }: { open?: string }) {
   const [spot, setSpot] = useState<Record<string, string>>(() => open === 'demo' ? { glucose: '50' } : Object.fromEntries(SPOT.filter((k) => existing?.values[sk(k)] !== undefined).map((k) => [k, String(existing!.values[sk(k)])])))
   // fields typed into since the last save: a value typed again is logged again, even if it is the same number
   const [dirty, setDirty] = useState<string[]>(open === 'demo' ? ['glucose'] : [])
+  const [meterUnit, setMeterUnit] = useMeterUnit()
+  // a dangerous reading the crew member has confirmed is no longer a typing mistake: its alert cannot be cancelled
+  const [confirmed, setConfirmed] = useState(false)
   const [pvt, setPvt] = useState<number | null>(existing?.values.pvt_rt ?? null)
   const [meds, setMeds] = useState<string[]>(existing?.meds ?? [])
   const [photos, setPhotos] = useState<Photo[]>(existing?.photos ?? [])
@@ -71,7 +75,14 @@ export function CheckIn({ open }: { open?: string }) {
     for (const k of SPOT) {
       const raw = spot[k]
       if (raw === undefined || raw === '') continue
-      const v = Number(String(raw).replace(',', '.'))
+      const rawU = String(raw).trim().toUpperCase()
+      let v = Number(String(raw).replace(',', '.'))
+      if (k === 'glucose') {
+        // a meter's own out-of-range readouts are the most dangerous readings: keep them, past the lines
+        if (rawU === 'LO') v = METER_LO
+        else if (rawU === 'HI') v = METER_HI
+        else if (meterUnit === 'mmol' && !Number.isNaN(v)) v = Math.round(v * 18.016)
+      }
       const [lo, hi] = IND[k].range
       const [hardLo0, hardHi] = IND[k].limits ?? IND[k].range
       // a meter in mmol/L shows 1 to 35: let it through to the unit question rather than refusing it
@@ -79,7 +90,7 @@ export function CheckIn({ open }: { open?: string }) {
       if (Number.isNaN(v) || v < hardLo || v > hardHi) { bad.push(`${lab(k)}: ${raw} was not saved. Enter a value between ${hardLo} and ${hardHi} ${IND[k].unit}.`); continue }
       // a blood sugar under 35 is either a dangerous low in mg/dL or a reading in mmol/L: ask before acting on it
       values[sk(k)] = v
-      if (dirty.includes(k) && (v < lo || v > hi || NOW_LINE[k]?.(v) || (k === 'temp_oral' && v < 35)) && !(k === 'glucose' && v < 35)) check.push(k)   // under 35: the unit card asks instead
+      if (dirty.includes(k) && (v < lo || v > hi || NOW_LINE[k]?.(v) || (k === 'temp_oral' && v < 35)) && !(k === 'glucose' && v < 35 && meterUnit === null)) check.push(k)   // under 35: the unit card asks instead
     }
     // symptoms and every valid value are always saved, whatever is wrong with one number
     await saveEntry({ crew: me, day, values, symptoms: sym, meds, photos }, dirty.map(sk))
@@ -116,7 +127,7 @@ export function CheckIn({ open }: { open?: string }) {
       {pending.map((q) => (
         <div className="banner strong" role="alert" key={q.k}>
           {NOW_LINE[q.k]?.(q.v) ? <p style={{ fontSize: '1.2rem' }}><strong>Act now: {(today(me, day)?.findings.find((f) => (f.inds ?? []).includes(q.k) && f.kind === 'vital')?.action) ?? 'tell the medical officer now.'}</strong></p> : null}<p><strong>{lab(q.k)}: {q.v} {IND[q.k].unit}</strong> {NOW_LINE[q.k]?.(q.v) ? 'is past a fixed safety line' : 'is far outside the usual range'}, so Keel saved it and is acting on it. {NOW_LINE[q.k]?.(q.v) ? (sharingOn ? 'It is past a safety line, so it is now visible on the medical officer\'s and the commander\'s Crew screens (emergency sharing), and an alert goes to them ten seconds after saving (at once if you leave this screen) unless you cancel it below.' : 'It is past a safety line. Emergency sharing is off, so nobody else has been shown it: tell the medical officer.') : q.k === 'glucose' && q.v < 35 ? `Did your meter show mmol/L? ${q.v} mmol/L is ${Math.round(q.v * 18)} mg/dL. If so, withdraw this and type ${Math.round(q.v * 18)}.` : (today(me, day)?.findings.some((f) => (f.inds ?? []).includes(q.k) && f.kind === 'vital') ? 'It is past a fixed line for today: it is on the medical officer\'s list; tell them today.' : q.k === 'temp_oral' && q.v < 35 ? 'Below 35.0 °C is usually a measurement problem: wait five minutes and repeat. If it repeats, tell the medical officer.' : 'It is not past a fixed safety line, so nobody else has been shown it.')} Is that what the device showed?</p>
-          <div className="row wrap"><button className="btn primary" onClick={() => setPending((p) => p.filter((x) => x.k !== q.k))} data-testid={`confirm-${q.k}`}>Yes, that is right</button><button className="btn" onClick={() => void withdraw(q.k)} data-testid={`withdraw-${q.k}`}>No, a typing mistake: withdraw it</button></div>
+          <div className="row wrap"><button className="btn primary" onClick={() => { if (NOW_LINE[q.k]?.(q.v)) setConfirmed(true); setPending((p) => p.filter((x) => x.k !== q.k)) }} data-testid={`confirm-${q.k}`}>Yes, that is right</button><button className="btn" onClick={() => void withdraw(q.k)} data-testid={`withdraw-${q.k}`}>No, a typing mistake: withdraw it</button></div>
           <p className="small">If you withdraw it, it stays in the log, struck through, and the medical officer still sees that it was entered.</p>
         </div>
       ))}</div>)
@@ -133,7 +144,7 @@ export function CheckIn({ open }: { open?: string }) {
       {prompts}
       {saved && <div className="card" role="status" ref={(el) => { if (el && justSaved.current) { justSaved.current = false; el.scrollIntoView({ block: 'center' }) } }}><strong>Saved.</strong><p className="muted">Keel has re-checked your readings on this tablet with your new entries.</p>{(() => { const n = (today(me, day)?.findings ?? []).filter((f) => f.status === 'urgent').length; const urgent = (today(me, day)?.findings ?? []).filter((f) => f.status === 'urgent')
             return n > 0 ? <div className="col"><p className="banner strong"><strong>{n === 1 ? 'One item needs' : `${n} items need`} action now.</strong> See Today for what to do.</p>
-              {auto.counting && <div className="banner strong" role="alert" style={{ position: 'fixed', top: 72, left: 16, right: 16, zIndex: 30, boxShadow: '0 4px 16px rgba(0,0,0,.4)' }}><p><strong>Alerting the medical officer and commander in {auto.autoLeft} s.</strong> Leaving this screen sends it now.</p><button className="btn" onClick={auto.cancel} data-testid="cancel-auto-alert">Cancel the alert</button></div>}
+              {auto.counting && <div className="banner strong" role="alert" style={{ background: 'var(--surface-3)', fontSize: '1.05rem' }}><p><strong>Alerting the medical officer and commander in {auto.autoLeft} s.</strong> Leaving this screen sends it now.</p>{confirmed ? <p className="small">You confirmed the reading, so the alert will go.</p> : <button className="btn" onClick={() => { auto.cancel(); for (const q of pending.filter((x) => NOW_LINE[x.k]?.(x.v))) void withdraw(q.k) }} data-testid="cancel-auto-alert">{pending.some((q) => NOW_LINE[q.k]?.(q.v)) ? 'Cancel: it was a typing mistake (withdraws the reading)' : 'Cancel the alert (the item stays open for the medical officer)'}</button>}</div>}
               {(() => { const akey = `alert|${urgent.map((x) => x.key).sort().join('+')}`; return !alertState(actions, me, urgent.map((x) => x.key)).sent ? <button className="btn alert block" style={{ minHeight: 72 }} onClick={() => void logAction({ crew: me, alertKey: akey, day, did: 'Alerted the crew', feel: null, ...alertFields(urgent) })} data-testid="alert-crew-checkin">{urgent.every((x) => x.cmoOnly && !x.patientIsCmo) ? 'Alert the medical officer now' : 'Alert the medical officer and commander now'}</button> : <p className="small"><strong>Alert sent.</strong></p> })()}</div> : null })()}<div className="row wrap"><button className="btn" onClick={() => go('today')}>See Today</button><a className="btn" href={href('sharing')}>Who can see this?</a></div></div>}
 
   </>)
@@ -174,7 +185,7 @@ export function CheckIn({ open }: { open?: string }) {
             <button aria-label="One drink bag more" onClick={() => setFluid((v) => Number((v + 0.25).toFixed(2)))} data-testid="fluid-plus">+</button>
           </div>
           <div className="row wrap"><button className="btn sm" onClick={() => setFluid(Math.round(fluidHint * 4) / 4)} data-testid="fluid-usual">Same as usual ({fluidHint.toFixed(1)} L)</button><button className="btn sm" onClick={() => setFluid((v) => Number((v + 1).toFixed(2)))}>+ 1 L</button></div>
-          <p className="small muted">One tap on + is one 250 mL drink bag. Aim for at least 2.0 to 2.5 L a day. Left at zero, nothing is recorded.</p>
+          <p className="small muted">One tap on + is one 250 mL drink bag. Aim for at least 2.0 to 2.5 L a day. Left at zero, nothing is recorded.{!existing?.values.fluid && simToday('fluid') ? ' Filled in from the drink bags logged today (simulated); change it if that is wrong.' : ''}</p>
         </Card>
         <Card title="4. How much of your planned food did you eat?">
           <div className="choices" role="group" aria-label="Food intake">{FOOD.map((f) => <button key={f.v} className="choice" aria-pressed={food === f.v} onClick={() => setFood(f.v)}>{f.label}</button>)}</div>
@@ -223,7 +234,9 @@ export function CheckIn({ open }: { open?: string }) {
               {SPOT.map((k) => (
                 <div className="field" key={k}>
                   <label htmlFor={`f-${k}`}>{lab(k)} <span className="muted small">({IND[k].unit})</span></label>
-                  <input id={`f-${k}`} type="number" inputMode="decimal" step="any" value={spot[k] ?? ''} onChange={(e) => { const v = e.target.value; setSpot((p) => ({ ...p, [k]: v })); setDirty((p) => (p.includes(k) ? p : [...p, k])) }} />
+                  {k === 'glucose' && <div className="seg" role="group" aria-label="Unit my meter shows"><span className="small muted">My meter shows:</span><button aria-pressed={meterUnit === 'mg'} onClick={() => setMeterUnit('mg')} data-testid="meter-mg">mg/dL</button><button aria-pressed={meterUnit === 'mmol'} onClick={() => setMeterUnit('mmol')} data-testid="meter-mmol">mmol/L</button></div>}
+                  {k === 'glucose' && meterUnit === 'mmol' && <p className="tiny muted">Type the mmol/L value; Keel stores it in mg/dL. LO and HI can be typed as shown.</p>}
+                  <input id={`f-${k}`} type={k === 'glucose' ? 'text' : 'number'} inputMode="decimal" step="any" value={spot[k] ?? ''} onChange={(e) => { const v = e.target.value; setSpot((p) => ({ ...p, [k]: v })); setDirty((p) => (p.includes(k) ? p : [...p, k])) }} />
                   <details><summary className="small">How to measure</summary><p className="small muted">{IND[k].how}</p></details>
                 </div>
               ))}
