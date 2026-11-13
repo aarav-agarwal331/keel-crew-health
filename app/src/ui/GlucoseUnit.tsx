@@ -9,7 +9,8 @@ export function GlucoseUnit() {
   const [unit, setUnit] = useMeterUnit()
   const e = entries.find((x) => x.mission === mission.id && x.crew === me && x.day === day)
   const r = [...(e?.readings ?? [])].reverse().find((q) => q.ind === 'glucose' && !q.void)
-  if (!e || !r || r.v >= 35 || unit === 'mg') return null
+  // only a typed number under 35 saved before the unit was known is ambiguous; a meter's LO readout is not
+  if (!e || !r || r.v >= 35 || unit === 'mg' || !r.unitUnknown) return null
   if (actions.some((a) => a.crew === me && a.did === 'Confirmed blood sugar unit' && a.note === String(r.ts))) return null
   const mg = Math.round(r.v * 18)
   const asMmol = async () => {
@@ -19,7 +20,7 @@ export function GlucoseUnit() {
   }
   return (
     <div className="banner strong" role="alert" data-testid="glucose-unit">
-      <p><strong>Blood sugar {r.v}: which unit did your meter show?</strong> Keel has saved it and treats it as a dangerously low {r.v} mg/dL until you answer. If you feel shaky, sweaty or confused, take sugar now and call a crewmate.</p>
+      <p><strong>Blood sugar {r.v}: which unit did your meter show?</strong> Keel has saved it and treats it as a dangerously low {r.v} mg/dL until you answer. If you feel shaky, sweaty or confused, take sugar now if you are awake and can swallow, and call a crewmate.</p>
       <div className="row wrap">
         <button className="btn primary" onClick={() => void asMmol()} data-testid="unit-mmol">mmol/L (change it to {mg} mg/dL)</button>
         <button className="btn alert" onClick={() => { setUnit('mg'); void logAction({ crew: me, alertKey: `glucose-unit|${day}`, day, did: 'Confirmed blood sugar unit', feel: null, note: String(r.ts) }) }} data-testid="unit-mgdl">mg/dL: it really is {r.v}</button>

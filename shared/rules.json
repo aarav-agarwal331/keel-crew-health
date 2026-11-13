@@ -67,7 +67,7 @@
    "summary": "The reading you entered is in the range that general guidance says can cause unclear thinking or seizure. Keel does not interpret it.",
    "action": "If you are awake and can swallow, eat or drink something sugary now, and tell the medical officer now.",
    "steps": [
-    "For whoever is with you: if they are confused, drowsy or cannot swallow safely, give nothing by mouth and get the medical officer now.",
+    "For whoever is with you: if they are awake and can swallow, even if confused, give sugar; if they are drowsy, cannot follow simple instructions or cannot swallow safely, give nothing by mouth and get the medical officer now.",
     "Stay with another crew member.",
     "Repeat the reading in 15 minutes; if it is still below 70, take sugar again and repeat.",
     "Do not exercise or do critical tasks until it is back above 70 and you feel normal."
@@ -397,7 +397,7 @@
     "min": 300
    },
    "summary": "The reading you entered is far above the usual range. Keel does not interpret it.",
-   "action": "Tell the medical officer now. If you feel shaky, sweaty, confused or drowsy, treat it as low instead: take sugar now if you can swallow.",
+   "action": "Tell the medical officer now. If you feel shaky, sweaty or confused, treat it as low instead: take sugar now if you are awake and can swallow.",
    "steps": [
     "Repeat the reading once with a clean fingertip.",
     "Tell them about vomiting, great thirst or confusion."
@@ -423,7 +423,7 @@
     "max": 299.99
    },
    "summary": "The reading you entered is well above the usual range. One reading proves nothing.",
-   "action": "Wash and dry your hands and repeat the reading now; if it is still 200 or more, tell the medical officer today. If you feel shaky, sweaty, confused or drowsy, treat it as low: take sugar now.",
+   "action": "Wash and dry your hands and repeat the reading now; if it is still 200 or more, tell the medical officer today. If you feel shaky, sweaty or confused, treat it as low: take sugar now if you are awake and can swallow.",
    "steps": [
     "Clean the fingertip and wipe away the first drop.",
     "Note when you last ate."

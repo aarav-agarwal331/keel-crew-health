@@ -30,7 +30,7 @@ export function RepeatEntry({ f }: { f: Finding }) {
     <div className="col" style={{ gap: 6 }}>
       <label className="lab small" htmlFor={`repeat-${ind}`}>Repeat reading: {LABEL[ind]}{ind === 'glucose' ? ` (${unit === 'mmol' ? 'mmol/L' : 'mg/dL'})` : ''}</label>
       <div className="row">
-        <input id={`repeat-${ind}`} type="number" inputMode="decimal" value={v} onChange={(e) => setV(e.target.value)} style={{ maxWidth: 160 }} data-testid="repeat-now" />
+        <input id={`repeat-${ind}`} type={ind === 'glucose' ? 'text' : 'number'} inputMode="decimal" value={v} onChange={(e) => setV(e.target.value)} style={{ maxWidth: 160 }} data-testid="repeat-now" />
         <button className="btn primary" onClick={() => void save()} data-testid="repeat-save">Save repeat</button>
       </div>
       {err && <p role="alert" className="small"><strong>{err}</strong></p>}

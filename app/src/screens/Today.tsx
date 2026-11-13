@@ -95,7 +95,7 @@ export function Today() {
       <GlucoseUnit />
       {intro && mission.simulated && (
         <section className="card intro" data-testid="intro">
-          <p className="small"><strong>When Earth can't answer, Keel tells you what to do and who to tell.</strong> Advises you at once on a dangerous reading you enter, and alerts the medical officer and commander within ten seconds. You choose who sees what. It also watches your readings against your own normal. Demo: {crew?.name.split(' ')[0]}'s tablet, simulated {mission.title}.</p>
+          <p className="small"><strong>When Earth can't answer, Keel tells you what to do and who to tell.</strong> Advises you at once on a dangerous reading you enter, and alerts the medical officer and commander within ten seconds (on their Crew screens; over the cabin network in a flight version). You choose who sees what. It also watches your readings against your own normal. Demo: {crew?.name.split(' ')[0]}'s tablet, simulated {mission.title}.</p>
           <div className="row wrap">
             <a className="btn primary sm" href={href('checkin', 'demo')} data-testid="intro-danger">Demo: enter a dangerous reading</a>
             <a className="btn sm" href={href('replay')} data-testid="intro-replay">Demo: replay a scripted event</a>

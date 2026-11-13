@@ -1096,6 +1096,36 @@ strictly-before-onset luck figure, cleaning bedrest.json fields (pipeline reruns
 (testicular pain, sudden hearing loss, facial swelling; for a clinician); radiation projection moved off
 Today (a flight surgeon asked for it there).
 
-## Round 26
+## Round 26 (2026-11-12, fresh reviewers, redeployed build)
 
-See the end of this file once the twenty-sixth round has run.
+Judge's scores: impact 7, creativity 8, validity 7, relevance 8, presentation 7 (37 of 50), "nominate:
+yes", with one high-severity issue. The astronaut and the statistician found none; the flight surgeon
+found three.
+
+| # | Reviewer | High-severity finding | Fix |
+|---|---|---|---|
+| 1 | Judge (astronaut medium) | The commander's summary counted an urgent crew member twice ("1 with an urgent item open now. 1 of 4 should talk …", adding up to 5 of 4). | The counts are disjoint: someone with a visible urgent item is counted only as urgent. |
+| 2 | Flight surgeon | A meter "LO" saved before the unit was set was offered a mmol/L conversion, turning it into 342 mg/dL; the repeat box could not take "LO". | LO and HI are never treated as unit-ambiguous; the unit question appears only for a typed number under 35; the repeat box accepts LO/HI. |
+| 3 | Flight surgeon | The Check-in card said "today" for rules that are "now" (still low after sugar, two fast heart rates, 220/130 twice, low pressure with dizziness), beside an alert counting down. | The card's urgency comes from the findings the rules produced as well as the fixed lines. |
+| 4 | Flight surgeon | Oral-sugar wording conflicted: the bystander line said "confused or drowsy: nothing by mouth", the high-sugar lines said "confused or drowsy: take sugar". | One wording everywhere: awake and able to swallow, even if confused, take sugar; drowsy, unable to follow instructions or to swallow, nothing by mouth and the medical officer now. |
+
+Medium-severity findings fixed in the same pass:
+
+- **Alert-tier ceiling** (statistician): the Method screen says the alert tier sits close to the z-score
+  cap and can be silent for some sensor sets.
+- **Gravity handling wording** (statistician): "alerts of any cause"; "no cost detected; equivalence not
+  tested".
+- **On-board predictive value** (statistician): one statement on both screens, with the shipped model's
+  figures on import channels (about 1 in 16 alert-tier alerts, 1 in 29 notices).
+- **Wording** (astronaut, judge, flight surgeon): Sharing lists "act now" as a commander level and says
+  the commander sees every value entered for an urgent item; the banner says alerts reach Crew screens
+  (cabin network in a flight version); How it works says which thresholds are provisional; DOMAIN.md
+  says "non-clinical (AI role-played) review round".
+
+Not done, with reasons: a full-screen urgent card on Check-in, one set of body areas, a spot heart-rate
+"now" band at 130 and a single-reading 220/130 "now" (for a clinician), uncapped scoring (needs a rerun),
+a blood-pressure repeat box, a low-temperature rule.
+
+## Round 27
+
+See the end of this file once the twenty-seventh round has run.

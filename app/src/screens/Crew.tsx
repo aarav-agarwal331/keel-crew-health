@@ -37,9 +37,12 @@ export function Crew() {
   // crew-level pattern: counts only, and only when at least two people are affected
   const pattern = SHARE_CATEGORIES.map((cat) => ({ cat, n: rows.filter((x) => x.a && ['watch', 'act', 'urgent'].includes(categoryStatus(x.a, cat))).length })).filter((x) => x.n >= 3)
   const env = rows[0]?.a?.findings.filter((f) => f.kind === 'environment') ?? []
-  const ready = rows.filter((x) => x.r?.tier === 'go').length
-  const hold = rows.filter((x) => x.r?.tier === 'hold').length
-  const minor = rows.filter((x) => x.r?.tier === 'caution').length
+  // the counts are disjoint and add up to the crew: someone with a visible urgent item is counted only there
+  const urgentNow = rows.filter((x) => x.v?.findings.some((f) => f.emergency)).length
+  const calm = rows.filter((x) => !x.v?.findings.some((f) => f.emergency))
+  const ready = calm.filter((x) => x.r?.tier === 'go').length
+  const hold = calm.filter((x) => x.r?.tier === 'hold').length
+  const minor = calm.filter((x) => x.r?.tier === 'caution').length
 
   return (
     <>
@@ -70,7 +73,7 @@ export function Crew() {
       {role === 'commander' && (
         <section className="card" data-testid="crew-summary">
           <h2>Task tomorrow: a critical task (a spacewalk, or robotic-arm work)</h2>
-          <p><strong className="num" style={{ fontSize: '1.3rem' }}>{rows.some((x) => x.v?.findings.some((f) => f.emergency)) ? `${rows.filter((x) => x.v?.findings.some((f) => f.emergency)).length} with an urgent item open now. ` : ''}{hold} of {rows.length} should talk to the medical officer first. {minor} {minor === 1 ? 'has' : 'have'} minor flags. {ready} {ready === 1 ? 'has' : 'have'} none.</strong></p>
+          <p><strong className="num" style={{ fontSize: '1.3rem' }}>{urgentNow ? `${urgentNow} urgent now. ` : ''}{hold} {hold === 1 ? 'needs' : 'need'} a talk with the medical officer first. {minor} {minor === 1 ? 'has' : 'have'} minor flags. {ready} {ready === 1 ? 'has' : 'have'} none.</strong></p>
           <p className="small">This is not a medical clearance.</p>
           <p className="small muted">NASA's medical operations standard requires medical clearance before every spacewalk. Keel's tier is one input to that conversation with the medical officer.</p>
         </section>
